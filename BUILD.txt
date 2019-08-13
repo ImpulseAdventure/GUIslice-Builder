@@ -1,7 +1,7 @@
 
 Build instructions using Windows 64-bit
 =======================================
-Inorder to build the GUIsliceBuilder package from source you will need 
+In order to build the GUIsliceBuilder package from source you will need 
 to download java 8 JDK from:
 https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
@@ -9,7 +9,7 @@ You want to download jdk-8u192-windows-x64.exe
 
 Run jdk-8u192-windows-x64.exe to install
 
-download gradle 4.10.2 gradle-4.10.2-all.zip
+download gradle 5.4.1
 https://gradle.org/releases/
 
 For windows it's important to unzip gradle to c:\
@@ -22,7 +22,7 @@ and open system->advanced system settings->environment variables
 
 Create environment varaibles:
 JAVA_HOME="C:\Program Files\Java\jdk1.8.0_192" or whatever version you downloaded.
-GRADLE_HOME=C:\GRADLE\gradle-4.10.2
+GRADLE_HOME=C:\gradle-5.4.1
 CLASSPATH=.;%JAVA_HOME%\lib
 and for path add
 PATH=%GRADLE_HOME%\bin;
