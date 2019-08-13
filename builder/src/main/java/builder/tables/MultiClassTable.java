@@ -60,7 +60,13 @@ public class MultiClassTable extends JTable {
   /** The model. */
   private WidgetModel model;
   
-  /**
+  /** The renderer class. */
+  private Class<?> rendererClass;
+  
+  /** The renderer. */
+  private TableCellRenderer renderer;
+  
+ /**
    * Constructs a default <code>MyTable</code> that is initialized with a default
    * data model, a default column model, and a default selection
    * model.
@@ -124,8 +130,13 @@ public class MultiClassTable extends JTable {
     editingClass = null;
     int modelColumn = convertColumnIndexToModel(column);
     if (modelColumn == 1) {
-      Class<?> rowClass = model.getClassAt(row);
-      return getDefaultRenderer(rowClass);
+      renderer = model.getRendererAt(row);
+      if (renderer == null) {
+        rendererClass = model.getClassAt(row);
+        return getDefaultRenderer(rendererClass);
+      } else {
+        return renderer;
+      }
     } else {
       return super.getCellRenderer(row, column);
     }

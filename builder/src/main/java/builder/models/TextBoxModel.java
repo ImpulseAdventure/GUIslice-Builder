@@ -32,13 +32,11 @@ import java.io.ObjectInputStream;
 
 import javax.swing.JTextField;
 
-import builder.common.ColorFactory;
+import builder.codegen.CodeUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
-import builder.prefs.GeneralEditor;
 
 /**
  * The Class TextBoxModel implements the model for the Text Box widget.
@@ -54,49 +52,48 @@ public class TextBoxModel extends WidgetModel {
   /** The Constant for gslc_tsElemRef* m_pElementRef name */
   public static final String ELEMENTREF_NAME = "m_pElemTextbox";
   
-  /** The Constant PROP_ELEMENTREF. */
-  static private final int PROP_ELEMENTREF        = 6;
-  
-  /** The Constant PROP_FONT. */
+  /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
+  static private final int PROP_WRAP              = 8;
+  static private final int PROP_ROWS              = 9;
+  static private final int PROP_COLS              = 10;
+  static private final int PROP_SCROLLBAR         = 11;
+  static private final int PROP_SCROLLBAR_ENUM    = 12;
+  static private final int PROP_SCROLLBAR_EREF    = 13;
+  static private final int PROP_SCROLLBAR_MAX     = 14;
+  static private final int PROP_TEXT_COLOR        = 15;
+  static private final int PROP_FRAME_COLOR       = 16;
+  static private final int PROP_FILL_COLOR        = 17;
+  static private final int PROP_SELECTED_COLOR    = 18;
+  static private final int PROP_BAR_FRAME_COLOR   = 19;
+  static private final int PROP_BAR_FILL_COLOR    = 20;
   
-  /** The Constant PROP_FONT_ENUM. */
-  static private final int PROP_FONT_ENUM         = 8;
-  
-  /** The Constant PROP_WRAP. */
-  static private final int PROP_WRAP              = 9;
-  
-  /** The Constant PROP_ROWS. */
-  static private final int PROP_ROWS              = 10;
-  
-  /** The Constant PROP_COLS. */
-  static private final int PROP_COLS              = 11;
-  
-  /** The Constant PROP_FRAME_COLOR. */
-  static private final int PROP_FRAME_COLOR       = 12;
-  
-  /** The Constant PROP_FILL_COLOR. */
-  static private final int PROP_FILL_COLOR        = 13;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
-  static private final int PROP_SELECTED_COLOR    = 14;
-  
-  /** The gm. */
-  GeneralModel gm = null;
-  
-  /** The ff. */
-  FontFactory  ff = null;
+  /** The Property Defaults */
+  static public  final Boolean DEF_WRAP              = Boolean.FALSE;
+  static public  final Integer DEF_ROWS              = Integer.valueOf(6);
+  static public  final Integer DEF_COLS              = Integer.valueOf(28);
+  static public  final Boolean DEF_SCROLLBAR         = Boolean.TRUE;
+  static public  final String  DEF_SCROLLBAR_ENUM    = "";
+  static public  final String  DEF_SCROLLBAR_EREF    = "";
+  static public  final Integer DEF_SCROLLBAR_MAX     = Integer.valueOf(100);
+  static public  final Color   DEF_TEXT_COLOR        = Color.YELLOW;
+  static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
+  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
+  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
+  static public  final Color   DEF_BAR_FRAME_COLOR   = new Color(128,128,128); // GSLC_COL_GRAY
+  static public  final Color   DEF_BAR_FILL_COLOR    = Color.BLACK;
   
   static private final int DEF_WIDTH = 203;
   static private final int DEF_HEIGHT= 68;
 
+  /** The ff. */
+  FontFactory  ff = null;
+  
   /**
    * Instantiates a new text box model.
    */
   public TextBoxModel() {
-    gm = (GeneralModel) GeneralEditor.getInstance().getModel();
     ff = FontFactory.getInstance();
-    cf = ColorFactory.getInstance();
     initProperties();
     calcSizes();
   }
@@ -107,23 +104,44 @@ public class TextBoxModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TEXTBOX;
-    data = new Object[15][5];
+    data = new Object[21][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
-    initProp(PROP_ELEMENTREF, String.class, "TXT-206", Boolean.FALSE,"ElementRef","");
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
-    initProp(PROP_FONT_ENUM, String.class, "TXT-211", Boolean.FALSE,"Font Enum",ff.getDefFontEnum());
-    initProp(PROP_WRAP, Boolean.class, "TXT-208", Boolean.FALSE,"Wrap Text",Boolean.TRUE);
-    initProp(PROP_ROWS, Integer.class, "TXT-209", Boolean.FALSE,"Text Rows",Integer.valueOf(0));
-    initProp(PROP_COLS, Integer.class, "TXT-210", Boolean.FALSE,"Text Columns",Integer.valueOf(0));
+    initProp(PROP_WRAP, Boolean.class, "TXT-208", Boolean.FALSE,"Wrap Text",DEF_WRAP);
+    initProp(PROP_ROWS, Integer.class, "TXT-209", Boolean.FALSE,"Display Rows",DEF_ROWS);
+    initProp(PROP_COLS, Integer.class, "TXT-210", Boolean.FALSE,"Characters per Row",DEF_COLS);
+    initProp(PROP_SCROLLBAR, Boolean.class, "BAR-112", Boolean.FALSE,"Add Scrollbar?",DEF_SCROLLBAR);
+    initProp(PROP_SCROLLBAR_ENUM, String.class, "BAR-113", Boolean.FALSE,"Scrollbar ENUM",DEF_SCROLLBAR_ENUM);
+    initProp(PROP_SCROLLBAR_EREF, String.class, "BAR-114", Boolean.FALSE,"Scrollbar EREF",DEF_SCROLLBAR_EREF);
+    initProp(PROP_SCROLLBAR_MAX, Integer.class, "BAR-115", Boolean.FALSE,"Scrollbar Max Value",DEF_SCROLLBAR_MAX);
 
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",cf.getDefFrameCol());
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",cf.getDefFillCol());
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",cf.getDefGlowCol());
+    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.FALSE,"Text Color",DEF_TEXT_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
+    initProp(PROP_BAR_FRAME_COLOR, Color.class, "BAR-116", Boolean.FALSE,"Frame Color",DEF_BAR_FRAME_COLOR);
+    initProp(PROP_BAR_FILL_COLOR, Color.class, "BAR-117", Boolean.FALSE,"Fill Color",DEF_BAR_FILL_COLOR);
 
   }
 
+  /**
+   * Sets the key.
+   *
+   * @param key
+   *          the new key
+   */
+  @Override
+  public void setKey(String key) { 
+    data[PROP_KEY][PROP_VAL_VALUE] = key;
+    String count = CodeUtils.getKeyCount(key);
+    String ref = ELEMENTREF_NAME;
+    ref = ref + count;
+    data[PROP_SCROLLBAR_ENUM][PROP_VAL_VALUE] = EnumFactory.TEXTBOX_SCROLLBAR_ENUM+count;
+    data[PROP_SCROLLBAR_EREF][PROP_VAL_VALUE] = EnumFactory.TEXTBOX_SCROLLBAR_EREF+count;
+  }
+  
   /**
    * changeValueAt
    *
@@ -131,71 +149,53 @@ public class TextBoxModel extends WidgetModel {
    */
   @Override
   public void changeValueAt(Object value, int row) {
-    boolean bChangeFontEnum = false;
     // The test for Integer supports copy and paste from clipboard.
     // Otherwise we get a can't cast class String to Integer fault
     if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
         data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
     } else {
-      if (row == PROP_FONT) {
-        // check to see if user defined this font enum, if so we won't change it
-        if (!ff.getFontEnum((String)value).equals(getFontEnum())) bChangeFontEnum=true;
-      }
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_FONT_ENUM) {
-      String strName = ff.getFontDisplayName(getFontEnum());
-      if (strName != null && !strName.equals(getFontDisplayName())) {
-        data[PROP_FONT][PROP_VAL_VALUE]=strName;
-        fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
-      }
-    }
-    if (row == PROP_WIDTH  ||
-        row == PROP_HEIGHT ||
+    if (row == PROP_COLS  ||
+        row == PROP_ROWS ||
         row == PROP_FONT ) {
-      if (bChangeFontEnum) {
-        setFontEnum(ff.getFontEnum(getFontDisplayName()));
-        fireTableCellUpdated(PROP_FONT_ENUM, COLUMN_VALUE);
-      }
       // re-calc number of text rows and columns
       calcSizes();
-      fireTableCellUpdated(PROP_ROWS, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_COLS, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
+    }
+    if (row == PROP_SCROLLBAR) {
+      if (addScrollbar()) {
+        data[PROP_SCROLLBAR_ENUM][PROP_VAL_READONLY]=Boolean.FALSE; 
+        data[PROP_SCROLLBAR_EREF][PROP_VAL_READONLY]=Boolean.FALSE; 
+        data[PROP_SCROLLBAR_MAX][PROP_VAL_READONLY]=Boolean.FALSE; 
+        data[PROP_BAR_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
+        data[PROP_BAR_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
+      } else {
+        data[PROP_SCROLLBAR_ENUM][PROP_VAL_READONLY]=Boolean.TRUE; 
+        data[PROP_SCROLLBAR_EREF][PROP_VAL_READONLY]=Boolean.TRUE; 
+        data[PROP_SCROLLBAR_MAX][PROP_VAL_READONLY]=Boolean.TRUE; 
+        data[PROP_BAR_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
+        data[PROP_BAR_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
+      }
     }
     
     if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
-    }
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
   }
 
-  /**
-   * Gets the element ref.
-   *
-   * @return the element ref
-   */
-  public String getElementRef() {
-    return (String) data[PROP_ELEMENTREF][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * Sets the element ref.
-   *
-   * @param s
-   *          the new element ref
-   */
-  public void setElementRef(String s) { 
-    shortcutValue(s, PROP_ELEMENTREF);
-  }
-  
   /**
    * Gets the font display name.
    *
    * @return the font display name
    */
+  @Override
   public String getFontDisplayName() {
     return (String) ((String)data[PROP_FONT][PROP_VAL_VALUE]);
   }
@@ -205,18 +205,39 @@ public class TextBoxModel extends WidgetModel {
    *
    * @return the font enum
    */
+  @Override
   public String getFontEnum() {
-    return (String) ((String)data[PROP_FONT_ENUM][PROP_VAL_VALUE]);
+    return ff.getFontEnum(getFontDisplayName());
   }
   
   /**
-   * Sets the font enum.
+   * Checks if we need to add a scrollbar.
    *
-   * @param s
-   *          the new font enum.
+   * @return true, if we add a scrollbar
    */
-  public void setFontEnum(String s) { 
-    shortcutValue(s, PROP_FONT_ENUM);
+  @Override
+  public boolean addScrollbar() {
+    return ((Boolean) data[PROP_SCROLLBAR][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Gets the scrollbar enum.
+   *
+   * @return the scrollbar enum
+   */
+  @Override
+  public String getScrollbarEnum() {
+    return (String)data[PROP_SCROLLBAR_ENUM][PROP_VAL_VALUE];
+  }
+  
+  /**
+   * Gets the scrollbar eref.
+   *
+   * @return the scrollbar enum
+   */
+  @Override
+  public String getScrollbarERef() {
+    return (String)data[PROP_SCROLLBAR_EREF][PROP_VAL_VALUE];
   }
   
   /**
@@ -274,22 +295,42 @@ public class TextBoxModel extends WidgetModel {
   }
 
   /**
+   * Gets the fill color.
+   *
+   * @return the fill color
+   */
+  public Color getBarFillColor() {
+    return (((Color) data[PROP_BAR_FILL_COLOR][PROP_VAL_VALUE]));
+  }
+
+  /**
+   * Gets the frame color.
+   *
+   * @return the frame color
+   */
+  public Color getBarFrameColor() {
+    return (((Color) data[PROP_BAR_FRAME_COLOR][PROP_VAL_VALUE]));
+  }
+
+  /**
    * Calc sizes.
    */
   private void calcSizes() {
-    int nCols;
-    int nRows;
+    // first does the current font exist? 
+    // if we changed target plaform we might need to change font to default
+    int nCols = getNumTextColumns();
+    if (nCols == 0) return;
+    int nRowWidth, nBoxHeight;
     String name = getFontDisplayName();
     FontItem item = ff.getFontItem(name);
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
-      data[PROP_FONT_ENUM][PROP_VAL_VALUE] = item.getFontId();
     }
     Dimension nChSz = ff.measureChar(getFontDisplayName());
-    nCols = (getWidth() - 33) / nChSz.width;
-    nRows = (getHeight() - 15) / nChSz.height; 
-    data[PROP_ROWS][PROP_VAL_VALUE]= Integer.valueOf(nRows);
-    data[PROP_COLS][PROP_VAL_VALUE]=Integer.valueOf(nCols);
+    nRowWidth = (nCols * nChSz.width) + 33;
+    nBoxHeight = (getNumTextRows() * nChSz.height) + 15;
+    data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(nRowWidth);
+    data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(nBoxHeight);
   }
 
   /**
@@ -310,17 +351,18 @@ public class TextBoxModel extends WidgetModel {
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
-    if (getElementRef().equals("")) {
-      String strKey = "";
-      int n = 0;
-      String strCount = ""; 
-      String ref = ""; 
-      ref = ELEMENTREF_NAME;
-      strKey = getKey();
-      n = strKey.indexOf("$");
-      strCount = strKey.substring(n+1, strKey.length());
-      ref = ref + strCount;
-      setElementRef(ref);
+    if (addScrollbar()) {
+      data[PROP_SCROLLBAR_ENUM][PROP_VAL_READONLY]=Boolean.FALSE; 
+      data[PROP_SCROLLBAR_EREF][PROP_VAL_READONLY]=Boolean.FALSE; 
+      data[PROP_SCROLLBAR_MAX][PROP_VAL_READONLY]=Boolean.FALSE; 
+      data[PROP_BAR_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
+      data[PROP_BAR_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
+    } else {
+      data[PROP_SCROLLBAR_ENUM][PROP_VAL_READONLY]=Boolean.TRUE; 
+      data[PROP_SCROLLBAR_EREF][PROP_VAL_READONLY]=Boolean.TRUE; 
+      data[PROP_SCROLLBAR_MAX][PROP_VAL_READONLY]=Boolean.TRUE; 
+      data[PROP_BAR_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
+      data[PROP_BAR_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
     }
   }
 }

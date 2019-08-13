@@ -30,7 +30,7 @@ import java.util.List;
 
 import builder.common.EnumFactory;
 import builder.mementos.GroupMemento;
-import builder.models.CheckBoxModel;
+//import builder.models.CheckBoxModel;
 import builder.models.RadioButtonModel;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
@@ -69,8 +69,13 @@ public class GroupCommand extends Command {
    */
   public boolean group() {
     for (Widget w : page.getSelectedList()) {
-      if (w.getType() == EnumFactory.RADIOBUTTON ||
-          w.getType() == EnumFactory.CHECKBOX) {
+/*
+      if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
+          w.getType().equals(EnumFactory.CHECKBOX)) {
+        groupList.add(w.getModel());
+      }
+*/
+      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
         groupList.add(w.getModel());
       }
     }
@@ -86,12 +91,14 @@ public class GroupCommand extends Command {
    */
   @Override
   public void execute() {
-    String groupID = EnumFactory.getInstance().createEnum(EnumFactory.GROUPID);
+    // We need to create a key first or ENUM will always be 0
+    String groupID = EnumFactory.getInstance().createKey(EnumFactory.GROUPID);
+    groupID = EnumFactory.getInstance().createEnum(EnumFactory.GROUPID);
     for(WidgetModel m : groupList) {
       if (m.getType().equals(EnumFactory.RADIOBUTTON))
         m.changeValueAt(groupID, RadioButtonModel.PROP_GROUP);
-      else
-        m.changeValueAt(groupID, CheckBoxModel.PROP_GROUP);
+//      else
+//        m.changeValueAt(groupID, CheckBoxModel.PROP_GROUP);
     }
   }
 

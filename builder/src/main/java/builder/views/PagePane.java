@@ -27,6 +27,7 @@ package builder.views;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -55,10 +56,8 @@ import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragWidgetCommand;
 import builder.commands.History;
-import builder.common.CommonUtil;
 import builder.common.EnumFactory;
 import builder.controller.PropManager;
-import builder.events.DeleteKeyListener;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -71,7 +70,6 @@ import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PagePane provides the view of selected widgets for one page.
  * 
@@ -86,17 +84,24 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The widgets. */
   private List<Widget> widgets = new ArrayList<Widget>();
   
-  /** The u. */
-  private CommonUtil u;
-  
   /** The mouse pt. */
   private Point mousePt;
+  private Point dragPt;
   
   /** The mouse rect. */
   private Rectangle mouseRect = new Rectangle();
   
+  /** our cross hair cursor */
+  Cursor crossHairCursor;
+
+  /** The rectangular selection enabled switch */
+  private boolean bRectangularSelectionEn = false;
+  
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
+  
+  /** The donotSelectKey */
+  private String donotSelectKey = null;
   
   /** The dragging indicator. */
   private boolean bDragging = false;
@@ -113,17 +118,11 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The instance. */
   private PagePane instance = null;
   
-  /** The ToolBar. */
-  private ToolBar toolBar = null;
+  /** The Ribbon. */
+  private static Ribbon ribbon = null;
   
   /** The drag command. */
   public  DragWidgetCommand dragCommand = null;
-
-  /** the string Key value for this page. */ 
-  private String strKey;
-  
-  /** the string Enum value for this page. */
-  private String strEnum;
 
   /** the number of selected widgets. */
   private int selectedCnt = 0;
@@ -134,25 +133,13 @@ public class PagePane extends JPanel implements iSubscriber {
   private int selectedGroupCnt = 0;
   
   /** The zoom factor. */
-  private double zoomFactor = 1;
-  
-  /** The prev zoom factor. */
-  private double prevZoomFactor = 1;
-  
-  /** boolean that indicates we need to do zoom calculation. */
-  private boolean bZoom;
-  
-  /** The zoom x offset. */
-  private double xOffset = 0;
-  
-  /** The zoom y offset. */
-  private double yOffset = 0;
+  private static double zoomFactor = 1;
   
   /** The zoom AffineTransform at. */
-  private AffineTransform at;
+  private static AffineTransform at = null;
   
   /** The inverse AffineTransform at. */
-  private AffineTransform inv_at;
+  private static AffineTransform inv_at;
   
   /** The canvas width */
   int canvasWidth;
@@ -160,44 +147,34 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The canvas height */
   int canvasHeight;
   
+  MsgBoard msg = null;
+  
   /**
    * Instantiates a new page pane.
    */
   public PagePane() {
     instance = this;
-    u = CommonUtil.getInstance();
-    toolBar = ToolBar.getInstance();
-    MsgBoard.getInstance().subscribe(this);
+    ribbon = Ribbon.getInstance();
     generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
+    msg = MsgBoard.getInstance();
     model = new PageModel();
     mousePt = new Point(generalModel.getWidth() / 2, generalModel.getHeight() / 2);
+    dragPt = mousePt;
     canvasWidth = Builder.CANVAS_WIDTH;
     canvasHeight = Builder.CANVAS_HEIGHT;
+    crossHairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     this.addMouseListener(new MouseHandler());
     this.addMouseMotionListener(new MouseMotionHandler());
-    this.addKeyListener(new DeleteKeyListener());
     this.setLocation(0, 0);
     this.setOpaque(true);
     this.setFocusable( true ); 
     this.setBorder(BorderFactory.createLineBorder(Color.black));
     this.setVisible(true);
-    bZoom = true;
+    if (at == null)
+      ZoomTransform();
   }
 
-  /**
-   * Instantiates a new page pane for JUnit tests.
-   *
-   * @param strKey
-   *          the str key
-   * @param strEnum
-   *          the str enum
-   */
-  public PagePane(String strKey, String strEnum) {
-    this.strKey = strKey;
-    this.strEnum = strEnum;
-  }
-  
   /**
    * paintComponent.
    *
@@ -207,48 +184,25 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   protected void paintComponent(Graphics g) {
-    // This is a little more complex then you might think.
-    // I want the TFT screen centered inside our panel
-    // Our widgets think their window starts at 0,0
-    // which isn't the case since I'm centering the
-    // drawing inside the panel.
-    // I therefore calculate offsets from our panel using
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D) g.create();
-    if (bZoom) {
-      at = new AffineTransform();
-      Dimension d = new Dimension(canvasWidth, canvasHeight);
-      double xRel = ((double)d.getWidth() - (double)gridModel.getWidth()) / 2.0;
-      double yRel = ((double)d.getHeight() - (double)gridModel.getHeight()) / 2.0;;
-
-      double zoomDiv = zoomFactor / prevZoomFactor;
-
-      xOffset = (zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel;
-      
-      yOffset = (zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel;
-      at.translate(xOffset, yOffset);
-      at.scale(zoomFactor, zoomFactor);
-      try {
-        inv_at = at.createInverse();
-      } catch (NoninvertibleTransformException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      prevZoomFactor = zoomFactor;
-      bZoom = false;
-    }
     g2d.transform(at);
-    // Now set to overwrite
-    g2d.setComposite(AlphaComposite.Src);
     int width = generalModel.getWidth();
     int height = generalModel.getHeight();
-    g2d.setColor(Color.BLACK);
-    g2d.drawRect(u.toWinX(0)-1, u.toWinY(0)-1, width+2, height+2);
-    g2d.setColor(generalModel.getFillColor());
-    g2d.fillRect(u.toWinX(0),  u.toWinY(0), width, height);
-    if (gridModel.getGrid()) {
-      drawCoordinates(g2d, width, height);
+    if (generalModel.useBackgroundImage() && !gridModel.getGrid()) {
+      g2d.drawImage(generalModel.getImage(), 0, 0, null);
+    } else {
+      if (gridModel.getGrid()) {
+        g2d.setColor(gridModel.getBackGroundColor());
+        g2d.fillRect(0, 0, width, height);
+        drawCoordinates(g2d, width, height);
+      } else {
+        g2d.setColor(generalModel.getBackgroundColor());
+        g2d.fillRect(0,  0, width, height);
+      }
     }
+    // Now set to overwrite
+    g2d.setComposite(AlphaComposite.SrcOver);
     for (Widget w : widgets) {
       w.draw(g2d);
     }
@@ -264,40 +218,51 @@ public class PagePane extends JPanel implements iSubscriber {
   };
 
   /**
+   * create a transform
+   */
+  public static void ZoomTransform() {
+    at = new AffineTransform();
+    double xOffset = 0.0;
+    double yOffset = 0.0;
+    
+    at.translate(xOffset, yOffset);
+    at.scale(zoomFactor, zoomFactor);
+    try {
+      inv_at = at.createInverse();
+    } catch (NoninvertibleTransformException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+}
+  
+  /**
    * Zoom in.
    */
-  public void zoomIn() {
+  public static void zoomIn() {
     zoomFactor *= 1.1;
-    bZoom = true;
-    ToolBar.getInstance().btn_zoom_out.setEnabled(true);
-    canvasWidth = (int)(Builder.CANVAS_WIDTH * zoomFactor);
-    canvasHeight = (int)(Builder.CANVAS_HEIGHT * zoomFactor);
-    System.out.println("in: " + zoomFactor + " zw: " + canvasWidth + " zh: " + canvasHeight);
-    Dimension canvasSz = new Dimension((int)canvasWidth, (int)canvasHeight);
-    CommonUtil.getInstance().setWinOffsets(canvasSz,
-        GeneralEditor.getInstance().getWidth(),
-        GeneralEditor.getInstance().getHeight());
-    repaint();
+    ZoomTransform();
+    ribbon.btn_zoom_out.setEnabled(true);
   }
   
   /**
    * Zoom out.
    */
-  public void zoomOut() {
+  public static void zoomOut() {
     zoomFactor /= 1.1;
-    if (zoomFactor < 1.1)
-      ToolBar.getInstance().btn_zoom_out.setEnabled(false);
-    bZoom = true;
-    canvasWidth = (int)(Builder.CANVAS_WIDTH * zoomFactor);
-    canvasHeight = (int)(Builder.CANVAS_HEIGHT * zoomFactor);
-    System.out.println("out: " + zoomFactor + " zw: " + canvasWidth + " zh: " + canvasHeight);
-    Dimension canvasSz = new Dimension((int)canvasWidth, (int)canvasHeight);
-    CommonUtil.getInstance().setWinOffsets(canvasSz,
-        GeneralEditor.getInstance().getWidth(),
-        GeneralEditor.getInstance().getHeight());
-    repaint();
+    if (zoomFactor < 1.1) {
+      ribbon.btn_zoom_out.setEnabled(false);
+    }
+    ZoomTransform();
   }
 
+  /**
+   * rectangularSelection.
+   */
+  public void rectangularSelection() {
+    bRectangularSelectionEn = true;
+    setCursor(crossHairCursor);
+  }
+  
   /**
    * Draw grid coordinates.
    *
@@ -317,28 +282,28 @@ public class PagePane extends JPanel implements iSubscriber {
     Color minorCol = gridModel.getGridMinorColor();
     Color majorCol = gridModel.getGridMajorColor();
     // draw X axis
-    dy = u.toWinY(0);
-    dh = u.toWinY(h);
+    dy = 0;
+    dh = h;
     for (x=0; x<w; x+=minorW) {
       if (x%majorW == 0) {
         g2d.setColor(majorCol);
       } else {
         g2d.setColor(minorCol);
       }
-      dx = u.toWinX(x);
+      dx = x;
       g2d.drawLine(dx, dy, dx, dh);
       
     }
     // draw Y axis  
-    dx = u.toWinX(0);
-    dw = u.toWinX(w);
+    dx = 0;
+    dw = w;
     for (y=0; y<h; y+=minorH) {
       if (y%majorH==0) {
         g2d.setColor(majorCol);
       } else {
         g2d.setColor(minorCol);
       }
-      dy = u.toWinY(y);
+      dy = y;
       g2d.drawLine(dx, dy, dw, dy);
     }
   }
@@ -358,8 +323,6 @@ public class PagePane extends JPanel implements iSubscriber {
    * @return the key
    */
   public String getKey() {
-    if (model == null)
-      return strKey;
     return model.getKey();
   }
   
@@ -369,8 +332,6 @@ public class PagePane extends JPanel implements iSubscriber {
    * @return the enum
    */
   public String getEnum() {
-    if (model == null)
-      return strEnum;
     return model.getEnum();
   }
   
@@ -401,7 +362,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
   /**
    * selectWidget is a central point for selecting any widget it allows the
-   * keeping of accurate selection counts for enabling or disabling ToolBar icons.
+   * keeping of accurate selection counts for enabling or disabling Ribbon icons.
    *
    * @param w
    *          the w
@@ -410,12 +371,12 @@ public class PagePane extends JPanel implements iSubscriber {
     if (w.isSelected()) return;
     w.select();
     doSelectedCount(w);
-    toolBar.setEditButtons(selectedCnt, selectedGroupCnt);
+    ribbon.setEditButtons(selectedCnt, selectedGroupCnt);
   }
   
   /**
    * unSelectWidget is a central point for selecting any widget it allows the
-   * keeping of accurate selection counts for enabling or disabling ToolBar icons.
+   * keeping of accurate selection counts for enabling or disabling Ribbon icons.
    * Also, for keeping views in sync.
    * @param w
    *          the w
@@ -424,7 +385,7 @@ public class PagePane extends JPanel implements iSubscriber {
     if (!w.isSelected()) return;
     w.unSelect();
     doSelectedCount(w);
-    toolBar.setEditButtons(selectedCnt, selectedGroupCnt);
+    ribbon.setEditButtons(selectedCnt, selectedGroupCnt);
   }
   
   /**
@@ -447,11 +408,7 @@ public class PagePane extends JPanel implements iSubscriber {
       if (selectedCnt > 0) selectedCnt--;
     }
     if (selectedCnt == 0) {
-      MsgEvent ev = new MsgEvent();
-      ev.message ="";
-      ev.parent = getKey();
-      ev.code = MsgEvent.OBJECT_UNSELECT_PAGEPANE;
-      MsgBoard.getInstance().publish(ev);
+      msg.sendEvent(getKey(),MsgEvent.OBJECT_UNSELECT_PAGEPANE,"",getKey());
     }
   }
 
@@ -459,7 +416,6 @@ public class PagePane extends JPanel implements iSubscriber {
    * Select no widgets.
    */
   public void selectNone() {
-    if (selectedCnt == 0) return;
     for (Widget w : widgets) {
       w.unSelect();
     }
@@ -494,8 +450,24 @@ public class PagePane extends JPanel implements iSubscriber {
     selectNone();
     selectWidget(w);
     PropManager.getInstance().addPropEditor(w.getModel());
-    TreeView.getInstance().addWidget(getKey(), w.getKey());
+    TreeView.getInstance().addWidget(getKey(), getEnum(), w.getKey(), w.getEnum());
     repaint();
+  }
+
+  /**
+   * Adds the widget to this page and to the tree view of widgets.
+   * This function is called by the PasteCommand object.
+   *
+   * @param m
+   *          the widget model
+   */
+  public void addWidget(WidgetModel m, int x, int y) {
+    Widget w = WidgetFactory.getInstance().createWidget(m.getType(), x, y);
+    w.getModel().copyProperties(m);
+    w.select();
+    widgets.add(w);
+    PropManager.getInstance().addPropEditor(w.getModel());
+    TreeView.getInstance().addWidget(getKey(), getEnum(), w.getKey(), w.getEnum());
   }
 
   /**
@@ -509,18 +481,36 @@ public class PagePane extends JPanel implements iSubscriber {
     while (itr.hasNext())
     {
         Widget x = (Widget)itr.next();
-        if (x.getEnum().equals(w.getEnum())) {
+        if (x.getKey().equals(w.getKey())) {
             itr.remove();
             break;
         }
     }
     TreeView.getInstance().delWidget(getKey(), w.getKey());
     repaint();
-    MsgEvent ev = new MsgEvent();
-    ev.message =  w.getKey();
-    ev.parent = getKey();
-    ev.code = MsgEvent.WIDGET_DELETE;
-    MsgBoard.getInstance().publish(ev);
+     msg.sendEvent(getKey(),MsgEvent.WIDGET_DELETE, w.getKey(), getKey());
+  }
+
+  /**
+   * Delete widget.
+   * This function is called by the CutCommand object.
+   *
+   * @param m
+   *          the widget model
+   */
+  public void delWidget(WidgetModel m) {
+    Iterator<?> itr = widgets.iterator();
+    while (itr.hasNext())
+    {
+        Widget x = (Widget)itr.next();
+        if (x.getKey().equals(m.getKey())) {
+            itr.remove();
+            break;
+        }
+    }
+    TreeView.getInstance().delWidget(getKey(), m.getKey());
+    repaint();
+    msg.sendEvent(getKey(),MsgEvent.WIDGET_DELETE, m.getKey(), getKey());
   }
 
   /**
@@ -549,16 +539,18 @@ public class PagePane extends JPanel implements iSubscriber {
 
   /**
    * Select each widget in rectangle.
+   * Used to implement the rubber band selection.
    *
    * @param r
    *          the rectangle
    */
   public void selectRect(Rectangle r) {
     Widget first = null;
-    Rectangle s = new Rectangle(u.fromWinX(r.x), 
-        u.fromWinY(r.y), r.width, r.height);
     for (Widget w : widgets) {
-      if (s.contains(w.getLocation())) {
+      if (donotSelectKey != null && w.getKey().equals(donotSelectKey)) {
+        continue;
+      }
+      if (r.contains(w.getLocation())) {
         if (first == null) first = w;
         selectWidget(w);
       } else {
@@ -566,11 +558,8 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     }
     if (first != null) { // send off a new selected message
-      MsgEvent ev = new MsgEvent();
-      ev.message = first.getKey();
-      ev.parent = getKey();
-      ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-      MsgBoard.getInstance().publish(ev);
+      msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
+          first.getKey(), getKey());
     }
   }
 
@@ -584,24 +573,52 @@ public class PagePane extends JPanel implements iSubscriber {
    * @return the matching <code>Widget</code> object or null.
    */
   public Widget findOne(Point p) {
-    // we need to deal with scaled points because of zoom feature
-    Point2D.Double scaledPos = new Point2D.Double();
-    scaledPos.x = (double)p.x;
-    scaledPos.y = (double)p.y;
-    if (zoomFactor > 1) // transforms are only needed in zoom mode
+    // we may need to deal with scaled points because of zoom feature
+    if (zoomFactor > 1) {
+      Point2D.Double scaledPos = new Point2D.Double();
+      scaledPos.x = (double)p.x;
+      scaledPos.y = (double)p.y;
+      // transforms are only needed in zoom mode
       inv_at.transform(scaledPos, scaledPos);
-    Point2D.Double mappedPos = u.fromWinPoint(scaledPos);
 //    System.out.println("findOne: Z=" + zoomFactor  + " p=[" + p.x + "," + p.y + "] " 
-//        + " s=[" + scaledPos.getX() + "," + scaledPos.getY() + "]"
-//        + " m=[" + mappedPos.getX() + "," + mappedPos.getY() + "]");
-    Widget ret = null;
-    for (Widget w : widgets) {
-      if (w.contains(mappedPos)) {
-//        System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
-        ret = w;
+//        + " s=[" + scaledPos.getX() + "," + scaledPos.getY() + "]");
+      Widget w = null;
+      for (int i=widgets.size()-1; i>=0; i--) {
+        w = widgets.get(i);
+        //for (Widget w : widgets) {
+        if (w.contains(scaledPos)) {
+//  System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
+          return w;
+        }
+      }
+    } else {
+      Widget w = null;
+      for (int i=widgets.size()-1; i>=0; i--) {
+        w = widgets.get(i);
+        if (w.contains(p)) {
+//  System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
+          return w;
+        }
       }
     }
-    return ret;
+    return null;
+  }
+  
+  public Point mapPoint(int x, int y) {
+    // we may need to deal with scaled points because of zoom feature
+    if (zoomFactor > 1) {
+      Point2D.Double scaledPos = new Point2D.Double();
+      scaledPos.x = (double)x;
+      scaledPos.y = (double)y;
+      // transforms are only needed in zoom mode
+      inv_at.transform(scaledPos, scaledPos);
+//    System.out.println("map: Z=" + zoomFactor  + 
+//        " [" + x + "," + y + "] "  + " s=["  +
+//        scaledPos.x + "," + scaledPos.y + "]");
+      return new Point((int)scaledPos.x, (int)scaledPos.y);
+    } else {
+      return new Point(x,y);
+    }
   }
   
   /**
@@ -620,9 +637,9 @@ public class PagePane extends JPanel implements iSubscriber {
   widgets.add(toIdx, w);
   MsgEvent ev = new MsgEvent();
   ev.message = w.getModel().getKey();
-  ev.parent = getKey();
+  ev.xdata = getKey();
   ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-  MsgBoard.getInstance().publish(ev);
+  msg.publish(ev, getKey());
   repaint();
 }
 
@@ -630,7 +647,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * Refresh view.
    */
   public void refreshView() {
-    ToolBar.getInstance().setEditButtons(selectedCnt, selectedGroupCnt); // needed on page changes
+    ribbon.setEditButtons(selectedCnt, selectedGroupCnt); // needed on page changes
     repaint();
   }
   
@@ -648,12 +665,16 @@ public class PagePane extends JPanel implements iSubscriber {
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-      bMultiSelectionBox = false;
       mousePt = e.getPoint();
       Widget w = findOne(mousePt);
       int button = e.getButton();
-      if (button != MouseEvent.BUTTON1) return;
-      if (e.isShiftDown() && e.isControlDown()) return;
+      if (button != MouseEvent.BUTTON1) {
+    System.out.println("button != MouseEvent.BUTTON1");
+        return;
+      }
+      if (e.isShiftDown() && e.isControlDown()) {
+        return;
+      }
       if (e.isControlDown()) {
         // Single Left-click + Ctrl means to toggle select under cursor
         if (w != null) {
@@ -667,53 +688,43 @@ public class PagePane extends JPanel implements iSubscriber {
             List<Widget> list = getSelectedList();
             if (list.size() > 0) {
               Widget selected = list.get(0);
-              MsgEvent ev = new MsgEvent();
-              ev.message = selected.getModel().getKey();
-              ev.parent = getKey();
-              ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-              MsgBoard.getInstance().publish(ev);
+              msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
+                  selected.getModel().getKey(),
+                  getKey());
             }
           } else {
             selectWidget(w);
-            MsgEvent ev = new MsgEvent();
-            ev.message = w.getModel().getKey();
-            ev.parent = getKey();
-            ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-            MsgBoard.getInstance().publish(ev);
+            msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
+                w.getModel().getKey(),
+                getKey());
           }
           e.getComponent().repaint();
         }
-      } else if (e.isShiftDown()) {
+        return;
+      }
+      if (e.isShiftDown()) {
         // Single Left-click + Shift means to select under cursor
         if (w != null) {
           selectWidget(w);
-          MsgEvent ev = new MsgEvent();
-          ev.message = w.getModel().getKey();
-          ev.parent = getKey();
-          ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-          MsgBoard.getInstance().publish(ev);
+          msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
+              w.getModel().getKey(),
+              getKey());
           e.getComponent().repaint();
         } 
-      } else { 
-        // Single Left-click - deselect all widgets then select widget under cursor
-        selectNone();
-        if (w == null) {
-          bMultiSelectionBox = true;
-          toolBar.setEditButtons(selectedCnt, selectedGroupCnt);
-          MsgEvent ev = new MsgEvent();
-          ev.message ="";
-          ev.parent = getKey();
-          ev.code = MsgEvent.OBJECT_UNSELECT_PAGEPANE;
-          MsgBoard.getInstance().publish(ev);
-        } else {
-          selectWidget(w);
-          MsgEvent ev = new MsgEvent();
-          ev.message = w.getModel().getKey();
-          ev.parent = getKey();
-          ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-          MsgBoard.getInstance().publish(ev);
-          e.getComponent().repaint();
-        }
+        return;
+      } 
+      // Single Left-click - deselect all widgets then select widget under cursor
+      selectNone();
+      if (w == null) {
+        ribbon.setEditButtons(selectedCnt, selectedGroupCnt);
+        msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
+            getKey(), "");
+      } else {
+//        System.out.println("selectWidget: " + w.getEnum());
+        selectWidget(w);
+        msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
+            w.getModel().getKey(), getKey());
+        e.getComponent().repaint();
       }
     }  // end mouseClicked
 
@@ -733,7 +744,9 @@ public class PagePane extends JPanel implements iSubscriber {
         dragCommand = null;
       }
       bMultiSelectionBox = false;
+      bRectangularSelectionEn = false;
       bDragging = false;
+      setCursor(Cursor.getDefaultCursor());
       e.getComponent().repaint();
     }  // end mouseReleased
 
@@ -749,9 +762,17 @@ public class PagePane extends JPanel implements iSubscriber {
       mousePt = e.getPoint();
       bDragging = false;
       Widget w = findOne(mousePt);
-      if (w != null) {
+      if (bRectangularSelectionEn) {
+        bMultiSelectionBox = true;
+        donotSelectKey = null;
+        if (w != null) {
+          donotSelectKey = w.getKey();
+        }
+      } else if (w != null) {
         if (w.isSelected()) bDragging = true;
-      } 
+        dragPt = mapPoint(mousePt.x, mousePt.y);
+        dragPt = new Point(dragPt.x-w.getX(), dragPt.y-w.getY());
+      }
     } // end mousePressed
   } // end MouseHandler
 
@@ -781,15 +802,20 @@ public class PagePane extends JPanel implements iSubscriber {
      } else if (bDragging ){
         if (dragCommand == null) {
           dragCommand = new DragWidgetCommand(instance);
-          dragCommand.start();
+          if (!dragCommand.start()) {
+            bDragging = false;
+            bMultiSelectionBox = false;
+            bRectangularSelectionEn = false;
+            dragCommand = null;
+            repaint();
+            return;
+          }
         }
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
-        Point dragPt= new Point(e.getX()-mousePt.x, e.getY()-mousePt.y);
-        dragCommand.move(dragPt);
-        mousePt = e.getPoint();
+        dragCommand.move(mapPoint(e.getX()-dragPt.x, e.getY()-dragPt.y));
       }
-      e.getComponent().repaint();
+      repaint();
     } // end mouseDragged
   }  // end MouseMotionHandler
   
@@ -830,12 +856,14 @@ public class PagePane extends JPanel implements iSubscriber {
   public void updateEvent(MsgEvent e) {
 //    System.out.println("PagePane: " + e.toString());
     if (e.code == MsgEvent.WIDGET_REPAINT) {
+//   System.out.println("PagePane: " + e.toString());
       Widget w = findWidget(e.message);
       if (w != null) {
         repaint();
       }
     } else if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
-               e.parent.equals(getKey())) {
+               e.xdata.equals(getKey())) {
+//  System.out.println("PagePane: " + e.toString());
       selectNone();
       Widget w = findWidget(e.message);
       if (w != null) {
@@ -843,20 +871,10 @@ public class PagePane extends JPanel implements iSubscriber {
         repaint();
       }
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-/*
-    // Can't call selectNone() or we will go into a loop.
-      for (Widget w : widgets) {
-        unSelectWidget(w);
-      }
-*/
+//  System.out.println("PagePane: " + e.toString());
       selectNone();
       repaint();
     } else if (e.code == MsgEvent.CANVAS_MODEL_CHANGE) {
-      canvasWidth = (int)(Builder.CANVAS_WIDTH * zoomFactor);
-      canvasHeight = (int)(Builder.CANVAS_HEIGHT * zoomFactor);
-      CommonUtil.getInstance().setWinOffsets(new Dimension(canvasWidth, canvasHeight), 
-          generalModel.getWidth(),
-          generalModel.getHeight());
       repaint();
     }
   }
@@ -890,10 +908,13 @@ public class PagePane extends JPanel implements iSubscriber {
    * @param state
    *          the state backup string
    */
-  public void restore(String state) {
+  public void restore(String state, boolean bUndo) {
     try {
       byte[] data = Base64.getDecoder().decode(state);
       ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
+      if (!bUndo) {
+        TreeView.getInstance().addPage(getKey(), getEnum());
+      }
       widgets = new ArrayList<Widget>();
       int cnt = in.readInt();  // size of array list
 //      System.out.println("widgets: " + cnt);
@@ -904,8 +925,12 @@ public class PagePane extends JPanel implements iSubscriber {
         w = WidgetFactory.getInstance().createWidget(widgetType,0,0);
         w.readObject(in, widgetType);
         widgets.add(w);
-        PropManager.getInstance().addPropEditor(w.getModel());
-//        TreeView.getInstance().addWidget(getKey(), w.getKey());
+        // without this check we duplicate elemnts on tree and prop views
+        if (!bUndo) {
+          PropManager.getInstance().addPropEditor(w.getModel());
+          TreeView.getInstance().addWidget(getKey(), getEnum(),
+              w.getKey(), w.getEnum());
+        }
       }
       in.close();
       selectedCnt = 0;
@@ -922,29 +947,22 @@ public class PagePane extends JPanel implements iSubscriber {
   }
 
   /**
-   * Restore for test.
+   * Gets the type of Page.
    *
-   * @param state
-   *          the state
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws ClassNotFoundException
-   *           the class not found exception
+   * @return the Page Type
    */
-  public void restoreForTest(String state) throws IOException, ClassNotFoundException  {
-    byte[] data = Base64.getDecoder().decode(state);
-    ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
-    widgets = new ArrayList<Widget>();
-    int cnt = in.readInt();  // size of array list
-    Widget w = null;
-    String widgetType = null;
-    for (int i=0; i<cnt; i++) {
-      widgetType = (String)in.readObject();
-      w = WidgetFactory.getInstance().createWidget(widgetType,0,0);
-      w.readObject(in, widgetType);
-      widgets.add(w);
-    }
-    in.close();
+  public String getPageType() {
+    return model.getType();
+  }
+
+  /**
+   * Sets the type of Page.
+   *
+   * @param the pageType
+   */
+  public void setPageType(String pageType) {
+    model.setType(pageType);
+    msg.subscribe(this, model.getKey());
   }
 }
 

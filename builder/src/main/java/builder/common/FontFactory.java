@@ -40,9 +40,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import builder.Builder;
-import builder.controller.CodeGenerator;
+import builder.codegen.CodeGenerator;
 import builder.models.GeneralModel;
+import builder.models.TextModel;
 import builder.prefs.GeneralEditor;
 
 /**
@@ -93,7 +93,7 @@ public class FontFactory {
     if (instance == null) {
       instance = new FontFactory();
       generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
-      String fullPath = CommonUtil.getInstance().getWorkingDir();
+      String fullPath = CommonUtils.getInstance().getWorkingDir();
       arduinoCVS = fullPath + "templates" + System.getProperty("file.separator") 
           + CodeGenerator.ARDUINO_FONT_TEMPLATE;
       arduinoMap = new HashMap<String, Integer>(128);
@@ -184,10 +184,7 @@ public class FontFactory {
    */
   public Font getFont(String key) {
     Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Builder.testPlatform;
-    if (target == null) {
-      target = generalModel.getTarget();
-    }
+    String target = generalModel.getTarget();
     if (target.equals("linux")) {
       if (linuxMap.containsKey(key)) 
         idx = linuxMap.get(key);
@@ -200,17 +197,36 @@ public class FontFactory {
   }
   
   /**
+   * Gets the font with a temporary style change
+   *
+   * @param key
+   *          the key
+   * @param style
+   *          the style
+   * @return the java <code>Font</code> object
+   */
+  public Font getStyledFont(String key, String style) {
+    Integer idx = Integer.valueOf(0);  // always return something...
+    String target = generalModel.getTarget();
+    if (target.equals("linux")) {
+      if (linuxMap.containsKey(key)) 
+        idx = linuxMap.get(key);
+      return linuxFonts.get(idx.intValue()).getStyledFont(style);
+    } else {
+      if (arduinoMap.containsKey(key)) 
+        idx = arduinoMap.get(key);
+      return arduinoFonts.get(idx.intValue()).getStyledFont(style);
+    }
+  }
+  
+  /**
    * Gets the name of the default font for the target platform.
    *
    * @return the font name
    */
   public String getDefFontName() {
     FontItem item = null;
-    String target = Builder.testPlatform;
-    if (target == null) {
-      target = generalModel.getTarget();
-    }
-    if (target.equals("linux")) {
+    if (generalModel.getTarget().equals("linux")) {
       item = linuxFonts.get(0);
     } else {
       item = arduinoFonts.get(0);
@@ -219,22 +235,23 @@ public class FontFactory {
   }
   
   /**
-   * Gets the name of the default font enum for the target platform.
+   * Gets the name of the default font using a size code for the target platform.
    *
+   * @param size varies from 1 to 5
+   *   ex: arduino size 2 = 'BuiltIn(2x)->10x16pt7b'
+   *       linux   size 2 = 'DroidSansMono9pt'
    * @return the font enum
    */
-  public String getDefFontEnum() {
+  public String getDefFontName(int size) {
     FontItem item = null;
-    String target = Builder.testPlatform;
-    if (target == null) {
-      target = generalModel.getTarget();
-    }
-    if (target.equals("linux")) {
-      item = linuxFonts.get(0);
+    if (size < 1 || size > 5) return "";
+    size--;
+    if (generalModel.getTarget().equals("linux")) {
+      item = linuxFonts.get(size);
     } else {
-      item = arduinoFonts.get(0);
+      item = arduinoFonts.get(size);
     }
-    return item.getFontId();
+    return item.getDisplayName();
   }
   
   /**
@@ -243,11 +260,7 @@ public class FontFactory {
    * @return the font list
    */
   public List<FontItem> getFontList() {
-    String target = Builder.testPlatform;
-    if (target == null) {
-      target = generalModel.getTarget();
-    }
-    if (target.equals("linux")) {
+    if (generalModel.getTarget().equals("linux")) {
       return linuxFonts;
     } else {
       return arduinoFonts;
@@ -264,11 +277,7 @@ public class FontFactory {
   public String getFontEnum(String key) {
     FontItem item = null;
     Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Builder.testPlatform;
-    if (target == null) {
-      target = generalModel.getTarget();
-    }
-    if (target.equals("linux")) {
+    if (generalModel.getTarget().equals("linux")) {
       if (linuxMap.containsKey(key)) {
         idx = linuxMap.get(key);
       }
@@ -306,16 +315,12 @@ public class FontFactory {
    * Gets the font item.
    *
    * @param key
-   *          the key
+   *          the key is the font display name
    * @return the font item
    */
   public FontItem getFontItem(String key) {
     Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Builder.testPlatform;
-    if (target == null) {
-      target = generalModel.getTarget();
-    }
-    if (target.equals("linux")) {
+    if (generalModel.getTarget().equals("linux")) {
       if (linuxMap.containsKey(key)) {
         idx = linuxMap.get(key);
       }
@@ -378,11 +383,11 @@ public class FontFactory {
         }
       } else {
         String acHeight = "p$";
-        String acWidth  = "W";
+        String acWidth  = "%";
         Font tmpFont = createFont(item.getLogicalName(), item.getLogicalSize(), item.getLogicalStyle());
         Dimension txtHeight = measureText(acHeight, tmpFont);
         Dimension txtWidth = measureText(acWidth, tmpFont);
-        nChSz.width = txtWidth.width-4;
+        nChSz.width = txtWidth.width;
         nChSz.height = txtHeight.height;
       }
     }
@@ -402,8 +407,8 @@ public class FontFactory {
     FontItem item = getFontItem(fontName);
     Dimension nChSz = new Dimension();
     int size = Integer.parseInt(item.getFontSz());
-    nChSz.width = (6 * size) * s.length()+2;
-    nChSz.height = (8 * size) + 4;
+    nChSz.width = (6 * size) * s.length();
+    nChSz.height = (8 * size) + 2;
     return nChSz;
   }
   
@@ -428,7 +433,7 @@ public class FontFactory {
     int adv = metrics.stringWidth(s);
     // calculate the size of a box to hold the
     // text with some padding.
-    return new Dimension(adv+5, hgt);
+    return new Dimension(adv, hgt);
   }
   
   /**
@@ -437,7 +442,7 @@ public class FontFactory {
    * @param g
    *          the g
    * @param align
-   *          - String "Left", "Right", or "Center"
+   *          - String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
    * @param r
    *          the r
    * @param s
@@ -457,13 +462,13 @@ public class FontFactory {
     g.setFont(font);
     switch (align)
     {
-    case "Left":
+    case TextModel.ALIGN_LEFT:
         g.drawString(s, r.x, r.y + b);
         break;
-      case "Center":
+      case TextModel.ALIGN_CENTER:
         centerString(g, r, s, font);
         break;
-      case "Right":
+      case TextModel.ALIGN_RIGHT:
         g.drawString(s, r.x + (r.width - adv), r.y + b);
         break;
     }  
@@ -534,5 +539,5 @@ public class FontFactory {
       map.put(item.getDisplayName(), Integer.valueOf(i));
     }
   }
-  
+ 
 }

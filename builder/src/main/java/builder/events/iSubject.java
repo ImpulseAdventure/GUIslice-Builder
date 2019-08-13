@@ -44,15 +44,7 @@ public interface iSubject {
    * @param subscriber
    *          the subscriber
    */
-  public void subscribe(iSubscriber subscriber);
-
-  /**
-   * Removes the.
-   *
-   * @param subscriber
-   *          the subscriber
-   */
-  public void remove(iSubscriber subscriber);
+  public void subscribe(iSubscriber subscriber, String name);
 
   /**
    * Notify subscribers.
@@ -60,5 +52,5 @@ public interface iSubject {
    * @param e
    *          the e
    */
-  public void notifySubscribers(MsgEvent e);
+  public void notifySubscribers(MsgEvent e, String name);
 }

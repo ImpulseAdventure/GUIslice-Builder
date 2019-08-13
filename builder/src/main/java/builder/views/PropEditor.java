@@ -28,18 +28,17 @@ package builder.views;
 import java.awt.Color;
 import java.awt.Dimension;
 
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import builder.events.ClipboardKeyAdapter;
+import builder.clipboard.ClipboardKeyAdapter;
 import builder.models.WidgetModel;
-import builder.tables.ColorEditor;
-import builder.tables.ColorRenderer;
-import builder.tables.FontEditor;
+import builder.tables.ColorCellEditor;
+import builder.tables.ColorCellRenderer;
+import builder.tables.FontCellEditor;
 import builder.tables.MultiClassTable;
 import builder.tables.NonEditableCellRenderer;
 import builder.tables.SelectAllCellEditor;
@@ -77,40 +76,55 @@ public class PropEditor {
     table.setPreferredScrollableViewportSize(table.getPreferredSize());
 
     // Set up renderer and editor for our Color cells.
-    table.setDefaultRenderer(Color.class, new ColorRenderer(true));
-    table.setDefaultEditor(Color.class, new ColorEditor());
+    table.setDefaultRenderer(Color.class, new ColorCellRenderer(true));
+    table.setDefaultEditor(Color.class, new ColorCellEditor());
 
     // Set up our gray out non editable cells renderer.
     table.setDefaultRenderer(String.class, new NonEditableCellRenderer());
-    DefaultTableCellRenderer IntegerNonEditableCellRenderer = new NonEditableCellRenderer();
-    IntegerNonEditableCellRenderer.setHorizontalAlignment( JLabel.CENTER );
-    table.setDefaultRenderer(Integer.class, IntegerNonEditableCellRenderer);
+    DefaultTableCellRenderer integerNonEditableCellRenderer = new NonEditableCellRenderer();
+    integerNonEditableCellRenderer.setHorizontalAlignment( SwingConstants.LEFT );
+    table.setDefaultRenderer(Integer.class, integerNonEditableCellRenderer);
+    DefaultTableCellRenderer checkBoxNonEditableCellRenderer = new NonEditableCellRenderer();
+    checkBoxNonEditableCellRenderer.setHorizontalAlignment( SwingConstants.LEFT );
+    table.setDefaultRenderer(Boolean.class, checkBoxNonEditableCellRenderer);
 
     // Setup editor for our Font cells.
-    table.setDefaultEditor(JTextField.class, new FontEditor());
+    table.setDefaultEditor(JTextField.class, new FontCellEditor());
 
     // Setup editor for Integer cells.
     table.setDefaultEditor(Integer.class, new SelectAllCellEditor());
 
     // set our preferred column widths
-    table.getColumnModel().getColumn(0).setPreferredWidth(180);
-    table.getColumnModel().getColumn(1).setPreferredWidth(180);
-    table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+    table.getColumnModel().getColumn(0).setPreferredWidth(130);
+    table.getColumnModel().getColumn(1).setPreferredWidth(175);
+//    table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+//    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
     // restrict selections to one cell of our table
-    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     table.setRowSelectionAllowed(true);
     table.setColumnSelectionAllowed(true);
 
+    // Force JTable to “commit” data to model while it is still in editing mode
+    table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+    
     // disable user column dragging
     table.getTableHeader().setReorderingAllowed(false);
     
     // set keyboard listener for copy and paste
     table.addKeyListener(new ClipboardKeyAdapter(table));
-    scrollPane = new JScrollPane(table);
-    scrollPane.setPreferredSize(new Dimension(380, 400));
+/*
+    scrollPane = new JScrollPane(table,
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+*/
+    scrollPane = new JScrollPane(table,
+        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    scrollPane.setPreferredSize(new Dimension(1200, 650));
   }
-
+  
   /**
    * Gets the key.
    *
@@ -139,5 +153,5 @@ public class PropEditor {
   {
     return scrollPane;
   }
-
+  
 }

@@ -473,7 +473,7 @@ public class GUIsliceColorChooser extends JDialog {
     tabbedPane.addTab("Color Wheel", null, wheelTab, null);
 
     JButton btnEyeDropper = new JButton("");
-    btnEyeDropper.setIcon(new ImageIcon(Builder.class.getResource("/resources/icons/eyedropper.png")));
+    btnEyeDropper.setIcon(new ImageIcon(Builder.class.getResource("/resources/icons/misc/eyedropper.png")));
     btnEyeDropper.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           isEyeDropper = true;

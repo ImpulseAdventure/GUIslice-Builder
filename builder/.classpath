@@ -15,5 +15,10 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/flamingo-7.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/laf-plugin-7.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/trident-7.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/laf-widget-7.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/substance-7.3.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

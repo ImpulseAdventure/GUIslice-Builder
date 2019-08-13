@@ -26,7 +26,7 @@
 package builder.commands;
 
 import builder.controller.Controller;
-import builder.mementos.PageMemento;
+import builder.mementos.NewPageMemento;
 import builder.views.PagePane;
 
 /**
@@ -53,7 +53,7 @@ public class AddPageCommand extends Command {
    */
   public AddPageCommand(Controller controller) {
     this.controller = controller;
-    memento = new PageMemento(controller);
+    memento = new NewPageMemento(controller);
   }
   
   /**

@@ -29,10 +29,8 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
 
 /**
  * The Class BoxModel implements the model for the Box widget.
@@ -42,27 +40,29 @@ import builder.events.MsgEvent;
  */
 public class BoxModel extends WidgetModel { 
   
-  /** The Constant serialVersionUID. */
+  /** The Property Index Constants. */
   private static final long serialVersionUID = 1L;
+  static private final int PROP_ROUNDED           = 7;
+  static private final int PROP_TOUCH_EN          = 8;
+  static private final int PROP_DRAW              = 9;
+  static private final int PROP_TICKCB            = 10;
+  static private final int PROP_USE_FLASH         = 11;
+  static private final int PROP_DEFAULT_COLORS    = 12;
+  static private final int PROP_FRAME_COLOR       = 13;
+  static private final int PROP_FILL_COLOR        = 14;
+  static private final int PROP_SELECTED_COLOR    = 15;
   
-  /** The Constant PROP_DRAW. */
-  static private final int PROP_DRAW              = 6;
-  
-  /** The Constant PROP_TICKCB. */
-  static private final int PROP_TICKCB            = 7;
-  
-  /** The Constant PROP_DEFAULT_COLORS. */
-  static private final int PROP_DEFAULT_COLORS    = 8;
-  
-  /** The Constant PROP_FRAME_COLOR. */
-  static private final int PROP_FRAME_COLOR       = 9;
-  
-  /** The Constant PROP_FILL_COLOR. */
-  static private final int PROP_FILL_COLOR        = 10;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
-  static private final int PROP_SELECTED_COLOR    = 11;
-  
+  /** The Property Defaults */
+  static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
+  static public  final Boolean DEF_TOUCH_EN          = Boolean.FALSE;
+  static public  final Boolean DEF_DRAW              = Boolean.FALSE;
+  static public  final Boolean DEF_TICKCB            = Boolean.FALSE;
+  static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
+  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
+  static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
+  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
+  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
+
   static private final int DEF_WIDTH = 300;
   static private final int DEF_HEIGHT= 150;
 
@@ -70,7 +70,6 @@ public class BoxModel extends WidgetModel {
    * Instantiates a new box model.
    */
   public BoxModel() {
-    cf = ColorFactory.getInstance();
     initProperties();
   }
   
@@ -80,38 +79,22 @@ public class BoxModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.BOX;
-    data = new Object[12][5];
+    data = new Object[16][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
-    initProp(PROP_DRAW, Boolean.class, "BOX-100", Boolean.FALSE,"Draw Function",Boolean.FALSE);
-    initProp(PROP_TICKCB, Boolean.class, "BOX-101", Boolean.FALSE,"Tick Function",Boolean.FALSE);
+    initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
+    initProp(PROP_TOUCH_EN, Boolean.class, "COM-016", Boolean.FALSE,"Touch Enabled?",DEF_TOUCH_EN);
+    initProp(PROP_DRAW, Boolean.class, "BOX-100", Boolean.FALSE,"Draw Function",DEF_DRAW);
+    initProp(PROP_TICKCB, Boolean.class, "BOX-101", Boolean.FALSE,"Tick Function",DEF_TICKCB);
 
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",Boolean.TRUE);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",cf.getDefFrameCol());
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",cf.getDefFillCol());
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",cf.getDefGlowCol());
+    initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
+    
+    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
 
-  }
-
-  /**
-   * isCellEditable
-   *
-   * @see builder.models.WidgetModel#isCellEditable(int, int)
-   */
-  @Override
-  public boolean isCellEditable(int row, int col) {
-    if (col == 0 || row == 0) {
-      return false;
-    } else if (!bSendEvents && (row == PROP_X || row == PROP_Y))
-    return false;
-    if ( useDefaultColors() && 
-        ( row == PROP_FRAME_COLOR ||
-          row == PROP_FILL_COLOR  ||
-          row == PROP_SELECTED_COLOR) ) {
-      return false;
-    } 
-    return true;
   }
 
   /**
@@ -146,9 +129,9 @@ public class BoxModel extends WidgetModel {
     if (row == PROP_DEFAULT_COLORS) {
       // check for switching back and forth
       if (useDefaultColors()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=cf.getDefFrameCol(); 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=cf.getDefFillCol();
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=cf.getDefGlowCol(); 
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
         data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
         data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
@@ -161,12 +144,32 @@ public class BoxModel extends WidgetModel {
       fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
       fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
     }     
+
     if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
-    }
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
+  }
+
+  /**
+   * Checks if buttons are round
+   *
+   * @return true, if they are round
+   */
+  public boolean isRoundedEn() {
+    return ((Boolean) data[PROP_ROUNDED][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if touch enabled?
+   *
+   * @return true, if touch is enabled
+   */
+  public boolean isTouchEn() {
+    return ((Boolean) data[PROP_TOUCH_EN][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -187,6 +190,16 @@ public class BoxModel extends WidgetModel {
     return ((Boolean) data[PROP_TICKCB][PROP_VAL_VALUE]).booleanValue();
   }
 
+  /**
+   * Use Flash API.
+   *
+   * @return <code>true</code>, if flash is to be used
+   */
+  @Override
+  public boolean useFlash() {
+    return ((Boolean) data[PROP_USE_FLASH][PROP_VAL_VALUE]).booleanValue();
+  }
+  
   /**
    * Use default colors.
    *

@@ -27,9 +27,9 @@ install_files() {
   printf "To uninstall this App simply re-run this script with -u argument\n\n"
   
   # Create startup script
-  printf "The Builder requires the location of Java 1.8\n"
+  printf "The Builder requires the location of Java\n"
   printf "If you have more then one Java version installed\n"
-  printf "you need to identify what directory has Java 8.\n" 
+  printf "you need to identify what directory has the Java you want to use\n" 
   printf "You can exit this script with ^c and use this command to find it.\n\n"
 
   printf "sudo update-alternatives --config java \n\n"
@@ -43,7 +43,7 @@ install_files() {
   JAVACMD=""
   while [ ! -d "$JAVA_PATH" ]
   do
-    printf "\nEnter location of Java 1.8: "
+    printf "\nEnter location of Java: "
     read JAVA_PATH
     JAVACMD="$JAVA_PATH/bin/java"
     # Test to see if file exists and is executable

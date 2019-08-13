@@ -129,6 +129,19 @@ public class FontItem {
   }
   
   /**
+   * Gets the font with a temporary style change
+   *
+   * @param key
+   *          the key
+   * @param style
+   *          the style
+   * @return the java <code>Font</code> object
+   */
+  public Font getStyledFont(String style) {
+    return FontFactory.createFont(logicalName, scaledSize, style);
+  }
+  
+  /**
    * Sets the font.
    *
    * @param font
@@ -237,6 +250,7 @@ public class FontItem {
     return logicalStyle;
   }
   
+ 
   /**
    * toString
    *

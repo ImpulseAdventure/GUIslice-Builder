@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.prefs.Preferences;
 
+import builder.Builder;
 import builder.common.EnumFactory;
 import builder.models.BoxModel;
 
@@ -71,7 +72,8 @@ public class BoxEditor extends ModelEditor {
     System.setErr(new PrintStream(new OutputStream() {
         public void write(int b) throws IOException {}
     }));
-    fPrefs = Preferences.userRoot().node(MY_NODE);
+    String prefNode = MY_NODE + Builder.VERSION_NO;
+    fPrefs = Preferences.userRoot().node(prefNode);
     model = new BoxModel();
     model.TurnOffEvents();
     updateModel();

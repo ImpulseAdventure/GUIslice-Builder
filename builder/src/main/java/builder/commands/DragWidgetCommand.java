@@ -29,6 +29,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import builder.mementos.PositionMemento;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -66,10 +68,18 @@ public class DragWidgetCommand extends Command {
   /**
    * Start will setup the drag widgets command for later execution.
    */
-  public void start() {
+  public boolean start() {
     targets = page.getSelectedList();
+    if (targets.size() > 1) {
+      JOptionPane.showMessageDialog(null, 
+          "You can only drag one element at a time.", 
+          "Error", JOptionPane.ERROR_MESSAGE);
+      page.selectNone(); // turn off all selections
+      return false;
+    }
     p = new Point[targets.size()];
     memento = new PositionMemento(page, targets);
+    return true;
   }
 
   /**

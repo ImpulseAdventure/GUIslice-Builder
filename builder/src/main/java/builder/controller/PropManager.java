@@ -35,6 +35,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
+import builder.common.CommonUtils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -87,14 +88,17 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
    * Instantiates a new prop manager.
    */
   public PropManager() {
-    MsgBoard.getInstance().subscribe(this);
+    MsgBoard.getInstance().subscribe(this, "PropManager");
     editors = new ArrayList<PropEditor>();
     layout = new CardLayout();
     cards = new JPanel(layout);
     add(cards);
-    setTitle("Properties");        
-    setPreferredSize(new Dimension(250, 350));
-    setVisible(true);
+    CommonUtils cu = CommonUtils.getInstance();
+    this.setTitle("Property View");
+    this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
+    this.setPreferredSize(new Dimension(300, 400));
+    this.pack();
+    this.setVisible(true);
   }
 
   /**
@@ -187,13 +191,17 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
         e.code == MsgEvent.WIDGET_REPAINT           ||
         e.code == MsgEvent.WIDGET_CHANGE_ZORDER     ||
         e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW) {
+//   System.out.println("PropManager: " + e.toString());
       showPropEditor(e.message);
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
-      showPropEditor(e.parent);
+//   System.out.println("PropManager: " + e.toString());
+      showPropEditor(e.xdata);
     } else if (e.code == MsgEvent.WIDGET_DELETE) {
-      showPropEditor(e.parent);
+//   System.out.println("PropManager: " + e.toString());
+      showPropEditor(e.xdata);
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-      showPropEditor(e.parent);
+//   System.out.println("PropManager: " + e.toString());
+      showPropEditor(e.xdata);
     }
   }
 

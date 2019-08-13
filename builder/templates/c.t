@@ -1,16 +1,16 @@
 //<File !Start!>
 //<File !End!>
 //
-// GUIslice Builder Generated File
-//
-//
 
+// ------------------------------------------------
+// Headers to include
+// ------------------------------------------------
 #include "GUIslice.h"
-#include "GUIslice_ex.h"
 #include "GUIslice_drv.h"
 
-#include <libgen.h>       // For path parsing
-
+// Include any extended elements
+//<Includes !Start!>
+//<Includes !End!>
 
 // ------------------------------------------------
 // Defines for resources
@@ -18,8 +18,16 @@
 #define MAX_PATH  255
 //<PathStorage !Start!>
 //<PathStorage !End!>
+
+// ------------------------------------------------
+// Headers and Defines for fonts
+// ------------------------------------------------
 //<Fonts !Start!>
 //<Fonts !End!>
+
+// ------------------------------------------------
+// Defines for resources
+// ------------------------------------------------
 //<Resources !Start!>
 //<Resources !End!>
 
@@ -33,10 +41,15 @@
 // Instantiate the GUI
 // ------------------------------------------------
 
-// Define the maximum number of elements per page
+// ------------------------------------------------
+// Define the maximum number of elements and pages
+// ------------------------------------------------
 //<ElementDefines !Start!>
 //<ElementDefines !End!>
 
+// ------------------------------------------------
+// Create element storage
+// ------------------------------------------------
 // GUI Elements
 gslc_tsGui                      m_gui;
 gslc_tsDriver                   m_drv;
@@ -47,14 +60,13 @@ gslc_tsPage                     m_asPage[MAX_PAGE];
 //<GUI_Extra_Elements !End!>
 
 // ------------------------------------------------
-// Save some element references for update loop access
+// Program Globals
 // ------------------------------------------------
+
+// Save some element references for direct access
 //<Save_References !Start!>
 //<Save_References !End!>
 
-// ------------------------------------------------
-// Program Globals
-// ------------------------------------------------
 
 // Configure environment variables suitable for display
 // - These may need modification to match your system
@@ -89,8 +101,18 @@ static int16_t DebugOut(char ch) { fputc(ch,stderr); return 0; }
 // ------------------------------------------------
 //<Button Callback !Start!>
 //<Button Callback !End!>
+//<Checkbox Callback !Start!>
+//<Checkbox Callback !End!>
+//<Keypad Callback !Start!>
+//<Keypad Callback !End!>
+//<Spinner Callback !Start!>
+//<Spinner Callback !End!>
+//<Listbox Callback !Start!>
+//<Listbox Callback !End!>
 //<Draw Callback !Start!>
 //<Draw Callback !End!>
+//<Slider Callback !Start!>
+//<Slider Callback !End!>
 //<Tick Callback !Start!>
 //<Tick Callback !End!>
 
@@ -131,12 +153,6 @@ int main( int argc, char* args[] )
   // Create graphic elements
   // ------------------------------------------------
   InitGUI(dirname(args[0])); // Pass executable path to find resource files
-
-  // ------------------------------------------------
-  // Save some element references for quick access
-  // ------------------------------------------------
-//<Quick_Access !Start!>
-//<Quick_Access !End!>
 
   // ------------------------------------------------
   // Start up display on main page

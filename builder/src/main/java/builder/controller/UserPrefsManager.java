@@ -103,9 +103,7 @@ public UserPrefsManager(JFrame frame, List<ModelEditor> prefEditors) {
    */
   private void initUI() {
     title = "Edit Preferences";
-    jTabbedPane = new JTabbedPane();
-    jTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-    jTabbedPane.setTabPlacement(JTabbedPane.TOP);
+    jTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     for(ModelEditor prefEditor: prefEditors) {
       JComponent editorGui = prefEditor.getUI();
       editorGui.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));

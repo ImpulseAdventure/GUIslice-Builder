@@ -26,13 +26,16 @@
 package builder.prefs;
 
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.prefs.Preferences;
 
+import builder.Builder;
 import builder.models.GeneralModel;
+import builder.models.WidgetModel;
 
 /**
  * The Class GeneralEditor manages the user preferences for the builder.
@@ -71,7 +74,8 @@ public class GeneralEditor extends ModelEditor {
     System.setErr(new PrintStream(new OutputStream() {
         public void write(int b) throws IOException {}
     }));
-    fPrefs = Preferences.userRoot().node(MY_NODE);
+    String prefNode = MY_NODE + Builder.VERSION_NO;
+    fPrefs = Preferences.userRoot().node(prefNode);
     model = new GeneralModel();
     model.TurnOffEvents();
     updateModel();
@@ -228,5 +232,39 @@ public class GeneralEditor extends ModelEditor {
       e.printStackTrace();
     }
   }
-  
+
+ /**
+  * Update model.
+  */
+ @Override
+ public void updateModel() {
+   model.TurnOffEvents();
+   int rows = model.getRowCount();
+   for (int i=0; i<rows; i++) {
+     String key = (String) model.getValueAt(i, WidgetModel.COLUMN_NAME);
+     Object o = model.getValueAt(i, WidgetModel.COLUMN_VALUE);
+     if(o instanceof String) {
+       model.changeValueAt(fPrefs.get(key, (String)o), i);
+     } else if(o instanceof Integer) {
+       int def = ((Integer)o).intValue();
+       int value = fPrefs.getInt(key, def);
+       if (value != def)
+         model.changeValueAt(Integer.valueOf(value), i);
+     } else if(o instanceof Boolean) {
+       boolean def = ((Boolean)o).booleanValue();
+       boolean value = fPrefs.getBoolean(key, def);
+       if (value != def)
+         model.changeValueAt(Boolean.valueOf(value), i);
+     } else if (o instanceof Color) {
+       int def = ((Color)o).getRGB();
+       int value = fPrefs.getInt(key, def);
+       if (value != def)
+         model.changeValueAt(new Color(value), i);
+     }
+   }
+   ((GeneralModel) model).setReadOnlyProperties();
+   model.TurnOnEvents();
+ }
+ 
+
 }

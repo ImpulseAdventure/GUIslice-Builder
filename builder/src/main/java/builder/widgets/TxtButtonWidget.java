@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.common.FontFactory;
 import builder.models.TxtButtonModel;
 import builder.prefs.TxtButtonEditor;
@@ -55,12 +55,12 @@ public class TxtButtonWidget extends Widget {
    *          the y coordinate position
    */
   public TxtButtonWidget(int x, int y) {
-    u = CommonUtil.getInstance();
+    u = CommonUtils.getInstance();
     ff = FontFactory.getInstance();
     m = new TxtButtonModel();
     model = m;
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
     setUserPrefs(TxtButtonEditor.getInstance().getModel());
@@ -72,21 +72,37 @@ public class TxtButtonWidget extends Widget {
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
   public void draw(Graphics2D g2d) {
+    Font font = null;
     Rectangle b = getWinBounded();
     if (bSelected) {
       g2d.setColor(m.getSelectedColor());
-      g2d.fillRect(b.x, b.y, b.width, b.height);
+      if (m.isRoundedEn())
+        g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
+      else
+        g2d.fillRect(b.x, b.y, b.width, b.height);
     } else {
       g2d.setColor(m.getFillColor());
-      g2d.fillRect(b.x, b.y, b.width, b.height);
+      if (m.isRoundedEn())
+        g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
+      else
+        g2d.fillRect(b.x, b.y, b.width, b.height);
     }
     if (m.isFrameEnabled()) {
       g2d.setColor(m.getFrameColor());
-      g2d.drawRect(b.x, b.y, b.width, b.height);
+      if (m.isRoundedEn())
+        g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
+      else
+        g2d.drawRect(b.x, b.y, b.width, b.height);
     }
     g2d.setColor(m.getTextColor());
-    Font font = ff.getFont(m.getFontDisplayName());
-    ff.alignString(g2d, m.getAlignment(), b, m.getText(), font);
+    String text = m.getText();
+    if (text.isEmpty()) {
+      text = "TODO";
+      font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
+    } else {
+      font = ff.getFont(m.getFontDisplayName());
+    }
+    ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);
   }
   
