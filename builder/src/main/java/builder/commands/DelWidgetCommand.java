@@ -27,6 +27,8 @@ package builder.commands;
 
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import builder.mementos.WidgetMemento;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -55,17 +57,23 @@ public class DelWidgetCommand extends Command {
    */
   public DelWidgetCommand(PagePane page) {
     this.page = page;
-    memento = new WidgetMemento(page);
   }
   
   /**
-   * Del will setup the delete widget(s) command.
+   * Delete will setup the delete widget(s) command.
    *
    * @return <code>true</code>, if successful
    */
-  public boolean del() {
+  public boolean delete() {
     groupList = page.getSelectedList();
-    if (groupList.size() < 1) return false;
+    if (groupList.size() < 1) {
+      JOptionPane.showMessageDialog(null, 
+          "You must first select elements to delete.",
+          "Warning",
+          JOptionPane.WARNING_MESSAGE);
+      return false;
+    }
+    memento = new WidgetMemento(page);
     return true;
   }
 

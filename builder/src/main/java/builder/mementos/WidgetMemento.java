@@ -69,7 +69,7 @@ public class WidgetMemento extends Memento {
 
   /**
    * Instantiates a new widget memento.
-   *
+   * This version is used by ChangeZOrderCommand
    * @param page
    *          the page
    * @param tree_backup
@@ -89,10 +89,10 @@ public class WidgetMemento extends Memento {
    */
   @Override
   public void restore() {
-    page.restore(page_backup);
+    page.restore(page_backup, true);
     TreeView.getInstance().restore(tree_backup);
     EnumFactory.getInstance().restore(enum_backup);
-    Controller.getInstance().refreshView();
+    Controller.getInstance().changePage(page.getKey());
   }
 
 }

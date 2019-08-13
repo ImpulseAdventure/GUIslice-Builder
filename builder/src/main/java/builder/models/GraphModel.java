@@ -37,7 +37,6 @@ import javax.swing.table.TableCellEditor;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
 
 /**
  * The Class GraphModel implements the model for the Graph widget.
@@ -53,42 +52,39 @@ public class GraphModel extends WidgetModel {
   /** The Constant for gslc_tsElemRef* m_pElementRef name */
   public static final String ELEMENTREF_NAME = "m_pElemGraph";
   
-  /** The Constant PROP_ELEMENTREF. */
-  static private final int PROP_ELEMENTREF        = 6;
-  
-  /** The Constant PROP_FONT. */
+  /** Graph Style Constants. */
+  static public  final String  STYLE_DOT          = "GSLCX_GRAPH_STYLE_DOT";
+  static public  final String  STYLE_LINE         = "GSLCX_GRAPH_STYLE_LINE";
+  static public  final String  STYLE_FILL         = "GSLCX_GRAPH_STYLE_FILL";
+
+  /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
-  
-  /** The Constant PROP_ROWS. */
   static private final int PROP_ROWS              = 8;
-  
-  /** The Constant PROP_STYLE. */
   static private final int PROP_STYLE             = 9;
-  
-  /** The Constant PROP_GRAPH_COLOR. */
   static private final int PROP_GRAPH_COLOR       = 10;
-  
-  /** The Constant PROP_DEFAULT_COLORS. */
   static private final int PROP_DEFAULT_COLORS    = 11;
-  
-  /** The Constant PROP_FRAME_COLOR. */
   static private final int PROP_FRAME_COLOR       = 12;
-  
-  /** The Constant PROP_FILL_COLOR. */
   static private final int PROP_FILL_COLOR        = 13;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
   static private final int PROP_SELECTED_COLOR    = 14;
 
+  /** The Property Defaults */
+  static public  final Integer DEF_ROWS              = Integer.valueOf(0);
+  static public  final String  DEF_STYLE             = "GSLCX_GRAPH_STYLE_DOT";
+  static public  final Color   DEF_GRAPH_COLOR       = Color.ORANGE;
+  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
+  static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
+  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
+  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
+  
+  static private final int DEF_WIDTH = 180;
+  static private final int DEF_HEIGHT= 120;
+  
   /** The cb style. */
   JComboBox<String> cbStyle;
   
   /** The style cell editor. */
   DefaultCellEditor styleCellEditor;
 
-  static private final int DEF_WIDTH = 180;
-  static private final int DEF_HEIGHT= 120;
-  
   /**
    * Instantiates a new graph model.
    */
@@ -107,22 +103,22 @@ public class GraphModel extends WidgetModel {
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
-    initProp(PROP_ELEMENTREF, String.class, "TXT-206", Boolean.FALSE,"ElementRef","");
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font","BuiltIn->5x8pt7b");
 
-    initProp(PROP_ROWS, Integer.class, "GRPH-100", Boolean.FALSE,"Maximum Points",Integer.valueOf(0));
-    initProp(PROP_STYLE, String.class, "GRPH-101", Boolean.FALSE,"Graph Style","Dot");
+    initProp(PROP_ROWS, Integer.class, "GRPH-100", Boolean.FALSE,"Maximum Points",DEF_ROWS);
+    initProp(PROP_STYLE, String.class, "GRPH-102", Boolean.FALSE,"Graph Style",DEF_STYLE);
 
-    initProp(PROP_GRAPH_COLOR, Color.class, "COL-309", Boolean.FALSE,"Color of Graph",Color.ORANGE);
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",Boolean.TRUE);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",cf.getDefFrameCol());
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",cf.getDefFillCol());
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",cf.getDefGlowCol());
+    initProp(PROP_GRAPH_COLOR, Color.class, "COL-309", Boolean.FALSE,"Color of Graph",DEF_GRAPH_COLOR);
+
+    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
 
     cbStyle = new JComboBox<String>();
-    cbStyle.addItem("Dot");
-    cbStyle.addItem("Fill");
-    cbStyle.addItem("Line");
+    cbStyle.addItem(STYLE_DOT);
+//    cbStyle.addItem(STYLE_LINE);
+    cbStyle.addItem(STYLE_FILL);
     styleCellEditor = new DefaultCellEditor(cbStyle);
   }
 
@@ -159,38 +155,22 @@ public class GraphModel extends WidgetModel {
       fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
       fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
     }     
+
     if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
-    }
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
   }
 
-  /**
-   * Gets the element ref.
-   *
-   * @return the element ref
-   */
-  public String getElementRef() {
-    return (String) data[PROP_ELEMENTREF][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * Sets the element ref.
-   *
-   * @param s
-   *          the new element ref
-   */
-  public void setElementRef(String s) { 
-    shortcutValue(s, PROP_ELEMENTREF);
-  }
-  
   /**
    * Gets the font display name.
    *
    * @return the font display name
    */
+  @Override
   public String getFontDisplayName() {
     return (String) ((String)data[PROP_FONT][PROP_VAL_VALUE]);
   }
@@ -301,7 +281,7 @@ public class GraphModel extends WidgetModel {
     int n = 0;
     String strCount = ""; 
     String ref = ""; 
-    if (getElementRef().equals("")) {
+    if (getElementRef().isEmpty()) {
       ref = ELEMENTREF_NAME;
       strKey = getKey();
       n = strKey.indexOf("$");

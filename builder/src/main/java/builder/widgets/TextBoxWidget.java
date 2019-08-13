@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.models.TextBoxModel;
 
 /**
@@ -49,10 +49,10 @@ public class TextBoxWidget extends Widget {
    *          the y coordinate position
    */
   public TextBoxWidget(int x, int y) {
-    u = CommonUtil.getInstance();
+    u = CommonUtils.getInstance();
     model = new TextBoxModel();
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
   }
@@ -65,12 +65,21 @@ public class TextBoxWidget extends Widget {
   public void draw(Graphics2D g2d) {
     Rectangle b = getWinBounded();
     TextBoxModel m = ((TextBoxModel) model);
-    g2d.setColor(m.getFillColor());
-    g2d.fillRect(b.x, b.y, b.width, b.height);
-    g2d.setColor(m.getFrameColor());
-    g2d.drawRect(b.x, b.y, b.width, b.height);
-    g2d.drawRect(b.x+2, b.y+4, b.width-23, b.height-8);
-    drawScrollBar(g2d, m, b);
+    if (m.addScrollbar()) {
+      g2d.setColor(m.getFillColor());
+      g2d.fillRect(b.x, b.y, b.width, b.height);
+      g2d.setColor(m.getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+      g2d.drawRect(b.x+2, b.y+4, b.width-23, b.height-7);
+      drawScrollBar(g2d, m, b);
+    } else {
+      b.width = b.width-23;
+      b.height = b.height-8;
+      g2d.setColor(m.getFillColor());
+      g2d.fillRect(b.x, b.y, b.width, b.height);
+      g2d.setColor(m.getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+    }
     super.drawSelRect(g2d, b);
   }
 
@@ -100,14 +109,16 @@ public class TextBoxWidget extends Widget {
     int nThumbSz = 5;
     int nMargin  = nThumbSz;
     nPosOffset = (height/2);
-    // Draw the track
-    g2d.setColor(m.getFrameColor());
-    g2d.drawLine(nXMid,nY0+nMargin,nXMid,nY1-nMargin);
-    // Draw the thumb control
     int nCtrlX0,nCtrlY0;
     nCtrlX0   = nXMid-nThumbSz;
     nCtrlY0   = nY0+nPosOffset-nThumbSz;
-    g2d.setColor(m.getFrameColor());
+    g2d.setColor(m.getBarFillColor());
+    g2d.fillRect(nCtrlX0-1, nY0, width-2, height-2);
+    // Draw the track
+    g2d.setColor(m.getBarFrameColor());
+    g2d.drawLine(nXMid,nY0+nMargin,nXMid,nY1-nMargin);
+    // Draw the thumb control
+    g2d.setColor(m.getBarFrameColor());
     g2d.drawRect(nCtrlX0, nCtrlY0, 2*nThumbSz, 2*nThumbSz);
   }
 }

@@ -36,11 +36,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.LinkedList;
 
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import builder.prefs.GeneralEditor;
 
@@ -71,7 +70,7 @@ public class SwatchPanel extends JPanel {
   private GeneralEditor generalEditor;
   
   /** lru cache of recent colors */
-  LinkedList<Color> lruList = new LinkedList<Color>();
+  ArrayList<Color> lruList;
   
   /** The swatch size. */
   protected Dimension swatchSize;
@@ -135,6 +134,36 @@ public class SwatchPanel extends JPanel {
   }
 
   /**
+   * Initializes the colors.
+   */
+  @SuppressWarnings("unchecked")
+  protected void initColors() {
+//    Color defaultColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor", getLocale());
+    Color defaultColor = new Color(230,230,230);
+    String recentColors = generalEditor.getRecentColors();
+    lruList = new ArrayList<Color>();
+    // do we have any user preferences for colors?
+    if (recentColors.length() > 0) {
+      ObjectInputStream in;
+      try {
+        byte[] data = Base64.getDecoder().decode(recentColors);
+        in = new ObjectInputStream(new ByteArrayInputStream(data));
+        lruList = (ArrayList<Color>) in.readObject();
+        in.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    } else {
+      // initialize lru with default colors
+      for (int i = 0; i < numColors; i++) {
+        lruList.add(defaultColor);
+      }
+    }
+  }
+
+  /**
    * paintComponent
    *
    * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
@@ -182,34 +211,6 @@ public class SwatchPanel extends JPanel {
     int x = numSwatches.width * (swatchSize.width + gap.width) - 1;
     int y = numSwatches.height * (swatchSize.height + gap.height) - 1;
     return new Dimension(x, y);
-  }
-
-  /**
-   * Initializes the colors.
-   */
-  @SuppressWarnings("unchecked")
-  protected void initColors() {
-    Color defaultColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor", getLocale());
-    String recentColors = generalEditor.getRecentColors();
-    // do we have any user preferences for colors?
-    if (recentColors.length() > 0) {
-      ObjectInputStream in;
-      try {
-        byte[] data = Base64.getDecoder().decode(recentColors);
-        in = new ObjectInputStream(new ByteArrayInputStream(data));
-        lruList = (LinkedList<Color>) in.readObject();
-        in.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      }
-    } else {
-      // first time we initialize lru with default colors
-      for (int i = 0; i < numColors; i++) {
-        lruList.addFirst(defaultColor);
-      }
-    }
   }
 
   /**
@@ -284,10 +285,11 @@ public class SwatchPanel extends JPanel {
   public void setMostRecentColor(Color c) {
     // update our lru but first check and see if the color is already present
     // if so, remove it then add to front of list
-    if (!lruList.remove(c)) {
-      lruList.removeLast();
+    lruList.remove(c);
+    lruList.add(0,c);
+    if (lruList.size() > numColors) {
+      lruList.remove(numColors);
     }
-    lruList.addFirst(c);
     repaint();
     // now push the recent colors panel to user preferences
     ObjectOutputStream out;

@@ -52,7 +52,7 @@ public class EnumFactory {
   private static int[] countKeys;
   
   /** The Constant numberOfTypes. */
-  static final public int numberOfTypes  = 16;
+  static final public int numberOfTypes  = 29;
   
   /** The Constant GENERAL. */
   static final public String GENERAL     = "General"; 
@@ -60,14 +60,26 @@ public class EnumFactory {
   /** The Constant GRID. */
   static final public String GRID        = "Grid";    
   
+  /** The Constant BASEPAGE. */
+  static final public String BASEPAGE    = "BasePage";
+  
   /** The Constant PAGE. */
   static final public String PAGE        = "Page";
   
   /** The Constant BOX. */
   static final public String BOX         = "Box";
   
+  /** The Constant CIRCLE. */
+  static final public String CIRCLE      = "Circle";
+  
+  /** The Constant LINE. */
+  static final public String LINE        = "Line";
+  
   /** The Constant TEXT. */
   static final public String TEXT        = "Text";
+  
+  /** The Constant LISTBOX. */
+  static final public String LISTBOX     = "ListBox";
   
   /** The Constant TEXTBOX. */
   static final public String TEXTBOX     = "TextBox";
@@ -75,11 +87,26 @@ public class EnumFactory {
   /** The Constant TEXTBUTTON. */
   static final public String TEXTBUTTON  = "TextButton";
   
+  /** The Constant NUMINPUT. */
+  static final public String NUMINPUT    = "NumberInput";
+  
+  /** The Constant TEXTINPUT. */
+  static final public String TEXTINPUT   = "TextInput";
+  
   /** The Constant CHECKBOX. */
   static final public String CHECKBOX    = "CheckBox";
   
   /** The Constant RADIOBUTTON. */
   static final public String RADIOBUTTON = "RadioButton";
+  
+  /** The Constant RINGGAUGE. */
+  static final public String RAMPGAUGE   = "RampGauge";
+  
+  /** The Constant RINGGAUGE. */
+  static final public String RADIALGAUGE = "RadialGauge";
+  
+  /** The Constant RINGGAUGE. */
+  static final public String RINGGAUGE =   "RingGauge";
   
   /** The Constant IMAGEBUTTON. */
   static final public String IMAGEBUTTON = "ImageButton";
@@ -87,11 +114,17 @@ public class EnumFactory {
   /** The Constant IMAGE. */
   static final public String IMAGE       = "Image";
   
+  /** The Constant POPUP. */
+  static final public String POPUP       = "Popup";
+  
   /** The Constant PROGRESSBAR. */
   static final public String PROGRESSBAR = "ProgressBar";
   
   /** The Constant SLIDER. */
   static final public String SLIDER      = "Slider";
+  
+  /** The Constant SPINNER. */
+  static final public String SPINNER     = "Spinner";
   
   /** The Constant GRAPH. */
   static final public String GRAPH       = "Graph";
@@ -102,30 +135,93 @@ public class EnumFactory {
   /** The Constant WIDGET. */
   static final public String WIDGET      = "Widget";  // used as a key to find our models
   
+  /** The Constants for KeyPads used mostly by code generation. */
+  static final public String NUMKEYPAD                = "KeyPad";  // widget type
+  static final public String KEYPAD_PAGE_ENUM         = "E_POP_KEYPAD";
+  static final public String KEYPAD_ELEM_ENUM         = "E_ELEM_KEYPAD";
+  static final public String KEYPAD_PAGE_STORAGE      = "m_asKeypadElem";
+  static final public String KEYPAD_ELEM_STORAGE      = "m_sKeyPad";
+  static final public String KEYPAD_ELEMREF           = "m_pElemKeyPad";
+ 
+  static final public String ALPHAKEYPAD              = "KeyPadText";  // widget type
+  static final public String ALPHAKEYPAD_PAGE_ENUM    = "E_POP_AKEYPAD";
+  static final public String ALPHAKEYPAD_ELEM_ENUM    = "E_ELEM_AKEYPAD";
+  static final public String ALPHAKEYPAD_PAGE_STORAGE = "m_asAKeypadElem";
+  static final public String ALPHAKEYPAD_ELEM_STORAGE = "m_sAKeyPad";
+  static final public String ALPHAKEYPAD_ELEMREF      = "m_pAElemKeyPad";
+  
+  // text boxes hidden scrollbar enums
+  static final public String LISTBOX_SCROLLBAR_ENUM   = "E_LISTSCROLL";
+  static final public String TEXTBOX_SCROLLBAR_ENUM   = "E_TXTSCROLL";
+  static final public String LISTBOX_SCROLLBAR_EREF   = "m_pListSlider";
+  static final public String TEXTBOX_SCROLLBAR_EREF   = "m_pTextSlider";
+  
+ 
   /** The type strings. */
   static public String[] typeStrings = 
-    { GENERAL, GRID, PAGE, BOX, TEXT, TEXTBOX, TEXTBUTTON, CHECKBOX, RADIOBUTTON,  
-      IMAGEBUTTON, IMAGE, PROGRESSBAR, SLIDER, GRAPH, GROUPID, WIDGET
+    { PAGE, 
+      BASEPAGE, 
+      GENERAL, 
+      GRID, 
+      BOX, 
+      TEXT, 
+      TEXTBOX, 
+      TEXTBUTTON, 
+      CHECKBOX, 
+      RADIOBUTTON,  
+      IMAGEBUTTON, 
+      IMAGE, 
+      PROGRESSBAR, 
+      SLIDER, 
+      SPINNER, 
+      GRAPH, 
+      GROUPID, 
+      WIDGET,
+      LISTBOX, 
+      NUMINPUT, 
+      TEXTINPUT, 
+      POPUP, 
+      NUMKEYPAD, 
+      ALPHAKEYPAD, 
+      RINGGAUGE,
+      RAMPGAUGE,
+      RADIALGAUGE,
+      CIRCLE,
+      LINE
     };
   
   /** The enum strings. */
   static public String[] enumStrings = 
-    { "GENERAL", 
+    { 
+      "E_PG",
+      "E_PG_BASE",      
+      "GENERAL", 
       "GRID", 
-      "E_PG", 
-      "E_BOX", 
-      "E_TXT", 
-      "E_TXTBOX", 
-      "E_BTN", 
-      "E_CHECK", 
-      "E_RADIO",  
-      "E_IMGBTN", 
-      "E_IMAGE",
-      "E_PROGRESS",
-      "E_SLIDER",
-      "E_GRAPH",
+      "E_ELEM_BOX", 
+      "E_ELEM_TEXT", 
+      "E_ELEM_TEXTBOX", 
+      "E_ELEM_BTN", 
+      "E_ELEM_CHECK", 
+      "E_ELEM_RADIO",  
+      "E_ELEM_IBTN", 
+      "E_ELEM_IMAGE",
+      "E_ELEM_PROGRESS",
+      "E_ELEM_SLIDER",
+      "E_ELEM_SPINNER",
+      "E_ELEM_GRAPH",
       "E_GROUP",
-      "W_"
+      "W_",
+      "E_ELEM_LISTBOX",
+      "E_ELEM_NUMINPUT",
+      "E_ELEM_TEXTINPUT",
+      "E_PG_POPUP",
+      "E_POP_KEYPAD",
+      "E_POP_AKEYPAD",
+      "E_ELEM_RINGGAUGE",
+      "E_ELEM_RAMPGAUGE",
+      "E_ELEM_RADIALGAUGE",
+      "E_DRAW_CIRCLE",
+      "E_DRAW_LINE"
     };
   
   /** The Constant PAGE_MAIN. */
@@ -166,6 +262,7 @@ public class EnumFactory {
    * @see java.lang.String
    */
   public String createKey(String type) {
+    String key = null;
     int i = 0;
     for(i=0; i<EnumFactory.numberOfTypes; i++) {
       if (type.equals(EnumFactory.typeStrings[i])) {
@@ -173,7 +270,7 @@ public class EnumFactory {
       }
     }
     countKeys[i]++;
-    String key = String.format("%s$%d", EnumFactory.typeStrings[i],countKeys[i]);
+    key = String.format("%s$%d", EnumFactory.typeStrings[i],countKeys[i]);
     return key;
   }
   
@@ -200,8 +297,10 @@ public class EnumFactory {
         break;
       }
     }
-    if (type == PAGE && countKeys[i] == 1)
+    if (type.equals(PAGE) && countKeys[i] == 1)
       return EnumFactory.PAGE_MAIN;
+    if (type.equals(BASEPAGE))
+      return strEnum;
     return String.format("%s%d", strEnum,countKeys[i]);
   }
   
@@ -214,6 +313,14 @@ public class EnumFactory {
     }
   }
 
+  public int getPageCount() {
+    return countKeys[0];
+  }
+  
+  public void setPageCount(int c) {
+    countKeys[0] = c;
+  }
+  
   /**
    * Backup the current state of this object as a String.
    *

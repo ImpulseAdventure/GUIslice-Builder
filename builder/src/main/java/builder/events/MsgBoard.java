@@ -27,7 +27,6 @@ package builder.events;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * The Class MsgBoard implements the Observer Pattern.
@@ -47,7 +46,8 @@ import java.util.ListIterator;
 public class MsgBoard implements iSubject {
   
   /** The subscribers. */
-  private static List<iSubscriber> subscribers = new ArrayList<iSubscriber>();
+//  private static List<Pair> subscribers = new CopyOnWriteArrayList <Pair>();
+  private List<Pair> subscribers = new ArrayList<Pair>();
 
   /** The instance. */
   private static MsgBoard instance = null;
@@ -77,8 +77,8 @@ public class MsgBoard implements iSubject {
    * @param event
    *          the event
    */
-  public void publish(MsgEvent event) {
-    notifySubscribers(event);
+  public void publish(MsgEvent event, String name) {
+    notifySubscribers(event, name);
   }
   
   /**
@@ -87,8 +87,9 @@ public class MsgBoard implements iSubject {
    * @see builder.events.iSubject#subscribe(builder.events.iSubscriber)
    */
   @Override
-  public void subscribe(iSubscriber subscriber) {
-    subscribers.add(subscriber);
+  public void subscribe(iSubscriber subscriber, String name) {
+//    System.out.println("Register Observer: " + name);
+    subscribers.add(new Pair(name, subscriber));
   }
 
   /**
@@ -96,9 +97,10 @@ public class MsgBoard implements iSubject {
    *
    * @see builder.events.iSubject#remove(builder.events.iSubscriber)
    */
-  @Override
-  public void remove(iSubscriber subscriber) {
-    subscribers.remove(subscriber);
+  public void remove(String name) {
+    Pair c = new Pair(name, null);
+    subscribers.removeIf(p -> p.equals(c));
+//    System.out.println("Removed Observer: " + c.getName());
   }
 
   /**
@@ -106,14 +108,194 @@ public class MsgBoard implements iSubject {
    *
    */
   @Override
-  public void notifySubscribers(MsgEvent e) {
-    synchronized(subscribers) {
-      ListIterator<iSubscriber> litr = subscribers.listIterator();
-  
-      while(litr.hasNext()){
-  //      System.out.println("Notifying Observers on event");
-        litr.next().updateEvent(e);
+  public void notifySubscribers(MsgEvent e, String name) {
+//    System.out.println("Notifying Observers on event: " + e.toString());
+    for (int i=0; i<subscribers.size(); i++) {
+      Pair p = subscribers.get(i);
+      // avoid loops by not sending the message to the originator
+      if (!p.getName().equals(name)) {
+        p.getSubscriber().updateEvent(e);
+//      System.out.println(p.getName());
       }
+    }
+  }
+
+  /**
+   * sendActionCommand.
+   *  Used by our Ribbon's JCommandButtons to send action events
+   *  to the Controller.
+   *
+   * @param command
+   *          the action to take
+   */
+  public void sendActionCommand(String name, String command) {
+    sendEvent(name, MsgEvent.ACTION_COMMAND, command);
+  }
+
+  /**
+   * sendRepaint.
+   *  Routine to send repaint events.
+   *
+   * @param code
+   *          the MsgEvent code
+   * @param widgetKey
+   *          the targets widget key 
+   */
+  public void sendRepaint(String name, String widgetKey) {
+//  System.out.println("Notifying Observers on Repaint: " + widgetKey);
+    sendEvent(name, MsgEvent.WIDGET_REPAINT, widgetKey);
+  }
+
+  /**
+   * sendEnumChange.
+   *  Routine to send enum change events.
+   *
+   * @param code
+   *          the MsgEvent code
+   * @param widgetKey
+   *          the targets widget key 
+   * @param widgetEnum
+   *          the widget's new ENUM 
+   */
+  public void sendEnumChange(String name, String widgetKey, String widgetEnum) {
+    sendEvent(name, MsgEvent.WIDGET_ENUM_CHANGE, widgetKey, widgetEnum);
+  }
+
+  /**
+   * sendEvent.
+   *  Generic routine to send event codes.
+   *
+   * @param code
+   *          the MsgEvent code
+   */
+  public void sendEvent(String name, int code) {
+    MsgEvent ev = new MsgEvent();
+    ev.code = code;
+    ev.message = "";
+    ev.xdata = "";
+    ev.fromIdx = 0;
+    ev.toIdx = 0;
+    ev.x = 0;
+    ev.y = 0;
+    publish(ev, name);
+  }
+
+  /**
+   * sendEvent.
+   *  Generic routine to send events that only require one parameter.
+   *
+   * @param code
+   *          the MsgEvent code
+   * @param param1
+   *          the message (often a widget key)
+   */
+  public void sendEvent(String name, int code, String param1) {
+    MsgEvent ev = new MsgEvent();
+    ev.code = code;
+    ev.message = param1;
+    ev.xdata = "";
+    ev.fromIdx = 0;
+    ev.toIdx = 0;
+    ev.x = 0;
+    ev.y = 0;
+    publish(ev, name);
+  }
+
+  /**
+   * sendEvent.
+   *  Generic routine to send events that require two parameters
+   *
+   * @param code
+   *          the MsgEvent code
+   * @param param1
+   *          the message (often a widget key)
+   * @param param2
+   *          the extra data (often a widget's parent page key)
+   */
+  public void sendEvent(String name, int code, String param1, String param2) {
+    MsgEvent ev = new MsgEvent();
+    ev.code = code;
+    ev.message = param1;
+    ev.xdata = param2;
+    ev.fromIdx = 0;
+    ev.toIdx = 0;
+    ev.x = 0;
+    ev.y = 0;
+    publish(ev, name);
+  }
+
+  /**
+   * The Class Pair used to store name and ISubscripter relationship.
+   *   Useful for debugging event messaging.
+   */
+  private class Pair {
+    
+    /** The name. */
+    String name;
+    
+    /** The subscriber. */
+    iSubscriber subscriber;
+
+    /**
+     * Instantiates a new pair.
+     *
+     * @param name
+     *          the name
+     * @param subscriber
+     *          the child
+     */
+    Pair(String name, iSubscriber subscriber) {
+      this.name = name;
+      this.subscriber = subscriber;
+    }
+
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
+    private String getName() {
+      return name;
+    }
+    
+    /**
+     * Gets the subscriber.
+     *
+     * @return the subscriber
+     */
+    private iSubscriber getSubscriber() {
+      return subscriber;
+    }
+
+    @Override
+    public boolean equals(Object o) { 
+
+      // If the object is compared with itself then return true   
+      if (o == this) { 
+          return true; 
+      } 
+
+      /* Check if o is an instance of Pair or not 
+        "null instanceof [type]" also returns false */
+      if (!(o instanceof Pair)) { 
+          return false; 
+      } 
+        
+      // typecast o to TreeItem so that we can compare data members  
+      Pair c = (Pair) o; 
+        
+      // Compare the data members and return accordingly  
+      return c.getName().equals(this.getName());
+    } 
+     
+    /**
+     * toString
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+      return getName();
     }
   }
 

@@ -28,7 +28,6 @@ package builder.views;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseAdapter;
@@ -61,7 +60,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import builder.Builder;
-import builder.events.DeleteKeyListener;
+import builder.clipboard.TreeItem;
+import builder.clipboard.TreeItemSelection;
+import builder.common.CommonUtils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -114,7 +115,10 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   private static TreeView instance = null;
   
   /** The currently selected widget */
-  private String SelectWidgetEnum = "";
+  private TreeItem selectWidget = null;
+  
+  /** The root object */
+  private TreeItem rootItem;
   
   /**
    * Gets the single instance of TreeView.
@@ -133,7 +137,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    */
   public TreeView() {
     initUI();
-    MsgBoard.getInstance().subscribe(this);
+    MsgBoard.getInstance().subscribe(this, "TreeView");
   }
   
   /**
@@ -141,15 +145,15 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    */
   private void initUI() {
     // create the root node
-    root = new DefaultMutableTreeNode("Root");
+    rootItem = new TreeItem("Root", null);
+    root = new DefaultMutableTreeNode(rootItem);
 
     treeModel = new DefaultTreeModel(root);
 
     // create the tree by passing in our tree model
     tree = new JTree(treeModel);
-
-    imageIcon = new ImageIcon(Builder.class.getResource("/resources/icons/widget.png"));
-    parentIcon = new ImageIcon(Builder.class.getResource("/resources/icons/brick.png"));
+    imageIcon = new ImageIcon(Builder.class.getResource("/resources/icons/misc/widget.png"));
+    parentIcon = new ImageIcon(Builder.class.getResource("/resources/icons/misc/brick.png"));
     
     DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
     renderer.setOpenIcon(parentIcon);
@@ -169,34 +173,37 @@ public class TreeView extends JInternalFrame implements iSubscriber {
 //    tree.setRootVisible(false);
     tree.setFocusable( true ); 
     tree.addMouseListener(new MouseHandler());
-    tree.addKeyListener(new DeleteKeyListener());
     tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-        if (selectedNode == null) SelectWidgetEnum = "";
+        if (selectedNode == null) selectWidget = null;
         if (selectedNode != null && !bDraggingNode) {
-          String widgetEnum = selectedNode.getUserObject().toString();
+          TreeItem widget = ((TreeItem)selectedNode.getUserObject());
           // this is necessary to avoid a loop with pagePane.
-          if (!SelectWidgetEnum.equals(widgetEnum)) {
-            SelectWidgetEnum = widgetEnum;
+          if (selectWidget == null || (!selectWidget.equals(widget))) {
+            selectWidget = widget;
             TreePath parentPath = e.getPath().getParentPath();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-            MsgEvent ev = new MsgEvent();
-            ev.code = MsgEvent.OBJECT_SELECTED_TREEVIEW;
-            ev.message = SelectWidgetEnum;
-            ev.parent = ((String) parentNode.getUserObject());
-            MsgBoard.getInstance().publish(ev);
+            MsgBoard.getInstance().sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
+                selectWidget.getKey(),
+                ((TreeItem) parentNode.getUserObject()).getKey());
           }
         }
       }
     });
-    scrollPane = new JScrollPane(tree);
+    scrollPane = new JScrollPane(tree,
+        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    scrollPane.setPreferredSize(new Dimension(300, 650));
     add(scrollPane);
     this.setTitle("Tree View");        
-    this.setPreferredSize(new Dimension(200, 400));
+     CommonUtils cu = CommonUtils.getInstance();
+    this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
+    this.setPreferredSize(new Dimension(210, 400));
+    this.pack();
     this.setVisible(true);
-  }
+ }
 
   /**
    * The Class MouseHandler.
@@ -213,12 +220,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       int row=tree.getRowForLocation(e.getX(),e.getY());
       if(row==-1) { //When user clicks on the "empty surface"
         tree.clearSelection();
-        SelectWidgetEnum = "";
-        MsgEvent ev = new MsgEvent();
-        ev.message = "";
-        ev.parent = currentPage.toString();
-        ev.code = MsgEvent.OBJECT_UNSELECT_TREEVIEW;
-        MsgBoard.getInstance().publish(ev);
+        selectWidget= null;
+        MsgBoard.getInstance().sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
+            "", ((TreeItem)currentPage.getUserObject()).getKey());
       }
     }
   }
@@ -229,9 +233,10 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @param pageID
    *          the page ID
    */
-  public void addPage(String pageID) {
+  public void addPage(String pageID, String pageEnum) {
     //create and add the top level page node
-    currentPage = addObject(null, pageID);
+    TreeItem item = new TreeItem(pageID, pageEnum);
+    currentPage = addObject(null, item);
     TreePath path = new TreePath(currentPage.getPath());
     tree.setSelectionPath(path);
     tree.scrollPathToVisible(path);
@@ -244,10 +249,11 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    *          the page ID
    */
   public void delPage(String pageID) {
-    DefaultMutableTreeNode node = findNode(pageID);
+    TreeItem pageItem = new TreeItem(pageID, null);
+    DefaultMutableTreeNode node = findNode(pageItem);
     if (node != null) {
       node.removeAllChildren(); //this removes all nodes
-      delObject(root, pageID);
+      delObject(root, pageItem);
     }
     List<DefaultMutableTreeNode> searchNodes = getSearchNodes((DefaultMutableTreeNode) tree.getModel().getRoot());
     currentPage = searchNodes.get(1);
@@ -264,12 +270,15 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @param widget
    *          the widget
    */
-  public void addWidget(String pageID, String widget) {
-    if (!((String)currentPage.getUserObject()).equals(pageID)) {
-      currentPage = findNode(pageID);
+  public void addWidget(String pageID, String pageEnum, String widgetID, String widgetEnum) {
+    TreeItem pageItem = new TreeItem(pageID, pageEnum);
+    TreeItem item = new TreeItem(widgetID, widgetEnum);
+    selectWidget = item;  // avoids loop in pagePane
+    if (!((TreeItem)currentPage.getUserObject()).equals(pageItem)) {
+      currentPage = findNode(pageItem);
     }
     //create and add the child node to the page node
-    DefaultMutableTreeNode newNode = addObject(currentPage, widget);
+    DefaultMutableTreeNode newNode = addObject(currentPage, item);
     TreePath path = new TreePath(newNode.getPath());
     tree.setSelectionPath(path);
     tree.scrollPathToVisible(path);
@@ -283,20 +292,24 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @param widget
    *          the widget
    */
-  public void delWidget(String pageID, String widget) {
-    if (!((String)currentPage.getUserObject()).equals(pageID)) {
-      currentPage = findNode(pageID);
+  public void delWidget(String pageID, String widgetID) {
+    TreeItem item = new TreeItem(pageID, null);
+    if (!((TreeItem)currentPage.getUserObject()).equals(item)) {
+      currentPage = findNode(item);
     }
     //remove the child node from the page node
-    delObject(currentPage, widget);
+    item = new TreeItem(widgetID, null);
+    delObject(currentPage, item);
   }
   
   /**
    * getSelectedWidget() gets the currently selected widget
-   * @return current widget's Enum or null;
+   * @return current widget's Key or null;
    */
   public String getSelectedWidget() {
-    return SelectWidgetEnum;
+    if (selectWidget != null)
+      return selectWidget.getKey();
+    return "";
   }
   
   /**
@@ -325,7 +338,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    *          the child
    * @return the <code>default mutable tree node</code> object
    */
-  public DefaultMutableTreeNode addObject(DefaultMutableTreeNode parent, String child) {
+  public DefaultMutableTreeNode addObject(DefaultMutableTreeNode parent, TreeItem child) {
     DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
 
     if (parent == null) {
@@ -348,7 +361,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @param child
    *          the child
    */
-  public void delObject(DefaultMutableTreeNode parent, String child) {
+  public void delObject(DefaultMutableTreeNode parent, TreeItem child) {
 
     if (parent == null) {
       parent = root;
@@ -361,20 +374,19 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   /**
    * Find node.
    *
-   * @param searchString
-   *          the search string
+   * @param searchItem
+   *          the search item
    * @return the <code>default mutable tree node</code> object
    */
-  public DefaultMutableTreeNode findNode(String searchString) {
+  public DefaultMutableTreeNode findNode(TreeItem searchItem) {
 
     List<DefaultMutableTreeNode> searchNodes = getSearchNodes((DefaultMutableTreeNode) tree.getModel().getRoot());
     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
     DefaultMutableTreeNode foundNode = null;
     int bookmark = -1;
-
     if (currentNode != null) {
-      if (currentNode.toString().equals(searchString))
+      if (((TreeItem)currentNode.getUserObject()).equals(searchItem))
         return currentNode;
       for (int index = 0; index < searchNodes.size(); index++) {
         if (searchNodes.get(index) == currentNode) {
@@ -385,7 +397,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     }
 
     for (int index = bookmark + 1; index < searchNodes.size(); index++) {
-      if (searchNodes.get(index).toString().toLowerCase().contains(searchString.toLowerCase())) {
+      if (((TreeItem)searchNodes.get(index).getUserObject()).equals(searchItem)) {
         foundNode = searchNodes.get(index);
         break;
       }
@@ -393,7 +405,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
 
     if (foundNode == null) {
       for (int index = 0; index <= bookmark; index++) {
-        if (searchNodes.get(index).toString().toLowerCase().contains(searchString.toLowerCase())) {
+        if (((TreeItem)searchNodes.get(index).getUserObject()).equals(searchItem)) {
           foundNode = searchNodes.get(index);
           break;
         }
@@ -428,11 +440,11 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    *          the s
    * @return the selected index
    */
-  public int getSelectedIndex(DefaultMutableTreeNode parent, String s) {
+  public int getSelectedIndex(DefaultMutableTreeNode parent, TreeItem item) {
     int row = -1;
     for (int i=0;i<parent.getChildCount();i++) {
       DefaultMutableTreeNode child = ((DefaultMutableTreeNode)parent.getChildAt(i));
-      if(s.equals((String) child.getUserObject())){
+      if(item.equals((TreeItem) child.getUserObject())){
           row = i;
           break;
       }
@@ -508,7 +520,8 @@ public class TreeView extends JInternalFrame implements iSubscriber {
      * @see javax.swing.TransferHandler#canImport(javax.swing.TransferHandler.TransferSupport)
      */
     public boolean canImport(TransferHandler.TransferSupport support) {
-      if (!support.isDataFlavorSupported(DataFlavor.stringFlavor) || !support.isDrop()) {
+      DataFlavor widgets = new DataFlavor(TreeItem.class, "TreeItem");
+      if (!support.isDataFlavorSupported(widgets) || !support.isDrop()) {
         return false;
       }
       // Only support moves within our tree branch
@@ -563,10 +576,10 @@ public class TreeView extends JInternalFrame implements iSubscriber {
        */
       Transferable transferable = support.getTransferable();
 
-      String transferData;
+      TreeItem transferData;
       try {
-        transferData = (String) transferable.getTransferData(
-        DataFlavor.stringFlavor);
+        transferData = (TreeItem) transferable.getTransferData(
+            TreeItemSelection.treeitemFlavor);
       } catch (IOException e) {
         return false;
       } catch (UnsupportedFlavorException e) {
@@ -577,7 +590,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(transferData);
       // grab the parent node
       parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-      fromRow = getSelectedIndex(parentNode, (String) newNode.getUserObject()); 
+      fromRow = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
       
       // add the new node to the tree path
       int childIndex = dropLocation.getChildIndex();
@@ -611,7 +624,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         if(paths != null) {
           // grab the selected node
           selectedNode = (DefaultMutableTreeNode)paths[0].getLastPathComponent();
-          return new StringSelection((String) selectedNode.getUserObject());
+          return new TreeItemSelection((TreeItem) selectedNode.getUserObject());
         }
       }
       return null;
@@ -629,17 +642,69 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         // Remove node saved in selectedNode in createTransferable.
         treeModel.removeNodeFromParent(selectedNode);
         // determine our destination row where we have been moved.
-        String widgetEnum = ((String)selectedNode.getUserObject());
-        int toRow = getSelectedIndex(parentNode, widgetEnum); 
+        TreeItem item = ((TreeItem)selectedNode.getUserObject());
+        int toRow = getSelectedIndex(parentNode, item); 
         MsgEvent ev = new MsgEvent();
         ev.code = MsgEvent.WIDGET_CHANGE_ZORDER;
-        ev.message = widgetEnum;
-        ev.parent = ((String) parentNode.getUserObject());
+        ev.message = item.getKey();
+        ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
         ev.fromIdx = fromRow;
         ev.toIdx = toRow;
-        MsgBoard.getInstance().publish(ev);
+        MsgBoard.getInstance().publish(ev, "TreeView");
       }
       bDraggingNode = false;
+    } 
+  }
+
+  public int getNumberOfNodes(DefaultTreeModel model)  
+  {  
+      return getNumberOfNodes(model, model.getRoot());  
+  }  
+
+  private int getNumberOfNodes(DefaultTreeModel model, Object node)  
+  {  
+      int count = 1;
+      int nChildren = model.getChildCount(node);  
+      for (int i = 0; i < nChildren; i++)  
+      {  
+          count += getNumberOfNodes(model, model.getChild(node, i));  
+      }  
+      return count;  
+  }
+  
+  @Override
+  public void updateEvent(MsgEvent e) {
+//    System.out.println("TreeView: " + e.toString());
+    if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE ||
+        e.code == MsgEvent.PAGE_TAB_CHANGE) {
+//  System.out.println("TreeView: " + e.toString());
+      TreeItem pageItem = new TreeItem(e.message, null);
+      DefaultMutableTreeNode w = findNode(pageItem);
+      if (w != null) {
+        selectWidget = ((TreeItem)w.getUserObject());
+        TreePath path = new TreePath(w.getPath());
+        tree.setSelectionPath(path);
+        tree.scrollPathToVisible(path);
+        repaint();
+      }
+    } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
+//  System.out.println("TreeView: " + e.toString());
+      tree.clearSelection();
+      scrollPane.repaint();
+    } else if (e.code == MsgEvent.WIDGET_ENUM_CHANGE ||
+          e.code == MsgEvent.PAGE_ENUM_CHANGE) {
+//  System.out.println("TreeView: " + e.toString());
+        TreeItem pageItem = new TreeItem(e.message, null);
+        DefaultMutableTreeNode w = findNode(pageItem);
+        if (w != null) {
+          selectWidget = ((TreeItem)w.getUserObject());
+          selectWidget.setEnum(e.xdata);
+          treeModel.nodeChanged(w);
+          TreePath path = new TreePath(w.getPath());
+          tree.setSelectionPath(path);
+          tree.scrollPathToVisible(path);
+          repaint();
+        }
     } 
   }
 
@@ -648,8 +713,8 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * <p>
    * Since TreeModel is serializable we could do this in one
    * writeObject() but getting our view to refresh is a nightmare best avoided.
-   * Our tree only contains string values so we will also be faster and smaller on
-   * backup and restores.
+   * (Don't ask me how I know).
+   * Our tree only contains string values so not a big deal.
    *
    * @param list
    *          - pairs of parent and child are added to this list as we traverse
@@ -657,27 +722,48 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @param node
    *          - parent node to search, must start with root
    */
-  private void backupTree(List<Pair> list, DefaultMutableTreeNode node) {
-    // We have to walk our tree to not only find parents and children but also
-    // to get an accurate count of nodes for restore.
-    int childCount = node.getChildCount();
+  private void backupTree(ObjectOutputStream out, DefaultMutableTreeNode node) 
+   throws IOException {
 
-    //    System.out.println("---" + node.toString() + "---");
-    if (!((String)node.getUserObject()).equals("Root")) 
-      list.add(new Pair(node.toString()));
+    // We have to walk our tree to find parents and children 
+//  System.out.println("---" + node.toString() + "---");
+    int childCount = node.getChildCount();
+//    System.out.println("Child count: " + childCount);
+    TreeItem item = ((TreeItem)node.getUserObject());
+//    System.out.println("Parent: " + item.toDebugString());
+    TreeItem child = null;
+    
+    if (!item.equals(rootItem)) {
+      out.writeObject(item.getKey());
+      out.writeObject(item.getEnum());
+      out.writeObject("*");
+//      System.out.println("===Root Item written");
+    }
     for (int i = 0; i < childCount; i++) {
 
       DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) node.getChildAt(i);
       if (childNode.getChildCount() > 0) {
-        backupTree(list, childNode);
+//        System.out.println("===Drill deeper");
+        backupTree(out, childNode);
       } else {
 //        System.out.println(childNode.toString());
-        if (((String)node.getUserObject()).equals("Root")) 
-          list.add(new Pair(childNode.toString()));
-        else
-          list.add(new Pair(node.toString(), childNode.toString()));
+        child = ((TreeItem)childNode.getUserObject());
+//        System.out.println("Child: " + child.toDebugString());
+        if (item.equals(rootItem)) {
+          out.writeObject(child.getKey());
+          out.writeObject(child.getEnum());
+          out.writeObject("*");
+//          System.out.println("===Page Item written");
+        } else {
+          out.writeObject(item.getKey());
+          out.writeObject(item.getEnum());
+          out.writeObject(child.getKey());
+          out.writeObject(child.getEnum());
+//          System.out.println("===Parent<->Child written");
+        }
       }
     }
+
   }
 
   /**
@@ -686,26 +772,24 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @return the <code>String</code> object
    */
   public String backup() {
+
     try {
 //      System.out.println(">>>>tree backup");
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ObjectOutputStream out = new ObjectOutputStream(baos);
-      List<Pair> list = new ArrayList<Pair>();
-      backupTree(list, root);
       // now that we have our backup list we need to write it to our stream
-      int nodeCount = list.size();
-      out.writeInt(nodeCount);
-      for(Pair p : list) {
-        out.writeObject(p.getParent());
-        out.writeObject(p.getChild());
-      }
+      int nodeCount = getNumberOfNodes(treeModel)-1; // don't include the root
+//      System.out.println("Node count: " + nodeCount);
+      out.writeInt(nodeCount); 
+      backupTree(out, root);
       out.close();
       return Base64.getEncoder().encodeToString(baos.toByteArray());
     } catch (IOException e) {
-      System.out.print("IOException occurred." + e.toString());
+//      System.out.print("IOException occurred." + e.toString());
       e.printStackTrace();
       return "";
     }
+
   }
 
   /**
@@ -720,17 +804,25 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    */
   private void restoreTree(ObjectInputStream in) 
       throws IOException, ClassNotFoundException {
-
+//    System.out.println(">>>>tree restore");
     int nodeCount = in.readInt();
-    Pair p = new Pair();
+//    System.out.println("Node count: " + nodeCount);
+    String parentKey;
+    String parentEnum;
+    String childKey;
+    String childEnum;
     for (int i=0; i<nodeCount; i++) {
-      p.setParent((String)in.readObject());
-      p.setChild((String)in.readObject());
-      if (p.getChild().equals("*")) 
-        addPage(p.getParent());
-      else
-        addWidget(p.getParent(), p.getChild());
+      parentKey=(String)in.readObject();
+      parentEnum=(String)in.readObject();
+      childKey=(String)in.readObject();
+      if (childKey.equals("*")) {
+        addPage(parentKey, parentEnum);
+      } else {
+        childEnum=(String)in.readObject();
+        addWidget(parentKey, parentEnum, childKey, childEnum);
+      }
     }
+
   }
 
   /**
@@ -740,6 +832,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    *          the state backup string
    */
   public void restore(String state) {
+
     try {
 //      System.out.println("tree restore>>>");
       byte[] data = Base64.getDecoder().decode(state);
@@ -749,124 +842,13 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       in.close();
       repaint();
     } catch (ClassNotFoundException e) {
-      System.out.print("ClassNotFoundException occurred.");
+//      System.out.print("ClassNotFoundException occurred.");
       e.printStackTrace();
     } catch (IOException e) {
-      System.out.print("IOException occurred." + e.toString());
+//      System.out.print("IOException occurred." + e.toString());
       e.printStackTrace();
     }
+
   }
 
-  /**
-   * The Class Pair used to store widget parent and child relationship.
-   */
-  private class Pair {
-    
-    /** The parent. */
-    String parent;
-    
-    /** The child. */
-    String child;
-
-    /**
-     * Instantiates a new pair.
-     */
-    Pair() {
-      
-    };
-    
-    /**
-     * Instantiates a new pair.
-     *
-     * @param parent
-     *          the parent
-     */
-    Pair(String parent) {
-      this.parent = parent;
-      this.child = "*";
-    }
-
-    /**
-     * Instantiates a new pair.
-     *
-     * @param parent
-     *          the parent
-     * @param child
-     *          the child
-     */
-    Pair(String parent, String child) {
-      this.parent = parent;
-      this.child = child;
-    }
-
-    /**
-     * Gets the parent.
-     *
-     * @return the parent
-     */
-    private String getParent() {
-      return parent;
-    }
-    
-    /**
-     * Sets the parent.
-     *
-     * @param parent
-     *          the new parent
-     */
-    private void setParent(String parent) {
-      this.parent = parent;
-    }
-
-    /**
-     * Gets the child.
-     *
-     * @return the child
-     */
-    private String getChild() {
-      return child;
-    }
-
-    /**
-     * Sets the child.
-     *
-     * @param child
-     *          the new child
-     */
-    private void setChild(String child) {
-      this.child = child;
-    }
-
-    /**
-     * toString
-     *
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-      if (getChild().equals("*"))
-        return String.format("%s",getParent());
-      else
-        return String.format("%s->%s",getParent(),getChild());
-    }
-  }
-
-  @Override
-  public void updateEvent(MsgEvent e) {
-//    System.out.println("TreeView: " + e.toString());
-    if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE) {
-      DefaultMutableTreeNode w = findNode(e.message);
-      if (w != null) {
-        SelectWidgetEnum = e.message;
-        TreePath path = new TreePath(w.getPath());
-        tree.setSelectionPath(path);
-        tree.scrollPathToVisible(path);
-        repaint();
-      }
-    } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
-      tree.clearSelection();
-      scrollPane.repaint();
-    } 
-  }
-  
 }

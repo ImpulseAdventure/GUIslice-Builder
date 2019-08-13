@@ -28,46 +28,61 @@ package builder;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-import builder.common.CommonUtil;
-import builder.common.TestException;
-import builder.controller.CodeGenerator;
+import builder.common.CommonUtils;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
+import builder.models.GeneralModel;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
-import builder.views.PagePane;
-import builder.views.ToolBar;
-import builder.views.Toolbox;
+import builder.views.Ribbon;
 import builder.views.TreeView;
+
+import org.pushingpixels.substance.api.skin.AutumnSkin;
+import org.pushingpixels.substance.api.skin.BusinessBlackSteelSkin;
+import org.pushingpixels.substance.api.skin.BusinessBlueSteelSkin;
+import org.pushingpixels.substance.api.skin.ChallengerDeepSkin;
+import org.pushingpixels.substance.api.skin.CremeCoffeeSkin;
+import org.pushingpixels.substance.api.skin.DustSkin;
+import org.pushingpixels.substance.api.skin.GraphiteAquaSkin;
+import org.pushingpixels.substance.api.skin.MarinerSkin;
+import org.pushingpixels.substance.api.skin.MistAquaSkin;
+import org.pushingpixels.substance.api.skin.OfficeBlack2007Skin;
+import org.pushingpixels.substance.api.skin.OfficeBlue2007Skin;
+import org.pushingpixels.substance.api.skin.OfficeSilver2007Skin;
+import org.pushingpixels.substance.api.skin.SaharaSkin;
+
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 /**
  * GUIsliceBuilder is the main class of the application.
@@ -99,8 +114,11 @@ public class Builder  extends JDesktopPane {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
   
-  /** The Constant VERSION_NO. */
-  public static final String VERSION_NO = "1.01";
+  /** The Constant VERSION. */
+  public static final String VERSION = "0.13.0";
+  
+  /** The Constant VERSION_NO is for save and restore of project file. */
+  public static final String VERSION_NO = "-13";
   
   /** The Constant PROGRAM_TITLE. */
   public static final String PROGRAM_TITLE = "GUIslice Builder";
@@ -115,7 +133,15 @@ public class Builder  extends JDesktopPane {
   public static int CANVAS_HEIGHT;
   
   /** The frame. */
-  private JFrame frame;
+  private Ribbon frame;
+  
+  /** The status bar */
+  public JPanel statusBar;
+  public JLabel welcomeDate;
+  public static JLabel statusMessage;
+  
+  /** The status bar timer */
+  Timer timee;
   
   /** The user preferences. */
   private UserPrefsManager userPreferences;
@@ -123,21 +149,20 @@ public class Builder  extends JDesktopPane {
   /** The controller. */
   protected Controller controller;
   
-  /** The base pane. */
-  private JPanel basePane;
-  
-  /** The toolbar. */
-  private ToolBar toolbar;
-  
-  /** The toolbox. */
-  private Toolbox toolbox;
-  
-  /** The property views. */
-  private JPanel propertyViews;
-  
-  /** The test platform, if any. */
-  public static String testPlatform = null;
-  
+  /* Look and Feel */
+  public static final String LAF_ACRYL     = "com.jtattoo.plaf.acryl.AcrylLookAndFeel";
+  public static final String LAF_AERO      = "com.jtattoo.plaf.aero.AeroLookAndFeel";
+  public static final String LAF_ALUMINIUM = "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel";
+  public static final String LAF_BERNSTEIN = "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel";
+  public static final String LAF_FAST      = "com.jtattoo.plaf.fast.FastLookAndFeel";
+  public static final String LAF_GRAPHITE  = "com.jtattoo.plaf.graphite.GraphiteLookAndFeel";
+  public static final String LAF_HIFI      = "com.jtattoo.plaf.hifi.HiFiLookAndFeel";
+  public static final String LAF_LUNA      = "com.jtattoo.plaf.luna.LunaLookAndFeel";
+  public static final String LAF_MCWIN     = "com.jtattoo.plaf.mcwin.McWinLookAndFeel";
+  public static final String LAF_MINT      = "com.jtattoo.plaf.mint.MintLookAndFeel";
+  public static final String LAF_SMART     = "com.jtattoo.plaf.smart.SmartLookAndFeel";
+  public static final String LAF_TEXTURE   = "com.jtattoo.plaf.texture.TextureLookAndFeel";
+ 
   /** The boolean indicating running on a MacOS system */
   public static boolean isMAC = false;
   
@@ -149,14 +174,6 @@ public class Builder  extends JDesktopPane {
    */
   public static void main(String[] args) {
     Builder builder = new Builder();
-    if (args.length == 3) {
-      boolean result = builder.testCodeGen(args[0], args[1], args[2]); 
-      if (result)
-        System.exit(0);
-      else
-        System.exit(1);
-    }
-
     double version = Double.parseDouble(System.getProperty("java.specification.version"));
     if (version < 1.8) {
       String msg = String.format("Java 8 is needed to run. Yours is %.2f", version);
@@ -180,32 +197,6 @@ public class Builder  extends JDesktopPane {
   }
   
   /**
-   * testCodeGen used by JUnit tests.
-   *
-   * @param testFile
-   *          name of project file to read as a test case
-   * @param outputFile
-   *          name of output file to write as a test case
-   * @return true if successful
-   */
-  public boolean testCodeGen(String target, String testFile, String outputFile) {
-    try {
-      testPlatform = target;
-      String workDir = CommonUtil.getInstance().getWorkingDir();
-      String fileName = new String(workDir + testFile + ".prj");
-//      System.out.println("testCodeGen: " + fileName);
-      CodeGenerator cg = CodeGenerator.getTestInstance();
-      List<PagePane> pages = ReadTestCaseProject(fileName);
-      fileName = new String(workDir + outputFile);
-      cg.generateTestCode(testPlatform, fileName, pages);
-      return true;
-    } catch (Exception e) {
-      e.printStackTrace();
-      return false;
-    }
-  }
-  
-  /**
    * starts the builder program.
    */
   public void startUp() {
@@ -222,7 +213,7 @@ public class Builder  extends JDesktopPane {
             {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } else{
-                UIManager.setLookAndFeel(GeneralEditor.getInstance().getThemeClassName());
+                setLookAndFeel(GeneralEditor.getInstance().getThemeClassName());
             }            
             SwingUtilities.updateComponentTreeUI(frame);
           } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -242,12 +233,13 @@ public class Builder  extends JDesktopPane {
         }
     });
 
+    // NOTE: if running a debugger you might want to comment this thread out
     Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
       @Override
       public void uncaughtException(Thread t, Throwable e) {
           Calendar cal = Calendar.getInstance();
           SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-          String workingDir = CommonUtil.getInstance().getWorkingDir();
+          String workingDir = CommonUtils.getInstance().getWorkingDir();
           File directory = new File(workingDir + "logs");
           if(!directory.exists()){
             directory.mkdir();
@@ -281,26 +273,36 @@ public class Builder  extends JDesktopPane {
     // access our controllers
     PropManager propManager = PropManager.getInstance();
     controller = Controller.getInstance();
-    toolbox = new Toolbox();
     
     // create our menu bar
     MenuBar mb = new MenuBar();
-    mb.addListeners(controller);
-    
-    // create out tool bar
-    toolbar = ToolBar.getInstance();
-    toolbar.addListeners(controller);
-    toolbar.setFloatable(false);
 
+    // create the tree view
+    TreeView treeView = TreeView.getInstance();
 
     // create our main frame and add our panels
     String frameTitle = PROGRAM_TITLE + NEW_PROJECT;
-    frame = new JFrame(frameTitle);
-    frame.addComponentListener(new FrameListen());;
+    // create out ribbon
+    frame = Ribbon.getInstance();
+    
+    // setup our listeners
+    mb.addListeners(frame.getRibbonListener());
 
-    frame.setIconImage(new ImageIcon(Builder.class.getResource("/resources/icons/application.png")).getImage());
+    // set a listener to capture resize window events
+    frame.addComponentListener(new FrameListen());;
+    
+    frame.setTitle(frameTitle);
+    frame.setJMenuBar(mb);
+
+    frame.setUndecorated( true );
+    int x=1;// use x value from 1 to 8
+    frame.getRootPane().setWindowDecorationStyle( x);
+  
+    frame.setIconImage(new ImageIcon(Builder.class.getResource("/resources/icons/guislicebuilder.png")).getImage());
+
     // pass on top level frame to controller so it can change project names
     controller.setFrame(frame); 
+
     // trap the red X on our main frame
     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -308,42 +310,124 @@ public class Builder  extends JDesktopPane {
     List<ModelEditor> prefEditors = controller.initUserPrefs();
     userPreferences = new UserPrefsManager(frame, prefEditors);
     controller.setUserPrefs(userPreferences);
+    controller.initUI();  // now we can start the controller
     
-    frame.setJMenuBar(mb);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setLayout(new BorderLayout());
+//    JRibbonFrame defaults to BorderLayout so no need to set it.
+//    frame.setLayout(new BorderLayout());
+    // add our views to the frame
+    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+        controller,
+        propManager); 
+    frame.add(splitPane,BorderLayout.CENTER);
 
-    basePane = new JPanel(new BorderLayout());
-    basePane.add(toolbar,BorderLayout.NORTH);
-    basePane.add(toolbox, BorderLayout.WEST);
+//    frame.add(propManager, BorderLayout.EAST);
+//    frame.add(controller,BorderLayout.CENTER);
+    frame.add(treeView, BorderLayout.WEST);
     
-    // our property views are made up of one JTable for viewing and editing properties 
-    // and one JTree to view our object hierarchy and allow changing the drawing Z-Order.
-    propertyViews = new JPanel(new GridLayout(0,1));
-    propertyViews.add(propManager);
-    propertyViews.add(TreeView.getInstance());
+    // create our status bar
+    statusBar = new JPanel();
+    setLayout(new BorderLayout());//frame layout
+    statusMessage = new JLabel("GUIsliceBuilder Started!", JLabel.LEFT);
+    welcomeDate = new JLabel();
+    welcomeDate.setOpaque(true);//to set the color for jlabel
+    statusBar.setLayout(new BorderLayout());
+    statusBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+    statusBar.add(statusMessage, BorderLayout.WEST);
+    statusBar.add(welcomeDate, BorderLayout.EAST);
+    frame.add(statusBar, BorderLayout.SOUTH);
+    //display date time to status bar
+    timee = new Timer(1000, new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            java.util.Date now = new java.util.Date();
+            String ss = DateFormat.getDateTimeInstance().format(now);
+            welcomeDate.setText(ss);
+            welcomeDate.setToolTipText("Welcome, Today is " + ss);
+
+        }
+    });
+    timee.start();
     
-    basePane.add(propertyViews, BorderLayout.EAST);
-    basePane.add(controller,BorderLayout.CENTER);
-    frame.add(basePane);
-    
-    int width = Math.max(GeneralEditor.getInstance().getWidth()+600, 700);
-    int height = Math.max(GeneralEditor.getInstance().getHeight()+40, 700);
-    frame.setPreferredSize(new Dimension(width, height));
-    frame.pack();
     
     // setup our canvas offsets
     // NOTE: we can't use controller.getPanel().getSize()
-    // since its a scrollpane thats much larger than actual screen size
-    CANVAS_WIDTH = GeneralEditor.getInstance().getWidth()+205;
-    CANVAS_HEIGHT = GeneralEditor.getInstance().getHeight()+235;
-    Dimension canvasSz = new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT);
-    CommonUtil.getInstance().setWinOffsets(canvasSz,
-        GeneralEditor.getInstance().getWidth(),
-        GeneralEditor.getInstance().getHeight());
+    // since it's scrollpane is much larger than actual screen size
+    CANVAS_WIDTH = GeneralEditor.getInstance().getWidth()+160;
+    CANVAS_HEIGHT = GeneralEditor.getInstance().getHeight()+100;
+
+    int width = Math.max(GeneralEditor.getInstance().getWidth()+716, 1040);
+    int height = Math.max(GeneralEditor.getInstance().getHeight()+360, 675);
+    frame.setPreferredSize(new Dimension(width, height));
+    frame.pack();
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
+    postStatusMsg("GUIsliceBuilder Started!");
   }
+  
+  public static void postStatusMsg(String message) {
+    statusMessage.setText(message);
+    Timer timer = new Timer(10000, new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        statusMessage.setText("");
+      }
+    });
+    timer.setRepeats(false); // Only execute once
+    timer.start(); // Go go go!
+  }
+  
+  public static void setLookAndFeel(String selectedLaf) {
+    try {
+      switch(selectedLaf) {
+        case GeneralModel.LAF_AUTUMNSKIN:
+          SubstanceLookAndFeel.setSkin(new AutumnSkin());
+          break;
+        case GeneralModel.LAF_BUSINESSBLACKSTEELSKIN:
+          SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
+          break;
+        case GeneralModel.LAF_BUSINESSBLUESTEELSKIN:
+          SubstanceLookAndFeel.setSkin(new BusinessBlueSteelSkin());
+          break;
+        case GeneralModel.LAF_CHALLENGERDEEPSKIN:
+          SubstanceLookAndFeel.setSkin(new ChallengerDeepSkin());
+          break;
+        case GeneralModel.LAF_CREMECOFFEESKIN:
+          SubstanceLookAndFeel.setSkin(new CremeCoffeeSkin());
+          break;
+        case GeneralModel.LAF_DUSTSKIN:
+          SubstanceLookAndFeel.setSkin(new DustSkin());
+          break;
+        case GeneralModel.LAF_GRAPHITEAQUASKIN:
+          SubstanceLookAndFeel.setSkin(new GraphiteAquaSkin());
+          break;
+        case GeneralModel.LAF_MARINERSKIN:
+          SubstanceLookAndFeel.setSkin(new MarinerSkin());
+          break;
+        case GeneralModel.LAF_MISTAQUASKIN:
+          SubstanceLookAndFeel.setSkin(new MistAquaSkin());
+          break;
+        case GeneralModel.LAF_OFFICEBLACK2007SKIN:
+          SubstanceLookAndFeel.setSkin(new OfficeBlack2007Skin());
+          break;
+        case GeneralModel.LAF_OFFICEBLUE2007SKIN:
+          SubstanceLookAndFeel.setSkin(new OfficeBlue2007Skin());
+          break;
+        case GeneralModel.LAF_OFFICESILVER2007SKIN:
+          SubstanceLookAndFeel.setSkin(new OfficeSilver2007Skin());
+          break;
+        case GeneralModel.LAF_SAHARASKIN:
+          SubstanceLookAndFeel.setSkin(new SaharaSkin());
+          break;
+        default:
+          UIManager.setLookAndFeel(selectedLaf);
+          break;
+      }
+    }
+    catch (Exception ex) {
+        ex.printStackTrace();
+    }
+  } // end setLookAndFeel
   
   /**
    * The Class FrameListen traps the resize frame event so we can
@@ -373,11 +457,7 @@ public class Builder  extends JDesktopPane {
      * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
      */
     public void componentResized(ComponentEvent arg0) {
-      MsgEvent ev = new MsgEvent();
-      ev.message ="";
-      ev.parent = "";
-      ev.code = MsgEvent.CANVAS_MODEL_CHANGE;
-      MsgBoard.getInstance().publish(ev);
+      MsgBoard.getInstance().sendEvent("Builder",MsgEvent.CANVAS_MODEL_CHANGE);
     }
     
     /**
@@ -388,57 +468,5 @@ public class Builder  extends JDesktopPane {
     public void componentShown(ComponentEvent arg0) {
 
     }
-  }
-  
-  /**
-   * Read test case project.
-   *
-   * @param testFile
-   *          the test file
-   * @return list of pages
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws TestException
-   *           Signals that an test exception has occurred.
-   * @throws ClassNotFoundException
-   *           Signals that an class exception has occurred.
-   */
-  private List<PagePane> ReadTestCaseProject(String testFile) 
-      throws IOException, TestException, ClassNotFoundException {
-    ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(testFile)));
-    String pageKey = null;
-    String pageEnum = null;
-//    System.out.println("test project: " + testFile);
-    List<PagePane> pages = new ArrayList<PagePane>();
-    PagePane p = null;
-    // Read in version number
-    // Read in version number
-    String strVersion = (String)in.readObject();
-    if (strVersion.equals("1.01")) {
-      // read in target platform
-      String target = (String)in.readObject();
-      if (!testPlatform.equals(target)) {
-        in.close();
-        throw new TestException("Project file's target does not match expected platform");
-      }
-    } else {
-      in.close();
-      throw new TestException("Corrupted Test Project");
-    }
-    @SuppressWarnings("unused")
-    String currentPageKey = (String)in.readObject();
-    int cnt = in.readInt();
-//      System.out.println("pages: " + cnt);
-    for (int i=0; i<cnt; i++) {
-      pageKey = (String)in.readObject();
-//        System.out.println("restore page: " + pageKey);
-      pageEnum = (String)in.readObject();
-//      System.out.println("restore page: " + pageEnum);
-      p = new PagePane(pageKey, pageEnum);
-      p.restoreForTest((String)in.readObject());
-      pages.add(p);
-    }
-    in.close();
-    return pages;
   }
 }

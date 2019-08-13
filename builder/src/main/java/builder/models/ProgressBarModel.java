@@ -29,14 +29,8 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.table.TableCellEditor;
-
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,74 +47,37 @@ public class ProgressBarModel extends WidgetModel {
   /** The Constant for gslc_tsElemRef* m_pElementRef name. */
   public static final String ELEMENTREF_NAME = "m_pElemProgress";
   
-  /** The Constant PROP_ELEMENTREF. */
-  static private final int PROP_ELEMENTREF        = 6;
-  
-  /** The Constant PROP_VERTICAL. */
+  /** The Constant ELEMENTREF_NAME. */
   static private final int PROP_VERTICAL          =7;
-  
-  /** The Constant PROP_STYLE. */
-  static private final int PROP_STYLE             =8;
-  
-  /** The Constant PROP_MIN. */
-  static private final int PROP_MIN               =9;
-  
-  /** The Constant PROP_MAX. */
-  static private final int PROP_MAX               =10;
-  
-  /** The Constant PROP_CURVALUE. */
-  static private final int PROP_CURVALUE          =11;
-  
-  /** The Constant PROP_DIVISIONS. */
-  static private final int PROP_DIVISIONS         =12;
-  
-  /** The Constant PROP_TICKSZ. */
-  static private final int PROP_TICKSZ            =13;
-  
-  /** The Constant PROP_TICK_COLOR. */
-  static private final int PROP_TICK_COLOR        =14;
-  
-  /** The Constant PROP_INDICATOR_SIZE. */
-  static private final int PROP_INDICATOR_SZ      =15;
-  
-  /** The Constant PROP_INDICATOR_SIZE. */
-  static private final int PROP_INDICATOR_TIP_SZ  =16;
-
-  /** The Constant PROP_INDICATOR_FILL. */
-  static private final int PROP_INDICATOR_FILL    =17;
-  
-  /** The Constant PROP_GAUGE_COLOR. */
-  static private final int PROP_GAUGE_COLOR       =18;
-  
-  /** The Constant PROP_DEFAULT_COLORS. */
-  static private final int PROP_DEFAULT_COLORS    =19;
-  
-  /** The Constant PROP_FRAME_COLOR. */
-  static private final int PROP_FRAME_COLOR       =20;
-  
-  /** The Constant PROP_FILL_COLOR. */
-  static private final int PROP_FILL_COLOR        =21;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
-  static private final int PROP_SELECTED_COLOR    =22;
+  static private final int PROP_MIN               =8;
+  static private final int PROP_MAX               =9;
+  static private final int PROP_CURVALUE          =10;
+  static private final int PROP_GAUGE_COLOR       =11;
+  static private final int PROP_USE_FLASH         =12;
+  static private final int PROP_DEFAULT_COLORS    =13;
+  static private final int PROP_FRAME_COLOR       =14;
+  static private final int PROP_FILL_COLOR        =15;
+  static private final int PROP_SELECTED_COLOR    =16;
     
-  /** The cb style. */
-  JComboBox<String> cbStyle;
+  /** The Property Defaults */
+  static public  final Boolean DEF_VERTICAL          = Boolean.FALSE;
+  static public  final Integer DEF_MIN               = Integer.valueOf(0);
+  static public  final Integer DEF_MAX               = Integer.valueOf(100);
+  static public  final Integer DEF_CURVALUE          = Integer.valueOf(0);
+  static public  final Color   DEF_GAUGE_COLOR       = Color.GREEN;
+  static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
+  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
+  static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
+  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
+  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
   
-  /** The style cell editor. */
-  DefaultCellEditor styleCellEditor;
-
-  /** The Constant DEF_WIDTH. */
   static private final int DEF_WIDTH = 50;
-  
-  /** The Constant DEF_HEIGHT. */
-  static private final int DEF_HEIGHT= 10;
-  
+  static private final int DEF_HEIGHT= 12;
+
   /**
    * Instantiates a new progress bar model.
    */
   public ProgressBarModel() {
-    cf = ColorFactory.getInstance();
     initProperties();
   }
   
@@ -130,112 +87,37 @@ public class ProgressBarModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.PROGRESSBAR;
-    data = new Object[23][5];
+    data = new Object[17][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
-    initProp(PROP_ELEMENTREF, String.class, "TXT-206", Boolean.FALSE,"ElementRef","");
-    initProp(PROP_VERTICAL, Boolean.class, "BAR-100", Boolean.FALSE,"Vertical?",Boolean.FALSE);
-    initProp(PROP_STYLE, String.class, "BAR-105", Boolean.FALSE,"Graph Style","Bar");
+    initProp(PROP_VERTICAL, Boolean.class, "BAR-100", Boolean.FALSE,"Vertical?",DEF_VERTICAL);
 
-    initProp(PROP_MIN, Integer.class, "BAR-102", Boolean.FALSE,"Minimum Value",Integer.valueOf(0));
-    initProp(PROP_MAX, Integer.class, "BAR-103", Boolean.FALSE,"Maximum Value",Integer.valueOf(100));
-    initProp(PROP_CURVALUE, Integer.class, "BAR-104", Boolean.FALSE,"Starting Value",Integer.valueOf(0));
+    initProp(PROP_MIN, Integer.class, "BAR-102", Boolean.FALSE,"Minimum Value",DEF_MIN);
+    initProp(PROP_MAX, Integer.class, "BAR-103", Boolean.FALSE,"Maximum Value",DEF_MAX);
+    initProp(PROP_CURVALUE, Integer.class, "BAR-104", Boolean.FALSE,"Starting Value",DEF_CURVALUE);
 
-    initProp(PROP_DIVISIONS, Integer.class, "BAR-106", Boolean.TRUE,"Tick Divisions",Integer.valueOf(8));
-    initProp(PROP_TICKSZ, Integer.class, "BAR-107", Boolean.TRUE,"Tick Size",Integer.valueOf(5));
-    initProp(PROP_TICK_COLOR, Color.class, "BAR-108", Boolean.TRUE,"Tick Color",Color.GRAY);
-    initProp(PROP_INDICATOR_SZ, Integer.class, "BAR-109", Boolean.TRUE,"Indicator Length",Integer.valueOf(10));
-    initProp(PROP_INDICATOR_TIP_SZ, Integer.class, "BAR-110", Boolean.TRUE,"Indicator Tip Size",Integer.valueOf(3));
-    initProp(PROP_INDICATOR_FILL, Boolean.class, "BAR-111", Boolean.TRUE,"Indicator Fill?",Boolean.FALSE);
+    initProp(PROP_GAUGE_COLOR, Color.class, "COL-308", Boolean.FALSE,"Gauge Indicator Color",DEF_GAUGE_COLOR);
 
-    initProp(PROP_GAUGE_COLOR, Color.class, "COL-308", Boolean.FALSE,"Gauge Indicator Color",Color.GREEN);
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",Boolean.TRUE);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",cf.getDefFrameCol());
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",cf.getDefFillCol());
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",cf.getDefGlowCol());
-
-    cbStyle = new JComboBox<String>();
-    cbStyle.addItem("Bar");
-    cbStyle.addItem("Radial");
-    cbStyle.addItem("Ramp");
-    styleCellEditor = new DefaultCellEditor(cbStyle);
+    initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
+    
+    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
 
   }
   
   /**
-   * Gets the element ref.
+   * Use Flash API.
    *
-   * @return the element ref
+   * @return <code>true</code>, if flash is to be used
    */
-  public String getElementRef() {
-    return (String) data[PROP_ELEMENTREF][PROP_VAL_VALUE];
+  @Override
+  public boolean useFlash() {
+    return ((Boolean) data[PROP_USE_FLASH][PROP_VAL_VALUE]).booleanValue();
   }
   
-  /**
-   * Sets the element ref.
-   *
-   * @param s
-   *          the new element ref
-   */
-  public void setElementRef(String s) { 
-    shortcutValue(s, PROP_ELEMENTREF);
-  }
-  
-  /**
-   * Gets the divisions.
-   *
-   * @return the divisions
-   */
-  public int getDivisions() {
-    return (((Integer) (data[PROP_DIVISIONS][PROP_VAL_VALUE])).intValue());
-  }
-  
-  /**
-   * Gets the tick size.
-   *
-   * @return the tick size
-   */
-  public int getTickSize() {
-    return (((Integer) (data[PROP_TICKSZ][PROP_VAL_VALUE])).intValue());
-  }
-
-  /**
-   * Gets the tick color.
-   *
-   * @return the tick color
-   */
-  public Color getTickColor() {
-    return (((Color) data[PROP_TICK_COLOR][PROP_VAL_VALUE]));
-  }
-
-  /**
-   * Gets the indicator size.
-   *
-   * @return the indicator size
-   */
-  public int getIndicatorSize() {
-    return (((Integer) (data[PROP_INDICATOR_SZ][PROP_VAL_VALUE])).intValue());
-  }
-
-  /**
-   * Gets the indicator tip size.
-   *
-   * @return the indicator tip size
-   */
-  public int getIndicatorTipSize() {
-    return (((Integer) (data[PROP_INDICATOR_TIP_SZ][PROP_VAL_VALUE])).intValue());
-  }
-
-  /**
-   * Checks if is indicator fill.
-   *
-   * @return true, if is indicator fill
-   */
-  public boolean isIndicatorFill() {
-    return ((Boolean) data[PROP_INDICATOR_FILL][PROP_VAL_VALUE]).booleanValue();
-  }
-
   /**
    * Gets the indicator color.
    *
@@ -252,27 +134,6 @@ public class ProgressBarModel extends WidgetModel {
    */
   public boolean isVertical() {
     return ((Boolean) data[PROP_VERTICAL][PROP_VAL_VALUE]).booleanValue();
-  }
-
-  /**
-   * Gets the Gauge style.
-   *
-   * @return the Gauge style
-   */
-  public String getGaugeStyle() {
-    return (String) data[PROP_STYLE][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * getEditorAt
-   *
-   * @see builder.models.WidgetModel#getEditorAt(int)
-   */
-  @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_STYLE)
-      return styleCellEditor;
-    return null;
   }
 
   /**
@@ -365,38 +226,12 @@ public class ProgressBarModel extends WidgetModel {
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
-    if (row == PROP_STYLE) {
-      if (getGaugeStyle().equals("Radial")) {
-        data[PROP_DIVISIONS][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_TICKSZ][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_TICK_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_INDICATOR_SZ][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_INDICATOR_TIP_SZ][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_INDICATOR_FILL][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_VERTICAL][PROP_VAL_READONLY]=Boolean.TRUE; 
-      } else {
-        data[PROP_DIVISIONS][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_TICKSZ][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_TICK_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_INDICATOR_SZ][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_INDICATOR_TIP_SZ][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_INDICATOR_FILL][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_VERTICAL][PROP_VAL_READONLY]=Boolean.FALSE; 
-      }
-      fireTableCellUpdated(PROP_DIVISIONS, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_TICKSZ, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_TICK_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_INDICATOR_SZ, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_INDICATOR_TIP_SZ, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_INDICATOR_FILL, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_VERTICAL, COLUMN_VALUE);
-    }
     if (row == PROP_DEFAULT_COLORS) {
       // check for switching back and forth
       if (useDefaultColors()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=cf.getDefFrameCol(); 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=cf.getDefFillCol();
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=cf.getDefGlowCol(); 
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
         data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
         data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
@@ -408,13 +243,15 @@ public class ProgressBarModel extends WidgetModel {
       fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
       fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
       fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }     
-    if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
     }
+    
+    if (bSendEvents) {
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
   }
 
   /**
@@ -434,68 +271,7 @@ public class ProgressBarModel extends WidgetModel {
   @Override
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
-//  System.out.println("WM readModel() " + getKey());
-    if (widgetType != null)
-      this.widgetType = widgetType;
-    bSendEvents = in.readBoolean();
-//  System.out.println("bSendEvents: " + bSendEvents);
-    int rows = in.readInt();
-    String metaID = null;
-    Object objectData = null;
-    int row;
-//  System.out.println("WM rows: " + rows);
-    boolean bNeedFix = false;
-    for (int i=0; i<rows; i++) {
-      metaID = (String)in.readObject();
-      objectData = in.readObject();
-      // work-around fix for bug in beta release where metaID's BAR-100, BAR-101 were duplicated
-      // and BAR-102 was miss-assigned
-      if (metaID.equals("BAR-102") && bNeedFix) {
-        metaID = "BAR-104";
-        bNeedFix = false;
-      }
-      if (metaID.equals("BAR-100") && objectData instanceof Integer) {
-        metaID = "BAR-102";
-        bNeedFix = true;
-      }
-      if (metaID.equals("BAR-101") && objectData instanceof Integer) {
-        metaID = "BAR-103";
-      }
-      // now that we remapped them we need to do another converting isRamp to our cbStyle combo
-      if (metaID.equals("BAR-101") && objectData instanceof Boolean) {
-        if (((Boolean)objectData).booleanValue()) {
-          // convert isRamp to "Ramp"
-          metaID = "BAR-105";
-          objectData = (String)"Ramp";
-        }
-          
-      }
-      row = super.mapMetaIDtoProperty(metaID);
-      if (row >= 0) {
-        data[row][PROP_VAL_VALUE] = objectData;
-/*
-   System.out.println(data[row][PROP_VAL_NAME].toString() + ": " + data[row][PROP_VAL_VALUE].toString()
-         + " mapped to row " + row);
-*/   
-      }
-    }
-    if (getGaugeStyle().equals("Radial")) {
-      data[PROP_DIVISIONS][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_TICKSZ][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_TICK_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_INDICATOR_SZ][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_INDICATOR_TIP_SZ][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_INDICATOR_FILL][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_VERTICAL][PROP_VAL_READONLY]=Boolean.TRUE; 
-    } else {
-      data[PROP_DIVISIONS][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_TICKSZ][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_TICK_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_INDICATOR_SZ][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_INDICATOR_TIP_SZ][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_INDICATOR_FILL][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_VERTICAL][PROP_VAL_READONLY]=Boolean.FALSE; 
-    }
+    super.readModel(in,  widgetType);
     if (useDefaultColors()) {
       data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
       data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
@@ -504,19 +280,6 @@ public class ProgressBarModel extends WidgetModel {
       data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
       data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-    }
-    // upgrade to beta release where previously ElementRef was empty
-    if (getElementRef().equals("")) {
-      int n = 0;
-      String strKey = "";
-      String strCount = ""; 
-      String ref = ""; 
-      ref = ELEMENTREF_NAME;
-      strKey = getKey();
-      n = strKey.indexOf("$");
-      strCount = strKey.substring(n+1, strKey.length());
-      ref = ref + strCount;
-      setElementRef(ref);
     }
   }
 

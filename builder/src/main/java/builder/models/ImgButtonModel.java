@@ -37,11 +37,11 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
+//import builder.tables.ImageCellEditor;
 import builder.prefs.GeneralEditor;
 
 /**
@@ -55,58 +55,42 @@ public class ImgButtonModel extends WidgetModel {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
   
-  /** The Constant PROP_IMAGE. */
-  static private final int PROP_IMAGE        =6;
-  
-  /** The Constant PROP_IMAGE_SEL. */
-  static private final int PROP_IMAGE_SEL    =7;
-  
-  /** The Constant PROP_DEFINE. */
-  static private final int PROP_DEFINE       =8;
-  
-  /** The Constant PROP_DEFINE_SEL. */
-  static private final int PROP_DEFINE_SEL   =9;
-  
-  /** The Constant PROP_EXTERN. */
-  static private final int PROP_EXTERN       =10;
-  
-  /** The Constant PROP_MEMORY PROGMEM or SRAM. */
-  static private final int PROP_MEMORY       =11;
+  /** The Property Index Constants. */
+  static private final int PROP_IMAGE           =  7;
+  static private final int PROP_DEFINE          =  8;
+  static private final int PROP_EXTERN          =  9;
+  static private final int PROP_MEMORY          = 10;
+  static private final int PROP_IMAGE_SEL       = 11;
+  static private final int PROP_DEFINE_SEL      = 12;
+  static private final int PROP_EXTERN_SEL      = 13;
+  static private final int PROP_MEMORY_SEL      = 14;
+  static private final int PROP_FORMAT          = 15;
+  static private final int PROP_TRANSPARENCY    = 16;
+  static private final int PROP_CHANGE_PAGE     = 17;
+  static private final int PROP_POPUP_SHOW      = 18;
+  static private final int PROP_PAGE            = 19;
+  static private final int PROP_POPUP_HIDE      = 20;
+  static private final int PROP_FRAME_EN        = 21;
+  static private final int PROP_FRAME_COLOR     = 22;
 
-  /** The Constant PROP_EXTERN_SEL. */
-  static private final int PROP_EXTERN_SEL   =12;
+  /** The Property Defaults */
+  static public  final String  DEF_IMAGE             = "";
+  static public  final String  DEF_DEFINE            = "";
+  static public  final String  DEF_EXTERN            = "";
+  static public  final String  DEF_MEMORY            = "";
+  static public  final String  DEF_IMAGE_SEL         = "";
+  static public  final String  DEF_DEFINE_SEL        = "";
+  static public  final String  DEF_EXTERN_SEL        = "";
+  static public  final String  DEF_MEMORY_SEL        = "";
+  static public  final String  DEF_FORMAT            = "";
+  static public  final Boolean DEF_TRANSPARENCY      = Boolean.FALSE;
+  static public  final Boolean DEF_CHANGE_PAGE       = Boolean.FALSE;
+  static public  final Boolean DEF_POPUP_SHOW        = Boolean.FALSE;
+  static public  final String  DEF_PAGE              = "";
+  static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
+  static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
+  static public  final Color   DEF_FRAME_COLOR       = Color.WHITE;
   
-  /** The Constant PROP_MEMORY_SEL PROGMEM or SRAM. */
-  static private final int PROP_MEMORY_SEL   =13;
-
-  /** The Constant PROP_FORMAT. */
-  static private final int PROP_FORMAT       =14;
-  
-  /** The Constant PROP_FORMAT. */
-  static private final int PROP_TRANSPARENCY =15;
-
-  /** The Constant PROP_CHANGE_PAGE. */
-  static private final int PROP_CHANGE_PAGE  =16;
-  
-  /** The Constant PROP_PAGE. */
-  static private final int PROP_PAGE         =17;
-  
-  /** The Constant PROP_ELEMENTREF. */
-  static private final int PROP_ELEMENTREF   =18;
-  
-  /** The Constant PROP_DEFAULT_COLORS. */
-  static private final int PROP_DEFAULT_COLORS    = 19;
-  
-  /** The Constant PROP_FRAME_COLOR. */
-  static private final int PROP_FRAME_COLOR       = 20;
-  
-  /** The Constant PROP_FILL_COLOR. */
-  static private final int PROP_FILL_COLOR        = 21;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
-  static private final int PROP_SELECTED_COLOR    = 22;
-
-
   /** The general model. */
   private GeneralModel generalModel;
   
@@ -122,13 +106,30 @@ public class ImgButtonModel extends WidgetModel {
   /** The align cell editor. */
   DefaultCellEditor memoryCellEditor;
 
+  /** The cb format. */
+  JComboBox<String> cbFormat;
+  
+  /** The format cell editor. */
+  DefaultCellEditor formatCellEditor;
+
+  /** memory Constants */
+  public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
+  public  final static String SRC_PROG = "gslc_GetImageFromProg((const unsigned char*)";
+  public  final static String SRC_RAM  = "gslc_GetImageFromRam((unsigned char*)";
+  public  final static String SRC_FILE = "gslc_GetImageFromFile(";
+
+  /** format Constants */
+  public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
+  public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
+  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
+  
   /**
    * Instantiates a new img button model.
    */
   public ImgButtonModel() {
     generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
     initProperties();
-    initComboBoxes();
+    initEditors();
   }
   
   /**
@@ -139,44 +140,53 @@ public class ImgButtonModel extends WidgetModel {
     widgetType = EnumFactory.IMAGEBUTTON;
     data = new Object[23][5];
     
-    initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",widgetType);
-    initProp(PROP_X, Integer.class, "COM-003", Boolean.FALSE,"X",Integer.valueOf(0));
-    initProp(PROP_Y, Integer.class, "COM-004", Boolean.FALSE,"Y",Integer.valueOf(0));
-    initProp(PROP_WIDTH, Integer.class, "COM-005", Boolean.TRUE,"Width",Integer.valueOf(0));
-    initProp(PROP_HEIGHT, Integer.class, "COM-006", Boolean.TRUE,"Height",Integer.valueOf(0));
+    initCommonProps(0, 0);
     
-    initProp(PROP_IMAGE, String.class, "IBTN-100", Boolean.TRUE,"Image","");
-    initProp(PROP_IMAGE_SEL, String.class, "IBTN-101", Boolean.TRUE,"Image When Selected","");
-    initProp(PROP_DEFINE, String.class, "IBTN-102", Boolean.FALSE,"Image #defines","");
-    initProp(PROP_DEFINE_SEL, String.class, "IBTN-103", Boolean.FALSE,"Select Image #defines","");
-    initProp(PROP_EXTERN, String.class, "IBTN-108", Boolean.TRUE,"Image Extern","");
-    initProp(PROP_MEMORY, String.class, "IBTN-110", Boolean.TRUE,"Image Memory","");
-    initProp(PROP_EXTERN_SEL, String.class, "IBTN-109", Boolean.TRUE,"Select Image Extern","");
-    initProp(PROP_MEMORY_SEL, String.class, "IBTN-111", Boolean.TRUE,"Select Image Memory","");
-    initProp(PROP_FORMAT, String.class, "IBTN-104", Boolean.TRUE,"Image Format","");
-    initProp(PROP_TRANSPARENCY, Boolean.class, "IBTN-107", Boolean.FALSE,"Transparent?",Boolean.FALSE);
-    initProp(PROP_CHANGE_PAGE, Boolean.class, "IBTN-105", Boolean.FALSE,"Change Page Funct?",Boolean.FALSE);
-    initProp(PROP_PAGE, String.class, "IBNT-106", Boolean.TRUE,"Jump to Page Enum","");
-    initProp(PROP_ELEMENTREF, String.class, "TXT-206", Boolean.FALSE,"ElementRef","");
+    imageSelected = null;
+    
+    // can't change height and width of image without scaling support
+    data[PROP_WIDTH][PROP_VAL_READONLY]=Boolean.TRUE;
+    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
 
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",Boolean.TRUE);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",Color.WHITE);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",Color.WHITE);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",Color.WHITE);
+    initProp(PROP_IMAGE, String.class, "IBTN-100", Boolean.TRUE,"Image",DEF_IMAGE);
+    initProp(PROP_DEFINE, String.class, "IBTN-102", Boolean.FALSE,"Image #defines",DEF_DEFINE);
+    initProp(PROP_EXTERN, String.class, "IBTN-108", Boolean.TRUE,"Image Extern",DEF_EXTERN);
+    initProp(PROP_MEMORY, String.class, "IBTN-110", Boolean.FALSE,"Image Memory",DEF_MEMORY);
+
+    initProp(PROP_IMAGE_SEL, String.class, "IBTN-101", Boolean.TRUE,"Image When Selected",DEF_IMAGE_SEL);
+    initProp(PROP_DEFINE_SEL, String.class, "IBTN-103", Boolean.FALSE,"Image Select #defines",DEF_DEFINE_SEL);
+    initProp(PROP_EXTERN_SEL, String.class, "IBTN-109", Boolean.TRUE,"Image Select Extern",DEF_EXTERN_SEL);
+    initProp(PROP_MEMORY_SEL, String.class, "IBTN-113", Boolean.FALSE,"Image Select Memory",DEF_MEMORY_SEL);
+
+    initProp(PROP_FORMAT, String.class, "IBTN-104", Boolean.FALSE,"Image Format",DEF_FORMAT);
+    initProp(PROP_TRANSPARENCY, Boolean.class, "IBTN-107", Boolean.FALSE,"Transparent?",DEF_TRANSPARENCY);
+
+    initProp(PROP_CHANGE_PAGE, Boolean.class, "TBTN-100", Boolean.FALSE,"Jump to Page?",DEF_CHANGE_PAGE);
+    initProp(PROP_POPUP_SHOW, Boolean.class, "IBTN-105", Boolean.FALSE,"Show Popup Page?",DEF_POPUP_SHOW);
+    initProp(PROP_PAGE, String.class, "IBNT-106", Boolean.TRUE,"Jump/Popup Page Enum",DEF_PAGE);
+    initProp(PROP_POPUP_HIDE, Boolean.class, "TBTN-103", Boolean.FALSE,"Hide Popup Page?",DEF_POPUP_HIDE);
+
+    initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
 
   }
 
   /**
    * Initializes the comboboxes.
    */
-  private void initComboBoxes()
+  private void initEditors()
   {
     cbMemory = new JComboBox<String>();
-    cbMemory.addItem("PROGMEM");
-    cbMemory.addItem("SRAM");
-    cbMemory.addItem("");
+    cbMemory.addItem(SRC_SD);
+    cbMemory.addItem(SRC_FILE);
+    cbMemory.addItem(SRC_PROG);
+    cbMemory.addItem(SRC_RAM);
     memoryCellEditor = new DefaultCellEditor(cbMemory);
+    cbFormat = new JComboBox<String>();
+    cbFormat.addItem(FORMAT_BMP24);
+    cbFormat.addItem(FORMAT_BMP16);
+    cbFormat.addItem(FORMAT_RAW);
+    formatCellEditor = new DefaultCellEditor(cbFormat);
   }
   
   /**
@@ -186,20 +196,13 @@ public class ImgButtonModel extends WidgetModel {
    */
   @Override
   public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_MEMORY)
+    if (rowIndex == PROP_MEMORY || rowIndex == PROP_MEMORY_SEL)
       return memoryCellEditor;
+    if (rowIndex == PROP_FORMAT)
+      return formatCellEditor;
     return null;
   }
 
-  /**
-   * Gets the element ref.
-   *
-   * @return the element ref
-   */
-  public String getElementRef() {
-    return (String) data[PROP_ELEMENTREF][PROP_VAL_VALUE];
-  }
-  
   /**
    * Gets the extern name.
    *
@@ -309,39 +312,12 @@ public class ImgButtonModel extends WidgetModel {
   }
   
   /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return ((Boolean) data[PROP_DEFAULT_COLORS][PROP_VAL_VALUE]).booleanValue();
-  }
-  
-  /**
-   * Gets the fill color.
-   *
-   * @return the fill color
-   */
-  public Color getFillColor() {
-    return (((Color) data[PROP_FILL_COLOR][PROP_VAL_VALUE]));
-  }
-
-  /**
    * Gets the frame color.
    *
    * @return the frame color
    */
   public Color getFrameColor() {
     return (((Color) data[PROP_FRAME_COLOR][PROP_VAL_VALUE]));
-  }
-
-  /**
-   * Gets the selected color.
-   *
-   * @return the selected color
-   */
-  public Color getSelectedColor() {
-    return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
   }
 
   /**
@@ -360,41 +336,88 @@ public class ImgButtonModel extends WidgetModel {
     }
     fireTableCellUpdated(row, 1);
     if (row == PROP_CHANGE_PAGE) {
-      if (isChangePageFunct()) {
+      if (isChangePage()) {
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
       } else {
-        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
         data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
       }
       fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_SHOW, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
     }
-    if (row == PROP_CHANGE_PAGE) {
-      
-    }
-    if (row == PROP_DEFAULT_COLORS) {
-      // check for switching back and forth
-      if (useDefaultColors()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=Color.WHITE; 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=Color.WHITE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=Color.WHITE; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
+    if (row == PROP_POPUP_SHOW) {
+      if (isShowPopup()) {
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+      }
+      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_CHANGE_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
+    }
+    if (row == PROP_POPUP_HIDE) {
+      if (isHidePopup()) {
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
+      } else {
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+      }
+      fireTableCellUpdated(PROP_CHANGE_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_SHOW, COLUMN_VALUE);
+    }
+    if (row == PROP_FRAME_EN) {
+      if (isFrameEnabled()) {
+        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
+      } else {
+        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
       }
       fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }     
-    if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
     }
+    if (bSendEvents) {
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
+  }
+
+  /**
+   * Checks if is frame enabled.
+   *
+   * @return true, if is frame enabled
+   */
+  public boolean isFrameEnabled() {
+    return ((Boolean) data[PROP_FRAME_EN][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -402,8 +425,26 @@ public class ImgButtonModel extends WidgetModel {
    *
    * @return true, if is change page funct
    */
-  public boolean isChangePageFunct() {
+  public boolean isChangePage() {
     return ((Boolean) data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if is popup page funct.
+   *
+   * @return true, if is popup page funct
+   */
+  public boolean isShowPopup() {
+    return ((Boolean) data[PROP_POPUP_SHOW][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if is hide popup page funct.
+   *
+   * @return true, if is hide popup page funct
+   */
+  public boolean isHidePopup() {
+    return ((Boolean) data[PROP_POPUP_HIDE][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -442,7 +483,7 @@ public class ImgButtonModel extends WidgetModel {
       if (image != null) {
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
         setExternName(convert.getExternName());
-        data[PROP_MEMORY][PROP_VAL_VALUE] = "PROGMEM";
+        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }
@@ -460,6 +501,10 @@ public class ImgButtonModel extends WidgetModel {
         setImageFormat("GSLC_IMGREF_FMT_BMP16");
       else
         setImageFormat("GSLC_IMGREF_FMT_RAW1");
+      if (generalModel.getTarget().equals("linux"))
+        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+      else      
+        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
       // now construct a #define to use during code generation
       String fileName = file.getName();
       int n = fileName.indexOf(".bmp");
@@ -474,6 +519,16 @@ public class ImgButtonModel extends WidgetModel {
       fileName = file.getName();
       setImageName(fileName);
     }
+    if (getDefine() != null && !getDefine().isEmpty()) {
+      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.FALSE;
+    }
+    if (getExternName() != null && !getExternName().isEmpty()) {
+      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
+    }
   }
 
   /**
@@ -483,6 +538,15 @@ public class ImgButtonModel extends WidgetModel {
    */
   public BufferedImage getImageSelected() {
     return imageSelected;
+  }
+
+  /**
+   * Gets the image selected file name.
+   *
+   * @return the image selected file name
+   */
+  public String getImageSelectedName() {
+    return (String)data[PROP_IMAGE_SEL][PROP_VAL_VALUE];
   }
 
   /**
@@ -498,7 +562,7 @@ public class ImgButtonModel extends WidgetModel {
       imageSelected = convert.doConvert(file);
       if (imageSelected != null) {
         setSelExternName(convert.getExternName());
-        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = "PROGMEM";
+        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }
@@ -508,6 +572,10 @@ public class ImgButtonModel extends WidgetModel {
       } catch(IOException e) {
           System.out.println("read error: " + e.getMessage());
       }
+      if (generalModel.getTarget().equals("linux"))
+        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_FILE;
+      else      
+        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_SD;
       String fileName = file.getName();
       // now construct a #define to use during code generation
       int n = fileName.indexOf(".bmp");
@@ -517,10 +585,20 @@ public class ImgButtonModel extends WidgetModel {
       }
       // remove all special characters
       fileName = fileName.replaceAll("\\W", ""); 
-      fileName = "IMG_BTN_" + fileName + "_SEL";
+      fileName = "IMG_" + fileName + "_SEL";
       setSelDefine(fileName);
       fileName = file.getName();
       setImageSelectedName(fileName);
+    }
+    if (getSelDefine() != null && !getSelDefine().isEmpty()) {
+      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
+    }
+    if (getSelExternName() != null && !getSelExternName().isEmpty()) {
+      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
     }
   }
 
@@ -530,7 +608,7 @@ public class ImgButtonModel extends WidgetModel {
    * @return the image name
    */
   public String getImageName() {
-    String dir = generalModel.getImageDir();
+    String dir = generalModel.getTargetImageDir();
     String name = (String) data[PROP_IMAGE][PROP_VAL_VALUE];
     // do we need to add a relative path for code generation?
     if (dir.length() > 0)
@@ -544,7 +622,7 @@ public class ImgButtonModel extends WidgetModel {
    * @return the select image name
    */
   public String getSelectImageName() {
-    String dir = generalModel.getImageDir();
+    String dir = generalModel.getTargetImageDir();
     String name = (String) data[PROP_IMAGE_SEL][PROP_VAL_VALUE];
     // do we need to add a relative path for code generation?
     if (dir.length() > 0)
@@ -602,8 +680,8 @@ public class ImgButtonModel extends WidgetModel {
   public void writeModel(ObjectOutputStream out) 
       throws IOException {
     super.writeModel(out);
-    out.writeObject((String)CommonUtil.getInstance().encodeToString(image));
-    out.writeObject((String)CommonUtil.getInstance().encodeToString(imageSelected));
+    out.writeObject((String)CommonUtils.getInstance().encodeToString(image));
+    out.writeObject((String)CommonUtils.getInstance().encodeToString(imageSelected));
   }
   
   /**
@@ -625,31 +703,65 @@ public class ImgButtonModel extends WidgetModel {
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
     String imageString = (String)in.readObject();
-    image = CommonUtil.getInstance().decodeToImage(imageString);
+    image = CommonUtils.getInstance().decodeToImage(imageString);
     String imageSelectedString = (String)in.readObject();
-    imageSelected = CommonUtil.getInstance().decodeToImage(imageSelectedString);
-    if (isChangePageFunct()) {
+    imageSelected = CommonUtils.getInstance().decodeToImage(imageSelectedString);
+    if (isChangePage()) {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else if (isShowPopup()) {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else if (isHidePopup()) {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+    } else {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+    }
+    if (getDefine() != null && !getDefine().isEmpty()) {
+      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.FALSE;
     }
     if (getExternName() != null && !getExternName().isEmpty()) {
-//      data[PROP_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
+    }
+    if (getSelDefine() != null && !getSelDefine().isEmpty()) {
+      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else {
+      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
     }
     if (getSelExternName() != null && !getSelExternName().isEmpty()) {
-//      data[PROP_MEMORY_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
-    if (useDefaultColors()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
     } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-    }   
+      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
+    }
+    if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("PROGMEM")) {
+      data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
+      data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
+    } else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("SRAM")) {
+      data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
+      data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_RAM;
+    } else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).isEmpty()) {
+      data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
+      data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_SD;
+    }
+    if (isFrameEnabled()) {
+      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
+    } else {
+      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
+    }
   }     
 
 }

@@ -28,9 +28,11 @@ package builder.widgets;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
+import builder.common.ImageTransparency;
 import builder.models.ImageModel;
 
 /**
@@ -41,12 +43,15 @@ import builder.models.ImageModel;
  */
 public class ImageWidget extends Widget {
   
+  ImageModel m;
+  
   /**
    * Instantiates a new image widget.
    */
   public ImageWidget() {
-    u = CommonUtil.getInstance();
-    model = new ImageModel();
+    u = CommonUtils.getInstance();
+    m = new ImageModel();
+    model = m;
   }
 
   /**
@@ -60,11 +65,11 @@ public class ImageWidget extends Widget {
    *          the y coordinate position
    */
   public void setImage(File file, int x, int y) {
-    ((ImageModel)model).setImage(file, x, y);
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
-    model.setX(p.x);
-    model.setY(p.y);
+    m.setImage(file, x, y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, m.getWidth(), m.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
+    m.setX(p.x);
+    m.setY(p.y);
   }
   
   /**
@@ -74,7 +79,16 @@ public class ImageWidget extends Widget {
    */
   public void draw(Graphics2D g2d) {
     Rectangle b = getWinBounded();
-    g2d.drawImage(((ImageModel)model).getImage(), b.x, b.y, null);
+    if (m.isTransparent()) {
+      BufferedImage image = ImageTransparency.makeColorTransparent(m.getImage());
+      g2d.drawImage(image, b.x, b.y, null);
+    } else {
+      g2d.drawImage(m.getImage(), b.x, b.y, null);
+    }
+    if (m.isFrameEnabled()) {
+      g2d.setColor(m.getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+    }
     super.drawSelRect(g2d, b);
   }
 

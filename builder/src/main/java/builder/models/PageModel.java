@@ -26,6 +26,8 @@
 package builder.models;
 
 import builder.common.EnumFactory;
+import builder.events.MsgBoard;
+import builder.events.MsgEvent;
 
 /**
  * The Class PageModel implements the model for the Page widget.
@@ -55,6 +57,7 @@ public class PageModel extends WidgetModel {
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",widgetType);
+
   }
   
   /**
@@ -69,5 +72,30 @@ public class PageModel extends WidgetModel {
     } 
     return true;
  }
+
+  /**
+   * changeValueAt is a method used by our command interface 
+   * so we can support undo/redo commands.
+   * setValue will create the command and execute will 
+   * cause the command to call this routine.
+   * It is also responsible for sending around repaint notices
+   * to our observer views, like Pagepage.
+   * 
+   * @param value - new object value
+   * @param row   - row in table to change
+   */
+  public void changeValueAt(Object value, int row) {
+    // The test for Integer supports copy and paste from clipboard.
+    // Otherwise we get a can't cast class String to Integer fault
+    if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
+        data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
+    } else {
+      data[row][PROP_VAL_VALUE] = value;
+    }
+    fireTableCellUpdated(row, COLUMN_VALUE);
+    if (bSendEvents && row == PROP_ENUM) {
+      MsgBoard.getInstance().sendEvent(getKey(), MsgEvent.PAGE_ENUM_CHANGE, getKey(), getEnum());
+    }
+  }
 
 }

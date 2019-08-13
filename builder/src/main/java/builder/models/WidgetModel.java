@@ -25,19 +25,27 @@
  */
 package builder.models;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import builder.commands.Command;
 import builder.commands.History;
 import builder.commands.PropertyCommand;
 import builder.common.ColorFactory;
+import builder.common.FontFactory;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class WidgetModel is the base class for all of our models.
  * 
@@ -49,40 +57,24 @@ public class WidgetModel extends AbstractTableModel {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
   
-  /** The Constant PROP_VAL_CLASS. */
+  /** The Column Constant Values. */
   static public final int PROP_VAL_CLASS=0;
-  
-  /** The Constant PROP_VAL_ID. */
   static public final int PROP_VAL_ID=1;
-  
-  /** The Constant PROP_VAL_READONLY. */
   static public final int PROP_VAL_READONLY=2;
-  
-  /** The Constant PROP_VAL_NAME. */
   static public final int PROP_VAL_NAME=3;
-  
-  /** The Constant PROP_VAL_VALUE. */
   static public final int PROP_VAL_VALUE=4;
   
-  /** The Constant PROP_KEY. */
+  /** The Property Index Constants. */
   static public final int PROP_KEY            = 0;  // key is our primary index
-  
-  /** The Constant PROP_ENUM. */
   static public final int PROP_ENUM           = 1;
-  
-  /** The Constant PROP_X. */
   static public final int PROP_X              = 2;
-  
-  /** The Constant PROP_Y. */
   static public final int PROP_Y              = 3;
-  
-  /** The Constant PROP_WIDTH. */
   static public final int PROP_WIDTH          = 4;
-  
-  /** The Constant PROP_HEIGHT. */
   static public final int PROP_HEIGHT         = 5;
-
-  /** The data is made up of 5 columns, the first three are hidden from users view.
+  static public final int PROP_ELEMENTREF     = 6;
+  
+  /** 
+   * The data is made up of 5 columns, the first three are hidden from users view.
    *  Column 0 is the Class of the JTable cell contents, like String, Integer, Color, etc...
    *  Column 1 has the Meta Property ID. 
    *  Column 2 is a boolean indicating if this cell is read-only.
@@ -112,20 +104,21 @@ public class WidgetModel extends AbstractTableModel {
   /** The b send events. */
   boolean bSendEvents = true;
   
-  /** The page enum. 
-   * pageEnum is set and used by our code generator, as an optimization,
-   * and only for a few widgets. Its unreliable for any other purpose.
-   */
-  String  pageEnum = "";  
-  
   /**
-   * initProp - helper method for loading a set of property attributes
-   * @param row the cell's row within our data table
-   * @param c   the class of this cell
-   * @param id  the meta property id - must not change over the life of the builder
-   * @param readOnly boolean indicating if the cell is currently read only
-   * @param name the property name
-   * @param value the default property value
+   * initProp - helper method for loading a set of property attributes.
+   *
+   * @param row
+   *          the cell's row within our data table
+   * @param c
+   *          the class of this cell
+   * @param id
+   *          the meta property id - must not change over the life of the builder
+   * @param readOnly
+   *          boolean indicating if the cell is currently read only
+   * @param name
+   *          the property name
+   * @param value
+   *          the default property value
    */
   public void initProp(int row, Class<?> c, String id, Boolean readOnly, String name, Object value) {
     data[row][PROP_VAL_CLASS]=c;
@@ -136,9 +129,12 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
-   * initCommonProps - Initialize the set of common property attributes
-   * @param width the widget's width
-   * @param height the widget's height
+   * initCommonProps - Initialize the set of common property attributes.
+   *
+   * @param width
+   *          the widget's width
+   * @param height
+   *          the widget's height
    */
   public void initCommonProps(int width, int height) {
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
@@ -147,6 +143,7 @@ public class WidgetModel extends AbstractTableModel {
     initProp(PROP_Y, Integer.class, "COM-004", Boolean.FALSE,"Y",Integer.valueOf(0));
     initProp(PROP_WIDTH, Integer.class, "COM-005", Boolean.FALSE,"Width",Integer.valueOf(width));
     initProp(PROP_HEIGHT, Integer.class, "COM-006", Boolean.FALSE,"Height",Integer.valueOf(height));
+    initProp(PROP_ELEMENTREF, String.class, "COM-019", Boolean.FALSE,"ElementRef","");
   }
   
   /**
@@ -164,26 +161,20 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
-   * Gets the page enum.
+   * get count from key strips "$" off of key.
    *
-   * @return the page enum
+   * @return the <code>String</code> without 'E_' at beginning
    */
-  public String getPageEnum() {
-    return pageEnum;
+  public String getKeyCount() {
+    String key = getKey();
+    int n = key.indexOf("$");
+    return (key.substring(n+1));
   }
   
-  /**
-   * Sets the page enum.
-   *
-   * @param pageEnum
-   *          the new page enum
-   */
-  public void setPageEnum(String pageEnum) {
-    this.pageEnum = pageEnum;
-  }
   
   /**
-   * getRowCount gives back the number of user visible properties
+   * getRowCount gives back the number of user visible properties.
+   *
    * @return the row count
    * @see javax.swing.table.TableModel#getRowCount()
    */
@@ -193,10 +184,20 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * getPropertyCount gives the actual number of properties
-   * while getRowCount gives back the number of user visible
-   * properties allowing us to hide some at the end of data[][].
+   * Use Flash API.
    *
+   * @return <code>true</code>, if flash is to be used
+   */
+  public boolean useFlash() {
+    return false;
+  }
+  
+  /**
+   * getPropertyCount gives the actual number of properties while getRowCount
+   * gives back the number of user visible properties allowing us to hide some at
+   * the end of data[][].
+   *
+   * @return the property count
    * @see javax.swing.table.TableModel#getRowCount()
    */
   public int getPropertyCount() {
@@ -204,8 +205,11 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * getColumnName
+   * getColumnName.
    *
+   * @param index
+   *          the index
+   * @return the column name
    * @see javax.swing.table.AbstractTableModel#getColumnName(int)
    */
   @Override
@@ -214,8 +218,9 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
-   * getColumnCount
+   * getColumnCount.
    *
+   * @return the column count
    * @see javax.swing.table.TableModel#getColumnCount()
    */
   @Override
@@ -224,12 +229,15 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * getValueAt
-   * The first three fields of our data array is always hidden 
-   * so we just add 3 to columnIndex when our property editor 
-   * asks for a field.
-   * This makes our five field table look a two field table.
+   * getValueAt The first three fields of our data array is always hidden so we
+   * just add 3 to columnIndex when our property editor asks for a field. This
+   * makes our five field table look a two field table.
    *
+   * @param rowIndex
+   *          the row index
+   * @param columnIndex
+   *          the column index
+   * @return the value at
    * @see javax.swing.table.TableModel#getValueAt(int, int)
    */
   @Override
@@ -244,6 +252,16 @@ public class WidgetModel extends AbstractTableModel {
    */
   public String getType() {
     return widgetType;
+  }
+  
+  /**
+   * Sets the type.
+   *
+   * @param type
+   *          the new type
+   */
+  public void setType(String type) {
+    widgetType = type;
   }
   
   /**
@@ -366,6 +384,79 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
+   * Gets the element ref.
+   *
+   * @return the element ref
+   */
+  public String getElementRef() {
+    return (String) data[PROP_ELEMENTREF][PROP_VAL_VALUE];
+  }
+  
+  /**
+   * Sets the element ref.
+   *
+   * @param s
+   *          the new element ref
+   */
+  public void setElementRef(String s) { 
+    shortcutValue(s, PROP_ELEMENTREF);
+  }
+  
+  /**
+   * Gets the font display name.
+   *
+   * @return the font display name
+   */
+  public String getFontDisplayName() {
+    return null;
+  }
+  
+  /**
+   * Gets the font enum.
+   *
+   * @return the font enum
+   */
+  public String getFontEnum() {
+    return null;
+  }
+  
+  /**
+   * Checks if we need to add a scrollbar.
+   *
+   * @return true, if we add a scrollbar
+   */
+  public boolean addScrollbar() {
+    return false;
+  }
+
+  /**
+   * Gets the scrollbar enum.
+   *
+   * @return the scrollbar enum
+   */
+  public String getScrollbarEnum() {
+    return null;
+  }
+  
+  /**
+   * Gets the scrollbar eref.
+   *
+   * @return the scrollbar enum
+   */
+  public String getScrollbarERef() {
+    return null;
+  }
+  
+  /**
+   * Gets the group id.
+   *
+   * @return the group id
+   */
+  public String getGroupId() {
+    return null;
+  }
+
+  /**
    * Gets the class at.
    *
    * @param rowIndex
@@ -388,8 +479,21 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
-   * isCellReadOnly
-   * @param row cell row number
+   * Gets the renderer at.
+   *
+   * @param rowIndex
+   *          the row index
+   * @return the renderer at
+   */
+  public TableCellRenderer getRendererAt(int rowIndex) {
+    return null;
+  }
+
+  /**
+   * isCellReadOnly.
+   *
+   * @param row
+   *          cell row number
    * @return true, if is cell readonly
    */
   public boolean isCellReadOnly(int row) {
@@ -413,13 +517,31 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * setValueAt
+   * setValueAt.
    *
-   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+   * @param value
+   *          the value
+   * @param row
+   *          the row
+   * @param col
+   *          the col
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
+   *      int)
    */
+  @SuppressWarnings("unused")
   @Override
   public void setValueAt(Object value, int row, int col) {
     if (col == COLUMN_VALUE) {
+      // check for invalid data
+      if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
+        try {
+          int test = Integer.valueOf(Integer.parseInt((String)value));
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, "You entered non-numeric data in an number field.", 
+              "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
       // commands are used to support undo and redo actions.
       PropertyCommand c = new PropertyCommand(this, value, row);
       execute(c);
@@ -474,12 +596,14 @@ public class WidgetModel extends AbstractTableModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+
     if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
-    }
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
   }
 
   /**
@@ -492,7 +616,7 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * Sets the data - Used for JUNIT testing someday
+   * Sets the data - Used for JUNIT testing someday.
    *
    * @param data
    *          the new data
@@ -501,6 +625,50 @@ public class WidgetModel extends AbstractTableModel {
     this.data = data;
   }
 
+  /**
+   * Gets the mapped properties.
+   *
+   * @param pageEnum
+   *          the page enum
+   * @return the mapped properties
+   */
+  public Map<String, String> getMappedProperties(String pageEnum) {
+    int def=0;
+    ColorFactory cf = ColorFactory.getInstance();
+    FontFactory  ff = FontFactory.getInstance();
+    Map<String, String> map = new HashMap<>();
+    // start with our page enum
+    map.put("COM-000", pageEnum);
+    // place our unique count value from the key into our map
+    map.put("COM-018", getKeyCount());
+    // now rip through our data model and add each property to our map
+    int rows = getRowCount();
+    for (int i=0; i<rows; i++) {
+      String key = (String)data[i][PROP_VAL_ID];
+      Object o = getValueAt(i, WidgetModel.COLUMN_VALUE);
+      if(o instanceof String) {
+        if (key.equals("TXT-200")) {
+          // special case font enum's which are not stored
+          map.put("TXT-211", ff.getFontEnum((String)o));
+        } else {
+          map.put(key, (String)o);
+        }
+      } else if(o instanceof Integer) {
+        def = ((Integer)o).intValue();
+        if (key.equals("TXT-205")) {
+          //special case Text storage size needs a 1 added
+           def++;
+        }
+        map.put(key, String.valueOf(def));
+      } else if(o instanceof Boolean) {
+        map.put(key, ((Boolean)o).toString());
+      } else if (o instanceof Color) {
+        map.put(key, cf.colorAsString((Color)o));
+      }
+    }
+    return map;
+  }
+  
   /**
    * backup() supports our undo command by making a copy of the table cell's value
    * before any changes have taken place.
@@ -557,10 +725,9 @@ public class WidgetModel extends AbstractTableModel {
     for (int i=0; i<rows; i++) {
       out.writeObject(data[i][PROP_VAL_ID]);
       out.writeObject(data[i][PROP_VAL_VALUE]);
-/*     System.out.println(data[i][PROP_VAL_ID] + ": "
- *       + data[i][PROP_VAL_VALUE].toString() + " = " 
- *       + data[i][PROP_VAL_VALUE].toString());
- */
+//     System.out.println(data[i][PROP_VAL_ID] + ": "
+//       + data[i][PROP_VAL_VALUE].toString());
+
     }
   }
   
@@ -595,27 +762,54 @@ public class WidgetModel extends AbstractTableModel {
       row = mapMetaIDtoProperty(metaID);
       if (row >= 0) {
         data[row][PROP_VAL_VALUE] = objectData;
-/*         
-  System.out.println(data[row][PROP_VAL_NAME].toString() + ": " +
-           data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
-*/        
+        
+//  System.out.println(data[row][PROP_VAL_NAME].toString() + ": " +
+//           data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
+        
       }
     }
   }
   
   /**
-   * mapMetaIDtoProperty
-   * 
-   * @param metaID the id assigned that must never change over the life time of the builder
+   * mapMetaIDtoProperty.
+   *
+   * @param metaID
+   *          the id assigned that must never change over the life time of the
+   *          builder
    * @return row that matches metaID, otherwise a -1 on no matching ID
    */
   public int mapMetaIDtoProperty(String metaID) {
     for (int i=0; i<data.length; i++) {
+      if (metaID == null) {
+//        System.out.println(getType() + " error metaID == null");
+        return -1;
+      }
+      if (data[i][PROP_VAL_ID] == null) {
+//        System.out.println(getType() + " error data[" + i + ", " +
+//          PROP_VAL_ID + "] == null");
+        return -1;
+      }
       if (metaID.equals((String)data[i][PROP_VAL_ID])) {
         return i;
       }
     }
     return -1;
+  }
+  
+  /**
+   * Copy properties.
+   *
+   * @param m
+   *          the m
+   */
+  public void copyProperties(WidgetModel m) {
+    Object newData[][] = m.getData();
+    // skip over key, enum, x and y position
+    for (int i=4; i<m.getPropertyCount(); i++) {
+      for (int j=0; j<5; j++) {
+        data[i][j] = newData[i][j];
+      }
+    }
   }
 
 }

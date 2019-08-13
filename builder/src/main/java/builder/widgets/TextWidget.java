@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.common.FontFactory;
 import builder.models.TextModel;
 import builder.prefs.TextEditor;
@@ -55,12 +55,12 @@ public class TextWidget extends Widget {
    *          the y coordinate position
    */
   public TextWidget(int x, int y) {
-    u = CommonUtil.getInstance();
+    u = CommonUtils.getInstance();
     ff = FontFactory.getInstance();
     m = new TextModel();
     model = m;
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
     setUserPrefs(TextEditor.getInstance().getModel());
@@ -72,8 +72,8 @@ public class TextWidget extends Widget {
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
   public void draw(Graphics2D g2d) {
-    Font font = ff.getFont(m.getFontDisplayName());
-    Rectangle b = getWinBounded();
+    Font font = null;
+    Rectangle b = super.getWinBounded();
     g2d.setColor(m.getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
     if (m.isFrameEnabled()) {
@@ -81,44 +81,20 @@ public class TextWidget extends Widget {
       g2d.drawRect(b.x, b.y, b.width, b.height);
     }
     g2d.setColor(m.getTextColor());
-    ff.alignString(g2d, m.getAlignment(), b, m.getText(), font);
+    String text = m.getText();
+    if (text.isEmpty()) {
+      if (m.getTextStorage() > 0) {
+        for (int i=1; i<m.getTextStorage(); i++) {
+          text = text + "?";
+        }
+      } else {
+        text = "TODO";
+      }
+      font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
+    } else {
+      font = ff.getFont(m.getFontDisplayName());
+    }
+    ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);
   }
-
-  /**
-   * getWinBounded
-   *
-   * @see builder.widgets.Widget#getWinBounded()
-   */
-  @Override
-  public Rectangle getWinBounded() {
-    int dx = u.toWinX(m.getX());
-    int dy = u.toWinY(m.getY());
-    Rectangle b = new Rectangle();
-    b.x = dx;
-    b.y = dy;
-    b.width = m.getWidth();
-    b.height = m.getHeight();
-    return b;
-  }
-
-  /**
-   * contains
-   *
-   * @see builder.widgets.Widget#contains(java.awt.Point)
-   */
-  @Override
-  /**
-   * Return true if this node contains p.
-   */
-
-  public boolean contains(Point p) {
-    Rectangle b = new Rectangle();
-    b.x = model.getX()-2;
-    b.y = model.getY()-2;
-    b.width = m.getWidth()+4;
-    b.height = m.getHeight()+4;
-    return b.contains(p);
-  }
-
 }

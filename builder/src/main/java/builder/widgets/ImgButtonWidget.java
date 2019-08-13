@@ -28,9 +28,11 @@ package builder.widgets;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
+import builder.common.ImageTransparency;
 import builder.models.ImgButtonModel;
 
 /**
@@ -41,12 +43,15 @@ import builder.models.ImgButtonModel;
  */
 public class ImgButtonWidget extends Widget {
 
+  private ImgButtonModel m;
+  
   /**
    * Instantiates a new img button widget.
    */
   public ImgButtonWidget() {
-    u = CommonUtil.getInstance();
-    model = new ImgButtonModel();
+    u = CommonUtils.getInstance();
+    m = new ImgButtonModel();
+    model = m;
   }
 
   /**
@@ -60,9 +65,9 @@ public class ImgButtonWidget extends Widget {
    *          the y coordinate position
    */
   public void setImage(File file, int x, int y) {
-    ((ImgButtonModel)model).setImage(file, x, y);
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    m.setImage(file, x, y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
   }
@@ -74,7 +79,7 @@ public class ImgButtonWidget extends Widget {
    *          the file containing image to use when button is selected.
    */
   public void setImageSelected(File file) {
-    ((ImgButtonModel)model).setImageSelected(file);
+    m.setImageSelected(file);
   }
   
   /**
@@ -85,9 +90,23 @@ public class ImgButtonWidget extends Widget {
   public void draw(Graphics2D g2d) {
     Rectangle b = getWinBounded();
     if (bSelected) {
-      g2d.drawImage(((ImgButtonModel)model).getImageSelected(), b.x, b.y, null);
+      if (m.isTransparent()) {
+        BufferedImage image = ImageTransparency.makeColorTransparent(m.getImageSelected());
+        g2d.drawImage(image, b.x, b.y, null);
+      } else {
+        g2d.drawImage(m.getImageSelected(), b.x, b.y, null);
+      }
     } else {
-      g2d.drawImage(((ImgButtonModel)model).getImage(), b.x, b.y, null);
+      if (m.isTransparent()) {
+        BufferedImage image = ImageTransparency.makeColorTransparent(m.getImage());
+        g2d.drawImage(image, b.x, b.y, null);
+      } else {
+        g2d.drawImage(m.getImage(), b.x, b.y, null);
+      }
+    }
+    if (m.isFrameEnabled()) {
+      g2d.setColor(m.getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
     }
     super.drawSelRect(g2d, b);
   }

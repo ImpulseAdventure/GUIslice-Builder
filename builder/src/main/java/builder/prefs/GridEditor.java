@@ -33,6 +33,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.prefs.Preferences;
 
+import builder.Builder;
 import builder.models.GridModel;
 
 /**
@@ -72,7 +73,8 @@ public class GridEditor extends ModelEditor {
     System.setErr(new PrintStream(new OutputStream() {
         public void write(int b) throws IOException {}
     }));
-    fPrefs = Preferences.userRoot().node(MY_NODE);
+    String prefNode = MY_NODE + Builder.VERSION_NO;
+    fPrefs = Preferences.userRoot().node(prefNode);
     model = new GridModel();
     model.TurnOffEvents();
     updateModel();
@@ -106,6 +108,15 @@ public class GridEditor extends ModelEditor {
    */
   public boolean getGrid() {
     return ((GridModel) model).getGrid();
+  }
+  
+  /**
+   * Sets the grid.
+   *
+   * @param the grid
+   */
+  public void setGrid(boolean b) {
+    ((GridModel) model).setGrid(b);
   }
   
   /**

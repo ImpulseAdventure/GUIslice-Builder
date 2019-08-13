@@ -1,20 +1,25 @@
 //<File !Start!>
 //<File !End!>
 //
-// GUIslice Builder Generated File
-//
 // ARDUINO NOTES:
 // - GUIslice_config.h must be edited to match the pinout connections
 //   between the Arduino CPU and the display controller (see ADAGFX_PIN_*).
 //
 
+// ------------------------------------------------
+// Headers to include
+// ------------------------------------------------
 #include "GUIslice.h"
-#include "GUIslice_ex.h"
 #include "GUIslice_drv.h"
 
-#include <Adafruit_GFX.h>
+// Include any extended elements
+//<Includes !Start!>
+//<Includes !End!>
 
+// ------------------------------------------------
+// Headers and Defines for fonts
 // Note that font files are located within the Adafruit-GFX library folder:
+// ------------------------------------------------
 //<Fonts !Start!>
 //<Fonts !End!>
 
@@ -34,11 +39,15 @@
 // Instantiate the GUI
 // ------------------------------------------------
 
-// Define the maximum number of elements per page
+// ------------------------------------------------
+// Define the maximum number of elements and pages
+// ------------------------------------------------
 //<ElementDefines !Start!>
 //<ElementDefines !End!>
 
-// GUI Elements
+// ------------------------------------------------
+// Create element storage
+// ------------------------------------------------
 gslc_tsGui                      m_gui;
 gslc_tsDriver                   m_drv;
 gslc_tsFont                     m_asFont[MAX_FONT];
@@ -48,14 +57,12 @@ gslc_tsPage                     m_asPage[MAX_PAGE];
 //<GUI_Extra_Elements !End!>
 
 // ------------------------------------------------
-// Save some element references for update loop access
-// ------------------------------------------------
-//<Save_References !Start!>
-//<Save_References !End!>
-
-// ------------------------------------------------
 // Program Globals
 // ------------------------------------------------
+
+// Save some element references for direct access
+//<Save_References !Start!>
+//<Save_References !End!>
 
 // Define debug message function
 static int16_t DebugOut(char ch) { if (ch == (char)'\n') Serial.println(""); else Serial.write(ch); return 0; }
@@ -65,6 +72,14 @@ static int16_t DebugOut(char ch) { if (ch == (char)'\n') Serial.println(""); els
 // ------------------------------------------------
 //<Button Callback !Start!>
 //<Button Callback !End!>
+//<Checkbox Callback !Start!>
+//<Checkbox Callback !End!>
+//<Keypad Callback !Start!>
+//<Keypad Callback !End!>
+//<Spinner Callback !Start!>
+//<Spinner Callback !End!>
+//<Listbox Callback !Start!>
+//<Listbox Callback !End!>
 //<Draw Callback !Start!>
 //<Draw Callback !End!>
 //<Slider Callback !Start!>
@@ -108,12 +123,6 @@ void setup()
   // Create graphic elements
   // ------------------------------------------------
   InitGUI();
-
-  // ------------------------------------------------
-  // Save some element references for quick access
-  // ------------------------------------------------
-//<Quick_Access !Start!>
-//<Quick_Access !End!>
 
 //<Startup !Start!>
 //<Startup !End!>

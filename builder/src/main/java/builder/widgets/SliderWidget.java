@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.models.SliderModel;
 
 /**
@@ -39,7 +39,9 @@ import builder.models.SliderModel;
  * 
  */
 public class SliderWidget extends Widget {
-
+  
+  SliderModel m;
+  
   /**
    * Instantiates a new slider widget.
    *
@@ -49,10 +51,11 @@ public class SliderWidget extends Widget {
    *          the y coordinate position
    */
   public SliderWidget(int x, int y) {
-    u = CommonUtil.getInstance();
-    model = new SliderModel();
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    u = CommonUtils.getInstance();
+    m = new SliderModel();
+    model = m;
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
   }
@@ -64,7 +67,6 @@ public class SliderWidget extends Widget {
    */
   public void draw(Graphics2D g2d) {
     Rectangle b = getWinBounded();
-    SliderModel m = ((SliderModel) model);
     // Most of this code was shamelessly ripped from GUIslice_ex.c->gslc_ElemXSliderDraw()
     int nX0,nY0,nX1,nY1,nXMid,nYMid;
     nX0 = b.x;
@@ -74,11 +76,18 @@ public class SliderWidget extends Widget {
     nXMid = (nX0+nX1)/2;
     nYMid = (nY0+nY1)/2;
 
-    int nPosOffset;
+    int nPos = m.getCurValue();
+    int nPosMin = m.getMin();
+    int nPosMax = m.getMax();
+    
+    // Scale the current position
+    int nPosRng = nPosMax-nPosMin;
+    int nPosOffset = nPos-nPosMin;
     // Provide some margin so thumb doesn't exceed control bounds
     int nThumbSz = m.getThumbSize();
     int nMargin  = nThumbSz;
     int nCtrlRng;
+/*
     if (!m.isVertical()) {
       nCtrlRng = (nX1-nMargin)-(nX0+nMargin);
       nPosOffset = (b.width/2)-m.getMin();
@@ -86,6 +95,15 @@ public class SliderWidget extends Widget {
       nCtrlRng = (nY1-nMargin)-(nY0+nMargin);
       nPosOffset = (b.height/2)-m.getMin();
     }
+*/
+    if (!m.isVertical()) {
+      nCtrlRng = (nX1-nMargin)-(nX0+nMargin);
+    } else {
+      nCtrlRng = (nY1-nMargin)-(nY0+nMargin);
+    }
+    int nCtrlPos  = (nPosOffset*nCtrlRng/nPosRng)+nMargin;
+
+
     // Draw the background
     g2d.setColor(m.getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
@@ -125,11 +143,11 @@ public class SliderWidget extends Widget {
     // Draw the thumb control
     int nCtrlX0,nCtrlY0;
     if (!m.isVertical()) {
-      nCtrlX0   = nX0+nPosOffset-nThumbSz;
+      nCtrlX0   = nX0+nCtrlPos-nThumbSz;
       nCtrlY0   = nYMid-nThumbSz;
     } else {
       nCtrlX0   = nXMid-nThumbSz;
-      nCtrlY0   = nY0+nPosOffset-nThumbSz;
+      nCtrlY0   = nY0+nCtrlPos-nThumbSz;
     }
     g2d.setColor(m.getFillColor());
     g2d.fillRect(nCtrlX0, nCtrlY0, 2*nThumbSz, 2*nThumbSz);

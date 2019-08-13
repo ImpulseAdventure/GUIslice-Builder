@@ -25,11 +25,12 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.models.BoxModel;
 import builder.prefs.BoxEditor;
 
@@ -50,10 +51,10 @@ public class BoxWidget extends Widget {
    *          the y coordinate position
    */
   public BoxWidget(int x, int y) {
-    u = CommonUtil.getInstance();
+    u = CommonUtils.getInstance();
     model = new BoxModel();
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
     setUserPrefs(BoxEditor.getInstance().getModel());
@@ -66,10 +67,21 @@ public class BoxWidget extends Widget {
    */
   public void draw(Graphics2D g2d) {
     Rectangle b = getWinBounded();
-    g2d.setColor(((BoxModel) model).getFillColor());
-    g2d.fillRect(b.x, b.y, b.width, b.height);
-    g2d.setColor(((BoxModel) model).getFrameColor());
-    g2d.drawRect(b.x, b.y, b.width, b.height);
+    Color c = null;
+    if (bSelected) 
+      c = ((BoxModel) model).getSelectedColor();
+    else
+      c = ((BoxModel) model).getFillColor();
+    g2d.setColor(c);
+    if (((BoxModel) model).isRoundedEn()) {
+      g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
+      g2d.setColor(((BoxModel) model).getFrameColor());
+      g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
+    } else {
+      g2d.fillRect(b.x, b.y, b.width, b.height);
+      g2d.setColor(((BoxModel) model).getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+    }
     super.drawSelRect(g2d, b);
   }
 

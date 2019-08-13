@@ -34,11 +34,10 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
+import builder.prefs.GeneralEditor;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -51,53 +50,44 @@ public class TxtButtonModel extends WidgetModel {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
   
-  /** The Constant PROP_FONT. */
-  static private final int PROP_FONT              = 6;
-  
-  /** The Constant PROP_FONT_ENUM. */
-  static private final int PROP_FONT_ENUM         = 7;
-  
-  /** The Constant PROP_TEXT. */
+  /** The Property Index Constants. */
+  static private final int PROP_FONT              = 7;
   static private final int PROP_TEXT              = 8;
-  
-  /** The Constant PROP_UTF8. */
   static private final int PROP_UTF8              = 9;
-  
-  /** The Constant PROP_FILL_EN. */
-  static private final int PROP_FILL_EN           = 10;
-  
-  /** The Constant PROP_FRAME_EN. */
-  static private final int PROP_FRAME_EN          = 11;
-  
-  /** The Constant PROP_TEXT_SZ. */
-  static private final int PROP_TEXT_SZ           = 12;
-
-  /** The Constant PROP_ELEMENTREF. */
-  static private final int PROP_ELEMENTREF        = 13;
-  
-  /** The Constant PROP_TEXT_ALIGN. */
+  static private final int PROP_ROUNDED           = 10;
+  static private final int PROP_FILL_EN           = 11;
+  static private final int PROP_FRAME_EN          = 12;
+  static private final int PROP_TEXT_SZ           = 13;
   static private final int PROP_TEXT_ALIGN        = 14;
-  
-  /** The Constant PROP_CHANGE_PAGE. */
   static private final int PROP_CHANGE_PAGE       = 15;
+  static private final int PROP_POPUP_SHOW        = 16;
+  static private final int PROP_PAGE              = 17;
+  static private final int PROP_POPUP_HIDE        = 18;
+  static private final int PROP_USE_FLASH         = 19;
+  static private final int PROP_DEFAULT_COLORS    = 20;
+  static private final int PROP_TEXT_COLOR        = 21;
+  static private final int PROP_FRAME_COLOR       = 22;
+  static private final int PROP_FILL_COLOR        = 23;
+  static private final int PROP_SELECTED_COLOR    = 24;
   
-  /** The Constant PROP_PAGE. */
-  static private final int PROP_PAGE              = 16;
-  
-  /** The Constant PROP_DEFAULT_COLORS. */
-  static private final int PROP_DEFAULT_COLORS    = 17;
-  
-  /** The Constant PROP_TEXT_COLOR. */
-  static private final int PROP_TEXT_COLOR        = 18;
-  
-  /** The Constant PROP_FRAME_COLOR. */
-  static private final int PROP_FRAME_COLOR       = 19;
-  
-  /** The Constant PROP_FILL_COLOR. */
-  static private final int PROP_FILL_COLOR        = 20;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
-  static private final int PROP_SELECTED_COLOR    = 21;
+  /** The Property Defaults */
+  static public  final String  DEF_TEXT              = "";
+  static public  final Boolean DEF_UTF8              = Boolean.FALSE;
+  static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
+  static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
+  static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
+  static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
+  static public  final String  DEF_TEXT_ALIGN        = TextModel.ALIGN_CENTER;
+  static public  final Boolean DEF_CHANGE_PAGE       = Boolean.FALSE;
+  static public  final Boolean DEF_POPUP_SHOW        = Boolean.FALSE;
+  static public  final String  DEF_PAGE              = "";
+  static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
+  static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
+  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
+  static public  final Color   DEF_TEXT_COLOR        = Color.WHITE;
+  static public  final Color   DEF_FRAME_COLOR       = new Color(0,0,192); // GSLC_COL_BLUE_DK2
+  static public  final Color   DEF_FILL_COLOR        = new Color(0,0,128); // GSLC_COL_BLUE_DK4
+  static public  final Color   DEF_SELECTED_COLOR    = new Color(0,0,224); // GSLC_COL_BLUE_DK1
   
   static private final int DEF_WIDTH = 80;
   static private final int DEF_HEIGHT= 40;
@@ -116,20 +106,19 @@ public class TxtButtonModel extends WidgetModel {
    */
   public TxtButtonModel() {
     ff = FontFactory.getInstance();
-    cf = ColorFactory.getInstance();
     initProperties();
-    initAlignments();
+    initEditors();
   }
   
   /**
-   * Initializes the alignments.
+   * Initializes the cell editors.
    */
-  private void initAlignments()
+  private void initEditors()
   {
     cbAlign = new JComboBox<String>();
-    cbAlign.addItem("Left");
-    cbAlign.addItem("Center");
-    cbAlign.addItem("Right");
+    cbAlign.addItem(TextModel.ALIGN_LEFT);
+    cbAlign.addItem(TextModel.ALIGN_CENTER);
+    cbAlign.addItem(TextModel.ALIGN_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
   }
   
@@ -140,29 +129,39 @@ public class TxtButtonModel extends WidgetModel {
   {
     widgetType = EnumFactory.TEXTBUTTON;
     
-    data = new Object[22][5];
+    data = new Object[25][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
-    initProp(PROP_FONT_ENUM, String.class, "TXT-211", Boolean.FALSE,"Font Enum",ff.getDefFontEnum());
-    initProp(PROP_TEXT, String.class, "TXT-202", Boolean.FALSE,"Label","Button");
-    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",Boolean.FALSE);
+    initProp(PROP_TEXT, String.class, "TXT-202", Boolean.FALSE,"Label",DEF_TEXT);
+    String target = ((GeneralModel) GeneralEditor.getInstance().getModel()).getTarget();
+    // arduino GFX doesn't support UTF8 only linix with SDL has support
+    // so for arduino set UTF8 property to read-only
+    if (target.equals("linux")) {
+      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
+    } else {
+      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.TRUE,"UTF-8?",DEF_UTF8);
+    }
 
-    initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",Boolean.TRUE);
-    initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",Boolean.TRUE);
-    initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"External Storage Size",Integer.valueOf(0));
-    initProp(PROP_ELEMENTREF, String.class, "TXT-206", Boolean.FALSE,"ElementRef","");
-    initProp(PROP_TEXT_ALIGN, String.class, "TXT-207", Boolean.FALSE,"Text Alignment","Center");
+    initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
+    initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
+    initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
+    initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"External Storage Size",DEF_TEXT_SZ);
+    initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
     
-    initProp(PROP_CHANGE_PAGE, Boolean.class, "TBTN-100", Boolean.FALSE,"Change Page Funct?",Boolean.FALSE);
-    initProp(PROP_PAGE, String.class, "TBNT-101", Boolean.TRUE,"Jump to Page Enum","");
+    initProp(PROP_CHANGE_PAGE, Boolean.class, "TBTN-100", Boolean.FALSE,"Jump to Page?",DEF_CHANGE_PAGE);
+    initProp(PROP_POPUP_SHOW, Boolean.class, "TBTN-102", Boolean.FALSE,"Show Popup Page?",DEF_POPUP_SHOW);
+    initProp(PROP_PAGE, String.class, "TBNT-101", Boolean.TRUE,"Jump/Popup Page Enum",DEF_PAGE);
+    initProp(PROP_POPUP_HIDE, Boolean.class, "TBTN-103", Boolean.FALSE,"Hide Popup Page?",DEF_POPUP_HIDE);
 
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",Boolean.TRUE);
-    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.TRUE,"Text Color",cf.getBtnTextCol());
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",cf.getBtnFrameCol());
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",cf.getBtnFillCol());
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",cf.getBtnGlowCol());
+    initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
+    
+    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
+    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.TRUE,"Text Color",DEF_TEXT_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
 
   }
 
@@ -185,37 +184,21 @@ public class TxtButtonModel extends WidgetModel {
    */
   @Override
   public void changeValueAt(Object value, int row) {
-    boolean bChangeFontEnum = false;
     // The test for Integer supports copy and paste from clipboard.
     // Otherwise we get a can't cast class String to Integer fault
     if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
         data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
     } else {
-      if (row == PROP_FONT) {
-        // check to see if user defined this font enum, if so we won't change it
-        if (!ff.getFontEnum((String)value).equals(getFontEnum())) bChangeFontEnum=true;
-      }
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_FONT_ENUM) {
-      String strName = ff.getFontDisplayName(getFontEnum());
-      if (strName != null && !strName.equals(getFontDisplayName())) {
-        data[PROP_FONT][PROP_VAL_VALUE]=strName;
-        fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
-      }
-    }
-    if (row == PROP_FONT && bChangeFontEnum) {
-      setFontEnum(ff.getFontEnum(getFontDisplayName()));
-      fireTableCellUpdated(PROP_FONT_ENUM, COLUMN_VALUE);
-    }
     if (row == PROP_DEFAULT_COLORS) {
       // check for switching back and forth
       if (useDefaultColors()) {
-        data[PROP_TEXT_COLOR][PROP_VAL_VALUE]=cf.getBtnTextCol(); 
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=cf.getBtnFrameCol(); 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=cf.getBtnFillCol();
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=cf.getBtnGlowCol(); 
+        data[PROP_TEXT_COLOR][PROP_VAL_VALUE]=DEF_TEXT_COLOR; 
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
         data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
         data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
         data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
@@ -232,33 +215,94 @@ public class TxtButtonModel extends WidgetModel {
       fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
     }     
     if (row == PROP_CHANGE_PAGE) {
-      if (isChangePageFunct()) {
+      if (isChangePage()) {
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
       } else {
-        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
         data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
       }
       fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_SHOW, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
+    }
+    if (row == PROP_POPUP_SHOW) {
+      if (isShowPopup()) {
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+      } else {
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+      }
+      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_CHANGE_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
+    }
+    if (row == PROP_POPUP_HIDE) {
+      if (isHidePopup()) {
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
+      } else {
+        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_PAGE][PROP_VAL_VALUE]="";
+      }
+      fireTableCellUpdated(PROP_CHANGE_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_SHOW, COLUMN_VALUE);
     }
     if (row == PROP_TEXT_SZ) {
       if (getTextStorage() > 0) {
         String strKey = getKey();
         int n = strKey.indexOf("$");
         String strCount = strKey.substring(n + 1, strKey.length());
-        if (getElementRef().length() == 0) {
+        if (getElementRef().isEmpty()) {
           setElementRef(new String("m_pElemBtn" + strCount));
           fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
         }
       }
     }
+    
     if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
-    }
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
   }
 
+  /**
+   * Use Flash API.
+   *
+   * @return <code>true</code>, if flash is to be used
+   */
+  @Override
+  public boolean useFlash() {
+    return ((Boolean) data[PROP_USE_FLASH][PROP_VAL_VALUE]).booleanValue();
+  }
+  
   /**
    * Checks if is utf8.
    *
@@ -266,6 +310,15 @@ public class TxtButtonModel extends WidgetModel {
    */
   public boolean isUTF8() {
     return ((Boolean) data[PROP_UTF8][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if buttons are round
+   *
+   * @return true, if they are round
+   */
+  public boolean isRoundedEn() {
+    return ((Boolean) data[PROP_ROUNDED][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -328,8 +381,26 @@ public class TxtButtonModel extends WidgetModel {
    *
    * @return true, if is change page funct
    */
-  public boolean isChangePageFunct() {
+  public boolean isChangePage() {
     return ((Boolean) data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if is show popup page funct.
+   *
+   * @return true, if is show popup page funct
+   */
+  public boolean isShowPopup() {
+    return ((Boolean) data[PROP_POPUP_SHOW][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if is hide popup page funct.
+   *
+   * @return true, if is hide popup page funct
+   */
+  public boolean isHidePopup() {
+    return ((Boolean) data[PROP_POPUP_HIDE][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -346,6 +417,7 @@ public class TxtButtonModel extends WidgetModel {
    *
    * @return the font display name
    */
+  @Override
   public String getFontDisplayName() {
     return (String) ((String)data[PROP_FONT][PROP_VAL_VALUE]);
   }
@@ -355,18 +427,9 @@ public class TxtButtonModel extends WidgetModel {
    *
    * @return the font enum
    */
+  @Override
   public String getFontEnum() {
-    return (String) ((String)data[PROP_FONT_ENUM][PROP_VAL_VALUE]);
-  }
-  
-  /**
-   * Sets the font enum.
-   *
-   * @param s
-   *          the new font enum.
-   */
-  public void setFontEnum(String s) { 
-    shortcutValue(s, PROP_FONT_ENUM);
+    return ff.getFontEnum(getFontDisplayName());
   }
   
   /**
@@ -452,11 +515,33 @@ public class TxtButtonModel extends WidgetModel {
       data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
     }
-    if (isChangePageFunct()) {
+    if (isChangePage()) {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else if (isShowPopup()) {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    } else if (isHidePopup()) {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+    } else {
+      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
     }
+    if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Left"))
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = "GSLC_ALIGN_MID_LEFT";
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Right"))
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = "GSLC_ALIGN_MID_RIGHT";
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Center"))
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = "GSLC_ALIGN_MID_MID";
   }     
 
 }

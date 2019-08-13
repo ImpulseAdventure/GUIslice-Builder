@@ -30,7 +30,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.models.GraphModel;
 
 /**
@@ -50,10 +50,10 @@ public class GraphWidget extends Widget {
    *          the y coordinate position
    */
   public GraphWidget(int x, int y) {
-    u = CommonUtil.getInstance();
+    u = CommonUtils.getInstance();
     model = new GraphModel();
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtil.getInstance().snapToGrid(p.x, p.y);
+    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
     model.setX(p.x);
     model.setY(p.y);
   }
@@ -70,7 +70,7 @@ public class GraphWidget extends Widget {
     g2d.fillRect(b.x, b.y, b.width, b.height);
     g2d.setColor(m.getFrameColor());
     g2d.drawRect(b.x, b.y, b.width, b.height);
-    if (m.getGraphStyle().equals("Dot")) {
+    if (m.getGraphStyle().equals(GraphModel.STYLE_DOT)) {
       g2d.setColor(m.getGraphColor());
       Stroke defaultStroke = g2d.getStroke();
       g2d.setStroke(Widget.dotted);

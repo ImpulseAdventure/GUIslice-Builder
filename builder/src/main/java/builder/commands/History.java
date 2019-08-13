@@ -29,7 +29,7 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-import builder.views.ToolBar;
+import builder.views.Ribbon;
 
 /**
  * The Class History implements undo and redo functionality.
@@ -71,8 +71,8 @@ public class History {
   /** The instance. */
   private static History instance = null;
   
-  /** The ToolBar. */
-  private static ToolBar toolBar;
+  /** The Ribbon. */
+  private static Ribbon ribbon;
 
   /**
    * Gets the single instance of History.
@@ -82,7 +82,7 @@ public class History {
   public static synchronized History getInstance() {
     if (instance == null) {
       instance = new History();
-      toolBar = ToolBar.getInstance();
+      ribbon = Ribbon.getInstance();
     }
     return instance;
   }
@@ -105,8 +105,8 @@ public class History {
   public void clearHistory() {
     undoStack.clear();
     redoStack.clear();
-    toolBar.disableUndo();
-    toolBar.disableRedo();
+    ribbon.disableUndo();
+    ribbon.disableRedo();
   }
   
   /**
@@ -117,9 +117,9 @@ public class History {
    */
   public void push(Command c) {
     undoStack.push(c);
-    toolBar.enableUndo();
+    ribbon.enableUndo();
     redoStack.clear();
-    toolBar.disableRedo();
+    ribbon.disableRedo();
   }
   
   /**
@@ -134,16 +134,16 @@ public class History {
           "Nothing to undo",
           "Information",
           JOptionPane.INFORMATION_MESSAGE);
-      toolBar.disableUndo();
+      ribbon.disableUndo();
       return false;
     }
     Command c = undoStack.pop();
-    if (undoStack.size() == 0) toolBar.disableUndo();
+    if (undoStack.size() == 0) ribbon.disableUndo();
     if (c == null) {
       return false;
     }
     redoStack.push(c);
-    toolBar.enableRedo();
+    ribbon.enableRedo();
 //    System.out.println("Undoing: " + c.toString());
     c.restore();
     return true;
@@ -161,17 +161,17 @@ public class History {
           "Nothing to redo",
           "Information",
           JOptionPane.INFORMATION_MESSAGE);
-      toolBar.disableRedo();
+      ribbon.disableRedo();
       return false;
     }
     Command c = redoStack.pop();
-    if (redoStack.size() == 0) toolBar.disableRedo();
+    if (redoStack.size() == 0) ribbon.disableRedo();
     if (c == null) {
       return false;
     }
 //    System.out.println("Redoing: " + c.toString());
     undoStack.push(c);
-    toolBar.enableUndo();
+    ribbon.enableUndo();
     c.restore();
     c.execute();
     return true;

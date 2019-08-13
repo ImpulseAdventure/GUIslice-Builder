@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import builder.common.CommonUtil;
+import builder.common.CommonUtils;
 import builder.common.FontFactory;
 import builder.models.WidgetModel;
 
@@ -58,7 +58,7 @@ public class Widget {
       BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {1.0f,2.0f}, 0);
 
   /** The u. */
-  CommonUtil u;
+  CommonUtils u;
   
   /** The ff. */
   FontFactory ff;
@@ -68,6 +68,10 @@ public class Widget {
   
   /** The b selected. */
   boolean bSelected = false;
+  
+  public Widget() {
+    u = CommonUtils.getInstance();
+  }
 
   /**
    * Sets the user prefs.
@@ -99,6 +103,14 @@ public class Widget {
     return model;
   }
   
+  public int getX() {
+    return model.getX();
+  }
+  
+  public int getY() {
+    return model.getY();
+  }
+  
   /**
    * Gets the key.
    *
@@ -127,6 +139,15 @@ public class Widget {
   }
   
   /**
+   * Use Flash API.
+   *
+   * @return <code>true</code>, if flash is to be used
+   */
+  public boolean useFlash() {
+    return model.useFlash();
+  }
+  
+  /**
    * Return this widget's location.
    *
    * @return the location <code>Point</code> object
@@ -141,25 +162,11 @@ public class Widget {
    * @return the window bounded <code>Rectangle</code> object
    */
   public Rectangle getWinBounded() {
-    int dx = u.toWinX(model.getX());
-    int dy = u.toWinY(model.getY());
+    int dx = model.getX();
+    int dy = model.getY();
     Rectangle b = new Rectangle();
     b.x = dx;
     b.y = dy;
-    b.width = model.getWidth();
-    b.height = model.getHeight();
-    return b;
-  }
-  
-  /**
-   * Gets the bounded rectangle
-   *
-   * @return the <code>Rectangle</code> object
-   */
-  public Rectangle getBounded() {
-    Rectangle b = new Rectangle();
-    b.x = model.getX();
-    b.y = model.getY();
     b.width = model.getWidth();
     b.height = model.getHeight();
     return b;
@@ -174,9 +181,11 @@ public class Widget {
    * @return the <code>point</code> object
    */
   public Point updateLocation(Point d) {
-    int x = model.getX() + d.x;
-    int y = model.getY() + d.y;
-    Point p = CommonUtil.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
+//    int x = model.getX() + d.x;
+//    int y = model.getY() + d.y;
+    int x = d.x;
+    int y = d.y;
+    Point p = u.fitToGrid(x, y, model.getWidth(), model.getHeight());
     model.setX(p.x);
     model.setY(p.y);
     return p;
@@ -201,7 +210,7 @@ public class Widget {
    * @return a possibly different point that fits on our screen.
    */
   public Point drop(Point d) {
-    d = CommonUtil.getInstance().snapToGrid(d.x, d.y);
+    d = u.snapToGrid(d.x, d.y);
     return d;
   }
 
@@ -213,11 +222,8 @@ public class Widget {
    * @return <code>true</code>, if successful
    */
   public boolean contains(Point p) {
-    Rectangle b = new Rectangle();
-    b.x = model.getX()-2;
-    b.y = model.getY()-2;
-    b.width = model.getWidth()+4;
-    b.height = model.getHeight()+4;
+    Rectangle b = getWinBounded();
+    b.grow(1,1);
     return b.contains(p);
   }
 
@@ -230,10 +236,10 @@ public class Widget {
    */
   public boolean contains(Point2D p) {
     Rectangle2D.Double b = new Rectangle2D.Double();
-    b.x = model.getX()-2;
-    b.y = model.getY()-2;
-    b.width = model.getWidth()+4;
-    b.height = model.getHeight()+4;
+    b.x = model.getX()-1;
+    b.y = model.getY()-1;
+    b.width = model.getWidth()+2;
+    b.height = model.getHeight()+2;
     return b.contains(p);
   }
 

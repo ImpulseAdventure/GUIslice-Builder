@@ -75,7 +75,7 @@ Filename: "{app}\\GUIslice.bat"; Description: "{cm:LaunchProgram,GUIsliceBuilder
 ; set JAVA_HOME
 Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName:"JAVA_HOME"; ValueData:"{code:GetJavaHome}"; Flags: preservestringtype
 ; set PROJECT DIRECTORY
-Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
+Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general1.02"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
 
 [Code]
 var
@@ -111,13 +111,14 @@ procedure InitializeWizard;
 begin
   JavaDirPage := CreateInputDirPage(wpLicense, 'Set JAVE_HOME to the folder where Java is installed', 
     'JAVA_HOME can be set to either Arduino IDE Java or Oracle JRE', 
-    'If the defaults are acceptable, then click Next.', False, '');
+    'If the default is acceptable, then click Next.', False, '');
   JavaDirPage.Add('Java Home:');
   JavaDirPage.Values[0] := javaPath;
 
   ProjectDirPage := CreateInputDirPage(wpLicense, 'Set your Project Folder to where all projects will be kept.', 
-    'Project Folder should be your Arduino Sketchbook Folder or another writable Folder', 
-    'If the defaults are acceptable, then click Next.', False, '');
+    'Project Folder should be your Arduino Sketchbook Folder or another writeable Folder',
+    'Note that this folder can be changed later in the Builder Preferences.'#13#10 +
+    'If the default is acceptable, then click Next.', False, '');
   ProjectDirPage.Add('Project Folder:');
   ProjectDirPage.Values[0] := ExpandConstant('{userdocs}\\Arduino');
 end;

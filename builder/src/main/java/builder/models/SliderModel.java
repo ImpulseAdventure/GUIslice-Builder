@@ -26,13 +26,10 @@
 package builder.models;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.events.MsgBoard;
-import builder.events.MsgEvent;
 
 /**
  * The Class SliderModel implements the model for the Slider widget.
@@ -48,48 +45,36 @@ public class SliderModel extends WidgetModel {
   /** The Constant for gslc_tsElemRef* m_pElementRef name */
   public static final String ELEMENTREF_NAME = "m_pElemSlider";
   
-  /** The Constant PROP_ELEMENTREF. */
-  static private final int PROP_ELEMENTREF     = 6;
-  
-  /** The Constant PROP_MIN. */
+  /** The Constant ELEMENTREF_NAME. */
   static private final int PROP_MIN            =7;
-  
-  /** The Constant PROP_MAX. */
   static private final int PROP_MAX            =8;
-  
-  /** The Constant PROP_CURVALUE. */
-  static private final int PROP_CURVALUE          =9;
-  
-  /** The Constant PROP_THUMBSZ. */
+  static private final int PROP_CURVALUE       =9;
   static private final int PROP_THUMBSZ        =10;
-  
-  /** The Constant PROP_VERTICAL. */
   static private final int PROP_VERTICAL       =11;
-  
-  /** The Constant PROP_DIVISIONS. */
-  static private final int PROP_DIVISIONS       =12;
-  
-  /** The Constant PROP_TICKSZ. */
+  static private final int PROP_DIVISIONS      =12;
   static private final int PROP_TICKSZ         =13;
-  
-  /** The Constant PROP_TICK_COLOR. */
   static private final int PROP_TICK_COLOR     =14;
-  
-  /** The Constant PROP_TRIM. */
   static private final int PROP_TRIM           =15;
-  
-  /** The Constant PROP_TRIM_COLOR. */
   static private final int PROP_TRIM_COLOR     =16;
-  
-  /** The Constant PROP_FRAME_COLOR. */
   static private final int PROP_FRAME_COLOR    =17;
-  
-  /** The Constant PROP_FILL_COLOR. */
   static private final int PROP_FILL_COLOR     =18;
-  
-  /** The Constant PROP_SELECTED_COLOR. */
   static private final int PROP_SELECTED_COLOR =19;
     
+  /** The Property Defaults */
+  static public  final Integer DEF_MIN               = Integer.valueOf(0);
+  static public  final Integer DEF_MAX               = Integer.valueOf(100);
+  static public  final Integer DEF_CURVALUE          = Integer.valueOf(0);
+  static public  final Integer DEF_THUMBSZ           = Integer.valueOf(5);
+  static public  final Boolean DEF_VERTICAL          = Boolean.FALSE;
+  static public  final Integer DEF_DIVISIONS         = Integer.valueOf(10);
+  static public  final Integer DEF_TICKSZ            = Integer.valueOf(5);
+  static public  final Color   DEF_TICK_COLOR        = Color.BLUE;
+  static public  final Boolean DEF_TRIM              = Boolean.FALSE;
+  static public  final Color   DEF_TRIM_COLOR        = Color.BLUE;
+  static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
+  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
+  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
+  
   static private final int DEF_WIDTH = 80;
   static private final int DEF_HEIGHT= 20;
 
@@ -111,21 +96,20 @@ public class SliderModel extends WidgetModel {
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
-    initProp(PROP_ELEMENTREF, String.class, "TXT-206", Boolean.FALSE,"ElementRef","");
-    initProp(PROP_MIN, Integer.class, "SLD-100", Boolean.FALSE,"Minimum Value",Integer.valueOf(0));
-    initProp(PROP_MAX, Integer.class, "SLD-101", Boolean.FALSE,"Maximum Value",Integer.valueOf(255));
-    initProp(PROP_CURVALUE, Integer.class, "SLD-102", Boolean.FALSE,"Starting Value",Integer.valueOf(0));
-    initProp(PROP_THUMBSZ, Integer.class, "SLD-103", Boolean.FALSE,"Thumb Size",Integer.valueOf(5));
-    initProp(PROP_VERTICAL, Boolean.class, "SLD-104", Boolean.FALSE,"Vertical?",Boolean.FALSE);
-    initProp(PROP_DIVISIONS, Integer.class, "SLD-105", Boolean.FALSE,"Tick Divisions",Integer.valueOf(10));
-    initProp(PROP_TICKSZ, Integer.class, "SLD-106", Boolean.FALSE,"Tick Size",Integer.valueOf(5));
-    initProp(PROP_TRIM, Boolean.class, "SLD-107", Boolean.FALSE,"Trim Style?",Boolean.FALSE);
+    initProp(PROP_MIN, Integer.class, "SLD-100", Boolean.FALSE,"Minimum Value",DEF_MIN);
+    initProp(PROP_MAX, Integer.class, "SLD-101", Boolean.FALSE,"Maximum Value",DEF_MAX);
+    initProp(PROP_CURVALUE, Integer.class, "SLD-102", Boolean.FALSE,"Starting Value",DEF_CURVALUE);
+    initProp(PROP_THUMBSZ, Integer.class, "SLD-103", Boolean.FALSE,"Thumb Size",DEF_THUMBSZ);
+    initProp(PROP_VERTICAL, Boolean.class, "SLD-104", Boolean.FALSE,"Vertical?",DEF_VERTICAL);
+    initProp(PROP_DIVISIONS, Integer.class, "SLD-105", Boolean.FALSE,"Tick Divisions",DEF_DIVISIONS);
+    initProp(PROP_TICKSZ, Integer.class, "SLD-106", Boolean.FALSE,"Tick Size",DEF_TICKSZ);
+    initProp(PROP_TRIM, Boolean.class, "SLD-107", Boolean.FALSE,"Trim Style?",DEF_TRIM);
 
-    initProp(PROP_TICK_COLOR, Color.class, "COL-306", Boolean.FALSE,"Tick Color",Color.BLUE);
-    initProp(PROP_TRIM_COLOR, Color.class, "COL_307", Boolean.FALSE,"Trim Color",Color.BLUE);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",cf.getDefFrameCol());
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",cf.getDefFillCol());
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",cf.getDefGlowCol());
+    initProp(PROP_TICK_COLOR, Color.class, "COL-306", Boolean.FALSE,"Tick Color",DEF_TICK_COLOR);
+    initProp(PROP_TRIM_COLOR, Color.class, "COL_307", Boolean.FALSE,"Trim Color",DEF_TRIM_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
     
   }
   
@@ -154,32 +138,14 @@ public class SliderModel extends WidgetModel {
     }
     
     if (bSendEvents) {
-      event = new MsgEvent();
-      event.code = MsgEvent.WIDGET_REPAINT;
-      event.message = getKey();
-      MsgBoard.getInstance().publish(event);
-    }
+      if (row == PROP_ENUM) {
+        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+      } else {
+        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+      }
+    } 
   }
 
-  /**
-   * Gets the element ref.
-   *
-   * @return the element ref
-   */
-  public String getElementRef() {
-    return (String) data[PROP_ELEMENTREF][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * Sets the element ref.
-   *
-   * @param s
-   *          the new element ref
-   */
-  public void setElementRef(String s) { 
-    shortcutValue(s, PROP_ELEMENTREF);
-  }
-  
   /**
    * Gets the tick color.
    *
@@ -306,36 +272,4 @@ public class SliderModel extends WidgetModel {
     return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
   }
 
-  /**
-   * readModel() will deserialize our model's data from a string object for backup
-   * and recovery.
-   *
-   * @param in
-   *          the in stream
-   * @param widgetType
-   *          the widget type
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws ClassNotFoundException
-   *           the class not found exception
-    * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream, java.lang.String)
-   */
-  @Override
-  public void readModel(ObjectInputStream in, String widgetType) 
-      throws IOException, ClassNotFoundException {
-    super.readModel(in,  widgetType);
-    // upgrade to beta release where previously ElementRef was empty
-    if (getElementRef().equals("")) {
-      int n = 0;
-      String strKey = "";
-      String strCount = ""; 
-      String ref = ""; 
-      ref = ELEMENTREF_NAME;
-      strKey = getKey();
-      n = strKey.indexOf("$");
-      strCount = strKey.substring(n+1, strKey.length());
-      ref = ref + strCount;
-      setElementRef(ref);
-    }
-  }
 }

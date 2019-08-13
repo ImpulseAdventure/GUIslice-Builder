@@ -11,11 +11,11 @@ buildscript {
 apply plugin: 'application'
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'org.junit.platform.gradle.plugin'
+
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-version = '0.11.0-rc4' 
+version = '0.13.0' 
  
 repositories {
     mavenCentral()
@@ -37,14 +37,28 @@ startScripts {
 }
 
 jar {
-  dependsOn junitPlatformTest
-  libsDirName = "tmp/output/GUIsliceBuilder/lib"
+//  dependsOn junitPlatformTest
+  libsDirName = "tmp/linux/GUIsliceBuilder/lib"
   manifest {
-    attributes("Main-Class": "builder.Builder",
-    "Implementation-Title": "GUIsliceBuilder",
-    "Implementation-Version": version)
+      attributes "Main-Class": "com.baeldung.fatjar.Application"
+  }
+
+  from {
+      configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
   }
 }
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes ('Main-Class': 'builder.Builder',
+          "Implementation-Title": "GUIsliceBuilder",
+          "Implementation-Version": version)
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
 
 javadoc {
   source = sourceSets.main.allJava
@@ -53,10 +67,11 @@ javadoc {
 }
 
 task createWindowsDir(type: Copy) {
-  dependsOn jar, startScripts
+  dependsOn customFatJar, startScripts
   description = "create temp folder for windows distribution"
-    from fileTree ("${buildDir}/tmp/output")
+    from fileTree ("${buildDir}/tmp/linux")
     into "${buildDir}/tmp/windows"
+    exclude '**/*.template'
 }
 
 task copyWindowsScripts(type: Copy) {
@@ -68,43 +83,39 @@ task copyWindowsScripts(type: Copy) {
     into "${buildDir}/tmp/windows/GUIsliceBuilder"
 }
 
-task copyLinuxDir(type: Copy) {
-  dependsOn jar, startScripts
-  description = "create temp folder for linux distribution"
-    from fileTree ("${buildDir}/tmp/output")
-    into "${buildDir}/tmp/linux"
-}
-
 task copyInstallScriptToLinux(type: Copy) {
-  dependsOn copyLinuxDir
+  dependsOn customFatJar, startScripts
   description = "copy install script to linux temp folder"
+    doFirst {
+      mkdir "${buildDir}/tmp/linux/GUIsliceBuilder/lib"
+    }
     from "${projectDir}/scripts/install.sh"
     into "${buildDir}/tmp/linux/GUIsliceBuilder"
 }
 
 task copyArduinoResToLinux(type: Copy) {
-  dependsOn copyLinuxDir
+  dependsOn copyInstallScriptToLinux
   description = "copy arduino resources to linux temp folder"
     from "${projectDir}/arduino_res"
     into "${buildDir}/tmp/linux/GUIsliceBuilder/arduino_res"
 }
 
 task copyLinuxResToLinux(type: Copy) {
-  dependsOn copyLinuxDir
+  dependsOn copyInstallScriptToLinux
   description = "copy linux resources to linux temp folder"
     from "${projectDir}/linux_res"
     into "${buildDir}/tmp/linux/GUIsliceBuilder/linux_res"
 }
 
 task copyTemplatesToLinux(type: Copy) {
-  dependsOn copyLinuxDir
+  dependsOn copyInstallScriptToLinux
   description = "copy templates to linux temp folder"
     from "${projectDir}/templates"
     into "${buildDir}/tmp/linux/GUIsliceBuilder/templates"
 }
 
 task copyLinuxScripts(type: Copy) {
-  dependsOn copyInstallScriptToLinux, copyLinuxDir, copyArduinoResToLinux, copyLinuxResToLinux, copyTemplatesToLinux
+  dependsOn copyInstallScriptToLinux, copyArduinoResToLinux, copyLinuxResToLinux, copyTemplatesToLinux
   description = "copy start scripts and icons to linux temp folder"
     from "${projectDir}/scripts/desktop.template"
     into "${buildDir}/tmp/linux/GUIsliceBuilder/lib"
@@ -127,8 +138,9 @@ task copyMacOSDir(type: Copy) {
     mkdir "${buildDir}/tmp/macApp/GUIsliceBuilder/projects"
     mkdir "${buildDir}/tmp/macApp/GUIsliceBuilder/logs"
   }
-  from fileTree ("${buildDir}/tmp/output/GUIsliceBuilder/lib")
+  from fileTree ("${buildDir}/tmp/linux/GUIsliceBuilder/lib")
   into "${buildDir}/tmp/macApp/GUIsliceBuilder"
+  exclude '**/*.template'
 }
 
 task copyArduinoResToMacOS(type: Copy) {
@@ -227,7 +239,15 @@ task packageAll() {
   description = "package all distributions"
 }
 
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
 dependencies {
+  compile fileTree(include: ['*.jar'], dir: 'libs')
   testCompile ('junit:junit:4.12',
                'org.assertj:assertj-core:3.11.1')
   testImplementation(

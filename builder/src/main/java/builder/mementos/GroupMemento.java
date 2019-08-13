@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import builder.common.EnumFactory;
-import builder.models.CheckBoxModel;
+//import builder.models.CheckBoxModel;
 import builder.models.RadioButtonModel;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
@@ -75,8 +75,8 @@ public class GroupMemento extends Memento {
     for(WidgetModel m : groupList) {
       if (m.getType().equals(EnumFactory.RADIOBUTTON))
         savedList.add((String) m.getValueAt(RadioButtonModel.PROP_GROUP, 1));
-      else
-        savedList.add((String) m.getValueAt(CheckBoxModel.PROP_GROUP, 1));
+//      else
+//        savedList.add((String) m.getValueAt(CheckBoxModel.PROP_GROUP, 1));
     }
   }
   
@@ -92,8 +92,8 @@ public class GroupMemento extends Memento {
     for(WidgetModel m : groupList) {
       if (m.getType().equals(EnumFactory.RADIOBUTTON))
         m.restore(savedList.get(i++), RadioButtonModel.PROP_GROUP);
-      else
-        m.restore(savedList.get(i++), CheckBoxModel.PROP_GROUP);
+//      else
+//        m.restore(savedList.get(i++), CheckBoxModel.PROP_GROUP);
       page.selectName(m.getKey());
     }
     page.refreshView();
