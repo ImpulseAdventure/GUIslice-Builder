@@ -5,15 +5,9 @@ Please refer to the wiki page for installation and usage details:
 [GUIslice Builder - Documentation](https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder)
 
 ### Builder Contents
-Note that the Builder executables are attached to the latest [Release Notes](https://github.com/ImpulseAdventure/GUIslice/releases):
-- [Builder_user_guide.pdf](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/Builder_user_guide.pdf) Builder User Guide (in PDF format)
-- [builder-win-0.11.0-rc1.zip](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/builder-win-0.11.0-rc1.zip) Builder Executable (in Windows ZIP format)
-- [builder-linux-0.11.0-rc1.tar.gz](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/builder-linux-0.11.0-rc1.tar.gz) Builder Executable (in LINUX tar gzip format)
-- [builder-osx-0.11.0-rc1.zip](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/builder-osx-0.11.0-rc1.zip) Builder Executable (in Mac OS/X zip format)
+[GUIslice Builder Sources](https://github.com/ImpulseAdventure/GUIslice-Builder-source)
 
-### Builder Source Code
-The Builder source code is located in this directory (`/builder`)
-- Build instructions can be found in `BUILD.txt`
+Note that the Builder executables and User Guide are attached to the latest GUIslice API releases. [Release Notes](https://github.com/ImpulseAdventure/GUIslice/releases):
 
 ### Brief Overview
 The GUIslice Builder is a standalone desktop application that is designed to help generate layouts for GUIslice.
@@ -47,6 +41,9 @@ You can find Example project files inside GUIslice/examples/builder
  - Base Page
  - PopUp Dialog Page
 
+##### Removed Features
+ - Import of .ino or .c files. Maintenance of this feature was simply too high to continue support. 
+ 
 ##### Bug Fixes
  - Bug No. 7  Support transparency in BMP 
  - Bug No. 12 All widgets should allow renaming ElementRef field
@@ -73,4 +70,5 @@ You can find Example project files inside GUIslice/examples/builder
  - Bug No. 89 Element drag when in zoomed mode doesn't track mouse 
  - Bug No. 90 checkboxes and radio buttons should have either width or height. 
  - Bug No. 92 Change the default background color to black 
-
+ - Bug No. 96 Fatal error can cause crash log loop
+ 
