@@ -232,7 +232,6 @@ public class Builder  extends JDesktopPane {
           frame.setVisible(true);
         }
     });
-
     // NOTE: if running a debugger you might want to comment this thread out
     Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
       @Override
@@ -261,9 +260,9 @@ public class Builder  extends JDesktopPane {
           } catch (IOException e1) {
               e1.printStackTrace();
           }
-      }
+          System.exit(0);
+     }
     });
-
   }
   
   /**
