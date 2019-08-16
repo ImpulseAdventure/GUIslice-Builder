@@ -5,14 +5,10 @@ Please refer to the wiki page for installation and usage details:
 [GUIslice Builder - Documentation](https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder)
 
 ### Builder Contents
-Note that the Builder executables are attached to the latest [Release Notes](https://github.com/ImpulseAdventure/GUIslice/releases):
-- [Builder_user_guide.pdf](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/Builder_user_guide.pdf) Builder User Guide (in PDF format)
-- [builder-win-0.11.0-rc1.zip](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/builder-win-0.11.0-rc1.zip) Builder Executable (in Windows ZIP format)
-- [builder-linux-0.11.0-rc1.tar.gz](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/builder-linux-0.11.0-rc1.tar.gz) Builder Executable (in LINUX tar gzip format)
-- [builder-osx-0.11.0-rc1.zip](https://github.com/ImpulseAdventure/GUIslice/releases/download/v0.11.0/builder-osx-0.11.0-rc1.zip) Builder Executable (in Mac OS/X zip format)
+Note that the Builder executables and User Guide are attached to the latest GUIslice API Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice/releases):
 
 ### Builder Source Code
-The Builder source code is located in this directory (`/builder`)
+The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder-source](https://github.com/ImpulseAdventure/GUIslice-Builder-source)
 - Build instructions can be found in `BUILD.txt`
 
 ### Brief Overview
@@ -46,6 +42,9 @@ You can find Example project files inside GUIslice/examples/builder
  - Text Input
  - Base Page
  - PopUp Dialog Page
+ 
+#### Removed Features
+ - Import Button for importing non-builder created projects. Round trip edits of builder created files are still supported. Maintence costs for the Import feature were too high to continue support.
 
 ##### Bug Fixes
  - Bug No. 7  Support transparency in BMP 
