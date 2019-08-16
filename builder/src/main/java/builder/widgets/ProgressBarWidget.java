@@ -71,6 +71,8 @@ public class ProgressBarWidget extends Widget {
     g2d.setColor(m.getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
     drawBar(g2d, b);
+    g2d.setColor(m.getFrameColor());
+    g2d.drawRect(b.x, b.y, b.width, b.height);
     super.drawSelRect(g2d, b);
   }
   

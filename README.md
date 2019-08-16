@@ -70,5 +70,5 @@ You can find Example project files inside GUIslice/examples/builder
  - Bug No. 89 Element drag when in zoomed mode doesn't track mouse 
  - Bug No. 90 checkboxes and radio buttons should have either width or height. 
  - Bug No. 92 Change the default background color to black 
- - Bug No. 96 Fatal error can cause crash log loop
- 
+ - Bug No. 96 Fatal error can cause crash log loop 
+ - Bug No. 97 Progress Bar Frame not showing up on TFT simulation screen
