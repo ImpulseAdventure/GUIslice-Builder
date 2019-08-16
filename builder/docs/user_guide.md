@@ -11,7 +11,7 @@
 </center>
 
 
-![](images/title.png)
+![](images/title_demo_control.png)
 
 
 
@@ -53,7 +53,7 @@ The net result is that the Builder allows users to layout their UI visually and 
 
 It generate a skeleton file for the target platform, either 'project.ino' for Arduino, or 'project.c' for linux.
 
-One additional target platform variation that is supported is the Arduino API with TFT_eSPI driver. This will simply replace AdaFruit_GFX.h with TFT_eSPI.h.
+One additional target platform variation that is supported is the Arduino API with TFT_eSPI driver. This will simply replace Adafruit_GFX.h with TFT_eSPI.h.
 Thus your three Target Platforms available in the General Tab of User Preferences are:
 - arduino
 - arduino TFT_eSPI
