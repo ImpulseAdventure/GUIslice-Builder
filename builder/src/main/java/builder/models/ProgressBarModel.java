@@ -271,7 +271,48 @@ public class ProgressBarModel extends WidgetModel {
   @Override
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
-    super.readModel(in,  widgetType);
+//  System.out.println("WM readModel() " + getKey());
+    if (widgetType != null)
+      this.widgetType = widgetType;
+    bSendEvents = in.readBoolean();
+//  System.out.println("bSendEvents: " + bSendEvents);
+    int rows = in.readInt();
+    String metaID = null;
+    Object objectData = null;
+    int row;
+//  System.out.println("WM rows: " + rows);
+    boolean bNeedFix = false;
+    for (int i=0; i<rows; i++) {
+      metaID = (String)in.readObject();
+      objectData = in.readObject();
+      // work-around fix for bug in beta release where metaID's BAR-100, BAR-101 were duplicated
+      // and BAR-102 was miss-assigned
+      if (metaID.equals("BAR-102") && bNeedFix) {
+        metaID = "BAR-104";
+        bNeedFix = false;
+      }
+      if (metaID.equals("BAR-100") && objectData instanceof Integer) {
+        metaID = "BAR-102";
+        bNeedFix = true;
+      }
+      if (metaID.equals("BAR-101") && objectData instanceof Integer) {
+        metaID = "BAR-103";
+      }
+      // now that we remapped them we need to do another converting isRamp to our cbStyle combo
+      if (metaID.equals("BAR-101") && objectData instanceof Boolean) {
+         // ignore
+        continue;
+      }
+      row = mapMetaIDtoProperty(metaID);
+// System.out.println("metaID: " + metaID + " row: " + row);
+      if (row >= 0) {
+        data[row][PROP_VAL_VALUE] = objectData;
+        
+// System.out.println(data[row][PROP_VAL_NAME].toString() + ": " +
+//   data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
+        
+      }
+    }
     if (useDefaultColors()) {
       data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
       data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
