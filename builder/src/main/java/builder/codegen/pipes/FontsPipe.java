@@ -143,19 +143,21 @@ public class FontsPipe extends WorkFlowPipe {
 
     // we are ready to output our font information
     tm = cg.getTemplateManager();
-    List<String> includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
-    List<String> defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);;
+    List<String> includeTemplate = null;
+    List<String> defineTemplate = null;
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
     
     for (FontItem f : fonts) {
       if (!f.getIncludeFile().equals("NULL")) {
         // This code only affects arduino implementation.
+        includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
         map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
         outputLines = tm.expandMacros(includeTemplate, map);
         tm.codeWriter(sBd, outputLines);
-      } else if (!f.getDefineFile().equals("NULL")) {
+      } else if (!f.getDefineFile().equals("NULL") && cg.getTargetPlatform().equals("linux")) {
         // This code only affects linux implementation.
+        defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);;
         map.put(FONT_REF_MACRO, f.getFontRef());
         map.put(DEFINE_FILE_MACRO, f.getDefineFile());
         outputLines = tm.expandMacros(defineTemplate, map);

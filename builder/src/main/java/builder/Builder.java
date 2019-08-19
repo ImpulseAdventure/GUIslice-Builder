@@ -115,7 +115,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.13.0";
+  public static final String VERSION = "0.13.0.1";
   
   /** The Constant VERSION_NO is for save and restore of project file. */
   public static final String VERSION_NO = "-13";

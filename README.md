@@ -28,6 +28,12 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.0.1
+
+##### Bug Fixes
+ - Bug No. 100 Linux target platform gives missing FONT_INCLUDE template 
+ - Bug No. 101 Builder fails to load in mac/os can't find starting class
+
 #### Changes for 0.13.0
 
 ##### New UI Elements Supported
