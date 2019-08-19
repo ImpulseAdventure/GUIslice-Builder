@@ -126,8 +126,8 @@ public class CodeGenerator {
   /** The full list of widget models. */
   List<WidgetModel> models;
   
-  /** The project file. */
-  File projectFile = null;
+  /** The skeleton file. */
+  File skeletonFile = null;
   
   /** The project's template name. */
   String projectTemplate = null;
@@ -276,8 +276,7 @@ public class CodeGenerator {
       // load our project template into a StringBuilder object
       StringBuilder sBd = processFiles(folder, fileName, defFName, fileExt);
       // pass the project template on to our workflow
-      doCodeGen(sBd);
-      return projectFile.getName();
+      return doCodeGen(sBd);
     } catch (CodeGenException e) {
       JOptionPane.showMessageDialog(null, "Code Generation Failed: " + e.toString(), 
           "Error", JOptionPane.ERROR_MESSAGE);
@@ -293,20 +292,22 @@ public class CodeGenerator {
    * @throws CodeGenException
    *           the code gen exception
    */
-  public void doCodeGen(StringBuilder sBd) throws CodeGenException { 
+  public String doCodeGen(StringBuilder sBd) throws CodeGenException { 
      try {
       // run our pipe line
       StringBuilder code = workFlow.process(sBd);
       // before writing out our C Source file make a backup of the original
-      if(projectFile.exists()) {
+      if(skeletonFile.exists()) {
         // Make a backup copy of projectFile
-        CommonUtils.getInstance().backupFile(projectFile);
+        CommonUtils.getInstance().backupFile(skeletonFile);
       }
+      String fileName = skeletonFile.getName();
       // now that all phases have completed output the results to our new c file
-      BufferedWriter bw = new BufferedWriter(new FileWriter(projectFile));
+      BufferedWriter bw = new BufferedWriter(new FileWriter(skeletonFile));
       bw.write(code.toString());
       bw.flush();
       bw.close();
+      return fileName;
     } catch (IOException | CodeGenException e) {
       throw new CodeGenException(e.toString());
     }
@@ -333,7 +334,7 @@ public class CodeGenerator {
     int n = fileName.indexOf(".prj");
     String tmp = fileName.substring(0,n);
     projectTemplate = new String(folder + System.getProperty("file.separator") + tmp + fileExt);
-    projectFile = new File(projectTemplate);
+    skeletonFile = new File(projectTemplate);
     File templateFile = null;
     try {
       // Here we are either going to use a previously generated file as input
@@ -341,7 +342,7 @@ public class CodeGenerator {
       // I do all of this so users can create a file, then edit it do a run on a target platform
       // and go back and add or subtract widgets from the same file and not lose edits.
       FileReader fr = null;
-      if(projectFile.exists()) {
+      if(skeletonFile.exists()) {
         templateFile = new File(projectTemplate);
         fr = new FileReader(templateFile);
       } else {
@@ -401,7 +402,7 @@ public class CodeGenerator {
    * @return the project file
    */
   public File getProjectFile() {
-    return projectFile;
+    return skeletonFile;
   }
   
   /**
