@@ -102,7 +102,7 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
         }
       }
       if (!bTagFound) {
-        throw new CodeGenException("file: " + cg.getProjectTemplate() + " is corrupted missing tag:" + MY_TAG);
+        throw new CodeGenException("file: " + cg.getProjectTemplate() + "\n is corrupted missing tag:" + MY_TAG);
       }
       CodeUtils.readPassString(br, processed, MY_END_TAG);
       CodeUtils.finishUp(br, processed);
@@ -155,7 +155,7 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
       }
       if (!bTagFound) {
         throw new CodeGenException("file: " + cg.getProjectTemplate() + 
-            " is corrupted missing tag:" + MY_TAG);
+            "\n is corrupted missing tag:" + MY_TAG);
       }
       CodeUtils.finishUp(br, processed);
       br.close();

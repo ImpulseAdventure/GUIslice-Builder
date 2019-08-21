@@ -61,9 +61,6 @@ public class SaveRefPipe extends WorkFlowPipe {
   /** The template manager. */
   TemplateManager tm = null;
   
-  /** Our code generator. */
-  private CodeGenerator cg = null;
-  
   /**
    * Instantiates a new pipe.
    *
