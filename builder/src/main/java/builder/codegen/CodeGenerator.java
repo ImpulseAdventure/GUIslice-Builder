@@ -308,7 +308,7 @@ public class CodeGenerator {
       bw.flush();
       bw.close();
       return fileName;
-    } catch (IOException | CodeGenException e) {
+    } catch (IOException e) {
       throw new CodeGenException(e.toString());
     }
   }

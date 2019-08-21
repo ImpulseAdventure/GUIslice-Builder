@@ -20,21 +20,26 @@ The generated output code (.c, .ino) includes all of the necessary defines, UI s
 
 You can find Example project files inside GUIslice/examples/builder
 
-### Known Issues for Release 0.13.0
-
- - Bug No. 48 Crash on generate code in macOS when space in file name. 
- - Bug No. 86 Need to double click mouse twice sometimes to get a selection.
- - Bug No. 91 Fails to trap "invalid" filenames that are not permitted by the Arduino IDE
-
 ### Release History
 
-#### Changes for 0.13.0.1
+#### Changes for 0.13.0.2 Hot Fix
+
+##### Bug Fixes
+ - Bug No. 102 crash running code gen missing tags for older project files 
+ 
+#### Changes for 0.13.0.1 Hot Fix
 
 ##### Bug Fixes
  - Bug No. 100 Linux target platform gives missing FONT_INCLUDE template 
  - Bug No. 101 Builder fails to load in mac/os can't find starting class
 
 #### Changes for 0.13.0
+
+### Known Issues for Release 0.13.0
+
+ - Bug No. 48 Crash on generate code in macOS when space in file name. 
+ - Bug No. 86 Need to double click mouse twice sometimes to get a selection.
+ - Bug No. 91 Fails to trap "invalid" filenames that are not permitted by the Arduino IDE
 
 ##### New UI Elements Supported
 
