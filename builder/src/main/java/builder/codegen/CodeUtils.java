@@ -222,6 +222,30 @@ public final class CodeUtils {
   }
 
   /**
+  * findTag
+  * Continue reading the buffered reader but throw away all input 
+  * until finding the end string. Then write the end string output
+  * to our StringBuilder object.
+  *
+  * @param br
+  *          the BufferedReader
+  * @param sBd
+  *          the StringBuilder
+  * @param endString
+  *          the end string
+  * @throws IOException
+  *           Signals that an I/O exception has occurred.
+  */
+  static public void findTag(BufferedReader br, StringBuilder sBd, String tagString) throws IOException {
+    String line = null;
+    while ((line = br.readLine()) != null) {
+      if (line.equals(tagString)) break;
+      sBd.append(line);
+      sBd.append(System.lineSeparator());
+    }
+  }
+
+  /**
   * Sort list and remove duplicates.
   *
   * @param list
