@@ -22,12 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
-#### Changes for 0.13.0.2 Hot Fix
+#### Changes for 0.13.0.2 Hot Fix for projects created with early beta versions of the builder
 
 ##### Bug Fixes
- - Bug No. 102 crash running code gen missing tags for older project files 
+ - Bug No. 102 crash running code generation due to missing tags in .ino or .c files for older projects
+ - Bug No. 103 Upgrading older project files causes duplicate storage to be assigned
  
-#### Changes for 0.13.0.1 Hot Fix
+#### Changes for 0.13.0.1 Hot Fix for linux and mac/os
 
 ##### Bug Fixes
  - Bug No. 100 Linux target platform gives missing FONT_INCLUDE template 

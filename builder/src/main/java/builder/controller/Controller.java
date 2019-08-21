@@ -754,8 +754,8 @@ public class Controller extends JInternalFrame
     }
     ObjectOutputStream out =  new ObjectOutputStream(new FileOutputStream(projectFile));
     // output current version so we can make changes on future updates
-    out.writeObject(Builder.VERSION_NO);
-//    System.out.println("VERSION_NO: " + Builder.VERSION_NO);
+    out.writeObject(Builder.FILE_VERSION_NO);
+//    System.out.println("FILE_VERSION_NO: " + Builder.FILE_VERSION_NO);
     out.writeObject(currentPage.getKey());  // save last page accessed.
 //    System.out.println("currentPageKey: " + currentPage.getKey());
     out.writeInt(pages.size());
@@ -777,10 +777,6 @@ public class Controller extends JInternalFrame
       // now backup our model data to a base64 string
       out.writeObject(p.backup());
     }
-//    String tree_backup = TreeView.getInstance().backup();
-//    out.writeObject(tree_backup);
-    String enum_backup = EnumFactory.getInstance().backup();
-    out.writeObject(enum_backup);
     out.writeLong(0);  // extra value to avoid java.io.EOFException
     out.flush();
     out.close();
@@ -853,11 +849,13 @@ public class Controller extends JInternalFrame
         String tree_backup = (String)in.readObject();
 //        TreeView.getInstance().restore(tree_backup);
       }
-      String enum_backup = (String)in.readObject();
-      EnumFactory.getInstance().restore(enum_backup);
-      // fix for some imports
-      if (EnumFactory.getInstance().getPageCount() == 0)
-        EnumFactory.getInstance().setPageCount(1);
+      if (strVersion.equals("1.01") || 
+          strVersion.equals("1.02") ||
+          strVersion.equals("-13")) {
+        @SuppressWarnings("unused")
+        String enum_backup = (String)in.readObject();
+      }
+      EnumFactory.getInstance().resetCounts(pages);
       MsgBoard.getInstance().sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
       MsgBoard.getInstance().sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
     } catch (ClassNotFoundException e) {
