@@ -22,12 +22,23 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.0.3 Hot Fix for Adafruit GFX font usage
+
+##### Bug Fixes
+ - Bug No. 104 RingGauge: default Flat Color property should be GSLC_COLOR_BLUE_LT4
+ - Bug No. 105 RingGauge: RingGauge: default Inactive Color property should be (gslc_tsColor) {0,0,48}
+ - Bug No. 106 RingGauge: TFT Simulation incorrectly shows Flat Color property
+ - Bug No. 108 RingGauge: codegen invalid API call to ElemXRingGaugeSetColorActiveFlat()
+ - Bug No. 109 Can't Install GUIsliceBuilder as a NON-Admin user
+ - Bug No. 110 (Issue 28) Compilation error in Adafruit-GFX.h fonts include typo 
+ - Bug No. 111 (Issue 26) Compilation error: gslc_ElemXRingGaugeSetAngleRange(&m_gui,pElemRef, 270, 360, RING-102);
+ 
 #### Changes for 0.13.0.2 Hot Fix for projects created with early beta versions of the builder
 
 ##### Bug Fixes
  - Bug No. 102 crash running code generation due to missing tags in .ino or .c files for older projects
  - Bug No. 103 Upgrading older project files causes duplicate storage to be assigned
- 
+
 #### Changes for 0.13.0.1 Hot Fix for linux and mac/os
 
 ##### Bug Fixes
