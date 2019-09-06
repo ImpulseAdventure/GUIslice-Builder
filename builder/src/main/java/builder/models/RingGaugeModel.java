@@ -82,7 +82,7 @@ public class RingGaugeModel extends WidgetModel {
   static public final Color   DEF_ACTIVE_COLOR          = new Color(128,128,255); // GSLC_COL_BLUE_LT4
   static public final Color   DEF_GRADIENT_START_COLOR  = new Color(128,128,255); // GSLC_COL_BLUE_LT4
   static public final Color   DEF_GRADIENT_END_COLOR    = Color.RED;
-  static public final Color   DEF_INACTIVE_COLOR        = new Color(64,64,64); // GSLC_COLGRAY_DK2
+  static public final Color   DEF_INACTIVE_COLOR        = new Color(0,0,48); 
   static public final Color   DEF_TEXT_COLOR            = Color.YELLOW;
   static public final Color   DEF_FILL_COLOR            = Color.BLACK;
 
