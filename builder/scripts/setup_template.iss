@@ -29,7 +29,7 @@ AppPublisherURL=https://www.impulseadventure.com
 AppSupportURL=https://github.com/ImpulseAdventure/GUIslice/issues
 AppUpdatesURL=https://github.com/ImpulseAdventure/GUIslice/releases
 DefaultGroupName=GUIslice
-DefaultDirName={pf}\\GUIsliceBuilder
+DefaultDirName={code:DefDirRoot}\\GUIsliceBuilder
 DisableDirPage=no
 DisableWelcomePage=no
 DisableProgramGroupPage=yes
@@ -39,6 +39,7 @@ OutputBaseFilename=builder-win-${applicationVersion}
 SetupIconFile=..\\tmp\\windows\\GUIsliceBuilder\\guislicebuilder.ico
 Compression=lzma
 SolidCompression=yes
+PrivilegesRequired=none
 
 [Setup]
 ; Tell Windows Explorer to reload the environment
@@ -121,4 +122,17 @@ begin
     'If the default is acceptable, then click Next.', False, '');
   ProjectDirPage.Add('Project Folder:');
   ProjectDirPage.Values[0] := ExpandConstant('{userdocs}\\Arduino');
+end;
+
+function IsRegularUser(): Boolean;
+begin
+Result := not (IsAdminLoggedOn or IsPowerUserLoggedOn);
+end;
+
+function DefDirRoot(Param: String): String;
+begin
+if IsRegularUser then
+Result := ExpandConstant('{userdocs}')
+else
+Result := ExpandConstant('{pf}')
 end;

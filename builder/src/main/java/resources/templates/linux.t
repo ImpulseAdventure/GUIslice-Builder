@@ -508,7 +508,7 @@ extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
   gslc_ElemXRingGaugeSetVal(&m_gui, pElemRef, $<RING-105>); // Set initial value
 <STOP>
 <RINGGAUGE_FLATCOL>
-  ElemXRingGaugeSetColorActiveFlat(&m_gui,pElemRef, $<RING-109>);
+  gslc_ElemXRingGaugeSetColorActiveFlat(&m_gui,pElemRef, $<RING-109>);
 <STOP>
 <RINGGAUGE_GRADIENTCOL>
   gslc_ElemXRingGaugeSetColorActiveGradient(&m_gui, pElemRef, $<RING-110>, $<RING-111>);
@@ -520,7 +520,7 @@ extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
   gslc_ElemXRingGaugeSetThickness(&m_gui,pElemRef, $<RING-107>);
 <STOP>
 <RINGGAUGE_RANGE>
-  gslc_ElemXRingGaugeSetAngleRange(&m_gui,pElemRef, $<RING-100>, $<RING-101>, RING-102);
+  gslc_ElemXRingGaugeSetAngleRange(&m_gui,pElemRef, $<RING-100>, $<RING-101>, $<RING-102>);
 <STOP>
 <RINGGAUGE_SEGMENTS>
   gslc_ElemXRingGaugeSetQuality(&m_gui,pElemRef, $<RING-106>);

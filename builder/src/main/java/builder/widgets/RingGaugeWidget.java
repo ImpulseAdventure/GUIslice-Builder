@@ -97,7 +97,7 @@ public class RingGaugeWidget extends Widget {
       nVal = m.getCurValue();
     }
     Color colRingActive1 = m.getGradientStartColor();
-    Color colRingActive2 = m.getActiveColor();
+    Color colRingActive2 = m.getGradientEndColor();
     Color colRingInactive = m.getInactiveColor();
     Color colStep;
 
@@ -146,7 +146,7 @@ public class RingGaugeWidget extends Widget {
           colStep = GUIslice.colorBlend2(colRingActive1, colRingActive2, 500, nGradPos);
         } else {
           // Flat coloring
-          colStep = colRingActive1;
+          colStep = m.getActiveColor();
         }
       } else {
         colStep = colRingInactive;
