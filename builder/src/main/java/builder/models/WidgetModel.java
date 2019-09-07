@@ -26,9 +26,12 @@
 package builder.models;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -671,13 +674,23 @@ public class WidgetModel extends AbstractTableModel {
   
   /**
    * backup() supports our undo command by making a copy of the table cell's value
-   * before any changes have taken place.
+   * before any changes have taken place. This version is only used to
+   * deal with X,Y,Width, and Height and is only called by
+   * AlignPropertyMemento as an optimization to avoid serializing the full model.
    *
    * @param row
    *          the row
    * @return cell's current value.
-   * @see builder.commands.PropertyCommand
-   * @see builder.mementos.PropertyMemento
+   * @see builder.commands.AlignBottomCommand
+   * @see builder.commands.AlignCenterCommand
+   * @see builder.commands.AlignHeightCommand
+   * @see builder.commands.AlignHSpacingCommand
+   * @see builder.commands.AlignLeftCommand
+   * @see builder.commands.AlignRightCommand
+   * @see builder.commands.AlignTopCommand
+   * @see builder.commands.AlignVSpacingCommand
+   * @see builder.commands.AlignWidthCommand
+   * @see builder.mementos.AlignPropertyMemento
    * @see builder.commands.History
    */
   public Object backup(int row) {
@@ -685,20 +698,97 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * restore() supports our redo command by replacing the current value of the
-   * cell with the backup copy made earlier.
+   * backup() supports our undo command by making a copy of 
+   * all the model's cell values and read-only settings
+   * before any changes have taken place.
    *
-   * @param oldValue
-   *          the old value
-   * @param row
-   *          the row
+   * @return Model's cell values as a serialize string.
    * @see builder.commands.PropertyCommand
    * @see builder.mementos.PropertyMemento
    * @see builder.commands.History
    */
+  public String backup() {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ObjectOutputStream out = new ObjectOutputStream(baos);
+//    System.out.println("WM writeModel(): " + getKey());
+//    System.out.println("bSendEvents: " + bSendEvents);
+      int rows = getRowCount();
+//    System.out.println("WM rows: " + rows);
+      out.writeInt(rows);
+      for (int i=0; i<rows; i++) {
+        out.writeObject(data[i][PROP_VAL_READONLY]);
+        out.writeObject(data[i][PROP_VAL_VALUE]);
+//     System.out.println(data[i][PROP_VAL_ID] + ": "
+//       + data[i][PROP_VAL_VALUE].toString() +
+//       " Read-Only: " + data[i][PROP_VAL_READONLY].toString());
+      }
+      out.close();
+      return Base64.getEncoder().encodeToString(baos.toByteArray());
+    } catch (IOException e) {
+      System.out.print("IOException occurred." + e.toString());
+      e.printStackTrace();
+      return "";
+    }
+  }
+
+  /**
+   * restore() supports our redo command by replacing the current value of the
+   * cell with the backup copy made earlier.
+   *
+   * @param oldValue
+   *          the Model's cell previous value
+   * @param row
+   *          the row
+   * @see builder.commands.AlignBottomCommand
+   * @see builder.commands.AlignCenterCommand
+   * @see builder.commands.AlignHeightCommand
+   * @see builder.commands.AlignHSpacingCommand
+   * @see builder.commands.AlignLeftCommand
+   * @see builder.commands.AlignRightCommand
+   * @see builder.commands.AlignTopCommand
+   * @see builder.commands.AlignVSpacingCommand
+   * @see builder.commands.AlignWidthCommand
+   * @see builder.mementos.AlignPropertyMemento
+   * @see builder.commands.History
+   */
   public void restore(Object oldValue, int row) {
     data[row][PROP_VAL_VALUE] = oldValue;
-    fireTableCellUpdated(row, COLUMN_VALUE);
+    fireTableCellUpdated(1, COLUMN_VALUE);
+  }
+
+  /**
+   * restore() supports our redo command by replacing all of the 
+   * Model's current cell values with the backup copy made earlier.
+   *
+   * @param oldValue
+   *          the Serialized model's cell values
+   * @see builder.commands.PropertyCommand
+   * @see builder.mementos.PropertyMemento
+   * @see builder.commands.History
+   */
+  public void restore(String oldValue) {
+    try {
+      byte[] state = Base64.getDecoder().decode(oldValue);
+      ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(state));
+//    System.out.println("WM rows: " + rows);
+      int rows = in.readInt();
+      for (int i = 0; i < rows; i++) {
+        data[i][PROP_VAL_READONLY] = in.readObject();
+        data[i][PROP_VAL_VALUE] = in.readObject();
+//      System.out.println(data[i][PROP_VAL_ID] + ": "
+//      + data[i][PROP_VAL_VALUE].toString() +
+//      " Read-Only: " + data[i][PROP_VAL_READONLY].toString());
+      }
+      in.close();
+      fireTableDataChanged();
+    } catch (ClassNotFoundException e) {
+      System.out.println("ClassNotFoundException occurred.");
+      e.printStackTrace();
+    } catch (IOException e) {
+      System.out.println("IOException occurred." + e.toString());
+      e.printStackTrace();
+    }
   }
 
   /**

@@ -62,7 +62,7 @@ public class PropertyCommand extends Command {
     this.model = model;
     this.row = row;
     this.newValue = newValue;
-    memento = new PropertyMemento(model, row);
+    memento = new PropertyMemento(model);
   }
   
   /**

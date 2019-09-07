@@ -44,11 +44,8 @@ public class PropertyMemento extends Memento {
   private WidgetModel model;
   
   /** The saved property value. */
-  private Object savedValue;
+  private String savedValue;
   
-  /** The property row within the widget model. */
-  private int row;
-
   /**
    * Instantiates a new property memento.
    *
@@ -57,10 +54,9 @@ public class PropertyMemento extends Memento {
    * @param row
    *          the property row within the widget model.
    */
-  public PropertyMemento(WidgetModel model, int row) {
+  public PropertyMemento(WidgetModel model) {
     this.model = model;
-    this.row = row;
-    this.savedValue = model.backup(row);
+    this.savedValue = model.backup();
   }
 
   /**
@@ -70,7 +66,7 @@ public class PropertyMemento extends Memento {
    */
   @Override
   public void restore() {
-    model.restore(savedValue, row);
+    model.restore(savedValue);
     Controller.getInstance().refreshView();
   }
 
