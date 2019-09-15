@@ -99,8 +99,8 @@ $<CALLBACK>
 <CHECKBOX_P>
    
   // create checkbox $<COM-002> in flash 
-  gslc_ElemXCheckboxCreate_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
-    $<RBTN-101>,false,GSLCX_CHECKBOX_STYLE_X,$<COL-305>,$<CBOX-100>);
+  gslc_ElemXCheckboxCreate_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,$<COL-303>,true,
+    GSLC_GROUP_ID_NONE,false,GSLCX_CHECKBOX_STYLE_X,$<COL-305>,$<CBOX-100>);
 <STOP>
 <CHECKBOX_GROUP>
    
@@ -181,16 +181,16 @@ $<CALLBACK>
 <STOP>
 <DEFINE_ELEM_PAGE>
 
-#define MAX_ELEM_$<STRIP_ENUM> $<42>$<COUNT> // # Elems total on page
+#define MAX_ELEM_$<STRIP_ENUM> $<COUNT> // # Elems total on page
 <STOP>
 <DEFINE_ELEM_RAM>
 #define MAX_ELEM_$<STRIP_ENUM>_RAM MAX_ELEM_$<STRIP_ENUM> // # Elems in RAM
 <STOP>
 <DEFINE_ELEM_RAM_P>
 #if (GSLC_USE_PROGMEM)
-  #define MAX_ELEM_$<STRIP_ENUM>_PROG $<42>$<FLASH> // # Elems in Flash
+  #define MAX_ELEM_$<STRIP_ENUM>_PROG $<FLASH> // # Elems in Flash
 #else
-  #define MAX_ELEM_$<STRIP_ENUM>_PROG $<42>0 // No Elems in Flash
+  #define MAX_ELEM_$<STRIP_ENUM>_PROG 0 // No Elems in Flash
 #endif
 #define MAX_ELEM_$<STRIP_ENUM>_RAM MAX_ELEM_$<STRIP_ENUM> - MAX_ELEM_$<STRIP_ENUM>_PROG 
 <STOP>
@@ -243,7 +243,7 @@ bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   $<COM-019> = pElemRef;
 <STOP>
 <ELEMENT_REF_FIND_P>
-  $<ELEMREF> = gslc_PageFindElemById(&m_gui,$<COM-000>,$<COM-002>);
+  $<COM-019> = gslc_PageFindElemById(&m_gui,$<COM-000>,$<COM-002>);
 <STOP>
 <ELEMENT_REF_SAVE>
 gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
@@ -513,7 +513,7 @@ $<CALLBACK>
   //       ensure that the main page is the correct page no matter the add order.
   gslc_SetPageCur(&m_gui,$<PAGE_ENUM>);
 <STOP>
-<PROGMEM_P>
+<PROGMEM>
 // Define the maximum number of elements per page
 // - To enable the same code to run on devices that support storing
 //   data into Flash (PROGMEM) and those that don't, we can make the
@@ -567,7 +567,7 @@ $<CALLBACK>
 <RADIOBUTTON_P>
    
   // create radiobutton $<COM-002> in flash 
-  gslc_ElemXCheckboxCreate_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
+  gslc_ElemXCheckboxCreate_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,$<COL-303>,true,
     $<RBTN-101>,true,GSLCX_CHECKBOX_STYLE_ROUND,$<COL-305>,$<CBOX-100>);
 <STOP>
 <RESOURCE_DEFINE>

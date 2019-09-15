@@ -57,7 +57,7 @@ public class CheckBoxModel extends WidgetModel {
   /** The Property Defaults */
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
   static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
-  static public  final Color   DEF_MARK_COLOR        = Color.ORANGE;
+  static public  final Color   DEF_MARK_COLOR        = new Color(255,165,0); // // GSLC_COL_ORANGE
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY

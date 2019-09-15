@@ -317,14 +317,14 @@ public class InitGuiPipe extends WorkFlowPipe {
 //    System.out.println("outputAPI page: " + pageEnum + " widget: " + m.getType());
     switch(m.getType()) {
       case EnumFactory.BOX:
-        if (m.useFlash()) {
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
           Box_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           BoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       case EnumFactory.CHECKBOX:
-        if (m.useFlash()) {
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
           CheckBox_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           CheckBoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -349,14 +349,14 @@ public class InitGuiPipe extends WorkFlowPipe {
         NumberInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.PROGRESSBAR:
-        if (m.useFlash()) {
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
           ProgressBar_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           ProgressBarCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       case EnumFactory.RADIOBUTTON:
-        if (m.useFlash()) {
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
           RadioButton_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           RadioButtonCodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -378,7 +378,7 @@ public class InitGuiPipe extends WorkFlowPipe {
         SpinnerCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.TEXT:
-        if (m.useFlash()) {
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
           Text_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           TextCodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -388,7 +388,7 @@ public class InitGuiPipe extends WorkFlowPipe {
         TextBoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.TEXTBUTTON:
-        if (m.useFlash()) {
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
           TxtButton_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           TxtButtonCodeBlock.process(cg, tm, sBd, pageEnum, m);

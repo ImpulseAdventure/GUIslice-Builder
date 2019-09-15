@@ -448,6 +448,10 @@ $<CALLBACK>
   gslc_SetPageCur(&m_gui,$<PAGE_ENUM>);
 
 <STOP>
+<PROGMEM>
+#error Your Project is asking to Use Arduino Flash API but you chose to generate code for Linux platform.
+// This code will not work until you go back into your project and turn off Use Flash API for all your UI Elements.
+<STOP>
 <PROGRESSBAR>
 
   // Create progress bar $<COM-002> 
@@ -495,7 +499,8 @@ $<CALLBACK>
 extern "C" unsigned char $<EXTERN_NAME>[];
 <STOP>
 <RESOURCE_PROGMEM>
-extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
+// This cannot be supported in linux
+// extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
 <STOP>
 <RINGGAUGE>
 
