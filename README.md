@@ -22,7 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
-#### Changes for 0.13.0.3 Hot Fix for Adafruit GFX font usage
+#### Changes for 0.13.0.4 Hot Fix for Use Flash API calls
+
+##### Bug Fixes
+ - Bug No. 107 RingGauge: undo button doesn't update Flat Color / Gradient color property visibility
+ - Bug No. 112 Code gen fails for "Use Flash API" mode
+
+ #### Changes for 0.13.0.3 Hot Fix for Adafruit GFX font usage
 
 ##### Bug Fixes
  - Bug No. 104 RingGauge: default Flat Color property should be GSLC_COLOR_BLUE_LT4
