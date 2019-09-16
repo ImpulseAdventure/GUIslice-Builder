@@ -22,6 +22,11 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.0.5 
+
+##### Bug Fixes
+ - Bug No. 113 Flash _P() macros with custom color parameters needs to be wrapped with parentheses
+ 
 #### Changes for 0.13.0.4 Hot Fix for Use Flash API calls
 
 ##### Bug Fixes
