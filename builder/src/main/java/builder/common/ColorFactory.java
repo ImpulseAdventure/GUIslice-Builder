@@ -232,7 +232,7 @@ public class ColorFactory {
          return item.getDisplayName();
       }
     }
-    strColor = String.format("(gslc_tsColor){%d,%d,%d}", color.getRed(), color.getGreen(), color.getBlue());
+    strColor = String.format("((gslc_tsColor){%d,%d,%d})", color.getRed(), color.getGreen(), color.getBlue());
     return strColor;
   }
   
