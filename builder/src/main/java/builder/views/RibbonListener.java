@@ -27,12 +27,14 @@ package builder.views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
@@ -268,20 +270,26 @@ public class RibbonListener implements ActionListener, iSubscriber {
     fileChooser.setAcceptAllFileFilterUsed(false);
     fileChooser.addChoosableFileFilter(new FileFilter() {
       public String getDescription() {
-        if (!target.equals("linux"))
-          return "BMP Images (*.bmp), C File with extern image (*.c)";
+        if (target.equals("linux"))
+          return "16 or 24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
         else
-          return "BMP Images (*.bmp)";
+          return "24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
       }
 
       public boolean accept(File f) {
         if (f.isDirectory()) {
           return true;
         } else {
-          if ((f.getName().toLowerCase().endsWith(".bmp")) ||
-              (f.getName().toLowerCase().endsWith(".c") && 
-               !target.equals("linux")) )
+          if (f.getName().toLowerCase().endsWith(".c")) {
             return true;
+          }
+          if (f.getName().toLowerCase().endsWith(".bmp")) {
+            if (target.equals("linux")) {
+              return isValidLinuxImage(f);
+            } else {
+              return isValidArduinoImage(f);
+            }
+          }
           return false;
         }
       }
@@ -313,6 +321,54 @@ public class RibbonListener implements ActionListener, iSubscriber {
     return file;
   }
   
+  /**
+   * Validate that image is supported on Arduino Platform.
+   *
+   * @param file
+   *          the file
+   * @return true if valid format, false otherwise
+   */
+  public boolean isValidArduinoImage(File file) {
+    BufferedImage image = null;
+    try {
+       image = ImageIO.read(file);
+    } catch(IOException e) {
+       JOptionPane.showMessageDialog(null, 
+           e.getMessage(), 
+           "Read ERROR",
+           JOptionPane.ERROR_MESSAGE);
+       return false;
+    }
+    if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
+      return true;
+    return false;
+  }
+ 
+  /**
+   * Validate that image is supported on Linux Platform.
+   *
+   * @param file
+   *          the file
+   * @return true if valid format, false otherwise
+   */
+  public boolean isValidLinuxImage(File file) {
+    BufferedImage image = null;
+    try {
+       image = ImageIO.read(file);
+    } catch(IOException e) {
+       JOptionPane.showMessageDialog(null, 
+           e.getMessage(), 
+           "Read ERROR",
+           JOptionPane.ERROR_MESSAGE);
+       return false;
+    }
+    if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
+      return true;
+    if (image.getType() == BufferedImage.TYPE_USHORT_555_RGB) 
+      return true;
+    return false;
+  }
+ 
   /**
    * onExit
    */

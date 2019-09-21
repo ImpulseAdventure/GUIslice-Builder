@@ -35,11 +35,14 @@ import java.io.ObjectOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
 
+import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 //import builder.tables.ImageCellEditor;
 import builder.prefs.GeneralEditor;
@@ -483,7 +486,10 @@ public class ImgButtonModel extends WidgetModel {
       if (image != null) {
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
         setExternName(convert.getExternName());
-        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
+        if (generalModel.getTarget().equals("linux"))
+          data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
+        else      
+          data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }
@@ -562,7 +568,10 @@ public class ImgButtonModel extends WidgetModel {
       imageSelected = convert.doConvert(file);
       if (imageSelected != null) {
         setSelExternName(convert.getExternName());
-        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
+        if (generalModel.getTarget().equals("linux"))
+          data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_RAM;
+        else      
+          data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }

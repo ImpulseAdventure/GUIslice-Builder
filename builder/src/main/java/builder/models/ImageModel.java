@@ -327,7 +327,10 @@ public class ImageModel extends WidgetModel {
       if (image != null) {
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
         setExternName(convert.getExternName());
-        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
+        if (generalModel.getTarget().equals("linux"))
+          data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
+        else      
+          data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }
