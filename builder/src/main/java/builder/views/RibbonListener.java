@@ -317,6 +317,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
     if (option == JFileChooser.APPROVE_OPTION) {
       file = fileChooser.getSelectedFile();
       generalModel.setImageDir(file.getParent());
+      GeneralEditor.getInstance().savePreferences();
     } 
     return file;
   }
