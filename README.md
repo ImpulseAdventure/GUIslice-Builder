@@ -22,10 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
-#### Changes for 0.13.0.5 
+#### Changes for 0.13.b005 
 
 ##### Bug Fixes
+ - Bug No.  76 (re-open))Image file selection always opens to arduino_res should remember last directory accessed
  - Bug No. 113 Flash _P() macros with custom color parameters needs to be wrapped with parentheses
+ - Bug No. 114 Builder should validate image formats to be sure they are supported
+ - Bug No. 115 Builder should validate Page ENUM is used for jump page on Text+Image Button Callbacks
  
 #### Changes for 0.13.0.4 Hot Fix for Use Flash API calls
 

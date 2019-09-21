@@ -1133,6 +1133,27 @@ public class Controller extends JInternalFrame
   }
   
   /**
+   * Validate page enum
+   *
+   * @param page enum
+   *          the page enum to validate
+   * @return true if valid page enum, false otherwise
+   */
+  public boolean isValidPageEnum(String pageEnum) {
+    litr = pages.listIterator();
+    PagePane p = null;
+    String searchKey;
+    while(litr.hasNext()){
+      p = litr.next();
+      searchKey = p.getEnum();
+      if (searchKey.equals(pageEnum)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  /**
    * zoomIn.
    */
   public void zoomIn() {

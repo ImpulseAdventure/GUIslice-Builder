@@ -35,11 +35,14 @@ import java.io.ObjectOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
 
+import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 //import builder.tables.ImageCellEditor;
 import builder.prefs.GeneralEditor;
@@ -321,6 +324,46 @@ public class ImgButtonModel extends WidgetModel {
   }
 
   /**
+   * setValueAt.
+   *
+   * @param value
+   *          the value
+   * @param row
+   *          the row
+   * @param col
+   *          the col
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
+   *      int)
+   */
+  @SuppressWarnings("unused")
+  @Override
+  public void setValueAt(Object value, int row, int col) {
+    if (col == COLUMN_VALUE) {
+      // check for invalid data
+      if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
+        try {
+          int test = Integer.valueOf(Integer.parseInt((String)value));
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, "You entered non-numeric data in an number field.", 
+              "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
+      if (row == PROP_PAGE) {
+        String pageEnum = (String)value;
+        if (!Controller.getInstance().isValidPageEnum(pageEnum)) {
+          JOptionPane.showMessageDialog(null, "You must select an existing Page ENUM like: E_PG_MAIN.", 
+              "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
+      // commands are used to support undo and redo actions.
+      PropertyCommand c = new PropertyCommand(this, value, row);
+      execute(c);
+    }
+  }
+
+  /**
    * changeValueAt
    *
    * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)
@@ -483,7 +526,10 @@ public class ImgButtonModel extends WidgetModel {
       if (image != null) {
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
         setExternName(convert.getExternName());
-        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
+        if (generalModel.getTarget().equals("linux"))
+          data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
+        else      
+          data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }
@@ -562,7 +608,10 @@ public class ImgButtonModel extends WidgetModel {
       imageSelected = convert.doConvert(file);
       if (imageSelected != null) {
         setSelExternName(convert.getExternName());
-        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
+        if (generalModel.getTarget().equals("linux"))
+          data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_RAM;
+        else      
+          data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
       }
