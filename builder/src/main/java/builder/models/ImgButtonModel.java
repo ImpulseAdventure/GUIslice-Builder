@@ -324,6 +324,46 @@ public class ImgButtonModel extends WidgetModel {
   }
 
   /**
+   * setValueAt.
+   *
+   * @param value
+   *          the value
+   * @param row
+   *          the row
+   * @param col
+   *          the col
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
+   *      int)
+   */
+  @SuppressWarnings("unused")
+  @Override
+  public void setValueAt(Object value, int row, int col) {
+    if (col == COLUMN_VALUE) {
+      // check for invalid data
+      if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
+        try {
+          int test = Integer.valueOf(Integer.parseInt((String)value));
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, "You entered non-numeric data in an number field.", 
+              "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
+      if (row == PROP_PAGE) {
+        String pageEnum = (String)value;
+        if (!Controller.getInstance().isValidPageEnum(pageEnum)) {
+          JOptionPane.showMessageDialog(null, "You must select an existing Page ENUM like: E_PG_MAIN.", 
+              "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
+      // commands are used to support undo and redo actions.
+      PropertyCommand c = new PropertyCommand(this, value, row);
+      execute(c);
+    }
+  }
+
+  /**
    * changeValueAt
    *
    * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)
