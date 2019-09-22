@@ -92,6 +92,7 @@ LIST-103,Item List
 LIST-104,Storage Size
 LIST-105,Set Text Margins? - NOT Used
 LIST-106,Item Gap
+LIST-107,Item Gap Color
 IBTN-100,Image
 IBTN-101,Image When Selected
 IBTN-102,Image #defines

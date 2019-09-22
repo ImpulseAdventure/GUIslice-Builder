@@ -78,11 +78,12 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static private final int PROP_SCROLLBAR_EREF    = 20;
   static private final int PROP_SCROLLBAR_MAX     = 21;
   static private final int PROP_TEXT_COLOR        = 22;
-  static private final int PROP_FRAME_COLOR       = 23;
-  static private final int PROP_FILL_COLOR        = 24;
-  static private final int PROP_SELECTED_COLOR    = 25;
-  static private final int PROP_BAR_FRAME_COLOR   = 26;
-  static private final int PROP_BAR_FILL_COLOR    = 27;
+  static private final int PROP_GAP_COLOR         = 23;
+  static private final int PROP_FRAME_COLOR       = 24;
+  static private final int PROP_FILL_COLOR        = 25;
+  static private final int PROP_SELECTED_COLOR    = 26;
+  static private final int PROP_BAR_FRAME_COLOR   = 27;
+  static private final int PROP_BAR_FILL_COLOR    = 28;
   
   /** The Property Defaults */
   static public  final String[] DEF_ITEMS             = { "" };
@@ -100,6 +101,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static public  final String   DEF_SCROLLBAR_EREF    = "";
   static public  final Integer  DEF_SCROLLBAR_MAX     = Integer.valueOf(100);
   static public  final Color    DEF_TEXT_COLOR        = Color.WHITE;
+  static public  final Color    DEF_GAP_COLOR         = Color.BLACK;
   static public  final Color    DEF_FRAME_COLOR       = Color.BLUE;
   static public  final Color    DEF_FILL_COLOR        = Color.BLACK;
   static public  final Color    DEF_SELECTED_COLOR    = Color.BLACK;
@@ -136,7 +138,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   protected void initProperties()
   {
     widgetType = EnumFactory.LISTBOX;
-    data = new Object[28][5];
+    data = new Object[29][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -161,6 +163,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
 
     initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.FALSE,"Text Color",DEF_TEXT_COLOR);
+    initProp(PROP_GAP_COLOR, Color.class, "LIST-107", Boolean.FALSE,"Item Gap Color",DEF_GAP_COLOR);
     initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
     initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
@@ -430,6 +433,15 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
    */
   public Color getTextColor() {
     return (((Color) data[PROP_TEXT_COLOR][PROP_VAL_VALUE]));
+  }
+
+  /**
+   * Gets the gap color.
+   *
+   * @return the gap color
+   */
+  public Color getGapColor() {
+    return (((Color) data[PROP_GAP_COLOR][PROP_VAL_VALUE]));
   }
 
   /**

@@ -360,7 +360,7 @@ gslc_tsElemRef                  $<STORAGE>Ref[1];
   gslc_ElemXListboxAddItem(&m_gui, pElemRef, "$<TEXT>");
 <STOP>
 <LISTBOX_GAP>
-  gslc_ElemXListboxItemsSetGap(&m_gui, pElemRef, $<LIST-106>);
+  gslc_ElemXListboxItemsSetGap(&m_gui, pElemRef, $<LIST-106>,$<LIST-107>);
 <STOP>
 <LISTBOX_CB>
 bool CbListbox(void* pvGui, void* pvElemRef, int16_t nSelId)
