@@ -5,10 +5,10 @@ Please refer to the wiki page for installation and usage details:
 [GUIslice Builder - Documentation](https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder)
 
 ### Builder Contents
-Note that the Builder executables and User Guide are attached to the latest GUIslice API Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice/releases):
+Note that the Builder executables and User Guide are attached to the latest GUIslice Builder Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/releases):
 
 ### Builder Source Code
-The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder-source](https://github.com/ImpulseAdventure/GUIslice-Builder-source)
+The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder](https://github.com/ImpulseAdventure/GUIslice-Builder)
 - Build instructions can be found in `BUILD.txt`
 
 ### Brief Overview
