@@ -22,6 +22,11 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b007 
+
+##### Bug Fixes
+ - Bug No. 117 Code Gen for Target Platform -Arduino TFT_eSPI Missing template: <FONT_TFT_ESPI>
+
 #### Changes for 0.13.b006 
 
 ##### Bug Fixes

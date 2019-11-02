@@ -260,18 +260,18 @@ public class CodeGenerator {
     String defFName = null;
     String fileExt = null;
     try {
-      if(target.equals("arduino")) {
-        defFName = ARDUINO_FILE;
-        fileExt = ARDUINO_EXT;
-        tm.storeTemplates("arduino.t");
-        pathStoragePipe.pipeEn(false);
-      } else {
+      if(target.equals("linux")) {
         // "linux"
         defFName = LINUX_FILE;
         fileExt = LINUX_EXT;
         tm.storeTemplates("linux.t");
         // Path Storage step is only for linux
         pathStoragePipe.pipeEn(true);
+      } else {
+        defFName = ARDUINO_FILE;
+        fileExt = ARDUINO_EXT;
+        tm.storeTemplates("arduino.t");
+        pathStoragePipe.pipeEn(false);
       }
       // load our project template into a StringBuilder object
       StringBuilder sBd = processFiles(folder, fileName, defFName, fileExt);
