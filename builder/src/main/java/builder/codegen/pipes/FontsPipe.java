@@ -127,13 +127,19 @@ public class FontsPipe extends WorkFlowPipe {
 
     // do we need to output TFT_eSPI include file?
     if (cg.getTargetPlatform().equals("arduino TFT_eSPI")) {
-      // need to output AdaFruit include
+      /*   Rules for TFT_eSPI mode:
+       * - If no fonts used: No include required
+       * - If "built-in" / default font used: No include required
+       * - If custom freefonts used: include <TFT_eSPI.h> only
+       *   since they're already inside TFT_eSPI.h
+       */
       for (FontItem f : fonts) {
+        // A built-in font is indicated with a literal string of "NULL" 
         if (!f.getIncludeFile().equals("NULL")) {
-          // This code only affects arduino implementation.
+          // This code only affects TFT_eSPI implementation.
           List<String> tft_espiTemplate = tm.loadTemplate(FONT_TFT_ESPI_TEMPLATE);;
           tm.codeWriter(sBd, tft_espiTemplate);
-          break;
+          return;
         }
       }
     }
