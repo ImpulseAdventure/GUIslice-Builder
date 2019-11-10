@@ -626,6 +626,7 @@ public class Controller extends JInternalFrame
     while(litr.hasNext()){
       p = litr.next();
       if (p.getKey().equals(page.getKey())) {
+        litr.remove();
         idx = findPageIdx(page.getKey());
         if (idx > 0) {
           tabbedPane.remove(idx);
@@ -637,10 +638,8 @@ public class Controller extends JInternalFrame
           nBasePages=0;
         if (pages.size() > 0)
           changePage(pages.get(0).getKey());
-        litr.remove();
         break;
       }
-      idx++;
     }
   }
   

@@ -22,6 +22,12 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b008 
+
+##### Bug Fixes
+ - Bug No. 118 Platform  Arduino TFT_eSPI, should not have include Fonts/...
+ - Bug No. 119 Delete extra page causes main page removal
+
 #### Changes for 0.13.b007 
 
 ##### Bug Fixes

@@ -270,7 +270,6 @@ gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
 <STOP>
 <FONT_TFT_ESPI>
 #include <TFT_eSPI.h>
-// Note that these files are located within the Adafruit-GFX library folder:
 <STOP>
 <FONT_DEFINE>
 // #define $<FONT_REF> "$<DEFINE_FILE>" linux only
