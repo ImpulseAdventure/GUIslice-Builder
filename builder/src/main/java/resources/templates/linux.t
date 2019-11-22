@@ -300,8 +300,7 @@ $<CALLBACK>
 <STOP>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
-        //TODO- Update input handling code
-        // using gslc_ElemXKeyPadDataValGet(pGui, pvData)
+        gslc_ElemSetTxtStr(pGui, $<KEY-019>, gslc_ElemXKeyPadDataValGet(pGui, pvData)); 
         gslc_PopupHide(&m_gui);
       break;
 <STOP>
