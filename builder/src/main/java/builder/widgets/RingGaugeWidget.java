@@ -27,7 +27,7 @@ package builder.widgets;
 
 //import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
+//import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -77,10 +77,15 @@ public class RingGaugeWidget extends Widget {
     Graphics2D g2d = (Graphics2D) g.create();
     Rectangle b = getWinBounded();
     drawRing(g2d);
-    g2d.setColor(m.getTextColor());
-    String text = String.valueOf(m.getCurValue()) + "%";
-    Font font = ff.getFont(m.getFontDisplayName());
-    ff.alignString(g2d, "GSLC_ALIGN_MID_MID", b, text, font);
+/*
+ * Code commented out to fix bug 120
+ * The generated code always defines an empty string for the gauge text, 
+ * which is different to what you see in the builder. 
+ *  g2d.setColor(m.getTextColor());
+ *  String text = String.valueOf(m.getCurValue()) + "%";
+ *  Font font = ff.getFont(m.getFontDisplayName());
+ *   ff.alignString(g2d, "GSLC_ALIGN_MID_MID", b, text, font);
+ */
     super.drawSelRect(g2d, b);
     g2d.dispose();
   }

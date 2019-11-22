@@ -22,6 +22,12 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b009 
+
+##### Bug Fixes
+ - Bug No. 120 gen code defines an empty string for ring gauge text while builder shows percent
+ - Bug No. 121 Builder doesn't return the keypad result back to the linked text element in callback
+
 #### Changes for 0.13.b008 
 
 ##### Bug Fixes
