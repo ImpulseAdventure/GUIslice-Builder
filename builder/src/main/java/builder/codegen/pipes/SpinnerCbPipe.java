@@ -201,8 +201,9 @@ public class SpinnerCbPipe extends WorkFlowPipe {
         enumList.add(m.getEnum());
       }
     }
-    if (callbackList.size() == 0)
-      return;
+// BUG 124 - Deletion of all Spinners leaves ENUM case statements in callback
+//    if (callbackList.size() == 0)
+//      return;
     
     // this removes duplicates and detects and removes deleted ui elements
     Map<String, String> enumMap = super.mapEnums(br, sBd, enumList);
