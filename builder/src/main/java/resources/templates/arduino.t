@@ -412,7 +412,7 @@ gslc_tsElemRef                  $<STORAGE>Ref[1];
   // Create listbox
   pElemRef = gslc_ElemXListboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sListbox$<COM-018>,
     (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},$<TXT-211>,
-    (char*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
+    (uint8_t*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
   gslc_ElemXListboxSetSize(&m_gui, pElemRef, $<TXT-209>, $<TXT-210>); // $<TXT-209> rows, $<TXT-210> columns
   gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, XLISTBOX_SIZE_AUTO, XLISTBOX_SIZE_AUTO);
   gslc_ElemSetTxtMarginXY(&m_gui, pElemRef, $<LIST-100>, $<LIST-101>);
@@ -466,7 +466,7 @@ $<CALLBACK>
   // Create listbox
   pElemRef = gslc_ElemXListboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sListbox$<COM-018>,
     (gslc_tsRect){$<COM-003>+2,$<COM-004>+4,$<COM-005>-23,$<COM-006>-7},$<TXT-211>,
-    (char*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
+    (uint8_t*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
   gslc_ElemXListboxSetSize(&m_gui, pElemRef, $<TXT-209>, $<TXT-210>); // $<TXT-209> rows, $<TXT-210> columns
   gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, XLISTBOX_SIZE_AUTO, XLISTBOX_SIZE_AUTO);
   gslc_ElemSetTxtMarginXY(&m_gui, pElemRef, $<LIST-100>, $<LIST-101>);
