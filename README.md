@@ -22,6 +22,14 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b010
+
+##### Bug Fixes
+ - Bug No. 122 VSCode/PlatformIO Type error with gen code (char*) for ListBox should be (uint8_t*)
+ - Bug No. 123 code gen fails when any text/label contains '$'
+ - BUG No. 124 case statements generated for deleted UI elements in callbacks
+  
+
 #### Changes for 0.13.b009 
 
 ##### Bug Fixes
