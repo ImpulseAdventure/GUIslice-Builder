@@ -72,10 +72,10 @@ $<CALLBACK>
       case $<COM-002>:
         //TODO- Check the code to see what else you may need to add
         // Clicked on edit field, so show popup box and associate with this text field
-        gslc_ElemXKeyPadTargetIdSet(&m_gui, $<KEY-019>, $<COM-002>);
-        gslc_PopupShow(&m_gui, $<KEY-002>, true);
+        gslc_ElemXKeyPadTargetIdSet(&m_gui, $<COM-019>, $<COM-002>);
+        gslc_PopupShow(&m_gui, $<COM-002>, true);
         // Preload current value
-        gslc_ElemXKeyPadValSet(&m_gui, $<KEY-019>, gslc_ElemGetTxtStr(&m_gui, $<COM-019>));
+        gslc_ElemXKeyPadValSet(&m_gui, $<COM-019>, gslc_ElemGetTxtStr(&m_gui, $<COM-019>));
         break;
 <STOP>
 <BUTTON_CB_SHOWPOPUP>
@@ -367,7 +367,7 @@ $<CALLBACK>
 <STOP>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
-        gslc_ElemSetTxtStr(pGui, $<KEY-019>, gslc_ElemXKeyPadDataValGet(pGui, pvData)); 
+        gslc_ElemSetTxtStr(pGui, $<COM-019>, gslc_ElemXKeyPadDataValGet(pGui, pvData)); 
         gslc_PopupHide(&m_gui);
       break;
 <STOP>
