@@ -25,6 +25,9 @@
  */
 package builder.models;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import javax.swing.JTextField;
 
 import builder.common.EnumFactory;
@@ -71,10 +74,10 @@ public class KeyPadTextModel extends WidgetModel {
     data = new Object[8][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_ENUM, String.class, "KEY-002", Boolean.FALSE,"ENUM",EnumFactory.ALPHAKEYPAD_PAGE_ENUM);
+    initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",EnumFactory.ALPHAKEYPAD_PAGE_ENUM);
     initProp(PROP_X, Integer.class, "COM-003", Boolean.FALSE,"X",Integer.valueOf(65));
     initProp(PROP_Y, Integer.class, "COM-004", Boolean.FALSE,"Y",Integer.valueOf(80));
-    initProp(PROP_ELEMENTREF, String.class, "KEY-019", Boolean.FALSE,"ElementRef",EnumFactory.ALPHAKEYPAD_ELEMREF);
+    initProp(PROP_ELEMENTREF, String.class, "COM-019", Boolean.FALSE,"ElementRef",EnumFactory.ALPHAKEYPAD_ELEMREF);
 
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
 
@@ -149,4 +152,51 @@ public class KeyPadTextModel extends WidgetModel {
 //    return (((Integer) (data[PROP_BUTTONGAPY][PROP_VAL_VALUE])).intValue());
 //  }
 
+  /**
+   * readModel() will deserialize our model's data from a string object for backup
+   * and recovery.
+   *
+   * @param in
+   *          the in stream
+   * @param widgetType
+   *          the widget type
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws ClassNotFoundException
+   *           the class not found exception
+    * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream, java.lang.String)
+   */
+   @Override
+   public void readModel(ObjectInputStream in, String widgetType) 
+      throws IOException, ClassNotFoundException {
+//   System.out.println("WM readModel() " + getKey());
+     if (widgetType != null)
+       this.widgetType = widgetType;
+     bSendEvents = in.readBoolean();
+//   System.out.println("bSendEvents: " + bSendEvents);
+     int rows = in.readInt();
+     String metaID = null;
+     Object objectData = null;
+     int row;
+//   System.out.println("WM rows: " + rows);
+     for (int i=0; i<rows; i++) {
+       metaID = (String)in.readObject();
+       objectData = in.readObject();
+       if (metaID.equals("KEY-002")) {
+         metaID = "COM-002";
+       }
+       if (metaID.equals("KEY-019")) {
+         metaID = "COM-019";
+       }
+       row = mapMetaIDtoProperty(metaID);
+// System.out.println("metaID: " + metaID + " row: " + row);
+       if (row >= 0) {
+         data[row][PROP_VAL_VALUE] = objectData;
+         
+//       System.out.println(data[row][PROP_VAL_NAME].toString() + ": " +
+//       data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
+         
+       }
+     }
+   }
 }

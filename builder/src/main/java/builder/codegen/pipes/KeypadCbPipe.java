@@ -159,7 +159,9 @@ public class KeypadCbPipe extends WorkFlowPipe {
     Map<String, String> map = new HashMap<String, String>();
     for (WidgetModel m : callbackList) {
       map.clear();
-      map.put(ENUM_MACRO, m.getEnum());
+// BUG 125 keypad callback fails to expand all properties
+//      map.put(ENUM_MACRO, m.getEnum());
+      map = m.getMappedProperties("");
       outputLines = tm.expandMacros(templateKeypad, map);
       tm.codeWriter(sTemp, outputLines);
     }
@@ -219,6 +221,9 @@ public class KeypadCbPipe extends WorkFlowPipe {
       if (enumMap.get(m.getEnum()).equals("0")) {
         map.clear();
         map.put(ENUM_MACRO, m.getEnum());
+// BUG 125 keypad callback fails to expand all properties
+//      map.put(ENUM_MACRO, m.getEnum());
+        map = m.getMappedProperties("");
         outputLines = tm.expandMacros(templateKeypad, map);
         tm.codeWriter(sBd, outputLines);
       }

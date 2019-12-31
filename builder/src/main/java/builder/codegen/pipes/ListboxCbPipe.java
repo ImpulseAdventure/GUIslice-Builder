@@ -193,8 +193,9 @@ public class ListboxCbPipe extends WorkFlowPipe {
         enumList.add(m.getEnum());
       }
     }
-    if (callbackList.size() == 0)
-      return;
+// BUG 122 - Deletion of listbox leaves ENUM case statement in CbListbox callback
+//    if (callbackList.size() == 0)
+//      return;
     
     // this removes duplicates and detects and removes deleted ui elements
     Map<String, String> enumMap = super.mapEnums(br, sBd, enumList);

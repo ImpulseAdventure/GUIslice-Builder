@@ -210,7 +210,10 @@ public class TemplateManager {
                   nPadding = 0; // reset for next value
                 }
               }
-              m.appendReplacement(sb, sValue);
+// bug: 123 appendReplacementfails if sValue has a '$' in it. 
+//              m.appendReplacement(sb, sValue);
+              m.appendReplacement(sb, "");
+              sb.append(sValue);
             }
           }
         }

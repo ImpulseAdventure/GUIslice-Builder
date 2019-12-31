@@ -34,7 +34,11 @@ import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
+import builder.models.KeyPadModel;
+import builder.models.KeyPadTextModel;
 import builder.models.WidgetModel;
+import builder.prefs.AlphaKeyPadEditor;
+import builder.prefs.NumKeyPadEditor;
 import builder.views.PagePane;
 
 /**
@@ -142,6 +146,21 @@ public class EnumPipe extends WorkFlowPipe {
     }
     // Final pass output any font enums
     enumList.clear();
+    // Start with keyboard fonts - bug 126 missing keyboard font
+    // place any keypads at end
+    if (bAddNumKeyPad) {
+      KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
+      name = m.getFontEnum();
+      if (name != null)
+        enumList.add(name);
+    }
+    if (bAddAlphaKeyPad) {
+      KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
+      name = m.getFontEnum();
+      if (name != null)
+        enumList.add(name);
+    }
+
     for (WidgetModel m : cg.getModels()) {
       name = m.getFontEnum();
       if (name != null)
