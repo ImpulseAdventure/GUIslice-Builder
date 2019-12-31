@@ -28,7 +28,8 @@ You can find Example project files inside GUIslice/examples/builder
  - Bug No. 122 VSCode/PlatformIO Type error with gen code (char*) for ListBox should be (uint8_t*)
  - Bug No. 123 code gen fails when any text/label contains '$'
  - BUG No. 124 case statements generated for deleted UI elements in callbacks
-  
+ - Bug No. 125 code gen for keypad input fails with IllegalArgumentException
+ - Bug No. 126 E_FONT_TXT5 not declared for keypad if no other text fields present
 
 #### Changes for 0.13.b009 
 
