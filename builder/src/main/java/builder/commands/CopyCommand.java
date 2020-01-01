@@ -107,20 +107,7 @@ public class CopyCommand extends Command {
   public void execute() {
     Clipboard clipboard = controller.getClipboard();
     // make sure we start with an empty clipboard
-    clipboard.setContents(new Transferable() {
-      public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[0];
-      }
-
-      public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return false;
-      }
-
-      public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-        throw new UnsupportedFlavorException(flavor);
-      }
-      
-    }, null);
+    clipboard.setContents(new WidgetItemsSelection(null), null);
     // now place selected widgets onto the clipboard
     WidgetItems items = new WidgetItems(groupList);
     WidgetItemsSelection selection = new WidgetItemsSelection(items);

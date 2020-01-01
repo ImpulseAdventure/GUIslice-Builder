@@ -81,6 +81,7 @@ public class PasteCommand extends Command implements ClipboardOwner {
   public boolean paste() {
     Clipboard clipboard = controller.getClipboard();
     WidgetItemsSelection clipboardContent = (WidgetItemsSelection) clipboard.getContents(this);
+    if (clipboardContent == null) return false;
     DataFlavor[] flavors = clipboardContent.getTransferDataFlavors();
     for (int i = 0; i < flavors.length; i++){
        if (flavors[i] == WidgetItemsSelection.widgetFlavor) {
