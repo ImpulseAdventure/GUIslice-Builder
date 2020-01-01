@@ -25,9 +25,9 @@ You can find Example project files inside GUIslice/examples/builder
 #### Changes for 0.13.b011
 
 ##### Bug Fixes
- - Bug No. 127 Incorrect visual width for ListBox without scrollbar
+ - Bug No. 127 Incorrect visual display width for ListBox without scrollbar
  - Bug No. 128 Fatal error when ctrl-c copy then paste element selected in treeview
- - Bug No. 129 Fatal error when pasting invalid referenced element
+ - Bug No. 129 Fatal error when pasting after undo of copy element
  - Bug No. 130 Random duplicate key and enum collisions of UI elements
 
  #### Changes for 0.13.b010
