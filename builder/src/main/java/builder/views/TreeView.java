@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
@@ -47,6 +48,7 @@ import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
@@ -63,6 +65,7 @@ import builder.Builder;
 import builder.clipboard.TreeItem;
 import builder.clipboard.TreeItemSelection;
 import builder.common.CommonUtils;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -190,6 +193,14 @@ public class TreeView extends JInternalFrame implements iSubscriber {
                 ((TreeItem) parentNode.getUserObject()).getKey());
           }
         }
+      }
+    });
+    tree.addKeyListener(new java.awt.event.KeyAdapter() {
+
+      public void keyPressed(java.awt.event.KeyEvent evt) {
+          if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_C) {
+              Controller.getInstance().copyWidgets();
+          }
       }
     });
     scrollPane = new JScrollPane(tree,
