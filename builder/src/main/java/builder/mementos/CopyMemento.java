@@ -26,9 +26,6 @@
 package builder.mementos;
 
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 
 import builder.clipboard.WidgetItemsSelection;
 import builder.controller.Controller;
