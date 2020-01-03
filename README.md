@@ -23,12 +23,16 @@ You can find Example project files inside GUIslice/examples/builder
 ### Release History
 
 #### Changes for 0.13.b011
+The Listbox edit list items dialog (entered by pressing '...' in its property tab) now has 
+Move Up and Down for reordering items.  You could and still can simply select a row and drag
+then drop to a new location but the new move commands will make it clearer.
 
 ##### Bug Fixes
  - Bug No. 127 Incorrect visual display width for ListBox without scrollbar
  - Bug No. 128 Fatal error when ctrl-c copy then paste element selected in treeview
  - Bug No. 129 Fatal error when pasting after undo of copy element
  - Bug No. 130 Random duplicate key and enum collisions of UI elements
+ - Bug No. 131 Enhancement - add move up and move down commands to Listbox edit items dialog
 
  #### Changes for 0.13.b010
 
