@@ -73,8 +73,9 @@ public class ListBoxWidget extends Widget {
       g2d.drawRect(b.x+2, b.y+4, b.width-23, b.height-7);
       drawScrollBar(g2d, m, b);
     } else {
-      b.width = b.width-23;
-      b.height = b.height-8;
+// BUG 127 Incorrect visual width for ListBox without scrollbar
+//      b.width = b.width-23;
+//      b.height = b.height-8;
       g2d.setColor(m.getFillColor());
       g2d.fillRect(b.x, b.y, b.width, b.height);
       g2d.setColor(m.getFrameColor());

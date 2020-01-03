@@ -26,10 +26,8 @@
 package builder.mementos;
 
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 
+import builder.clipboard.WidgetItemsSelection;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.views.PagePane;
@@ -85,20 +83,7 @@ public class CutMemento extends Memento {
   public void restore() {
     // clear out our clipboard
     Clipboard clipboard = controller.getClipboard();
-    clipboard.setContents(new Transferable() {
-      public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[0];
-      }
-
-      public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return false;
-      }
-
-      public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-        throw new UnsupportedFlavorException(flavor);
-      }
-      
-    }, null);
+    clipboard.setContents(new WidgetItemsSelection(null), null);
     page.restore(page_backup, true);
     TreeView.getInstance().restore(tree_backup);
     EnumFactory.getInstance().restore(enum_backup);

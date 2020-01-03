@@ -669,7 +669,7 @@ public class PagePane extends JPanel implements iSubscriber {
       Widget w = findOne(mousePt);
       int button = e.getButton();
       if (button != MouseEvent.BUTTON1) {
-    System.out.println("button != MouseEvent.BUTTON1");
+//    System.out.println("button != MouseEvent.BUTTON1");
         return;
       }
       if (e.isShiftDown() && e.isControlDown()) {

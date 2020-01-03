@@ -20,6 +20,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -37,6 +38,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
 
+import builder.Builder;
+
 public class StringListDialog extends JDialog implements ActionListener, ListSelectionListener {
   private static final long serialVersionUID = 1L;
 
@@ -47,7 +50,14 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
   private JFormattedTextField itemName;
   private JButton btn_remove;
   private JButton btn_add;
+  private JButton btn_up;
+  private JButton btn_down;
   
+  private static final String okString = "ok";
+  private static final String addString = "add";
+  private static final String removeString = "remove";
+  private static final String upString = "move up";
+  private static final String downString = "move down";
   private static String[] emptyList = { "" };
 
   /**
@@ -72,19 +82,32 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
 
     // Create and initialize the buttons.
     JButton okButton = new JButton("OK");
-    okButton.setActionCommand("ok");
+    okButton.setActionCommand(okString);
     okButton.setToolTipText("Press 'OK' when list is completed.");
     okButton.addActionListener(this);
     //
-    btn_add = new JButton("Add Item");
-    btn_add.setActionCommand("add");
+    btn_add = new JButton("Add");
+    btn_add.setActionCommand(addString);
     btn_add.addActionListener(this);
-    btn_add.setToolTipText("Enter an item then press 'Add Item' to place in list.");
+    btn_add.setToolTipText("Enter an item then press 'Add' to place in list.");
     
-    btn_remove = new JButton("Remove");
-    btn_remove.setActionCommand("remove");
+    btn_up = new JButton();
+    btn_up.setIcon(new ImageIcon(Builder.class.getResource("/resources/icons/misc/up24.png")));
+    btn_up.setToolTipText("Move the currently selected list item higher.");
+    btn_up.setActionCommand(upString);
+    btn_up.addActionListener(this);
+
+    btn_down = new JButton();
+    btn_down.setIcon(new ImageIcon(Builder.class.getResource("/resources/icons/misc/down24.png")));
+    btn_down.setToolTipText("Move the currently selected list item lower.");
+    btn_down.setActionCommand(downString);
+    btn_down.addActionListener(this);
+
+    btn_remove = new JButton();
+    btn_remove.setIcon(new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png")));
+    btn_remove.setActionCommand(removeString);
     btn_remove.addActionListener(this);
-    btn_remove.setToolTipText("Select an item then press 'Remove' to delete.");
+    btn_remove.setToolTipText("Select an item then press to delete.");
     btn_remove.setEnabled(false);
     AddItemListener addItemListener = new AddItemListener(btn_remove);
 
@@ -190,6 +213,10 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
     buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
     buttonPane.add(itemName);
     buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+    buttonPane.add(btn_up);
+    buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+    buttonPane.add(btn_down);
+    buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
     buttonPane.add(btn_remove);
     buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
     buttonPane.add(okButton);
@@ -217,9 +244,9 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
   // Handle clicks on the Add and Cancel buttons.
   public void actionPerformed(ActionEvent e) {
     String command = e.getActionCommand();
-    int index = 0;
+    int index = list.getSelectedIndex();
     switch (command) {
-      case "add":
+      case addString:
         try {
           itemName.commitEdit();
           addItem(itemName.getText());
@@ -227,11 +254,10 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
           return;
         }
         break;
-      case "remove":
-        // This method can be called only if
-        // there's a valid selection
+      case removeString:
+        // no need to test for valid selection
+        // you can't get here unless valid
         // so go ahead and remove whatever's selected.
-        index = list.getSelectedIndex();
         listModel.remove(index);
         int size = listModel.getSize();
         if (size == 0) { // Nothing left, disable removal.
@@ -245,7 +271,41 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
           list.ensureIndexIsVisible(index);
         }
         break;
-      case "ok":
+      case upString: //UP ARROW BUTTON
+        // test for valid selection
+        if (index == -1) {
+          JOptionPane.showMessageDialog(null, 
+              "You must first select an item row to move.",
+              "Warning",
+              JOptionPane.WARNING_MESSAGE);
+          return;
+        }
+        // go ahead and move the list item up one row.
+        if (index != 0) {
+            //not already at top
+            swap(index, index - 1);
+            list.setSelectedIndex(index - 1);
+            list.ensureIndexIsVisible(index - 1);
+        }
+        break;
+      case downString: //DOWN ARROW BUTTON
+        // test for valid selection
+        if (index == -1) {
+          JOptionPane.showMessageDialog(null, 
+              "You must first select an item row to move.",
+              "Warning",
+              JOptionPane.WARNING_MESSAGE);
+          return;
+        }
+        // go ahead and move the list item down one row.
+        if (index != listModel.getSize() - 1) {
+            //not already at bottom
+            swap(index, index + 1);
+            list.setSelectedIndex(index + 1);
+            list.ensureIndexIsVisible(index + 1);
+        }
+        break;
+      case okString:
         try {
           itemName.commitEdit();
           addItem(itemName.getText());
@@ -352,6 +412,14 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
             btn_remove.setEnabled(true);
           }
       }
+  }
+
+  //Swap two elements in the list.
+  private void swap(int a, int b) {
+    Object aObject = listModel.getElementAt(a);
+    Object bObject = listModel.getElementAt(b);
+    listModel.set(a, (String) bObject);
+    listModel.set(b, (String) aObject);
   }
 
   //This method tests for string equality. You could certainly

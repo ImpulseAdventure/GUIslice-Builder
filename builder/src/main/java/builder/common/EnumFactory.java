@@ -335,6 +335,7 @@ public class EnumFactory {
       for (Widget w : widgets) {
         sType = w.getType();
         sCount = CodeUtils.getKeyCount(w.getKey());
+        c = Integer.valueOf(sCount);  // added for bug 130 Wrong count keys causes dup elements
         resetCount(sType, c);
       }
     }
