@@ -115,7 +115,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.13.b011";
+  public static final String VERSION = "0.13.b012";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-13";
@@ -152,22 +152,13 @@ public class Builder  extends JDesktopPane {
   /** The controller. */
   protected Controller controller;
   
-  /* Look and Feel */
-  public static final String LAF_ACRYL     = "com.jtattoo.plaf.acryl.AcrylLookAndFeel";
-  public static final String LAF_AERO      = "com.jtattoo.plaf.aero.AeroLookAndFeel";
-  public static final String LAF_ALUMINIUM = "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel";
-  public static final String LAF_BERNSTEIN = "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel";
-  public static final String LAF_FAST      = "com.jtattoo.plaf.fast.FastLookAndFeel";
-  public static final String LAF_GRAPHITE  = "com.jtattoo.plaf.graphite.GraphiteLookAndFeel";
-  public static final String LAF_HIFI      = "com.jtattoo.plaf.hifi.HiFiLookAndFeel";
-  public static final String LAF_LUNA      = "com.jtattoo.plaf.luna.LunaLookAndFeel";
-  public static final String LAF_MCWIN     = "com.jtattoo.plaf.mcwin.McWinLookAndFeel";
-  public static final String LAF_MINT      = "com.jtattoo.plaf.mint.MintLookAndFeel";
-  public static final String LAF_SMART     = "com.jtattoo.plaf.smart.SmartLookAndFeel";
-  public static final String LAF_TEXTURE   = "com.jtattoo.plaf.texture.TextureLookAndFeel";
- 
   /** The boolean indicating running on a MacOS system */
   public static boolean isMAC = false;
+  
+  public static String NO_OPTIONAL_LAFS = "NO_OPTIONAL_LAFS";
+  
+  /** The boolean indicating SubstanceLookAndFeel is supported */
+  public static boolean isSubstanceSupported = false;
   
   /**
    * The main method.
@@ -183,6 +174,9 @@ public class Builder  extends JDesktopPane {
       JOptionPane.showMessageDialog(null, 
         msg, "Failure", JOptionPane.ERROR_MESSAGE);
     }
+    String osName = System.getProperty("os.name").toLowerCase();
+    isMAC = osName.startsWith("mac os x");
+    isSubstanceSupported = osName.contains("win");
 /*  Use this code for Java 9 and above
     if (version < 9) {
       String msg = String.format("Java 9 or higher is needed to run. Yours is %.2f", version);
@@ -210,8 +204,6 @@ public class Builder  extends JDesktopPane {
           setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
           initUI();
           try {
-            String osName = System.getProperty("os.name").toLowerCase();
-            isMAC = osName.startsWith("mac os x");
             if (isMAC) 
             {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -381,7 +373,8 @@ public class Builder  extends JDesktopPane {
   
   public static void setLookAndFeel(String selectedLaf) {
     try {
-      switch(selectedLaf) {
+      if (isSubstanceSupported) {
+        switch (selectedLaf) {
         case GeneralModel.LAF_AUTUMNSKIN:
           SubstanceLookAndFeel.setSkin(new AutumnSkin());
           break;
@@ -424,12 +417,59 @@ public class Builder  extends JDesktopPane {
         default:
           UIManager.setLookAndFeel(selectedLaf);
           break;
+        }
+      } else {
+        if (isSubstanceLookAndFeel(selectedLaf)) {
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } else {
+          UIManager.setLookAndFeel(selectedLaf);
+        }
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  } // end setLookAndFeel
+  
+  public static boolean isSubstanceLookAndFeel(String selectedLaf) {
+    boolean ret = true;
+    try {
+      switch(selectedLaf) {
+        case GeneralModel.LAF_AUTUMNSKIN:
+          break;
+        case GeneralModel.LAF_BUSINESSBLACKSTEELSKIN:
+          break;
+        case GeneralModel.LAF_BUSINESSBLUESTEELSKIN:
+          break;
+        case GeneralModel.LAF_CHALLENGERDEEPSKIN:
+          break;
+        case GeneralModel.LAF_CREMECOFFEESKIN:
+          break;
+        case GeneralModel.LAF_DUSTSKIN:
+          break;
+        case GeneralModel.LAF_GRAPHITEAQUASKIN:
+          break;
+        case GeneralModel.LAF_MARINERSKIN:
+          break;
+        case GeneralModel.LAF_MISTAQUASKIN:
+          break;
+        case GeneralModel.LAF_OFFICEBLACK2007SKIN:
+          break;
+        case GeneralModel.LAF_OFFICEBLUE2007SKIN:
+          break;
+        case GeneralModel.LAF_OFFICESILVER2007SKIN:
+          break;
+        case GeneralModel.LAF_SAHARASKIN:
+          break;
+        default:
+          ret = false;
+          break;
       }
     }
     catch (Exception ex) {
         ex.printStackTrace();
     }
-  } // end setLookAndFeel
+    return ret;
+  } // end isSubstanceLookAndFeel
   
   /**
    * The Class FrameListen traps the resize frame event so we can

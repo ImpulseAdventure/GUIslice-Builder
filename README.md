@@ -22,10 +22,18 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b012
+Bug 132 turns out to be a major issue on Linux with the Optional LAFs that causes the UI to only appear as the user moves the mouse over hidden UI panels. The Ribbon support we use is based upon an open project called insubstantial. This project also supplies our optional Look and Feels. The project, however, is no longer supported and the bug fix for linux is way beyond our ability to repair. A new version of the project exists and is supported but requires Java 9 and above. 
+
+The Ribbon and other features work fine so the solution is to remove the optional LAFs for linux. They will still be available in windows 10 since no issues have been reported. Now however, Users will startup in the default Java system LAF for their platform.  Users (except for Macs) can go to edit->options->Themes and change to any available LAF.
+
+A future version will upgrade LAFs to a supported Open Source Project that has modern LAFs for swing. For example, The FlatLAF project.
+
+##### Bug Fixes
+- Bug No. 132 Application hangs when trying to run it under Linux Debian Buster with xfce4 desktop
+
 #### Changes for 0.13.b011
-The Listbox edit list items dialog (entered by pressing '...' in its property tab) now has 
-Move Up and Down for reordering items.  You could and still can simply select a row and drag
-then drop to a new location but the new move commands will make it clearer.
+The Listbox edit list items dialog (entered by pressing '...' in its property tab) now has Move Up and Down for reordering items. You could and still can simply select a row and drag then drop to a new location but the new move commands will make it clearer.
 
 ##### Bug Fixes
  - Bug No. 127 Incorrect visual display width for ListBox without scrollbar

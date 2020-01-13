@@ -136,16 +136,16 @@ public class GeneralModel extends WidgetModel {
   };
     
   /** The themes. */
-  List<String> themes;
+  public static List<String> themes;
   
   /** The theme class names. */
-  List<String> themeClassNames;
+  public static List<String> themeClassNames;
   
   /** The idx theme. */
-  int idxTheme;
+  public static int idxTheme = 0;
   
   /** The cb themes. */
-  JComboBox<String> cbThemes;
+  public static JComboBox<String> cbThemes;
   
   /** The theme cell editor. */
   DefaultCellEditor  themeCellEditor;
@@ -157,10 +157,10 @@ public class GeneralModel extends WidgetModel {
   DefaultCellEditor targetCellEditor;
   
   /** The default theme name */
-  String defThemeName;
+  public static String defThemeName;
 
   /** The default theme class */
-  String defThemeClass;
+  public static String defThemeClass;
 
   /** The background image. */
   private BufferedImage image = null;
@@ -207,11 +207,9 @@ public class GeneralModel extends WidgetModel {
     data = new Object[23][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
+    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Theme",defThemeName);
     if (Builder.isMAC) {
-      initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Theme",defThemeName);
       data[PROP_THEME][PROP_VAL_READONLY]= Boolean.TRUE;
-    } else {
-      initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Theme",LAF_BUSINESSBLACKSTEELSKIN);
     }
     initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Target Platform",DEF_TARGET);
 
@@ -262,18 +260,23 @@ public class GeneralModel extends WidgetModel {
         themes.add(look_and_feel.getName());
         themeClassNames.add(look_and_feel.getClassName());
       }
-   		for (int i = 0; i < lafObjs.length; i++) {
-        themes.add(lafObjs[i]);
-        themeClassNames.add(lafObjs[i]);
+      if (Builder.isSubstanceSupported) {
+     		for (int i = 0; i < lafObjs.length; i++) {
+          themes.add(lafObjs[i]);
+          themeClassNames.add(lafObjs[i]);
+        }
       }
         
       cbThemes = new JComboBox<String>();
       int i = 0;
-      
+      String testClass;
       for(String t : themes) {
         cbThemes.addItem(t);
-        if (t.equals(LAF_BUSINESSBLACKSTEELSKIN))
+        testClass = themeClassNames.get(i);
+        if (testClass.equals(defThemeClass)) {
+          defThemeName = t;
           idxTheme = i;
+        }
         i++;
       }
       cbThemes.setSelectedIndex(idxTheme);
@@ -363,6 +366,8 @@ public class GeneralModel extends WidgetModel {
       return defThemeClass;
     }
     String currentTheme = (String) data[PROP_THEME][PROP_VAL_VALUE];
+    if (currentTheme == null)
+      return defThemeClass;
     for (int j = 0; j < themes.size(); j++) {
       if (currentTheme.equals(themes.get(j)))
         idxTheme = j;
