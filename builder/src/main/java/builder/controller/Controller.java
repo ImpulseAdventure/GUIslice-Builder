@@ -630,7 +630,6 @@ public class Controller extends JInternalFrame
         idx = findPageIdx(page.getKey());
         if (idx > 0) {
           tabbedPane.remove(idx);
-          removePageIdx(page.getKey());
           tabbedPane.repaint();
         }
         TreeView.getInstance().delPage(page.getKey());
@@ -641,6 +640,7 @@ public class Controller extends JInternalFrame
         break;
       }
     }
+    removePageIdx(page.getKey());
   }
   
   /**
