@@ -22,6 +22,15 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b013
+
+##### Bug Fixes
+ - Bug No. 132 Application hangs when trying to run it under Linux Debian Buster with xfce4 desktop
+ - Bug No. 133 Fatal error when deleting/selecting popup in tree view
+ - Bug No. 134 Provide error check in template to catch case user selects incorrect Target Platform (ie. TFT_eSPI)
+ - Bug No. 135 In some themes, the app window is not controllable because of missing title bar
+ - Bug No. 136 Number Input ERROR: GetXDataFromRef(Type 4116, Line 254) Elem type mismatch
+
 #### Changes for 0.13.b012
 Bug 132 turns out to be a major issue on Linux with the Optional LAFs that causes the UI to only appear as the user moves the mouse over hidden UI panels. The Ribbon support we use is based upon an open project called insubstantial. This project also supplies our optional Look and Feels. The project, however, is no longer supported and the bug fix for linux is way beyond our ability to repair. A new version of the project exists and is supported but requires Java 9 and above. 
 

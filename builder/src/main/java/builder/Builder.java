@@ -115,7 +115,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.13.b012";
+  public static final String VERSION = "0.13.b013";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-13";
@@ -283,15 +283,11 @@ public class Builder  extends JDesktopPane {
     mb.addListeners(frame.getRibbonListener());
 
     // set a listener to capture resize window events
-    frame.addComponentListener(new FrameListen());;
+    frame.addComponentListener(new FrameListen());
     
     frame.setTitle(frameTitle);
     frame.setJMenuBar(mb);
 
-    frame.setUndecorated( true );
-    int x=1;// use x value from 1 to 8
-    frame.getRootPane().setWindowDecorationStyle( x);
-  
     frame.setIconImage(new ImageIcon(Builder.class.getResource("/resources/icons/guislicebuilder.png")).getImage());
 
     // pass on top level frame to controller so it can change project names
