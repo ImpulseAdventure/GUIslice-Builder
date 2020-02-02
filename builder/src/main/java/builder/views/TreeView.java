@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -520,12 +520,18 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     /** The parent node. */
     private DefaultMutableTreeNode parentNode;
     
-    /** The from row. */
-    private int fromRow;
+    /** The from index. */
+    private int fromIndex;
+    
+    /** The drop index. */
+    int dropIndex;
+    
+    /** The number of children. */
+    int numberChildren;
     
     /**
      * canImport
-     * for a string-flavored, drop transfer over a non-null tree path.
+     * for a TreeItem-flavored, drop transfer over a non-null tree path.
      *
      * @see javax.swing.TransferHandler#canImport(javax.swing.TransferHandler.TransferSupport)
      */
@@ -538,29 +544,48 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       int action = support.getDropAction();
       if(action != MOVE) return false;
    
+//      System.out.println("**Enter canImport");
       JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
       TreePath parentPath = dropLocation.getPath();
       parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-
+      TreeItem tiParent = (TreeItem)(parentNode.getUserObject());
+//      System.out.println("parentNode: " + tiParent.toDebugString());
+ 
+      // do not allow parent to be root
+      if (tiParent.getKey().equals("Root"))
+        return false;
       // do not allow drop past end of branch
-      int childIndex = dropLocation.getChildIndex();
-      int parentIndex = parentNode.getChildCount();
+      dropIndex = dropLocation.getChildIndex();
+      numberChildren = parentNode.getChildCount();
       
-      if (childIndex+1 >= parentIndex) return false;
+//      System.out.println("dropIndex: " + dropIndex + " nChildren: " + numberChildren);
+      if (dropIndex == -1 || dropIndex >= numberChildren) {
+        return false;
+      }
 
       DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+      TreeItem tiSelect = (TreeItem)(selectedNode.getUserObject());
+//      System.out.println("selectedNode: " + tiSelect.toDebugString());
       TreePath dropPath = new TreePath(selectedNode.getPath());
+//      System.out.println("dropPath: " + dropPath.toString());
 
       // Do not allow MOVE-action drops if a non-leaf node is selected
       // non-leaf node?
-      if(!selectedNode.isLeaf()) return false;
+      if(!selectedNode.isLeaf()) {
+//        System.out.println("!selectedNode.isLeaf()");
+        return false;
+      }
       
       // Do not allow moves between parent nodes
-      if (!parentPath.isDescendant(dropPath)) return false;
+      if (!parentPath.isDescendant(dropPath)) {
+//        System.out.println("!parentPath.isDescendant(dropPath)");
+        return false;
+      }
 
       // make sure we have a valid drop point
       bDraggingNode = dropLocation.getPath() != null;
       if (bDraggingNode) {
+//        System.out.println("bDraggingNode: " + bDraggingNode);
         lastestBackup = backup(); // save for undo command
       }
       return bDraggingNode;
@@ -575,6 +600,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       if (!canImport(support)) {
         return false;
       }
+//    System.out.println("##Enter importData");
       // dropLocation will give you the location in the tree to add the new node. 
       JTree.DropLocation dropLocation =
       (JTree.DropLocation) support.getDropLocation();
@@ -598,14 +624,14 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       
       // create the new node using the transfer data
       DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(transferData);
-      // grab the parent node
-      parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-      fromRow = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
+      fromIndex = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
+//      System.out.println("dropIndex: " + dropIndex + " fromIndex: " + fromIndex);
       
       // add the new node to the tree path
       int childIndex = dropLocation.getChildIndex();
+//      System.out.println("childIndex: " + childIndex);
       treeModel.insertNodeInto(newNode, parentNode, childIndex);
-
+ 
       // ensure the new path element is visible.
       TreePath newPath = path.pathByAddingChild(newNode);
       tree.makeVisible(newPath);
@@ -658,7 +684,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         ev.code = MsgEvent.WIDGET_CHANGE_ZORDER;
         ev.message = item.getKey();
         ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
-        ev.fromIdx = fromRow;
+        ev.fromIdx = fromIndex;
         ev.toIdx = toRow;
         MsgBoard.getInstance().publish(ev, "TreeView");
       }
