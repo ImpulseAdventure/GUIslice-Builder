@@ -22,6 +22,11 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b014
+
+##### Bug Fixes
+ - Bug No. 137 Tree view reorganization causes fatal error
+
 #### Changes for 0.13.b013
 
 ##### Bug Fixes
