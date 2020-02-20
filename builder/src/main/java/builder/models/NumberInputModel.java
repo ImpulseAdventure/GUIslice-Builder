@@ -83,12 +83,6 @@ public class NumberInputModel extends WidgetModel {
   static private final int DEF_WIDTH = 40;
   static private final int DEF_HEIGHT= 10;
 
-  /** The scaled width. */
-  private int scaledWidth = 0;
-  
-  /** The scaled height. */
-  private int scaledHeight = 0;
-  
   /** The ff. */
   private FontFactory ff = null;
   
@@ -237,50 +231,6 @@ public class NumberInputModel extends WidgetModel {
     } 
   }
 
-  /**
-   * getWidth
-   *
-   * @see builder.models.WidgetModel#getWidth()
-   */
-  public int getWidth() {
-    // this is complicated by users needing to change size
-    // return the larger value, either the scaled value or user defined
-    if (getTargetWidth() > scaledWidth)
-      return getTargetWidth();
-    return scaledWidth;
-  }
-  
-  /**
-   * getHeight
-   *
-   * @see builder.models.WidgetModel#getHeight()
-   */
-  public int getHeight() {
-    // this is complicated by users needing to change size
-    // return the larger value, either the scaled value or user defined
-    if (getTargetHeight() > scaledHeight)
-      return getTargetHeight();
-    return scaledHeight;
-  }
-
-  /**
-   * Gets the target width.
-   *
-   * @return the target width
-   */
-  public int getTargetWidth() {
-    return (((Integer) (data[PROP_WIDTH][PROP_VAL_VALUE])).intValue());
-  }
-
-  /**
-   * Gets the target height.
-   *
-   * @return the target height
-   */
-  public int getTargetHeight() {
-    return (((Integer) (data[PROP_HEIGHT][PROP_VAL_VALUE])).intValue());
-  }
-  
   /**
    * Checks if is utf8.
    *
@@ -443,8 +393,6 @@ public class NumberInputModel extends WidgetModel {
     }
     // calculate the real sizes of our display text
     Dimension d = ff.measureText(text, font);
-    scaledWidth  = d.width;
-    scaledHeight = d.height;
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
       // now figure out the rect size needed on the target platform
@@ -462,17 +410,4 @@ public class NumberInputModel extends WidgetModel {
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
   }
-
-  /**
-   * Copy properties.
-   *
-   * @param m is the new model that needs data
-   *          the m
-   */
-  @Override
-  public void copyProperties(WidgetModel m) {
-    super.copyProperties(m);
-    calcSizes(false);
-  }
-  
 }
