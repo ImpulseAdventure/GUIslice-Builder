@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -463,7 +463,15 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void addWidget(WidgetModel m, int x, int y) {
     Widget w = WidgetFactory.getInstance().createWidget(m.getType(), x, y);
-    w.getModel().copyProperties(m);
+/*   Bug 138 copy and paste of numeric input fields causes
+ *   duplicate m_pElemVal entries.  The problem is that the following 
+ *   statement doesn't take into account properties that are specific
+ *   to the type of model or specal functions like calcSizes()  
+ *   'w.getModel().copyProperties(m);' The fix is to reverse
+ *   who gets called with copyProperties() so we can overload 
+ *   the function in sub classes that require extra code.
+ */
+    m.copyProperties(w.getModel());
     w.select();
     widgets.add(w);
     PropManager.getInstance().addPropEditor(w.getModel());

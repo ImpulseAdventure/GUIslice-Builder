@@ -135,6 +135,31 @@ public class CommonUtils {
   }
   
   /**
+  * createElemName - Create Element Reference Name 
+  * strips "$" off of key to find number and adds the
+  * number to the element reference name.
+  *
+  * @param key
+  *          the key
+  * @param refName
+  *          the element reference name
+  * @return the <code>String</code> with the new element ref name
+  */
+  static public String createElemName(String key, String refName) {
+    // first strip off the number from the key
+    String sCount = "";
+    int n = key.indexOf("$");
+    sCount = key.substring(n+1);
+    /* now check the ref name and determine if it has a number
+     * at the end and if so remove it.
+     */
+    int i = 0;
+    while (i < refName.length() && !Character.isDigit(refName.charAt(i))) i++;
+    String sType = refName.substring(0, i);
+    return new String(sType + sCount);
+  }
+  
+  /**
    * encodeToString() - .
    *
    * @param image

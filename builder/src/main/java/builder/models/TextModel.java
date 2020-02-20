@@ -501,7 +501,7 @@ public class TextModel extends WidgetModel {
     String text = getText();
     if (getTextStorage() > 0) {
       text = "";
-      for (int i=0; i<getTextStorage()-1; i++) {
+      for (int i=0; i<getTextStorage(); i++) {
         text = text + "%";
       }
     } else {
@@ -528,6 +528,18 @@ public class TextModel extends WidgetModel {
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
+  }
+
+  /**
+   * Copy properties.
+   *
+   * @param m is the new model that needs data
+   *          the m
+   */
+  @Override
+  public void copyProperties(WidgetModel m) {
+    super.copyProperties(m);
+    calcSizes(false);
   }
 
 }

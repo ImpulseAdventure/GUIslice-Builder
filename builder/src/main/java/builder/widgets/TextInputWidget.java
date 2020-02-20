@@ -79,7 +79,7 @@ public class TextInputWidget extends Widget {
     Font font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
     g2d.setColor(m.getTextColor());
     String text = "";
-    for (int i=1; i<m.getTextStorage(); i++) {
+    for (int i=0; i<m.getTextStorage(); i++) {
       text = text + "X";
     }
     ff.alignString(g2d, m.getAlignment(), b, text, font);
