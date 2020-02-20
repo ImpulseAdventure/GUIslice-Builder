@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -689,8 +689,8 @@ public class RibbonListener implements ActionListener, iSubscriber {
 //    System.out.println("command: " + command);
     switch(command) {
     case "about":
-      String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight (c) Paul Conti 2018-2019</center>"
-          + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2019</center></p>", Builder.VERSION);
+      String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight (c) Paul Conti 2018-2020</center>"
+          + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2020</center></p>", Builder.VERSION);
       htmlBody = htmlBody + "<br>For the latest guides, updates and support view:<br>";
       MessageWithLink msgDialog = new MessageWithLink(htmlBody, "https://github.com/ImpulseAdventure/GUIslice/wiki");
       msgDialog.showMessage();
