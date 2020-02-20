@@ -22,6 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b015
+
+##### Bug Fixes
+ - Bug No. 138 Copy & paste of Numeric Input causes duplicate m_pElemVal 
+ - Bug No. 139 Copy & paste of Numeric Input rendering ignores field size
+ - Bug No. 140 Numeric Input Field Size renders one less character
+
 #### Changes for 0.13.b014
 
 ##### Bug Fixes
