@@ -348,4 +348,17 @@ public class SpinnerModel extends WidgetModel {
     super.readModel(in,  widgetType);
   }
 
+  /**
+   * Copy properties.
+   *
+   * @param m is the new model that needs data
+   *          the m
+   */
+  @Override
+  public void copyProperties(WidgetModel m) {
+    super.copyProperties(m);
+    calcSizes();
+  }
+  
+
 }

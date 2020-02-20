@@ -530,4 +530,16 @@ public class TextModel extends WidgetModel {
     }
   }
 
+  /**
+   * Copy properties.
+   *
+   * @param m is the new model that needs data
+   *          the m
+   */
+  @Override
+  public void copyProperties(WidgetModel m) {
+    super.copyProperties(m);
+    calcSizes(false);
+  }
+
 }

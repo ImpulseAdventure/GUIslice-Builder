@@ -44,6 +44,7 @@ import builder.commands.Command;
 import builder.commands.History;
 import builder.commands.PropertyCommand;
 import builder.common.ColorFactory;
+import builder.common.CommonUtils;
 import builder.common.FontFactory;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
@@ -889,17 +890,24 @@ public class WidgetModel extends AbstractTableModel {
   /**
    * Copy properties.
    *
-   * @param m
+   * @param m is the new model that needs data
    *          the m
    */
   public void copyProperties(WidgetModel m) {
     Object newData[][] = m.getData();
     // skip over key, enum, x and y position
-    for (int i=4; i<m.getPropertyCount(); i++) {
+    for (int i=4; i<getPropertyCount(); i++) {
       for (int j=0; j<5; j++) {
-        data[i][j] = newData[i][j];
+        if (i == PROP_ELEMENTREF && j == PROP_VAL_VALUE) {
+          if (getElementRef().isEmpty()) {
+            newData[i][j] = data[i][j];
+          } else {
+            newData[i][j] = CommonUtils.createElemName(m.getKey(), m.getElementRef());
+          }
+        } else {
+          newData[i][j] = data[i][j];
+        }
       }
     }
   }
-
 }

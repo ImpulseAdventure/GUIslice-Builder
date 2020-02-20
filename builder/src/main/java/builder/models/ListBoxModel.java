@@ -543,4 +543,16 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     data[PROP_STORAGESZ][PROP_VAL_VALUE] = Integer.valueOf(nChars);
   }
 
+  /**
+   * Copy properties.
+   *
+   * @param m is the new model that needs data
+   *          the m
+   */
+  @Override
+  public void copyProperties(WidgetModel m) {
+    super.copyProperties(m);
+    calcSizes();
+  }
+  
 }
