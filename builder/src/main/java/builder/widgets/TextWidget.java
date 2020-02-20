@@ -84,7 +84,7 @@ public class TextWidget extends Widget {
     String text = m.getText();
     if (text.isEmpty()) {
       if (m.getTextStorage() > 0) {
-        for (int i=1; i<m.getTextStorage(); i++) {
+        for (int i=0; i<m.getTextStorage(); i++) {
           text = text + "?";
         }
       } else {

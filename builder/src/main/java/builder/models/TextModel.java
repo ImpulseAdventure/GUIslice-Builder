@@ -501,7 +501,7 @@ public class TextModel extends WidgetModel {
     String text = getText();
     if (getTextStorage() > 0) {
       text = "";
-      for (int i=0; i<getTextStorage()-1; i++) {
+      for (int i=0; i<getTextStorage(); i++) {
         text = text + "%";
       }
     } else {
