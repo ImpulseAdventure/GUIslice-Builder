@@ -21,13 +21,13 @@
 
 **Publication date and software version**
 
-Published August, 2019. Based on GUIslice API Library 0.13.0
+Published February, 2020. Based on GUIslice API Library 0.13.0
 
 **Copyright**
 
-This document is Copyright © 2019,2018 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
+This document is Copyright © 2020,2019,2018 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
 
-GUIslice CopyRight (c) Calvin Hass 2016-2019
+GUIslice Copyright (c) Calvin Hass 2016-2020
 
 All trademarks within this guide belong to their legitimate owners.
 
