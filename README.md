@@ -22,6 +22,10 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b016
+
+trap java.lang.IllegalStateException: cannot open system clipboard
+
 #### Changes for 0.13.b015
 
 ##### Bug Fixes
