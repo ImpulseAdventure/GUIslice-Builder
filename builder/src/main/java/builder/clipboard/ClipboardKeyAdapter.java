@@ -73,7 +73,12 @@ public class ClipboardKeyAdapter extends KeyAdapter {
 		}
 
 		StringSelection sel = new StringSelection(excelStr.toString());
-		CLIPBOARD.setContents(sel, sel);
+    try {
+      CLIPBOARD.setContents(sel, sel);
+    } catch (Exception e) {
+      // trap class java.lang.IllegalStateException: cannot open system clipboard
+      return;
+    }
 	}
 
 	private void pasteFromClipboard() {
