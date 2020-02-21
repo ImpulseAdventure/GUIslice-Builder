@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -99,6 +99,7 @@ public class Ribbon extends JRibbonFrame {
   
   /** The view buttons. */
   public JCommandButton btn_grid,btn_zoom_in,btn_zoom_out;
+  public JCommandButton mini_grid,mini_zoom_in,mini_zoom_out;
   
   /** The page elements */
   public JCommandButton btn_page, btn_base_page, btn_popup;
@@ -316,6 +317,59 @@ public class Ribbon extends JRibbonFrame {
         "Delete", 
         "Delete widgets from your project file"));
     this.getRibbon().addTaskbarComponent(btn_delete);
+
+    this.getRibbon().addTaskbarComponent(
+        new JSeparator(JSeparator.VERTICAL));
+
+    mini_grid = new JCommandButton("Grid",
+      cu.getResizableIcon("resources/icons/view/grid.png"));
+    mini_grid
+        .setCommandButtonKind(CommandButtonKind.ACTION_ONLY);
+    mini_grid.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mb.sendActionCommand("Ribbon", "grid");
+      }
+    });
+    mini_grid.setActionRichTooltip(new RichTooltip(
+      "Grid",
+      "Toggle Grid ON/OFF"));
+    this.getRibbon().addTaskbarComponent(mini_grid);
+      
+    mini_zoom_in = new JCommandButton("Zoom In",
+      cu.getResizableIcon("resources/icons/view/zoom_in.png"));
+    mini_zoom_in
+        .setCommandButtonKind(CommandButtonKind.ACTION_ONLY);
+    mini_zoom_in.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mb.sendActionCommand("Ribbon", "zoomin");
+      }
+    });
+    mini_zoom_in.setDisabledIcon(
+        cu.getResizableIcon("resources/icons/view/disable_zoom_in.png"));
+    mini_zoom_in.setActionRichTooltip(new RichTooltip(
+        "Zoom In",
+        "Zoom In the TFT Simulation Panel"));
+    this.getRibbon().addTaskbarComponent(mini_zoom_in);
+
+    mini_zoom_out = new JCommandButton("Zoom Out",
+      cu.getResizableIcon("resources/icons/view/zoom_out.png"));
+    mini_zoom_out.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mb.sendActionCommand("Ribbon", "zoomout");
+      }
+    });
+    mini_zoom_out.setActionRichTooltip(new RichTooltip(
+        "Zoom Out",
+        "Zoom Out the TFT Simulation Panel"));
+    mini_zoom_out
+        .setCommandButtonKind(CommandButtonKind.ACTION_ONLY);
+    mini_zoom_out.setDisabledIcon(
+        cu.getResizableIcon("resources/icons/view/disable_zoom_out.png"));
+    mini_zoom_out.setEnabled(false);
+    this.getRibbon().addTaskbarComponent(mini_zoom_out);
 
     this.getRibbon().addTaskbarComponent(
         new JSeparator(JSeparator.VERTICAL));
