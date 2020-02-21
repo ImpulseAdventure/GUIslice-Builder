@@ -23,7 +23,9 @@ You can find Example project files inside GUIslice/examples/builder
 ### Release History
 
 #### Changes for 0.13.b016
+Added Grid, Zoom In and Zoom Out icons to the mini-toolbar to better support non-english keyboards.
 
+##### Bug Fixes
 trap java.lang.IllegalStateException: cannot open system clipboard
 
 #### Changes for 0.13.b015
