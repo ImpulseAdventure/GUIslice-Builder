@@ -22,6 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b017
+Enhancement to Button Callbacks to better determine when case statements need to be regenerated. We now test for button model modifications against any existing source code like adding a jump to page, showpopup, change to page, change in the name of page enum, change of a pElementRef name for Input Fields.
+
+##### Bug Fixes
+ - Bug No. 141 Input + Text fields need default colors turned off to see frame box at runtime.
+ - Bug No. 142 Improve button callback generation vs existing source code.
+ 
 #### Changes for 0.13.b016
 Added Grid, Zoom In and Zoom Out icons to the mini-toolbar to better support non-english keyboards.
 

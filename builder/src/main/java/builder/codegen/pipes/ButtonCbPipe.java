@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
@@ -84,7 +86,25 @@ public class ButtonCbPipe extends WorkFlowPipe {
   
   /** The template manager. */
   TemplateManager tm = null;
+
+  /** The regex word pattern */
+  private static final Pattern WORD_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
+
+  /** Button Case Statement types */
+  private final static int CT_UNDEFINED  = 0;
+  private final static int CT_STANDARD   = 1;
+  private final static int CT_CHGPAGE    = 2;
+  private final static int CT_INPUTNUM   = 3;
+  private final static int CT_INPUTTXT   = 4;
+  private final static int CT_SHOWPOPUP  = 5;
+  private final static int CT_HIDEPOPUP  = 6;
+
+  /** The case statement map. */
+  HashMap<String, Integer> caseMap;
   
+  /** The list of case statements. */
+  List<String>[] listOfCases = null;
+
   /**
    * Instantiates a new pipe.
    *
@@ -251,46 +271,17 @@ public class ButtonCbPipe extends WorkFlowPipe {
    * @param sBd
    *          the StringBuilder object containing our project template output
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void doEnums(BufferedReader br, StringBuilder sBd) throws IOException {
     // setup for code generation
     KeyPadModel km = (KeyPadModel) NumKeyPadEditor.getInstance().getModel();
     KeyPadTextModel ktm = (KeyPadTextModel) AlphaKeyPadEditor.getInstance().getModel();
     tm = cg.getTemplateManager();
-
-    // build up a list of widget models that have button callbacks enabled
-    // also, save the enums into our enumMap for easier checking for existence.
-    callbackList = new ArrayList<WidgetModel>();
-    List<String> enumList = new ArrayList<String>();
-    for (WidgetModel m : cg.getModels()) {
-      if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
-        callbackList.add(m);
-        enumList.add(m.getEnum());
-      } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
-        callbackList.add(m);
-        enumList.add(m.getEnum());
-      } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
-        callbackList.add(m);
-        enumList.add(m.getEnum());
-      } else if (m.getType().equals(EnumFactory.TEXTINPUT)) {
-        callbackList.add(m);
-        enumList.add(m.getEnum());
-      } else if (m.getType().equals(EnumFactory.IMAGE) && ((ImageModel)m).isTouchEn()) {
-        callbackList.add(m);
-        enumList.add(m.getEnum());
-      } else if (m.getType().equals(EnumFactory.BOX) && ((BoxModel)m).isTouchEn()) {
-        callbackList.add(m);
-        enumList.add(m.getEnum());
-      }
-    }
-// BUG 124 - Deletion of all UI Buttons leaves ENUM case statements in callback
-//    if (callbackList.size() == 0)
-//      return;
     
-    // this removes duplicates and detects and removes deleted ui elements
-    Map<String, String> enumMap = super.mapEnums(br, sBd, enumList);
+    listOfCases = new ArrayList[256];
 
-    // now deal with our new enums    
+    // setup our templates for outputs   
     List<String> templateStandard = tm.loadTemplate(BUTTON_CASE_TEMPLATE);
     List<String> templateChgPage = tm.loadTemplate(BUTTON_CHGPG_TEMPLATE);
     List<String> templateInput     = tm.loadTemplate(BUTTON_INPUT_TEMPLATE);
@@ -298,59 +289,384 @@ public class ButtonCbPipe extends WorkFlowPipe {
     List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
     List<String> outputLines;
     Map<String, String> map = new HashMap<String,String>();
-    for (WidgetModel m : callbackList) {
-      /* search our enumMap for this enum. 
-       * if found to have been dealt with already; skip it (value == "1"),      
-       * otherwise expand the macros
-       */
-      if (enumMap.get(m.getEnum()).equals("0")) {
+
+    // build up a list of widget models that have button callbacks enabled
+    callbackList = new ArrayList<WidgetModel>();
+    for (WidgetModel m : cg.getModels()) {
+      if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
+        callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
+        callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
+        callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.TEXTINPUT)) {
+        callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.IMAGE) && ((ImageModel)m).isTouchEn()) {
+        callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.BOX) && ((BoxModel)m).isTouchEn()) {
+        callbackList.add(m);
+      }
+    }
+    
+    /* our callback section already exists - read it into a buffers so we can scan 
+     * it for existing Enum case statements. 
+     * This will allow us to determine if a case statement for an ENUM needs updating.
+     */     
+    storeCaseStatements(br);
+    /* now search the callback list and for each model
+     * check for an existing case statement in our saved buffers.
+     * If none, just do the output.
+     * Otherwise, determine type of case statement and if it needs to updated. 
+     * No need to worry about any that need deletion since we only output
+     * those in our callbackList.
+     */
+    WidgetModel m = null;
+    String e = "";
+    for (int n=0; n<callbackList.size(); n++) {
+      // grab our model and enum
+      m = callbackList.get(n);
+      e = m.getEnum();
+      boolean bNeedOutput = true;
+      // now examine the model and determine the case type to be generated
+      CaseInfo modelInfo = getCaseType(m);
+      // lookup our enum to see if we have an existing case statement
+      int idx = findCaseStatement(e);
+      if (idx != -1) {
+        /* we do have an existing case statement so now the fun begins
+         * need to parse it for case type and compare it to what our model now wants
+         * if everything matches just output the stored source code in case user 
+         * has modified it. This makes round trip edits possible.
+         */
+        CaseInfo oldInfo = parseCaseType(e, idx);
+        switch(modelInfo.getCaseType()) {
+          case CT_UNDEFINED:  // better not happen
+            break;
+          case CT_STANDARD: 
+            if (oldInfo.getCaseType() == CT_STANDARD) {
+              // output what we have stored
+              outputLines = listOfCases[idx];
+              tm.codeWriter(sBd, outputLines);
+              bNeedOutput = false;
+            }
+            break;
+          case CT_CHGPAGE:
+            if (oldInfo.getCaseType() == CT_INPUTNUM) {
+              if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              }
+            }
+            break;
+          case CT_INPUTNUM: 
+            if (oldInfo.getCaseType() == CT_INPUTNUM) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              }
+            }
+            break;
+          case CT_INPUTTXT: 
+            if (oldInfo.getCaseType() == CT_INPUTNUM) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              }
+            }
+            break;
+          case CT_SHOWPOPUP: 
+            if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
+              if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              }
+            }
+            break;
+          case CT_HIDEPOPUP:
+            if (oldInfo.getCaseType() == CT_STANDARD) {
+              outputLines = listOfCases[idx];
+              tm.codeWriter(sBd, outputLines);
+              bNeedOutput = false;
+            }
+            break;
+        }
+      } 
+      if (bNeedOutput) {
+        // No existing case statement or we need to regenerate it.
         map.clear();
-        map.put(ENUM_MACRO, m.getEnum());
-        if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
-          if (((TxtButtonModel)m).isChangePage()) {
-            map.put(PAGE_ENUM_MACRO, ((TxtButtonModel)m).getChangePageEnum());
-            outputLines = tm.expandMacros(templateChgPage, map);
-          } else if (((TxtButtonModel)m).isShowPopup()) {
-            map.put(PAGE_ENUM_MACRO, ((TxtButtonModel)m).getChangePageEnum());
-            outputLines = tm.expandMacros(templateShowPopup, map);
-          } else if (((TxtButtonModel)m).isHidePopup()) {
-            outputLines = tm.expandMacros(templateHidePopup, map);
-          } else {
+        map.put(ENUM_MACRO, modelInfo.getKey());
+        switch(modelInfo.getCaseType()) {
+          case CT_UNDEFINED:  // better not happen
+            break;
+          case CT_STANDARD: 
             outputLines = tm.expandMacros(templateStandard, map);
-          }
-          tm.codeWriter(sBd, outputLines);
-        } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
-          if (((ImgButtonModel)m).isChangePage()) {
-            map.put(PAGE_ENUM_MACRO, ((ImgButtonModel)m).getChangePageEnum());
+            tm.codeWriter(sBd, outputLines);
+            break;
+          case CT_CHGPAGE:
+            map.put(PAGE_ENUM_MACRO, modelInfo.getPageEnum());
             outputLines = tm.expandMacros(templateChgPage, map);
-          } else if (((ImgButtonModel)m).isShowPopup()) {
-            map.put(PAGE_ENUM_MACRO, ((ImgButtonModel)m).getChangePageEnum());
+            tm.codeWriter(sBd, outputLines);
+            break;
+          case CT_INPUTNUM: 
+            map.put(ELEMREF_MACRO, modelInfo.getElementRef());
+            map.put(KEY_ENUM_MACRO, km.getEnum());
+            map.put(KEY_ELEMREF_MACRO, km.getElementRef());
+            outputLines = tm.expandMacros(templateInput, map);
+            tm.codeWriter(sBd, outputLines);
+            break;
+          case CT_INPUTTXT: 
+            map.put(ELEMREF_MACRO, modelInfo.getElementRef());
+            map.put(KEY_ENUM_MACRO, ktm.getEnum());
+            map.put(KEY_ELEMREF_MACRO, ktm.getElementRef());
+            outputLines = tm.expandMacros(templateInput, map);
+            tm.codeWriter(sBd, outputLines);
+            break;
+          case CT_SHOWPOPUP: 
+            map.put(PAGE_ENUM_MACRO, modelInfo.getPageEnum());
             outputLines = tm.expandMacros(templateShowPopup, map);
-          } else if (((ImgButtonModel)m).isHidePopup()) {
+            tm.codeWriter(sBd, outputLines);
+            break;
+          case CT_HIDEPOPUP:
             outputLines = tm.expandMacros(templateHidePopup, map);
-          } else {
-            outputLines = tm.expandMacros(templateStandard, map);
-          }
-          tm.codeWriter(sBd, outputLines);
-        } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
-          map.put(ELEMREF_MACRO, m.getElementRef());
-          map.put(KEY_ENUM_MACRO, km.getEnum());
-          map.put(KEY_ELEMREF_MACRO, km.getElementRef());
-          outputLines = tm.expandMacros(templateInput, map);
-          tm.codeWriter(sBd, outputLines);
-        } else if (m.getType().equals(EnumFactory.TEXTINPUT)) {
-          map.put(ELEMREF_MACRO, m.getElementRef());
-          map.put(KEY_ENUM_MACRO, ktm.getEnum());
-          map.put(KEY_ELEMREF_MACRO, ktm.getElementRef());
-          outputLines = tm.expandMacros(templateInput, map);
-          tm.codeWriter(sBd, outputLines);
-        } else {
-          outputLines = tm.expandMacros(templateStandard, map);
-          tm.codeWriter(sBd, outputLines);
+            tm.codeWriter(sBd, outputLines);
+            break;
         }
       }
     }
+
   }    
 
+  /**
+   * storeCaseStatements - read all existing case statements in the source code
+   * and store them in buffers.  Keep a map of them for fast lookups.
+   *
+   * @param br
+   *          the BufferedReader br
+   * @throws IOException
+   *           the code gen exception
+   */
+  public void storeCaseStatements(BufferedReader br) throws IOException {
+    caseMap = new HashMap<String, Integer>(64);
+    String scan = "";
+    String enumName = "";
+    int i = 0;
+    while((scan = br.readLine()) != null) {
+      if (scan.equals(MY_ENUM_END_TAG)) 
+        break;
+
+      // break the line up into words
+      if (scan.isEmpty()) continue;
+      String[] words = splitWords(scan);
+      // first word must be "case"
+      if (words[0].equals("case")) {
+        enumName = words[1];
+        List<String> lines = new ArrayList<String>();
+        lines.add(scan);
+        while((scan = br.readLine()) != null) {
+           lines.add(scan);
+           if (scan.isEmpty()) continue;
+           String[] atoms = splitWords(scan);
+           if (atoms[0].equals("break")) 
+             break;
+        }
+        caseMap.put(enumName, i);
+        listOfCases[i] = lines;
+//        System.out.println("Stored Case Statement: " + enumName + " idx=" + i);
+        i++;
+      }
+    }
+  }
+
+  /**
+   * findCaseStatement - find the case statement for this enum.
+   *
+   * @param caseEnum
+   *          the caseEnum name
+   * @return the index into our list of case statements
+   */
+  public int findCaseStatement(String caseEnum) {
+    Integer idx = Integer.valueOf(-1);  
+    if (caseMap.containsKey(caseEnum)) {
+      idx = caseMap.get(caseEnum);
+    }
+    
+    return idx.intValue();
+  }
+  
+  public CaseInfo getCaseType(WidgetModel m) {
+     CaseInfo ci = new CaseInfo(m.getEnum());      
+     ci.setCaseType(CT_STANDARD);
+     if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
+      if (((TxtButtonModel)m).isChangePage()) {
+        ci.setCaseType(CT_CHGPAGE);
+        ci.setPageEnum(((TxtButtonModel)m).getChangePageEnum());
+      } else if (((TxtButtonModel)m).isShowPopup()) {
+        ci.setCaseType(CT_SHOWPOPUP);
+        ci.setPageEnum(((TxtButtonModel)m).getChangePageEnum());
+      } else if (((TxtButtonModel)m).isHidePopup()) {
+        ci.setCaseType(CT_HIDEPOPUP);
+      }
+    } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
+      if (((ImgButtonModel)m).isChangePage()) {
+        ci.setCaseType(CT_CHGPAGE);
+        ci.setPageEnum(((ImgButtonModel)m).getChangePageEnum());
+      } else if (((ImgButtonModel)m).isShowPopup()) {
+        ci.setCaseType(CT_SHOWPOPUP);
+        ci.setPageEnum(((ImgButtonModel)m).getChangePageEnum());
+      } else if (((ImgButtonModel)m).isHidePopup()) {
+        ci.setCaseType(CT_HIDEPOPUP);
+      }
+    } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
+      ci.setCaseType(CT_INPUTNUM);
+      ci.setElementRef(m.getElementRef());
+    } else if (m.getType().equals(EnumFactory.TEXTINPUT)) {
+      ci.setCaseType(CT_INPUTTXT);
+      ci.setElementRef(m.getElementRef());
+    }
+    return ci;
+  }
+
+  public CaseInfo parseCaseType(String e, int idx) {
+    CaseInfo ci = new CaseInfo(e);      
+    ci.setCaseType(CT_STANDARD);
+    List<String> caseList = listOfCases[idx];
+    for (String line : caseList) {
+      if (line.isEmpty()) continue;
+      String split[] = splitWords(line);
+      if (split[0].equals("case")) continue;
+      if (split[0].equals("gslc_SetPageCur")) {
+        ci.setCaseType(CT_CHGPAGE);
+        ci.setPageEnum(split[2]);
+      }
+      if (split[0].equals("gslc_PopupShow")) {
+        if (split[2].equals("E_POP_KEYPAD")) {
+          ci.setCaseType(CT_INPUTNUM);
+        } else if (split[2].equals("E_POP_AKEYPAD")) {
+          ci.setCaseType(CT_INPUTTXT);
+        } else {
+          ci.setCaseType(CT_SHOWPOPUP);
+          ci.setPageEnum(split[2]);
+        }
+      }
+      if (split[0].equals("gslc_ElemXKeyPadValSet") && 
+          ci.getCaseType() == CT_INPUTNUM) {
+        ci.setElementRef(split[5]);
+      }
+      if (split[0].equals("gslc_PopupHide")) {
+        ci.setCaseType(CT_HIDEPOPUP);
+      }      
+    }
+    return ci;  
+  }
+  
+  public String[] splitWords(String s) {
+    ArrayList<String> wordList = new ArrayList<String>();
+    
+    Matcher m = WORD_PATTERN.matcher(s);
+    while (m.find()) {
+      String sWord = s.substring(m.start(), m.end());
+      wordList.add(sWord);
+    }
+    
+    String[] wordArray = new String[wordList.size()];
+    int i=0;
+    for (String w : wordList) {
+      wordArray[i++] = w;
+    }
+    return wordArray;
+  }
+
+  /**
+   * The Private Class CaseInfo used to store Case Enum (key) 
+   * with Case Type, Page ENUM and Element Reference, if any.
+   * It allows the Button Callback pipe to more easily track
+   * any required changes to any existing Case Statements.
+   */
+   class CaseInfo {
+    
+    /** The key. */
+    String key;
+    
+    /** The case type */
+    int caseType;
+    
+    /** The page enum. */
+    String pageEnum;
+
+    /** The element ref */
+    String elementRef;
+    
+    /**
+     * Instantiates a new CaseInfo.
+     */
+    CaseInfo(String key) {
+      this.key = key;
+      this.caseType = CT_UNDEFINED;
+      this.pageEnum = "";
+      this.elementRef = "";
+    }
+ 
+    /**
+     * Gets the key.
+     *
+     * @return the key
+     */
+    public String getKey() {
+      return key;
+    }
+    
+    /**
+     * Sets the caseType.
+     */
+    public void setCaseType(int caseType) {
+      this.caseType = caseType;
+    }
+    
+    /**
+     * Gets the caseType.
+     *
+     * @return the caseType
+     */
+     public int getCaseType() {
+      return caseType;
+    }
+
+    /**
+     * Sets the pageEnum.
+     */
+    public void setPageEnum(String pageEnum) {
+      this.pageEnum = pageEnum;
+    }
+
+    /**
+     * Gets the pageEnum.
+     *
+     * @return the pageEnum
+     */
+    public String getPageEnum() {
+      return pageEnum;
+    }
+
+    /**
+     * Sets the elementRef.
+     */
+    public void setElementRef(String elementRef) {
+      this.elementRef = elementRef;
+    }
+
+    /**
+     * Gets the elementRef.
+     *
+     * @return the elementRef
+     */
+    public String getElementRef() {
+      return elementRef;
+    }
+
+  }
+ 
 }
   
