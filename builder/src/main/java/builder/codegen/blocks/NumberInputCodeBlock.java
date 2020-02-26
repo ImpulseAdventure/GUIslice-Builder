@@ -99,14 +99,18 @@ public final class NumberInputCodeBlock implements CodeBlock {
       tm.codeWriter(sBd, outputLines);
     }
     
-    if (!m.useDefaultColors()) {
+    /* BUG 141 For input fields which always have frame enabled you still 
+     * need to turn off default colors to see frame box at runtime
+     * since GUIslice API default color for text frame is black not gray.
+     */
+//    if (!m.useDefaultColors()) {
       template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
-    }
+//    }
     if (m.isUTF8()) {
       template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
       tm.codeWriter(sBd, template);

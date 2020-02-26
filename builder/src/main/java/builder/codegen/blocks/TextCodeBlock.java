@@ -102,20 +102,6 @@ public final class TextCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    if (!m.useDefaultColors()) {
-      if (!((TextModel)m).getTextColor().equals(TextModel.DEF_TEXT_COLOR)) {
-        template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
-        outputLines = tm.expandMacros(template, map);
-        tm.codeWriter(sBd, outputLines);
-      }
-      if (!((TextModel)m).getFrameColor().equals(TextModel.DEF_FRAME_COLOR)      ||
-          !((TextModel)m).getFillColor().equals(TextModel.DEF_FILL_COLOR)        ||
-          !((TextModel)m).getSelectedColor().equals(TextModel.DEF_SELECTED_COLOR)) {
-        template = tm.loadTemplate(COLOR_TEMPLATE);
-        outputLines = tm.expandMacros(template, map);
-        tm.codeWriter(sBd, outputLines);
-      }
-    }
     if (m.isUTF8()) {
       template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
       tm.codeWriter(sBd, template);
@@ -127,6 +113,20 @@ public final class TextCodeBlock implements CodeBlock {
     }
     if (m.isFrameEnabled()) {
       template = tm.loadTemplate(FRAME_EN_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    /* BUG 141 For text fields if you have Frame Enabled you still 
+     * need to turn off default colors to see frame box at runtime
+     * since its GUIslice API default color for text frame is black not gray.
+     */
+    if (!m.useDefaultColors() || m.isFrameEnabled()) {
+      if (!((TextModel)m).getTextColor().equals(TextModel.DEF_TEXT_COLOR)) {
+        template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
+        outputLines = tm.expandMacros(template, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
