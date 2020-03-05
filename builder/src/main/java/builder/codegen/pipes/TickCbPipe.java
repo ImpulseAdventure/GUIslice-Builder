@@ -34,6 +34,7 @@ import java.lang.StringBuilder;
 import java.nio.charset.StandardCharsets;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
@@ -60,6 +61,8 @@ public class TickCbPipe extends WorkFlowPipe {
   
   /** The Constants for templates. */
   private final static String TICK_CB_TEMPLATE     = "<TICK_CB>";
+  private final static Pattern LTRIM = Pattern.compile("^\\s+");
+  private final static String EMPTY_STRING = "";
   
   /** The template manager. */
   TemplateManager tm = null;
@@ -105,8 +108,10 @@ public class TickCbPipe extends WorkFlowPipe {
       InputStream is = new ByteArrayInputStream(bytes);
       BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
       StringBuilder processed = new StringBuilder();
+      String sTestTag= "";
       while ((line = br.readLine()) != null) {
-        if (line.equals(TICKCB_TAG)) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals(TICKCB_TAG)) {
           doCallback(br, processed);
           break;
         } else {
@@ -153,8 +158,10 @@ public class TickCbPipe extends WorkFlowPipe {
     tm.codeWriter(sBd, templateStandard);
 
     // now remove the existing TICKCB_END_TAG
+    String sTestTag= "";
     while ((line = br.readLine()) != null) {
-      if (line.equals(TICKCB_END_TAG)) break;
+      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+      if (sTestTag.equals(MY_END_TAG)) break;
     }
 
   }

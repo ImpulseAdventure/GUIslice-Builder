@@ -766,7 +766,7 @@ $<CALLBACK>
   // Create $<COM-002> modifiable text using flash API
   static char m_sDisplayText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   gslc_ElemCreateTxt_P_R(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
-    m_sDisplayText$<COM-018>,$<TXT-205>>,&m_asFont[$<TXT-211>],
+    m_sDisplayText$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
     $<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<COM-010>,$<COM-011>);
 <STOP>
 <TEXT_UTF8>

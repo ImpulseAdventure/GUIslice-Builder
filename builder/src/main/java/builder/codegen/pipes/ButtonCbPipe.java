@@ -87,8 +87,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
   /** The template manager. */
   TemplateManager tm = null;
 
-  /** The regex word pattern */
+  /** The regex word patterns */
   private static final Pattern WORD_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
+  private final static Pattern LTRIM = Pattern.compile("^\\s+");
+  private final static String EMPTY_STRING = "";
 
   /** Button Case Statement types */
   private final static int CT_UNDEFINED  = 0;
@@ -453,10 +455,11 @@ public class ButtonCbPipe extends WorkFlowPipe {
     String scan = "";
     String enumName = "";
     int i = 0;
+    String sTestTag= "";
     while((scan = br.readLine()) != null) {
-      if (scan.equals(MY_ENUM_END_TAG)) 
+      sTestTag = LTRIM.matcher(scan).replaceAll(EMPTY_STRING);
+      if (sTestTag.equals(MY_ENUM_END_TAG)) 
         break;
-
       // break the line up into words
       if (scan.isEmpty()) continue;
       String[] words = splitWords(scan);

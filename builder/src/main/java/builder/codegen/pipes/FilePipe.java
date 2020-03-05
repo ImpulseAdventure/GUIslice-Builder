@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import builder.Builder;
 import builder.codegen.CodeGenException;
@@ -76,6 +77,8 @@ public class FilePipe extends WorkFlowPipe {
   /** The Constants for macros */
   private final static String FILENAME_MACRO             = "FILENAME";
   private final static String VERSION_MACRO              = "VERSION";
+  private final static Pattern LTRIM = Pattern.compile("^\\s+");
+  private final static String EMPTY_STRING = "";
 
   /**
    * Instantiates a new pipe.
@@ -110,13 +113,15 @@ public class FilePipe extends WorkFlowPipe {
       InputStream is = new ByteArrayInputStream(bytes);
       BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
       StringBuilder processed = new StringBuilder();
+      String sTestTag= "";
       line = br.readLine();
+      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
       // do we need to upgrade from earlier beta versions?
-      if (line.equals(MY_TAG)) {
+      if (sTestTag.equals(MY_TAG)) {
         processed.append(line);
         processed.append(System.lineSeparator());
         doCodeGen(processed);
-        CodeUtils.readPassString(br, processed, MY_END_TAG);
+        CodeUtils.findTag(br, processed, MY_END_TAG);
       } else {
         // yes, we need to upgrade so first add our new file tag and header
         processed.append(MY_TAG);

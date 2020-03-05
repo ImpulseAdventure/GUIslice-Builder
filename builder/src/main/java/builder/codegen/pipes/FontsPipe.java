@@ -35,8 +35,13 @@ import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
 import builder.common.FontItem;
+import builder.common.EnumFactory;
 import builder.common.FontFactory;
+import builder.models.KeyPadModel;
+import builder.models.KeyPadTextModel;
 import builder.models.WidgetModel;
+import builder.prefs.AlphaKeyPadEditor;
+import builder.prefs.NumKeyPadEditor;
 
 /**
  * The Class FontsPipe handles code generation
@@ -93,7 +98,29 @@ public class FontsPipe extends WorkFlowPipe {
     // build up a list of all font display names.
     List<String> fontNames = new ArrayList<String>();
     String name = null;
+    boolean bAddNumKeyPad = false;
+    boolean bAddAlphaKeyPad = false;
     for (WidgetModel m : cg.getModels()) {
+      name = m.getFontDisplayName();
+      if (name != null)
+        fontNames.add(name);
+      if (m.getType().equals(EnumFactory.NUMINPUT)) {
+        bAddNumKeyPad = true;
+      }
+      if (m.getType().equals(EnumFactory.TEXTINPUT)) {
+        bAddAlphaKeyPad = true;
+      }
+    }
+    // End with keyboard fonts - bug 144 missing keyboard font #include
+    // place any keypads at end
+    if (bAddNumKeyPad) {
+      KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
+      name = m.getFontDisplayName();
+      if (name != null)
+        fontNames.add(name);
+    }
+    if (bAddAlphaKeyPad) {
+      KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
       name = m.getFontDisplayName();
       if (name != null)
         fontNames.add(name);
