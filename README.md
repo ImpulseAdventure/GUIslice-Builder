@@ -22,6 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b018
+
+##### Bug Fixes
+ - Bug No. 143 Arduino IDE Auto Format will move tags so Builder can't find them
+ - Bug No. 144 Changing Keypad font to one not previously used will result in it not being found
+ - Bug No. 145 Code gen output for gslc_ElemCreateTxt_P_R has spurious  ">".
+
 #### Changes for 0.13.b017
 Enhancement to Button Callbacks to better determine when case statements need to be regenerated. We now test for button model modifications against any existing source code like adding a jump to page, showpopup, change to page, change in the name of page enum, change of a pElementRef name for Input Fields.
 
