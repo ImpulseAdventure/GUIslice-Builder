@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Pattern;
 
 import builder.models.WidgetModel;
 import builder.views.PagePane;
@@ -45,6 +46,10 @@ import builder.widgets.Widget;
  * 
  */
 public final class CodeUtils {
+  
+  private final static Pattern LTRIM = Pattern.compile("^\\s+");
+  private final static String EMPTY_STRING = "";
+
   public CodeUtils() {
   }
 
@@ -198,30 +203,6 @@ public final class CodeUtils {
   }
 
   /**
-  * readPassString
-  * Continue reading the buffered reader but throw away all input 
-  * until finding the end string. Then write the end string output
-  * to our StringBuilder object.
-  *
-  * @param br
-  *          the BufferedReader
-  * @param sBd
-  *          the StringBuilder
-  * @param endString
-  *          the end string
-  * @throws IOException
-  *           Signals that an I/O exception has occurred.
-  */
-  static public void readPassString(BufferedReader br, StringBuilder sBd, String endString) throws IOException {
-    String line = null;
-    while ((line = br.readLine()) != null) {
-      if (line.equals(endString)) break;
-    }
-    sBd.append(endString);
-    sBd.append(System.lineSeparator());
-  }
-
-  /**
   * findTag
   * Continue reading the buffered reader but throw away all input 
   * until finding the end string. Then write the end string output
@@ -236,13 +217,15 @@ public final class CodeUtils {
   * @throws IOException
   *           Signals that an I/O exception has occurred.
   */
-  static public void findTag(BufferedReader br, StringBuilder sBd, String tagString) throws IOException {
+  static public void findTag(BufferedReader br, StringBuilder sBd, String endString) throws IOException {
     String line = null;
+    String sTestTag = "";
     while ((line = br.readLine()) != null) {
-      if (line.equals(tagString)) break;
-      sBd.append(line);
-      sBd.append(System.lineSeparator());
+      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+      if (sTestTag.equals(endString)) break;
     }
+    sBd.append(line);
+    sBd.append(System.lineSeparator());
   }
 
   /**

@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
@@ -57,6 +58,9 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
   public String MY_END_TAG;
   public String MY_ENUM_TAG;
   public String MY_ENUM_END_TAG;
+  
+  private final static Pattern LTRIM = Pattern.compile("^\\s+");
+  private final static String EMPTY_STRING = "";
   
   List<WidgetModel> callbackList = null;;
   
@@ -92,10 +96,12 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
       InputStream is = new ByteArrayInputStream(bytes);
       BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
       StringBuilder processed = new StringBuilder();
+      String sTestTag= "";
       while ((line = br.readLine()) != null) {
         processed.append(line);
         processed.append(System.lineSeparator());
-        if (line.equals(MY_TAG)) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals(MY_TAG)) {
           bTagFound = true;
           doCodeGen(processed);
           break;
@@ -104,7 +110,7 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
       if (!bTagFound) {
         throw new CodeGenException("file: " + cg.getProjectTemplate() + "\n is corrupted missing tag:" + MY_TAG);
       }
-      CodeUtils.readPassString(br, processed, MY_END_TAG);
+      CodeUtils.findTag(br, processed, MY_END_TAG);
       CodeUtils.finishUp(br, processed);
       br.close();
       return processed;   
@@ -136,14 +142,16 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
       InputStream is = new ByteArrayInputStream(bytes);
       BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
       StringBuilder processed = new StringBuilder();
+      String sTestTag= "";
       while ((line = br.readLine()) != null) {
-        if (line.equals(MY_TAG)) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals(MY_TAG)) {
           bTagFound = true;
           doCbCommon(br, processed);
           break;
-        } else if (line.equals(MY_ENUM_TAG)) {
+        } else if (sTestTag.equals(MY_ENUM_TAG)) {
           bTagFound = true;
-          processed.append(line); // output our BUTTON_ENUMS_TAG
+          processed.append(sTestTag); // output our BUTTON_ENUMS_TAG
           processed.append(System.lineSeparator());  
           doEnums(br, processed);
           processed.append(MY_ENUM_END_TAG); 
@@ -196,8 +204,10 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
     // now process our model list and create the callbacks
     outputCB(sBd);
     // now remove the existing MY_END_TAG
+    String sTestTag= "";
     while ((line = br.readLine()) != null) {
-      if (line.equals(MY_END_TAG)) break;
+      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+      if (sTestTag.equals(MY_END_TAG)) break;
     }
   }
   
@@ -244,12 +254,14 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
     List<String> scanLines = new ArrayList<String>();
     /* our callback section already exists - read it into a buffer we can scan 
      * it for existing Enum case statements. This will allow us to determine
-     * if a case statement for an ENUM already exoists or not.
+     * if a case statement for an ENUM already exists or not.
      * Also, we can detect of a ENUM case should be deleted because the button
      * was removed.
      */     
+    String sTestTag= "";
     while((line = br.readLine()) != null) {
-      if (line.equals(MY_ENUM_END_TAG)) break;
+      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+      if (sTestTag.equals(MY_ENUM_END_TAG)) break;
       scanLines.add(line);
     }
     /* now search the saved buffer (scanLines) for any 
