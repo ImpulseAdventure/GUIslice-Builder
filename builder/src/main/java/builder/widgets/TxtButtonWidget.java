@@ -27,7 +27,6 @@ package builder.widgets;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
@@ -59,10 +58,7 @@ public class TxtButtonWidget extends Widget {
     ff = FontFactory.getInstance();
     m = new TxtButtonModel();
     model = m;
-    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
-    model.setX(p.x);
-    model.setY(p.y);
+    super.setXY(model, x, y);
     setUserPrefs(TxtButtonEditor.getInstance().getModel());
   }
 

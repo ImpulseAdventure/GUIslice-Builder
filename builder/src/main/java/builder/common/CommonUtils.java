@@ -146,17 +146,26 @@ public class CommonUtils {
   * @return the <code>String</code> with the new element ref name
   */
   static public String createElemName(String key, String refName) {
-    // first strip off the number from the key
+    // first test to see if we have a ElementRef name
+    if (refName == null || refName.isEmpty())
+      return new String("");
+    // We have one, now strip off the number from the key
     String sCount = "";
     int n = key.indexOf("$");
     sCount = key.substring(n+1);
-    /* now check the ref name and determine if it has a number
-     * at the end and if so remove it.
+    /* now check the refName and determine if it has a number
+     * at the end. When we create elementrefs 
+     * we use the key number at the end but users
+     * can and will add numbers themselves.
+     * So if we find a number we will add "_keycount"
+     * instead of simply "keycount".
+     * This will only happen during a paste operation.
      */
-    int i = 0;
-    while (i < refName.length() && !Character.isDigit(refName.charAt(i))) i++;
-    String sType = refName.substring(0, i);
-    return new String(sType + sCount);
+    int i = refName.length()-1;
+    if(Character.isDigit(refName.charAt(i))) {
+      return new String(refName + "_" + sCount);
+    }
+    return new String(refName + sCount);
   }
   
   /**

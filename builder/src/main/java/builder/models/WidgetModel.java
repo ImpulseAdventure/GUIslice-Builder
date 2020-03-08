@@ -63,18 +63,38 @@ public class WidgetModel extends AbstractTableModel {
   
   /** The Column Constant Values. */
   static public final int PROP_VAL_CLASS=0;
+  
+  /** The Constant PROP_VAL_ID. */
   static public final int PROP_VAL_ID=1;
+  
+  /** The Constant PROP_VAL_READONLY. */
   static public final int PROP_VAL_READONLY=2;
+  
+  /** The Constant PROP_VAL_NAME. */
   static public final int PROP_VAL_NAME=3;
+  
+  /** The Constant PROP_VAL_VALUE. */
   static public final int PROP_VAL_VALUE=4;
   
   /** The Property Index Constants. */
   static public final int PROP_KEY            = 0;  // key is our primary index
+  
+  /** The Constant PROP_ENUM. */
   static public final int PROP_ENUM           = 1;
+  
+  /** The Constant PROP_X. */
   static public final int PROP_X              = 2;
+  
+  /** The Constant PROP_Y. */
   static public final int PROP_Y              = 3;
+  
+  /** The Constant PROP_WIDTH. */
   static public final int PROP_WIDTH          = 4;
+  
+  /** The Constant PROP_HEIGHT. */
   static public final int PROP_HEIGHT         = 5;
+  
+  /** The Constant PROP_ELEMENTREF. */
   static public final int PROP_ELEMENTREF     = 6;
   
   /** 
@@ -887,25 +907,34 @@ public class WidgetModel extends AbstractTableModel {
     return -1;
   }
   
+
   /**
    * Copy properties.
    *
-   * @param m is the new model that needs data
-   *          the m
+   * @param m
+   *          the widget model
+   * @param x
+   *          the x
+   * @param y
+   *          the y
    */
-  public void copyProperties(WidgetModel m) {
-    Object newData[][] = m.getData();
+  public void copyProperties(WidgetModel m, int x, int y) {
+    Object oldData[][] = m.getData();
     // skip over key, enum, x and y position
-    for (int i=4; i<getPropertyCount(); i++) {
+    for (int i=2; i<getPropertyCount(); i++) {
       for (int j=0; j<5; j++) {
-        if (i == PROP_ELEMENTREF && j == PROP_VAL_VALUE) {
-          if (getElementRef().isEmpty()) {
-            newData[i][j] = data[i][j];
+        if (i == PROP_X && j == PROP_VAL_VALUE) {
+          data[i][j] = Integer.valueOf(x);
+        } else if (i == PROP_Y && j == PROP_VAL_VALUE) {
+          data[i][j] = Integer.valueOf(y);
+        } else if (i == PROP_ELEMENTREF && j == PROP_VAL_VALUE) {
+          if (m.getElementRef() == null || m.getElementRef().isEmpty()) {
+            data[i][j] = oldData[i][j];
           } else {
-            newData[i][j] = CommonUtils.createElemName(m.getKey(), m.getElementRef());
+            data[i][j] = CommonUtils.createElemName(getKey(), m.getElementRef());
           }
         } else {
-          newData[i][j] = data[i][j];
+          data[i][j] = oldData[i][j];
         }
       }
     }

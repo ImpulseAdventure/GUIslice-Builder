@@ -464,7 +464,7 @@ public class PagePane extends JPanel implements iSubscriber {
    *          the widget model
    */
   public void addWidget(WidgetModel m, int x, int y) {
-    Widget w = WidgetFactory.getInstance().createWidget(m.getType(), x, y);
+    Widget w = WidgetFactory.getInstance().createWidget(m.getType(), -1, -1);
 /*   Bug 138 copy and paste of numeric input fields causes
  *   duplicate m_pElemVal entries.  The problem is that the following 
  *   statement doesn't take into account properties that are specific
@@ -473,7 +473,7 @@ public class PagePane extends JPanel implements iSubscriber {
  *   who gets called with copyProperties() so we can overload 
  *   the function in sub classes that require extra code.
  */
-    m.copyProperties(w.getModel());
+    w.getModel().copyProperties(m, x, y);
     w.select();
     widgets.add(w);
     PropManager.getInstance().addPropEditor(w.getModel());

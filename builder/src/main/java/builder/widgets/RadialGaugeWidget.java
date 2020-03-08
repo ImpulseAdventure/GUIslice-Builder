@@ -55,10 +55,7 @@ public class RadialGaugeWidget extends Widget {
     u = CommonUtils.getInstance();
     m = new RadialGaugeModel();
     model = m;
-    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
-    model.setX(p.x);
-    model.setY(p.y);
+    super.setXY(model, x, y);
   }
 
   /**

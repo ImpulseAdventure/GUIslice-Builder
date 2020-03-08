@@ -111,6 +111,16 @@ public class Widget {
     return model.getY();
   }
   
+  public void setXY(WidgetModel m, int x, int y) {
+    // if x and y are set to -1 we will position widget later (paste operation)
+    if (x >= 0 && y >= 0) {
+      Point p = CommonUtils.getInstance().fitToGrid(x, y, m.getWidth(), m.getHeight());
+      p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
+      m.setX(p.x);
+      m.setY(p.y);
+    }
+  }
+  
   /**
    * Gets the key.
    *
