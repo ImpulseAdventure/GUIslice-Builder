@@ -42,6 +42,7 @@ import builder.common.FontFactory;
 import builder.common.FontItem;
 import builder.models.GeneralModel;
 import builder.prefs.GeneralEditor;
+import builder.prefs.NumKeyPadEditor;
 import builder.events.MsgBoard;
 
 /**
@@ -59,17 +60,19 @@ public class NumberInputModel extends WidgetModel {
   
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
-  static private final int PROP_UTF8              = 8;
-  static private final int PROP_TEXT_SZ           = 9;
-  static private final int PROP_TEXT_ALIGN        = 10;
-  static private final int PROP_FILL_EN           = 11;
-  static private final int PROP_DEFAULT_COLORS    = 12;
-  static private final int PROP_TEXT_COLOR        = 13;
-  static private final int PROP_FRAME_COLOR       = 14;
-  static private final int PROP_FILL_COLOR        = 15;
-  static private final int PROP_SELECTED_COLOR    = 16;
+  static private final int PROP_TEXT              = 8;
+  static private final int PROP_UTF8              = 9;
+  static private final int PROP_TEXT_SZ           = 10;
+  static private final int PROP_TEXT_ALIGN        = 11;
+  static private final int PROP_FILL_EN           = 12;
+  static private final int PROP_DEFAULT_COLORS    = 13;
+  static private final int PROP_TEXT_COLOR        = 14;
+  static private final int PROP_FRAME_COLOR       = 15;
+  static private final int PROP_FILL_COLOR        = 16;
+  static private final int PROP_SELECTED_COLOR    = 17;
 
   /** The Property Defaults */
+  static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(6);
   static public  final String  DEF_TEXT_ALIGN        = "GSLC_ALIGN_MID_LEFT";
@@ -120,11 +123,12 @@ public class NumberInputModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.NUMINPUT;
-    data = new Object[17][5];
+    data = new Object[18][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
     String target = ((GeneralModel) GeneralEditor.getInstance().getModel()).getTarget();
+    initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
     // arduino GFX doesn't support UTF8 only linix with SDL has support
     // so for arduino set UTF8 property to read-only
     if (target.equals("linux")) {
@@ -151,8 +155,40 @@ public class NumberInputModel extends WidgetModel {
    *
    * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
    */
+  @SuppressWarnings("unused")
   @Override
   public void setValueAt(Object value, int row, int col) {
+    if (row == PROP_TEXT && !((String)value).isEmpty()) {
+      if (!NumKeyPadEditor.getInstance().isSignEn() &&
+          ((String) value).charAt(0) == '-') {
+        JOptionPane.showMessageDialog(null, 
+            "Your Keypad perference says not to allow minus sign", 
+            "ERROR",
+            JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+      if (NumKeyPadEditor.getInstance().isFloatingPointEn()) {
+        try {
+          float val = Float.parseFloat((String) value);
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, 
+              "Field must be valid floating point number", 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      } else {
+        try {
+          int val = Integer.parseInt((String) value);
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, 
+              "Field must be valid integer number", 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
+    }
     if (row == PROP_TEXT_SZ) {
       int size = Integer.valueOf((String) value);
       if (size <= 0) {
@@ -287,6 +323,15 @@ public class NumberInputModel extends WidgetModel {
     return ff.getFontEnum(getFontDisplayName());
   }
  
+  /**
+   * Gets the text.
+   *
+   * @return the text
+   */
+  public String getText() {
+    return ((String) data[PROP_TEXT][PROP_VAL_VALUE]);
+  }
+
   /**
    * Gets the text color.
    *

@@ -59,17 +59,19 @@ public class TextInputModel extends WidgetModel {
   
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
-  static private final int PROP_UTF8              = 8;
-  static private final int PROP_TEXT_SZ           = 9;
-  static private final int PROP_TEXT_ALIGN        = 10;
-  static private final int PROP_FILL_EN           = 11;
-  static private final int PROP_DEFAULT_COLORS    = 12;
-  static private final int PROP_TEXT_COLOR        = 13;
-  static private final int PROP_FRAME_COLOR       = 14;
-  static private final int PROP_FILL_COLOR        = 15;
-  static private final int PROP_SELECTED_COLOR    = 16;
+  static private final int PROP_TEXT              = 8;
+  static private final int PROP_UTF8              = 9;
+  static private final int PROP_TEXT_SZ           = 10;
+  static private final int PROP_TEXT_ALIGN        = 11;
+  static private final int PROP_FILL_EN           = 12;
+  static private final int PROP_DEFAULT_COLORS    = 13;
+  static private final int PROP_TEXT_COLOR        = 14;
+  static private final int PROP_FRAME_COLOR       = 15;
+  static private final int PROP_FILL_COLOR        = 16;
+  static private final int PROP_SELECTED_COLOR    = 17;
 
   /** The Property Defaults */
+  static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(10);
   static public  final String  DEF_TEXT_ALIGN        = "GSLC_ALIGN_MID_LEFT";
@@ -120,11 +122,12 @@ public class TextInputModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TEXTINPUT;
-    data = new Object[17][5];
+    data = new Object[18][5];
 
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
+    initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
     String target = ((GeneralModel) GeneralEditor.getInstance().getModel()).getTarget();
     // arduino GFX doesn't support UTF8 only linix with SDL has support
     // so for arduino set UTF8 property to read-only
@@ -287,6 +290,15 @@ public class TextInputModel extends WidgetModel {
     return ff.getFontEnum(getFontDisplayName());
   }
  
+  /**
+   * Gets the text.
+   *
+   * @return the text
+   */
+  public String getText() {
+    return ((String) data[PROP_TEXT][PROP_VAL_VALUE]);
+  }
+
   /**
    * Gets the text color.
    *

@@ -74,9 +74,11 @@ public class NumberInputWidget extends Widget {
     g2d.drawRect(b.x, b.y, b.width, b.height);
     Font font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
     g2d.setColor(m.getTextColor());
-    String text = "";
-    for (int i=0; i<m.getTextStorage(); i++) {
-      text = text + "9";
+    String text = m.getText();
+    if (text.isEmpty()) {
+      for (int i=0; i<m.getTextStorage(); i++) {
+        text = text + "9";
+      }
     }
     ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);

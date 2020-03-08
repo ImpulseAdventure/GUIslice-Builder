@@ -99,6 +99,25 @@ public class NumKeyPadEditor extends ModelEditor {
   }
   
   /**
+   * Checks if floating point enabled.
+   *
+   * @return true, if is enabled
+   */
+  public boolean isFloatingPointEn() {
+    return ((KeyPadModel)model).isFloatingPointEn();
+  }
+
+  /**
+   * Checks if minus sign enabled.
+   *
+   * @return true, if is enabled
+   */
+  public boolean isSignEn() {
+    return ((KeyPadModel)model).isSignEn();
+  }
+
+ 
+  /**
    * getTitle
    *
    * @see builder.prefs.ModelEditor#getTitle()
