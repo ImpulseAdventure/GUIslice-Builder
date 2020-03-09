@@ -83,7 +83,7 @@ public class SaveRefPipe extends WorkFlowPipe {
     // scan our widget models for element references and build a list of them
     List<String> refList = new ArrayList<String>();
     for (WidgetModel m : cg.getModels()) {
-      if (!m.getElementRef().isEmpty())
+      if (m.getElementRef() != null && !m.getElementRef().isEmpty())
         refList.add(m.getElementRef());
       if (m.getScrollbarERef() != null)
         refList.add(m.getScrollbarERef());

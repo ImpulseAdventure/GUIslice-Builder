@@ -125,6 +125,7 @@ public class ImgButtonModel extends WidgetModel {
   public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
   public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
+  public  final static String FORMAT_JPG    = "GSLC_IMGREF_FMT_JPG";
   
   /**
    * Instantiates a new img button model.
@@ -188,6 +189,7 @@ public class ImgButtonModel extends WidgetModel {
     cbFormat = new JComboBox<String>();
     cbFormat.addItem(FORMAT_BMP24);
     cbFormat.addItem(FORMAT_BMP16);
+    cbFormat.addItem(FORMAT_JPG);
     cbFormat.addItem(FORMAT_RAW);
     formatCellEditor = new DefaultCellEditor(cbFormat);
   }
@@ -541,7 +543,9 @@ public class ImgButtonModel extends WidgetModel {
       }
       setWidth(image.getWidth());
       setHeight(image.getHeight());
-      if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
+      if (file.getName().toLowerCase().endsWith(".jpg"))
+        setImageFormat("GSLC_IMGREF_FMT_JPG");
+      else if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
       else if (image.getType() == BufferedImage.TYPE_USHORT_555_RGB) 
         setImageFormat("GSLC_IMGREF_FMT_BMP16");
@@ -549,11 +553,14 @@ public class ImgButtonModel extends WidgetModel {
         setImageFormat("GSLC_IMGREF_FMT_RAW1");
       if (generalModel.getTarget().equals("linux"))
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+      else if (generalModel.getTarget().equals("arduino TFT_eSPI") &&
+          file.getName().toLowerCase().endsWith(".jpg"))
+        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
       else      
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
       // now construct a #define to use during code generation
       String fileName = file.getName();
-      int n = fileName.indexOf(".bmp");
+      int n = fileName.indexOf(".");
       if (n > 0) {
         String tmp = fileName.substring(0,n);
         fileName = tmp.toUpperCase();
@@ -623,11 +630,14 @@ public class ImgButtonModel extends WidgetModel {
       }
       if (generalModel.getTarget().equals("linux"))
         data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_FILE;
+      else if (generalModel.getTarget().equals("arduino TFT_eSPI") &&
+          file.getName().toLowerCase().endsWith(".jpg"))
+        data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_FILE;
       else      
         data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_SD;
       String fileName = file.getName();
       // now construct a #define to use during code generation
-      int n = fileName.indexOf(".bmp");
+      int n = fileName.indexOf(".");
       if (n > 0) {
         String tmp = fileName.substring(0,n);
         fileName = tmp.toUpperCase();

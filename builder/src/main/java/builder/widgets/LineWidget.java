@@ -58,10 +58,7 @@ public class LineWidget extends Widget {
     u = CommonUtils.getInstance();
     m = new LineModel();
     model = m;
-    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
-    m.setX(p.x);
-    m.setY(p.y);
+    super.setXY(model, x, y);
   }
 
   /**

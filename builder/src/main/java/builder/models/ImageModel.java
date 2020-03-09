@@ -101,6 +101,7 @@ public class ImageModel extends WidgetModel {
   public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
   public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
+  public  final static String FORMAT_JPG    = "GSLC_IMGREF_FMT_JPG";
   
   /**
    * Instantiates a new image model.
@@ -122,10 +123,11 @@ public class ImageModel extends WidgetModel {
     initCommonProps(0, 0);
     
     // can't change height and width of image without scaling support
-    data[PROP_WIDTH][PROP_VAL_READONLY]=Boolean.TRUE;
-    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
+//    data[PROP_WIDTH][PROP_VAL_READONLY]=Boolean.TRUE;
+//    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
 
-    initProp(PROP_IMAGE, String.class, "IMG-100", Boolean.TRUE,"Image",DEF_IMAGE);
+//    initProp(PROP_IMAGE, String.class, "IMG-100", Boolean.TRUE,"Image",DEF_IMAGE);
+    initProp(PROP_IMAGE, String.class, "IMG-100", Boolean.FALSE,"Image",DEF_IMAGE);
     initProp(PROP_DEFINE, String.class, "IMG-101", Boolean.FALSE,"Image #defines",DEF_DEFINE);
     initProp(PROP_EXTERN, String.class, "IMG-108", Boolean.FALSE,"Image Extern",DEF_EXTERN);
     initProp(PROP_MEMORY, String.class, "IMG-109", Boolean.FALSE,"Image Memory",DEF_MEMORY);
@@ -151,6 +153,7 @@ public class ImageModel extends WidgetModel {
     cbFormat = new JComboBox<String>();
     cbFormat.addItem(FORMAT_BMP24);
     cbFormat.addItem(FORMAT_BMP16);
+    cbFormat.addItem(FORMAT_JPG);
     cbFormat.addItem(FORMAT_RAW);
     formatCellEditor = new DefaultCellEditor(cbFormat);
   }
@@ -343,7 +346,9 @@ public class ImageModel extends WidgetModel {
 
       setWidth(image.getWidth());
       setHeight(image.getHeight());
-      if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
+      if (file.getName().toLowerCase().endsWith(".jpg"))
+        setImageFormat("GSLC_IMGREF_FMT_JPG");
+      else if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
       else if (image.getType() == BufferedImage.TYPE_USHORT_555_RGB) 
         setImageFormat("GSLC_IMGREF_FMT_BMP16");
@@ -351,15 +356,18 @@ public class ImageModel extends WidgetModel {
         setImageFormat("GSLC_IMGREF_FMT_RAW1");
       if (generalModel.getTarget().equals("linux"))
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+      else if (generalModel.getTarget().equals("arduino TFT_eSPI") &&
+               file.getName().toLowerCase().endsWith(".jpg"))
+        data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
       else      
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
       // now construct a #define to use during code generation
       String fileName = file.getName();
-      int n = fileName.indexOf(".bmp");
+      int n = fileName.indexOf(".");
       if (n > 0) {
         String tmp = fileName.substring(0,n);
         fileName = tmp.toUpperCase();
-      }
+      } 
       // remove all special characters
       fileName = fileName.replaceAll("\\W", ""); 
       fileName = "IMG_" + fileName;

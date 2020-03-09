@@ -40,7 +40,6 @@ import builder.clipboard.WidgetItemsSelection;
 import builder.controller.Controller;
 import builder.mementos.WidgetMemento;
 import builder.models.WidgetModel;
-import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
 
 /**
@@ -116,15 +115,31 @@ public class PasteCommand extends Command implements ClipboardOwner {
     // first turn off any selections on page
     page.selectNone();
     List<WidgetModel> list = items.getItems();
-    /* 
-     * work out an offset for x,y positions so widgets 
-     * don't get placed on top of each other
+    /* If we are only pasting one widget 
+     * work out an offset for x,y position so  
+     * it doesn't get placed on top of the original.
+     * More than one widget assume copying to another page
+     * so keep original x and y positions.
      */
-    GeneralEditor ed = GeneralEditor.getInstance();
-    int margins = ed.getMargins();
-    // now add widgets one at a time from the clipboard to the target page
-    for (WidgetModel m : list) {
-      page.addWidget(m, m.getX()-margins, m.getY()-margins);
+    WidgetModel m1 = list.get(0);
+    int nX = m1.getX();
+    int nY = m1.getY();
+    if (list.size() == 1) {
+      // see if we can move the element up to the left?
+      if (nX-10 >= 0 && nY-10 >= 0) {
+        page.addWidget(m1, nX-10, nY-10);
+      } else if (nX-10 >= 0) {  // move side left?
+        page.addWidget(m1, nX-10, nY);
+      } else if (nY-10 >= 0) {  // move up?
+        page.addWidget(m1, nX, nY-10);
+      } else {  // ok, i give up. just place on top
+        page.addWidget(m1, nX, nY);
+      }
+    } else {
+      // now paste widgets one at a time from the clipboard to the target page
+      for (WidgetModel m : list) {
+        page.addWidget(m, m.getX(), m.getY());
+      }
     }
     Controller.getInstance().refreshView();
   }

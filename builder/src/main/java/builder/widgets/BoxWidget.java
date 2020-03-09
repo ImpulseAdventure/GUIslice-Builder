@@ -27,7 +27,6 @@ package builder.widgets;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
@@ -53,10 +52,7 @@ public class BoxWidget extends Widget {
   public BoxWidget(int x, int y) {
     u = CommonUtils.getInstance();
     model = new BoxModel();
-    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
-    model.setX(p.x);
-    model.setY(p.y);
+    super.setXY(model, x, y);
     setUserPrefs(BoxEditor.getInstance().getModel());
   }
 

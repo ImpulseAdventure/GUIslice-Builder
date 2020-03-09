@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
@@ -201,11 +202,8 @@ public class TextModel extends WidgetModel {
     } 
     if (row == PROP_TEXT_SZ) {
       if (getTextStorage() > 0) {
-        String strKey = getKey();
-        int n = strKey.indexOf("$");
-        String strCount = strKey.substring(n + 1, strKey.length());
         if (getElementRef().isEmpty()) {
-          setElementRef(new String(TextModel.ELEMENTREF_NAME + strCount));
+          setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
           fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
         }
         calcSizes(true);
@@ -533,12 +531,16 @@ public class TextModel extends WidgetModel {
   /**
    * Copy properties.
    *
-   * @param m is the new model that needs data
-   *          the m
+   * @param m
+   *          the widget model
+   * @param x
+   *          the x
+   * @param y
+   *          the y
    */
   @Override
-  public void copyProperties(WidgetModel m) {
-    super.copyProperties(m);
+  public void copyProperties(WidgetModel m, int x, int y) {
+    super.copyProperties(m,x,y);
     calcSizes(false);
   }
 

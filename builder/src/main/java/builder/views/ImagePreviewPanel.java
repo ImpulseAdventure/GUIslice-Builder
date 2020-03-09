@@ -103,9 +103,11 @@ public class ImagePreviewPanel extends JPanel implements PropertyChangeListener 
             
             /*
              * GUIslice API only supports BMP and C Files
+             * However, TFT_espi with TFT_eFEX supports Jpeg
              */
             if (imageName != null) {
-              if (imageName.toLowerCase().endsWith(".bmp")) {
+              if (imageName.toLowerCase().endsWith(".bmp") ||
+                  imageName.toLowerCase().endsWith(".jpg") ) {
                 try {
                   image = ImageIO.read(new File(imageName));
                   scaleImage();

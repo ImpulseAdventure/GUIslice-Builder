@@ -27,7 +27,6 @@ package builder.widgets;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
@@ -58,10 +57,7 @@ public class TextInputWidget extends Widget {
     ff = FontFactory.getInstance();
     m = new TextInputModel();
     model = m;
-    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
-    model.setX(p.x);
-    model.setY(p.y);
+    super.setXY(model, x, y);
 //    setUserPrefs(TextInputEditor.getInstance().getModel());
   }
 
@@ -78,9 +74,11 @@ public class TextInputWidget extends Widget {
     g2d.drawRect(b.x, b.y, b.width, b.height);
     Font font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
     g2d.setColor(m.getTextColor());
-    String text = "";
-    for (int i=0; i<m.getTextStorage(); i++) {
-      text = text + "X";
+    String text = m.getText();
+    if (text.isEmpty()) {
+      for (int i=0; i<m.getTextStorage(); i++) {
+        text = text + "X";
+      }
     }
     ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);

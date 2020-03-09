@@ -32,6 +32,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import builder.mementos.PositionMemento;
+import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
 import builder.widgets.Widget;
 
@@ -50,10 +51,15 @@ public class DragWidgetCommand extends Command {
   /** The p is our adjusted drag point to fit to our design canvas 
    * (TFT screen simulation). Each widget gets one Point (p) object.
    */
-  private Point[] p;
+  private Point[] pt; // current position
+  private Point[] offsetPt; // offset from original position
   
   /** The targets list contains the set of widgets to drag. */
   private List<Widget> targets = new ArrayList<Widget>();
+  private int tft_width = 0;
+  private int tft_height = 0;
+  
+  private boolean bSuccess;
   
   /**
    * Instantiates a new drag widget command.
@@ -63,22 +69,40 @@ public class DragWidgetCommand extends Command {
    */
   public DragWidgetCommand(PagePane page) {
     this.page = page;
+    tft_width = GeneralEditor.getInstance().getWidth();
+    tft_height = GeneralEditor.getInstance().getHeight();
+    bSuccess = false;
   }
   
   /**
    * Start will setup the drag widgets command for later execution.
    */
-  public boolean start() {
+  public boolean start(Point mousePt) {
     targets = page.getSelectedList();
-    if (targets.size() > 1) {
+    if (targets.size() == 0) {
       JOptionPane.showMessageDialog(null, 
-          "You can only drag one element at a time.", 
-          "Error", JOptionPane.ERROR_MESSAGE);
+          "You must select something to drag.", 
+          "Warning", JOptionPane.WARNING_MESSAGE);
       page.selectNone(); // turn off all selections
       return false;
     }
-    p = new Point[targets.size()];
+    // setup for undo
     memento = new PositionMemento(page, targets);
+    
+    // we support zoom so we need to map our mouse point
+    Point mapPt = PagePane.mapPoint(mousePt.x, mousePt.y);
+    
+    // house keeping
+    pt = new Point[targets.size()];
+    offsetPt = new Point[targets.size()];
+    /* calculate our point of contact vs the upper edge 
+     * of our widgets so we can keep our cursor on the 
+     * object dragged
+     */
+    for (int i=0; i<targets.size(); i++) {
+      Point locPt = targets.get(i).getLocation();
+      offsetPt[i] = new Point(mapPt.x-locPt.x, mapPt.y-locPt.y);
+    }
     return true;
   }
 
@@ -89,23 +113,35 @@ public class DragWidgetCommand extends Command {
    *          the <code>m</code> is the new relative position of our dragged widgets. 
    */
   public void move(Point m) {
+    /* 
+     * Test our drag position to be sure it will fit to our TFT screen.
+     * Simply return if it doesn't.
+     */
+    Widget w;
+    Point testPt;
+    Point mapPt = PagePane.mapPoint(m.x, m.y);
+
     for (int i=0; i<targets.size(); i++) {
-      /* p[i] will be our adjusted drag position to fit to our TFT screen.
-       * It does not take into account snap to grid
-       */
-      p[i] = targets.get(i).updateLocation(m);
+      w = targets.get(i);
+      testPt = new Point(mapPt.x-offsetPt[i].x, mapPt.y-offsetPt[i].y);
+      if(!w.testLocation(testPt.x, testPt.y, tft_width, tft_height)) return;
     }
+
+    for (int i=0; i<targets.size(); i++) {
+      /* 
+       *  pt[i] will be our new dragged position.
+       */
+      w = targets.get(i);
+      pt[i] = new Point(mapPt.x-offsetPt[i].x, mapPt.y-offsetPt[i].y);
+      w.updateLocation(pt[i]);
+    }
+    bSuccess = true;
   }
 
   /**
-   * Stop ends the drag and corrects p[i] for snap to grid,
-   * if its enabled.
+   * Stop ends the drag (Now a NOP)
    */
   public void stop() {
-    // adjust out drop point to snap to grid
-    for (int i=0; i<targets.size(); i++) {
-      p[i] = targets.get(i).drop(p[i]);
-    }
   }
 
   /**
@@ -115,8 +151,14 @@ public class DragWidgetCommand extends Command {
    */
   @Override
   public void execute() {
-    for (int i=0; i<targets.size(); i++) {
-      targets.get(i).moveBy(p[i]);
+    if (bSuccess) {
+      try {
+        for (int i=0; i<targets.size(); i++) {
+          targets.get(i).moveBy(pt[i]);
+        }
+      } catch (NullPointerException e) {
+        return;
+      }
     }
   }
 

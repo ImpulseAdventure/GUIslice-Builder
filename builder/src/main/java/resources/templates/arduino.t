@@ -743,14 +743,14 @@ $<CALLBACK>
 <TEXT_INPUT>
   
   // Create $<COM-002> text input field
-  static char m_sInputText$<COM-018>[$<TXT-205>] = "";
+  static char m_sInputText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   pElemRef = gslc_ElemCreateTxt(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
     (char*)m_sInputText$<COM-018>,$<TXT-205>,$<TXT-211>);
 <STOP>
 <TEXT_INPUT_NUM>
   
   // Create $<COM-002> numeric input field
-  static char m_sInputNumber$<COM-018>[$<TXT-205>] = "";
+  static char m_sInputNumber$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   pElemRef = gslc_ElemCreateTxt(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
     (char*)m_sInputNumber$<COM-018>,$<TXT-205>,$<TXT-211>);
 <STOP>

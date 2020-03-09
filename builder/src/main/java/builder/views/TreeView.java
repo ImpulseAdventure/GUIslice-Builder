@@ -560,10 +560,10 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    
 //      System.out.println("**Enter canImport");
       JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
-      System.out.println("canImport dropLocation.getPath() " + dropLocation.getPath().toString() );
+//      System.out.println("canImport dropLocation.getPath() " + dropLocation.getPath().toString() );
       int parentRow = tree.getRowForPath(dropLocation.getPath());
       if (parentRow == -1) {
-        System.out.println("parentRow == -1");
+//        System.out.println("parentRow == -1");
         return true;  // weird to return true but this allows us to append to end of branch
       }
       TreePath parentPath = dropLocation.getPath();
@@ -622,7 +622,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       if (!canImport(support)) {
         return false;
       }
-    System.out.println("##Enter importData");
+//    System.out.println("##Enter importData");
       // dropLocation will give you the location in the tree to add the new node. 
       JTree.DropLocation dropLocation =
       (JTree.DropLocation) support.getDropLocation();

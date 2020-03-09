@@ -91,6 +91,7 @@ public class Ribbon extends JRibbonFrame {
   
   /** The edit buttons. */
   public JCommandButton btn_copy,btn_cut,btn_paste;
+  public JCommandButton mini_copy,mini_cut,mini_paste;
   
   /** The alignment buttons. */
   public JCommandButton btn_aligntop,btn_alignbottom, btn_aligncenter,
@@ -303,11 +304,54 @@ public class Ribbon extends JRibbonFrame {
 //    btn_redo.setEnabled(false);;
     this.getRibbon().addTaskbarComponent(btn_redo);
 
-    btn_delete = new JCommandButton("",
+    this.getRibbon().addTaskbarComponent(
+        new JSeparator(JSeparator.VERTICAL));
+    
+    mini_paste = new JCommandButton("Paste",
+        cu.getResizableIcon("resources/icons/edit/paste.png"));
+    mini_paste.setActionRichTooltip(new RichTooltip(
+        "Paste",
+        "Paste an element from the clipboard."));
+    mini_paste.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "paste");
+        }
+      });
+    this.getRibbon().addTaskbarComponent(mini_paste);
+      
+    mini_copy = new JCommandButton("Copy",
+        cu.getResizableIcon("resources/icons/edit/copy.png"));
+    mini_copy.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "copy");
+        }
+      });
+    mini_copy.setActionRichTooltip(new RichTooltip(
+          "Copy",
+          "Copy element selections to clipboard."));
+    mini_copy.setEnabled(true);
+    this.getRibbon().addTaskbarComponent(mini_copy);
+
+    mini_cut = new JCommandButton("Cut",
+        cu.getResizableIcon("resources/icons/edit/cut.png"));
+    mini_cut.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "cut");
+        }
+      });
+    mini_cut.setActionRichTooltip(new RichTooltip(
+          "Cut",
+          "Cut element selections from page."));
+    this.getRibbon().addTaskbarComponent(mini_cut);
+
+      btn_delete = new JCommandButton("",
         cu.getResizableIcon("resources/icons/edit/delete.png"));
-    btn_delete
+      btn_delete
         .setCommandButtonKind(CommandButtonKind.ACTION_ONLY);
-    btn_delete.addActionListener(new ActionListener() {
+      btn_delete.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         mb.sendActionCommand("Ribbon", "Delete");
@@ -1112,9 +1156,11 @@ public class Ribbon extends JRibbonFrame {
 
   public void enablePaste() {
     btn_paste.setEnabled(true);
+    mini_paste.setEnabled(true);
   }
   
   public void disablePaste() {
     btn_paste.setEnabled(false);
+    mini_paste.setEnabled(false);
   }
 }

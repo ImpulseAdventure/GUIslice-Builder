@@ -22,6 +22,17 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b019
+Enhancements and bug fixes made to paste allowing users to copy a group of UI Elements and keep the original positioning.  Checkboxes and Radio Buttons now will create a default Element Reference name when users turn on callbacks.
+
+Support is back in for dragging multiple UI Elements. This had been removed due to problems handling Zoom magnification.
+
+We now support selecting Jpeg images if you are using TFT_espi drivers. It is assumed in this case you will be using SPIFFS. This is in anticipation of support being added to GUIslice API.  
+
+##### Bug Fixes
+ - Bug No. 146 Request that input fields support Text property
+ - Bug No. 147 Pasting an Element with ElementRef incorrectly copies it.
+
 #### Changes for 0.13.b018
 
 ##### Bug Fixes

@@ -139,7 +139,7 @@ public class PagePane extends JPanel implements iSubscriber {
   private static AffineTransform at = null;
   
   /** The inverse AffineTransform at. */
-  private static AffineTransform inv_at;
+  public static AffineTransform inv_at;
   
   /** The canvas width */
   int canvasWidth;
@@ -464,7 +464,7 @@ public class PagePane extends JPanel implements iSubscriber {
    *          the widget model
    */
   public void addWidget(WidgetModel m, int x, int y) {
-    Widget w = WidgetFactory.getInstance().createWidget(m.getType(), x, y);
+    Widget w = WidgetFactory.getInstance().createWidget(m.getType(), -1, -1);
 /*   Bug 138 copy and paste of numeric input fields causes
  *   duplicate m_pElemVal entries.  The problem is that the following 
  *   statement doesn't take into account properties that are specific
@@ -473,7 +473,7 @@ public class PagePane extends JPanel implements iSubscriber {
  *   who gets called with copyProperties() so we can overload 
  *   the function in sub classes that require extra code.
  */
-    m.copyProperties(w.getModel());
+    w.getModel().copyProperties(m, x, y);
     w.select();
     widgets.add(w);
     PropManager.getInstance().addPropEditor(w.getModel());
@@ -614,7 +614,7 @@ public class PagePane extends JPanel implements iSubscriber {
     return null;
   }
   
-  public Point mapPoint(int x, int y) {
+  static public Point mapPoint(int x, int y) {
     // we may need to deal with scaled points because of zoom feature
     if (zoomFactor > 1) {
       Point2D.Double scaledPos = new Point2D.Double();
@@ -780,8 +780,7 @@ public class PagePane extends JPanel implements iSubscriber {
         }
       } else if (w != null) {
         if (w.isSelected()) bDragging = true;
-        dragPt = mapPoint(mousePt.x, mousePt.y);
-        dragPt = new Point(dragPt.x-w.getX(), dragPt.y-w.getY());
+        dragPt = new Point(mousePt.x, mousePt.y);
       }
     } // end mousePressed
   } // end MouseHandler
@@ -810,9 +809,9 @@ public class PagePane extends JPanel implements iSubscriber {
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
      } else if (bDragging ){
-        if (dragCommand == null) {
+       if (dragCommand == null) {
           dragCommand = new DragWidgetCommand(instance);
-          if (!dragCommand.start()) {
+          if (!dragCommand.start(dragPt)) {
             bDragging = false;
             bMultiSelectionBox = false;
             bRectangularSelectionEn = false;
@@ -823,7 +822,7 @@ public class PagePane extends JPanel implements iSubscriber {
         }
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
-        dragCommand.move(mapPoint(e.getX()-dragPt.x, e.getY()-dragPt.y));
+        dragCommand.move(e.getPoint());
       }
       repaint();
     } // end mouseDragged

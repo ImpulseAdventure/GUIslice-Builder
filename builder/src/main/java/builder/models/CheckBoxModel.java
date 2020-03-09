@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.events.MsgBoard;
 
@@ -42,6 +43,9 @@ public class CheckBoxModel extends WidgetModel {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
+  
+  /** The Constant for gslc_tsElemRef* m_pElementRef name */
+  public static final String ELEMENTREF_NAME = "m_pElemCB";
   
   /** The Property Index Constants. */
   static private final int PROP_CHECKED        = 7;
@@ -125,6 +129,12 @@ public class CheckBoxModel extends WidgetModel {
     if (row == PROP_HEIGHT) {
       data[PROP_WIDTH][PROP_VAL_VALUE] = getHeight();
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
+    }
+    if (row == PROP_CALLBACK_EN) {
+      if (isCallbackEn() && getElementRef().isEmpty()) {
+        setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+        fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
+      }
     }
     if (row == PROP_DEFAULT_COLORS) {
       // check for switching back and forth

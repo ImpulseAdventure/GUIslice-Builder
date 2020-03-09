@@ -26,7 +26,6 @@
 package builder.widgets;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -66,10 +65,7 @@ public class ImgButtonWidget extends Widget {
    */
   public void setImage(File file, int x, int y) {
     m.setImage(file, x, y);
-    Point p = CommonUtils.getInstance().fitToGrid(x, y, model.getWidth(), model.getHeight());
-    p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
-    model.setX(p.x);
-    model.setY(p.y);
+    super.setXY(model, x, y);
   }
   
   /**

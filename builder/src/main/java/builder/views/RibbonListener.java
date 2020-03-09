@@ -27,14 +27,12 @@ package builder.views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
@@ -159,7 +157,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
     File file = showImageDialog("Choose your Button's Image");
     if (file != null) {
       w.setImage(file, x, y);
-      file = showImageDialog("Choose your Pressed Button's Image");
+      file = showImageDialog("Choose your Disabled Button's Image");
       if (file != null) {
         w.setImageSelected(file);
         controller.addWidget(w);
@@ -271,7 +269,9 @@ public class RibbonListener implements ActionListener, iSubscriber {
     fileChooser.addChoosableFileFilter(new FileFilter() {
       public String getDescription() {
         if (target.equals("linux"))
-          return "16 or 24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
+          return "16 or 24 Bit Depth Bitmap (*.bmp), C File with extern image (*.c)";
+        else if (target.equals("arduino TFT_eSPI"))
+          return "16 or 24 Bit Depth Bitmap (*.bmp), Jpeg (*jpg), C File with extern image (*.c)";
         else
           return "24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
       }
@@ -280,16 +280,21 @@ public class RibbonListener implements ActionListener, iSubscriber {
         if (f.isDirectory()) {
           return true;
         } else {
+          System.out.print("File: " + f.getName());
           if (f.getName().toLowerCase().endsWith(".c")) {
+            System.out.println(" VALID");
             return true;
           }
           if (f.getName().toLowerCase().endsWith(".bmp")) {
-            if (target.equals("linux")) {
-              return isValidLinuxImage(f);
-            } else {
-              return isValidArduinoImage(f);
-            }
+            System.out.println(" VALID");
+            return true;
+          } 
+          if (f.getName().toLowerCase().endsWith(".jpg") &&
+                     target.equals("arduino TFT_eSPI")) {
+            System.out.println(" VALID");
+            return true;
           }
+          System.out.println(" NOT VALID");
           return false;
         }
       }
@@ -322,53 +327,6 @@ public class RibbonListener implements ActionListener, iSubscriber {
     return file;
   }
   
-  /**
-   * Validate that image is supported on Arduino Platform.
-   *
-   * @param file
-   *          the file
-   * @return true if valid format, false otherwise
-   */
-  public boolean isValidArduinoImage(File file) {
-    BufferedImage image = null;
-    try {
-       image = ImageIO.read(file);
-    } catch(IOException e) {
-       JOptionPane.showMessageDialog(null, 
-           e.getMessage(), 
-           "Read ERROR",
-           JOptionPane.ERROR_MESSAGE);
-       return false;
-    }
-    if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
-      return true;
-    return false;
-  }
- 
-  /**
-   * Validate that image is supported on Linux Platform.
-   *
-   * @param file
-   *          the file
-   * @return true if valid format, false otherwise
-   */
-  public boolean isValidLinuxImage(File file) {
-    BufferedImage image = null;
-    try {
-       image = ImageIO.read(file);
-    } catch(IOException e) {
-       JOptionPane.showMessageDialog(null, 
-           e.getMessage(), 
-           "Read ERROR",
-           JOptionPane.ERROR_MESSAGE);
-       return false;
-    }
-    if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
-      return true;
-    if (image.getType() == BufferedImage.TYPE_USHORT_555_RGB) 
-      return true;
-    return false;
-  }
  
   /**
    * onExit
