@@ -183,34 +183,53 @@ public class Widget {
   }
   
   /**
-   * updateLocation() will adjust our location to make sure it fits to our grid
+   * testLocation() will determine if our new location will fit our screen
+   *
+   * @param x
+   *          the test destination point x
+   * @param y
+   *          the test destination point y
+   * @param tft_width
+   *          the width of our target tft display
+   * @param tft_height
+   *          the height of our target tft display
+   * @return true if we still fit on the display, false otherwise
+   */
+  public boolean testLocation(int x, int y, int tft_width, int tft_height) {
+    int w = model.getWidth();
+    int h = model.getHeight();
+    // Do the new Coordinates fit on our Display?
+    if ((x + w) > tft_width)
+      return false;
+    if ((y + h) > tft_height)
+      return false;
+    if (x < 0 || y < 0)
+      return false;
+    return true;
+  }
+  
+  /**
+   * updateLocation() will set our location
    * margins.
    *
-   * @param d
-   *          the d
+   * @param pt
+   *          the new location point
    * @return the <code>point</code> object
    */
-  public Point updateLocation(Point d) {
-//    int x = model.getX() + d.x;
-//    int y = model.getY() + d.y;
-    int x = d.x;
-    int y = d.y;
-    Point p = u.fitToGrid(x, y, model.getWidth(), model.getHeight());
-    model.setX(p.x);
-    model.setY(p.y);
-    return p;
+  public void updateLocation(Point pt) {
+    model.setX(pt.x);
+    model.setY(pt.y);
   }
   
   /**
    * Move by.
    *
    * @param d
-   *          the d
+   *          the destination point
    */
   public void moveBy(Point d) {
     model.setX(d.x);
     model.setY(d.y);
-//    System.out.println("moveBy: " + d.toString());
   }
 
   /**
