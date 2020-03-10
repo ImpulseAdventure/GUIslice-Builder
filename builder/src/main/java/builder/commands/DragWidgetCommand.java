@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import builder.common.CommonUtils;
 import builder.mementos.PositionMemento;
 import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
@@ -120,7 +121,6 @@ public class DragWidgetCommand extends Command {
     Widget w;
     Point testPt;
     Point mapPt = PagePane.mapPoint(m.x, m.y);
-
     for (int i=0; i<targets.size(); i++) {
       w = targets.get(i);
       testPt = new Point(mapPt.x-offsetPt[i].x, mapPt.y-offsetPt[i].y);
@@ -139,9 +139,16 @@ public class DragWidgetCommand extends Command {
   }
 
   /**
-   * Stop ends the drag (Now a NOP)
+   * Stop ends the drag 
    */
   public void stop() {
+    /* Adjust out drop point to snap to grid
+     * Only if we have one object selected
+     * Multiple objects get screwed up
+     */
+    if (targets.size() == 1) {
+      pt[0] = targets.get(0).drop(pt[0]);
+    }
   }
 
   /**
