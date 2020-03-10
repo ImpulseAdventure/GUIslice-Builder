@@ -22,7 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
-#### Changes for 0.13.b019
+#### Changes for 0.13.b020
+Fix for SnapTo grid will only work for dragging single object. Multiple objects being dragged will still ignore SnapTo setting otherwise spacing between objects would get distorted.
+
+##### Bug Fixes
+ - Bug No. 148 Dragging an object doesn't snap to grid when preferences has SnapTo=true
+
+ #### Changes for 0.13.b019
 Enhancements and bug fixes made to paste allowing users to copy a group of UI Elements and keep the original positioning.  Checkboxes and Radio Buttons now will create a default Element Reference name when users turn on callbacks.
 
 Support is back in for dragging multiple UI Elements. This had been removed due to problems handling Zoom magnification.
