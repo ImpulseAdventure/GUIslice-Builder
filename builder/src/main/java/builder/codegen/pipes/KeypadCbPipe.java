@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.WidgetModel;
@@ -51,12 +52,6 @@ import builder.models.WidgetModel;
  */
 public class KeypadCbPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String KEYPADCB_TAG           = "//<Keypad Callback !Start!>";
-  private final static String KEYPADCB_END_TAG       = "//<Keypad Callback !End!>";
-  private final static String KEYPAD_ENUMS_TAG       = "//<Keypad Enums !Start!>";
-  private final static String KEYPAD_ENUMS_END_TAG   = "//<Keypad Enums !End!>";
-  
   /** The Constants for templates. */
   private final static String KEYPAD_CB_TEMPLATE      = "<KEYPAD_CB>";
   private final static String KEYPAD_CASE_TEMPLATE  = "<KEYPAD_CB_CASE>";
@@ -100,10 +95,10 @@ public class KeypadCbPipe extends WorkFlowPipe {
    */
   @Override
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    MY_TAG = KEYPADCB_TAG;
-    MY_END_TAG = KEYPADCB_END_TAG;
-    MY_ENUM_TAG = KEYPAD_ENUMS_TAG;
-    MY_ENUM_END_TAG = KEYPAD_ENUMS_END_TAG;
+    this.MY_TAG     = Tags.TAG_PREFIX + Tags.KEYPADCB_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX + Tags.KEYPADCB_TAG + Tags.TAG_SUFFIX_END;
+    this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.KEYPAD_ENUMS_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.KEYPAD_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
     return super.processCB(input);
         

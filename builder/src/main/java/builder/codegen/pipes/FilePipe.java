@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-//import builder.Builder;
 import java.lang.StringBuilder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -42,6 +41,7 @@ import builder.Builder;
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 
 /**
@@ -56,21 +56,6 @@ import builder.codegen.TemplateManager;
  */
 public class FilePipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String FILE_TAG                   = "//<File !Start!>";
-  private final static String FILE_END_TAG               = "//<File !End!>";
-  private final static String INCLUDES_TAG                 = "//<Includes !Start!>";
-  private final static String INCLUDES_END_TAG             = "//<Includes !End!>";
-  private final static String TICKCB_TAG           = "//<Tick Callback !Start!>";
-  private final static String CHECKBOXCB_TAG           = "//<Checkbox Callback !Start!>";
-  private final static String CHECKBOXCB_END_TAG       = "//<Checkbox Callback !End!>";
-  private final static String KEYPADCB_TAG           = "//<Keypad Callback !Start!>";
-  private final static String KEYPADCB_END_TAG       = "//<Keypad Callback !End!>";
-  private final static String SPINNERCB_TAG           = "//<Spinner Callback !Start!>";
-  private final static String SPINNERCB_END_TAG       = "//<Spinner Callback !End!>";
-  private final static String LISTBOXCB_TAG           = "//<Listbox Callback !Start!>";
-  private final static String LISTBOXCB_END_TAG       = "//<Listbox Callback !End!>";
-  
   /** The Constants for templates. */
   private final static String FILE_HDR_TEMPLATE          = "<FILE_HDR>";
   
@@ -88,8 +73,8 @@ public class FilePipe extends WorkFlowPipe {
    */
   public FilePipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = FILE_TAG;
-    this.MY_END_TAG = FILE_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.FILE_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.FILE_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**
@@ -98,9 +83,6 @@ public class FilePipe extends WorkFlowPipe {
    * @see builder.codegen.pipes.Pipe#process(java.lang.Object, java.lang.Object)
    */
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    if (!bEnable) {
-      return input;
-    }
     try {
       /*
        * To convert StringBuilder to InputStream in Java, first get bytes
@@ -123,25 +105,7 @@ public class FilePipe extends WorkFlowPipe {
         doCodeGen(processed);
         CodeUtils.findTag(br, processed, MY_END_TAG);
       } else {
-        // yes, we need to upgrade so first add our new file tag and header
-        processed.append(MY_TAG);
-        processed.append(System.lineSeparator());
-        doCodeGen(processed);
-        processed.append(MY_END_TAG);
-        processed.append(System.lineSeparator());
-        // now copy everything up to extended element tag
-        CodeUtils.findTag(br, processed, "#include \"GUIslice_ex.h\"");
-        processed.append("#include \"GUIslice_drv.h\"");
-        processed.append(System.lineSeparator());
-        processed.append(System.lineSeparator());
-        processed.append(INCLUDES_TAG);
-        processed.append(System.lineSeparator());
-        processed.append(INCLUDES_END_TAG);
-        processed.append(System.lineSeparator());
-        processed.append(System.lineSeparator());
-        CodeUtils.findTag(br, processed, TICKCB_TAG);
-        // output our new tags
-        upgradeToVer13(processed);
+        throw new CodeGenException("file: " + cg.getTemplateName() + "\n is corrupted missing tag:" + MY_TAG);
       }
       CodeUtils.finishUp(br, processed);
       br.close();
@@ -159,11 +123,12 @@ public class FilePipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     TemplateManager tm = cg.getTemplateManager();
-    List<String> templateLines = tm.loadTemplate(FILE_HDR_TEMPLATE);
+    List<String> templateLines = null;
+    String sFileName = cg.getOutputName();
+    templateLines = tm.loadTemplate(FILE_HDR_TEMPLATE);
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
-
-    map.put(FILENAME_MACRO, cg.getProjectFile().getName());
+    map.put(FILENAME_MACRO, sFileName);
     map.put(VERSION_MACRO, Builder.VERSION);
     outputLines = tm.expandMacros(templateLines, map);
     tm.codeWriter(sBd, outputLines);
@@ -172,34 +137,6 @@ public class FilePipe extends WorkFlowPipe {
     outputLines.clear();
     map.clear();
   }
-
-  /**
-   * Upgrade to ver 13.
-   *
-   * @param sBd
-   *          the s bd
-   */
-  public void upgradeToVer13(StringBuilder sBd) {
-    sBd.append(CHECKBOXCB_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(CHECKBOXCB_END_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(KEYPADCB_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(KEYPADCB_END_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(SPINNERCB_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(SPINNERCB_END_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(LISTBOXCB_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(LISTBOXCB_END_TAG);
-    sBd.append(System.lineSeparator());
-    sBd.append(TICKCB_TAG);
-    sBd.append(System.lineSeparator());
-  }
-
 
 }
   

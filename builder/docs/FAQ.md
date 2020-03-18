@@ -48,6 +48,28 @@ char       acTxt[8];
 Note the `%lu` if I had defined m_nCount as uint16_t I would have used `%u` instead.
 You can see a full example inside ex04 supplied with GUIslice API library.
 
+### Can't get a floating point number in a Text Field
+
+Attempting to use 'sprintf(acTxt,4,"%f",fValue);' won't work with Arduino's runtime.
+Floating Point number are not supported by sprintf or snprintf. However you can use dtostrf().
+Example:
+```
+static float f_val = 123.6794;
+static char outstr[15];
+
+void setup() {
+  dtostrf(f_val,7, 3, outstr);
+
+  Serial.begin(9600);
+  Serial.println(outstr);
+}
+
+void loop(){
+}
+```
+Output: 124.679
+
+
 ### Compiler Error when I try and use TFT_espi Display Driver
 If the error is Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
 
@@ -59,6 +81,11 @@ The Builder supports the following target platforms:
 -  linux
 
 Just follow the error message's guidance to reset your target platform. This allows the Builder to correctly handle fonts between the different packages.
+
+
+---------
+<div style="page-break-after: always;"></div>
+
 
 ## GUIslice API
 
@@ -130,10 +157,6 @@ You just make it visible or not.
   gslc_tsElemRef*  m_pElemName       = NULL;
   gslc_ElemSetVisible(&m_gui,m_pElemName,true|false);
 ```
-
----------
-<div style="page-break-after: always;"></div>
-
 
 ### XSpinner Element missing arrows if non built-in fonts used
 

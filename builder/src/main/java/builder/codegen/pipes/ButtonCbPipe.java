@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.BoxModel;
@@ -62,12 +63,6 @@ import builder.prefs.NumKeyPadEditor;
  */
 public class ButtonCbPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String BUTTONCB_TAG           = "//<Button Callback !Start!>";
-  private final static String BUTTONCB_END_TAG       = "//<Button Callback !End!>";
-  private final static String BUTTON_ENUMS_TAG       = "//<Button Enums !Start!>";
-  private final static String BUTTON_ENUMS_END_TAG   = "//<Button Enums !End!>";
-  
   /** The Constants for templates. */
   private final static String BUTTON_CB_TEMPLATE     = "<BUTTON_CB>";
   private final static String BUTTON_CASE_TEMPLATE   = "<BUTTON_CB_CASE>";
@@ -139,10 +134,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
    */
   @Override
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    MY_TAG = BUTTONCB_TAG;
-    MY_END_TAG = BUTTONCB_END_TAG;
-    MY_ENUM_TAG = BUTTON_ENUMS_TAG;
-    MY_ENUM_END_TAG = BUTTON_ENUMS_END_TAG;
+    this.MY_TAG     = Tags.TAG_PREFIX + Tags.BUTTONCB_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX + Tags.BUTTONCB_TAG + Tags.TAG_SUFFIX_END;
+    this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
     return super.processCB(input);
         

@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.BoxModel;
@@ -55,10 +56,6 @@ import builder.models.WidgetModel;
  */
 public class TickCbPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String TICKCB_TAG           = "//<Tick Callback !Start!>";
-  private final static String TICKCB_END_TAG       = "//<Tick Callback !End!>";
-  
   /** The Constants for templates. */
   private final static String TICK_CB_TEMPLATE     = "<TICK_CB>";
   private final static Pattern LTRIM = Pattern.compile("^\\s+");
@@ -75,8 +72,8 @@ public class TickCbPipe extends WorkFlowPipe {
    */
   public TickCbPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = TICKCB_TAG;
-    this.MY_END_TAG = TICKCB_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.TICKCB_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.TICKCB_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**
@@ -93,9 +90,6 @@ public class TickCbPipe extends WorkFlowPipe {
    */
   @Override
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    if (!bEnable) {
-      return input;
-    }
     try {
       /*
        * To convert StringBuilder to InputStream in Java, first get bytes
@@ -111,7 +105,7 @@ public class TickCbPipe extends WorkFlowPipe {
       String sTestTag= "";
       while ((line = br.readLine()) != null) {
         sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals(TICKCB_TAG)) {
+        if (sTestTag.equals(MY_TAG)) {
           doCallback(br, processed);
           break;
         } else {
@@ -147,7 +141,7 @@ public class TickCbPipe extends WorkFlowPipe {
       }
     }
     if (!bFoundFunc) {
-      sBd.append(TICKCB_TAG); 
+      sBd.append(MY_TAG); 
       sBd.append(System.lineSeparator()); 
       return;      
     }

@@ -230,29 +230,23 @@ gslc_tsElemRef                  m_as$<STRIP_KEY>ElemRef[MAX_ELEM_$<STRIP_ENUM>];
 <IMAGE_DEFINE>
  
   // Create $<COM-002> using Image $<IMAGE_DEFINE> $<IMAGE_FROM_SRC>
+  // - Extra code to for path generation based on location of executable
+  strncpy(m_strImgPath$<COUNT>,strPath,MAX_PATH);
+  strncat(m_strImgPath$<COUNT>,$<IMG-101>,MAX_PATH);
   pElemRef = gslc_ElemCreateImg(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
-    $<IMG-109>$<IMG-101>,$<IMG-102>));
-<STOP>
-<IMAGE_EXTERN>
- 
-  // Create $<COM-002> using Image $<IMAGE_DEFINE> $<IMAGE_FROM_SRC>
-  pElemRef = gslc_ElemCreateImg(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
-    $<IMG-109>$<IMG-108>,$<IMG-102>));
+    $<IMG-109>m_strImgPath$<COUNT>,$<IMG-102>));
 <STOP>
 <IMGBUTTON_DEFINE>
   
   // Create $<COM-002> button with image label
+  // - Extra code to for path generation based on location of executable
+  strncpy(m_strImgBtnPath$<COUNT>,strPath,MAX_PATH);
+  strncat(m_strImgBtnPath$<COUNT>,$<IBTN-102>,MAX_PATH);
+  strncpy(m_strImgBtnSelPath$<COUNT>,strPath,MAX_PATH);
+  strncat(m_strImgBtnSelPath$<COUNT>,$<IBTN-103>,MAX_PATH);
   pElemRef = gslc_ElemCreateBtnImg(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
-          $<IBTN-110>$<IBTN-102>,$<IBTN-104>),
-          $<IBTN-113>$<IBTN-103>,$<IBTN-104>),
-          &CbBtnCommon);
-<STOP>
-<IMGBUTTON_EXTERN>
-  
-  // Create $<COM-002> button with image label
-  pElemRef = gslc_ElemCreateBtnImg(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
-          $<IBTN-110>$<IBTN-108>,$<IBTN-104>),
-          $<IBTN-113>$<IBTN-109>,$<IBTN-104>),
+          $<IBTN-110>m_strImgBtnPath$<COUNT>,$<IBTN-104>),
+          $<IBTN-113>m_strImgBtnSelPath$<COUNT>,$<IBTN-104>),
           &CbBtnCommon);
 <STOP>
 <IMAGETRANSPARENT>

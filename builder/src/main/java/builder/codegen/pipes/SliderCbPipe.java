@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.ListBoxModel;
@@ -53,12 +54,6 @@ import builder.models.WidgetModel;
  */
 public class SliderCbPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String SLIDERCB_TAG           = "//<Slider Callback !Start!>";
-  private final static String SLIDERCB_END_TAG       = "//<Slider Callback !End!>";
-  private final static String SLIDER_ENUMS_TAG       = "//<Slider Enums !Start!>";
-  private final static String SLIDER_ENUMS_END_TAG   = "//<Slider Enums !End!>";
-  
   /** The Constants for templates. */
   private final static String SLIDER_CB_TEMPLATE     = "<SLIDER_CB>";
   private final static String SLIDER_CASE_TEMPLATE   = "<SLIDER_CB_CASE>";
@@ -103,10 +98,10 @@ public class SliderCbPipe extends WorkFlowPipe {
    */
   @Override
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    MY_TAG = SLIDERCB_TAG;
-    MY_END_TAG = SLIDERCB_END_TAG;
-    MY_ENUM_TAG = SLIDER_ENUMS_TAG;
-    MY_ENUM_END_TAG = SLIDER_ENUMS_END_TAG;
+    this.MY_TAG     = Tags.TAG_PREFIX + Tags.SLIDERCB_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX + Tags.SLIDERCB_TAG + Tags.TAG_SUFFIX_END;
+    this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.SLIDER_ENUMS_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.SLIDER_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
     return super.processCB(input);
         

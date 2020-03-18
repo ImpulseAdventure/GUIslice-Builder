@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,16 +44,5 @@ public interface Pipe<T> {
    * @return the processed input
    */
   T process(T input);
-  
-  /**
-   * pipeEn will ignore processing a step if set to disable.
-   * This allows the workflow to be dynamically changed at runtime.
-   *
-   * The default should be enabled.
-   *
-   * @param bEnable
-   *          bEnable set to true to enable this step, false to disable
-   */
-  void pipeEn(boolean bEnable);
   
 }

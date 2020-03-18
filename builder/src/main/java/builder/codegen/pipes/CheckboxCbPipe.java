@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.CheckBoxModel;
@@ -53,12 +54,6 @@ import builder.models.WidgetModel;
  */
 public class CheckboxCbPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String CHECKBOXCB_TAG           = "//<Checkbox Callback !Start!>";
-  private final static String CHECKBOXCB_END_TAG       = "//<Checkbox Callback !End!>";
-  private final static String CHECKBOX_ENUMS_TAG       = "//<Checkbox Enums !Start!>";
-  private final static String CHECKBOX_ENUMS_END_TAG   = "//<Checkbox Enums !End!>";
-  
   /** The Constants for templates. */
   private final static String CHECKBOX_CB_TEMPLATE     = "<CHECKBOX_CB>";
   private final static String CHECKBOX_CASE_TEMPLATE   = "<CHECKBOX_CB_CASE>";
@@ -102,10 +97,10 @@ public class CheckboxCbPipe extends WorkFlowPipe {
    */
   @Override
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    MY_TAG = CHECKBOXCB_TAG;
-    MY_END_TAG = CHECKBOXCB_END_TAG;
-    MY_ENUM_TAG = CHECKBOX_ENUMS_TAG;
-    MY_ENUM_END_TAG = CHECKBOX_ENUMS_END_TAG;
+    this.MY_TAG     = Tags.TAG_PREFIX + Tags.CHECKBOXCB_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX + Tags.CHECKBOXCB_TAG + Tags.TAG_SUFFIX_END;
+    this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.CHECKBOX_ENUMS_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.CHECKBOX_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
     return super.processCB(input);
         

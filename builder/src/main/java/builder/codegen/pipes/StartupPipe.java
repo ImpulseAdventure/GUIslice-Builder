@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.ColorFactory;
 import builder.models.GeneralModel;
@@ -49,10 +50,6 @@ import builder.prefs.GeneralEditor;
  */
 public class StartupPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String STARTUP_TAG                 = "//<Startup !Start!>";
-  private final static String STARTUP_END_TAG             = "//<Startup !End!>";
-  
   /** The Constants for templates. */
   private final static String ROTATE_TEMPLATE             = "<ROTATE>";
   private final static String TRANSPARENCY_COLOR_TEMPLATE = "<TRANSPARENCY_COLOR>";
@@ -72,8 +69,8 @@ public class StartupPipe extends WorkFlowPipe {
    */
   public StartupPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = STARTUP_TAG;
-    this.MY_END_TAG = STARTUP_END_TAG;
+    this.MY_TAG     = Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_END;
   }
   
   /**
