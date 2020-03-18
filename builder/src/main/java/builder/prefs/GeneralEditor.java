@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -115,6 +115,26 @@ public class GeneralEditor extends ModelEditor {
    */
   public void setRecentColors(String s) { 
     ((GeneralModel) model).setRecentColors(s);
+    savePreferences();
+  }
+
+  /**
+   * Gets the recent file list.
+   *
+   * @return the recent file list
+   */
+  public String getRecentFilesList() {
+    return ((GeneralModel) model).getRecentFilesList();
+  }
+
+  /**
+   * setRecentFilesList sets the recent colors
+   * called by our file chooser.
+   * @param s
+   */
+  public void setRecentFilesList(String s) { 
+    ((GeneralModel) model).setRecentFilesList(s);
+    savePreferences();
   }
 
   /**
@@ -219,6 +239,15 @@ public class GeneralEditor extends ModelEditor {
     return ((GeneralModel) model).getVSpacing();
   }
 
+  /**
+   * is Backward Compatibility Mode?
+   *
+   * @return <code>true</code>, if Backward Compatibility Mode is to be used
+   */
+  public boolean isBackwardCompat() {
+    return ((GeneralModel) model).isBackwardCompat();
+  }
+  
  /**
   * Write model.
   *
@@ -239,7 +268,7 @@ public class GeneralEditor extends ModelEditor {
  @Override
  public void updateModel() {
    model.TurnOffEvents();
-   int rows = model.getRowCount();
+   int rows = model.getPropertyCount();
    for (int i=0; i<rows; i++) {
      String key = (String) model.getValueAt(i, WidgetModel.COLUMN_NAME);
      Object o = model.getValueAt(i, WidgetModel.COLUMN_VALUE);

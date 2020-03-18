@@ -35,6 +35,7 @@ import java.util.Random;
 
 import javax.swing.AbstractButton;
 import javax.swing.filechooser.FileFilter;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -73,6 +74,9 @@ public class RibbonListener implements ActionListener, iSubscriber {
   /** The rand. */
   private Random rand = new Random();
   
+  /** The Recent File List */
+  private RecentFilePanel recentFileList = null;
+
   /**
    * Instantiates a new toolbox.
    */
@@ -235,20 +239,28 @@ public class RibbonListener implements ActionListener, iSubscriber {
         }
       }
     });
+    recentFileList = new RecentFilePanel(fileChooser);
+    fileChooser.setAccessory(recentFileList);
+    String sCurrentFolder = recentFileList.getCurrentFolder();
     File currentDirectory;
-    String projectDir = generalModel.getProjectDir();
-    // absolute path or relative?
-    Path path = Paths.get(projectDir);
-    if (path.isAbsolute()) {
-      currentDirectory = new File(projectDir);
+    if (sCurrentFolder == null) {
+      String sProjectDir = generalModel.getProjectDir();
+      // absolute path or relative?
+      Path path = Paths.get(sProjectDir);
+      if (path.isAbsolute()) {
+        currentDirectory = new File(sProjectDir);
+      } else {
+        String sWorkingDir = CommonUtils.getInstance().getWorkingDir();
+        currentDirectory = new File(sWorkingDir + sProjectDir);
+      }
     } else {
-      String workingDir = CommonUtils.getInstance().getWorkingDir();
-      currentDirectory = new File(workingDir + projectDir);
+      currentDirectory = new File(sCurrentFolder);
     }
     fileChooser.setCurrentDirectory(currentDirectory);
     int option = fileChooser.showDialog(new JFrame(), btnText);
     if (option == JFileChooser.APPROVE_OPTION) {
       file = fileChooser.getSelectedFile();
+      recentFileList.add(file);
     }
     return file;
   }
