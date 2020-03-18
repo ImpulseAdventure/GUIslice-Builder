@@ -22,6 +22,15 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b021
+Enhancement to split [project name].ino file into  [project name].ino and [project name]_GUI.h header that contains GUIslice API storage, Fonts, Element Initialization and other items users generally don't need to modify.  While [project name].ino will remain where users must do their code injections.
+
+Target Platform linux will continue to use a single [project name].c file. Also, existing projects will be upgraded automatically with the existing [project name].ino renamed to [project name].ino.orig in case of any problems with the upgrade.  
+
+Enhancement to File Chooser to maintain a list of recently accessed project files and to open the last accessed folder.
+
+NOTE: Any projects created with beta versions of the builder will no longer be supported.  Use an older Builder to upgrade your beta project before attempting to use the new Builder.
+
 #### Changes for 0.13.b020
 Fix for SnapTo grid will only work for dragging single object. Multiple objects being dragged will still ignore SnapTo setting otherwise spacing between objects would get distorted.
 
