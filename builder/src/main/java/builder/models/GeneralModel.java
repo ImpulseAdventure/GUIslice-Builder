@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -77,9 +77,11 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_VSPACING             = 18;
   public static final int PROP_MAX_STRING           = 19;
   public static final int PROP_ROTATION             = 20;
+  public static final int PROP_BACKWARD_COMPAT      = 21;
+  public static final int PROP_IMAGE_DIR            = 22; // last folder used to load image
   // The following properties are hidden from users
-  public static final int PROP_IMAGE_DIR            = 21; // last folder used to load image
-  public static final int PROP_RECENT_COLORS        = 22; // LRU of recent colors choosen (reset each startup)
+  public static final int PROP_RECENT_COLORS        = 23; // LRU of recent colors choosen
+  public static final int PROP_RECENT_FILES         = 24; // LRU of recent files choosen
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
@@ -101,6 +103,7 @@ public class GeneralModel extends WidgetModel {
   static public  final Integer DEF_VSPACING            = Integer.valueOf(20);
   static public  final Integer DEF_MAX_STRING          = Integer.valueOf(100);
   static public  final Integer DEF_ROTATION            = Integer.valueOf(-1);
+  static public  final Boolean DEF_BACKWARD_COMPAT     = Boolean.valueOf(false);
   
   /* Look and Feel */
   public static final String LAF_AUTUMNSKIN             = "AutumnSkin";
@@ -204,7 +207,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[23][5];
+    data = new Object[25][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Theme",defThemeName);
@@ -242,8 +245,11 @@ public class GeneralModel extends WidgetModel {
     initProp(PROP_MAX_STRING, Integer.class, "GEN-110", Boolean.FALSE,"MAX_STR",DEF_MAX_STRING);
     initProp(PROP_ROTATION, Integer.class, "GEN-112", Boolean.FALSE,
         "Screen Rotation [0-3 or -1 default]",DEF_ROTATION);
+    initProp(PROP_BACKWARD_COMPAT, Boolean.class, "GEN-120", Boolean.FALSE,
+        "Backward Compatibility Mode?",DEF_BACKWARD_COMPAT);
     initProp(PROP_IMAGE_DIR, String.class, "GEN-113", Boolean.FALSE,"Last Image Directory Accessed","");
     initProp(PROP_RECENT_COLORS, String.class, "GEN-111", Boolean.TRUE,"Recent Colors","");
+    initProp(PROP_RECENT_FILES, String.class, "GEN-121", Boolean.TRUE,"Recent Files","");
   }
   
   /**
@@ -310,14 +316,14 @@ public class GeneralModel extends WidgetModel {
   /**
    * getRowCount gives back the number of user visible properties
    * its 2 less than the data[][] table size because we hide 
-   * recent colors and last image dir accessed from the user.
+   * recent colors and recent files list from the user.
    * 
    * @return the row count
    * @see javax.swing.table.TableModel#getRowCount()
    */
   @Override
   public int getRowCount() {
-    return data.length-1;  
+    return data.length-2;  
   }
 
   /**
@@ -408,6 +414,24 @@ public class GeneralModel extends WidgetModel {
    */
   public void setRecentColors(String s) { 
     shortcutValue(s, PROP_RECENT_COLORS);
+  }
+
+  /**
+   * Gets the recent file list.
+   *
+   * @return the recent file list
+   */
+  public String getRecentFilesList() {
+    return (String) data[PROP_RECENT_FILES][PROP_VAL_VALUE];
+  }
+
+  /**
+   * setRecentFilesList sets the recent colors
+   * called by our file chooser.
+   * @param s
+   */
+  public void setRecentFilesList(String s) { 
+    shortcutValue(s, PROP_RECENT_FILES);
   }
 
   /**
@@ -559,6 +583,15 @@ public class GeneralModel extends WidgetModel {
     return (((Integer) (data[PROP_ROTATION][PROP_VAL_VALUE])).intValue());
   }
 
+  /**
+   * is Backward Compatibility Mode?
+   *
+   * @return <code>true</code>, if Backward Compatibility Mode is to be used
+   */
+  public boolean isBackwardCompat() {
+    return ((Boolean) data[PROP_BACKWARD_COMPAT][PROP_VAL_VALUE]).booleanValue();
+  }
+  
   /**
    * Use Background image.
    *
