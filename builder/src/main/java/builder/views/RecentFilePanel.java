@@ -69,7 +69,7 @@ public class RecentFilePanel extends JPanel {
   
   public class FileListModel extends AbstractListModel<File> {
     private static final long serialVersionUID = 1L;
-    private static final int MAXFILES = 10;
+    private static final int MAXFILES = 6;
     /** lru cache of recent file names */
     public  ArrayList<String> lruList;
     public  List<File> files;
@@ -136,12 +136,13 @@ public class RecentFilePanel extends JPanel {
       if (lruList.size() > MAXFILES) {
         lruList.remove(MAXFILES);
       }
-      files.clear();
+//      files.clear();
       StringBuilder sb = new StringBuilder();
       for (int index = 0; index < lruList.size(); index++) {
         fileName = lruList.get(index);
         file = new File(fileName);
-        files.add(file);
+//  No point in adding file to files list since it won't ever be used again.
+//        files.add(file);
         if (sb.length() > 0) {
           sb.append(File.pathSeparator);
         }

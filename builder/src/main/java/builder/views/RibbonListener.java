@@ -242,6 +242,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
     recentFileList = new RecentFilePanel(fileChooser);
     fileChooser.setAccessory(recentFileList);
     String sCurrentFolder = recentFileList.getCurrentFolder();
+    fileChooser.setFileView(new FileViewWithIcons());
     File currentDirectory;
     if (sCurrentFolder == null) {
       String sProjectDir = generalModel.getProjectDir();
@@ -292,27 +293,23 @@ public class RibbonListener implements ActionListener, iSubscriber {
         if (f.isDirectory()) {
           return true;
         } else {
-          System.out.print("File: " + f.getName());
           if (f.getName().toLowerCase().endsWith(".c")) {
-            System.out.println(" VALID");
             return true;
           }
           if (f.getName().toLowerCase().endsWith(".bmp")) {
-            System.out.println(" VALID");
             return true;
           } 
           if (f.getName().toLowerCase().endsWith(".jpg") &&
                      target.equals("arduino TFT_eSPI")) {
-            System.out.println(" VALID");
             return true;
           }
-          System.out.println(" NOT VALID");
           return false;
         }
       }
     });
     ImagePreviewPanel preview = new ImagePreviewPanel();
     fileChooser.setAccessory(preview);
+    fileChooser.setFileView(new FileViewWithIcons());
     fileChooser.addPropertyChangeListener(preview);
 
     File currentDirectory = null;
