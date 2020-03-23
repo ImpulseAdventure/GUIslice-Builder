@@ -134,7 +134,7 @@ public class CodeGenerator {
   public  final static String ARDUINO_EXT             = ".ino";
   
   /** The Constant HEADER_EXT. */
-  public  final static String HEADER_EXT              = "_GUI.h";
+  public  final static String HEADER_EXT              = "_GLSC.h";
   
   /** The Constant LINUX_EXT. */
   public  final static String LINUX_EXT               = ".c";
@@ -303,7 +303,6 @@ public class CodeGenerator {
         instance.elementPipe,
         instance.extraElementPipe,
         instance.externRefPipe,
-        instance.saveRefPipe,
         instance.initGuiPipe,
         instance.fontLoadPipe,
         instance.startupPipe
@@ -445,6 +444,9 @@ public class CodeGenerator {
           appName = new String(sProjectName + ARDUINO_EXT);
           appFullPath = folder + System.getProperty("file.separator") + appName;
           sTemplateFileName = appFullPath;
+          /* Do we need to upgrade a beta application file?
+           */
+          upgradeBetaApp(appFullPath);
           /* Do we need to create our application file from templateName?
            */
           appFile = new File(appFullPath);
@@ -474,10 +476,13 @@ public class CodeGenerator {
           hdrName = new String(sProjectName + HEADER_EXT);
           hdrFullPath = folder + System.getProperty("file.separator") + hdrName;
           sTemplateFileName = appFullPath;
+          /* Do we need to upgrade a beta application file?
+           */
+          upgradeBetaApp(appFullPath);
           /* now we need to determine if we have a 
            * older single file that needs upgrading.
            */
-          upgradeApp(folder, appFullPath, hdrFullPath);
+          modifyAppToUseHdr(folder, appFullPath, hdrFullPath);
           /* Do we need to create our application file from templateName?
            */
           appFile = new File(appFullPath);
@@ -551,51 +556,249 @@ public class CodeGenerator {
   }
  
   /**
-   * upgrade the application to use a header
+   * upgrade our beta version of app to current single file app 
+   * @param appName
+   * @param backupName
+   * @param hdrName
+   * @param bOldApp
+   */
+  public void upgradeBetaApp(String appName) throws CodeGenException, IOException {
+    File appFile = new File(appName);
+    if (!appFile.exists()) {
+      return; // nothing to do here
+    }
+    FileReader fr;
+    FileWriter aw;
+    BufferedWriter bwA;
+    BufferedReader br;
+    String APP_TAG = new String(Tags.TAG_PREFIX + Tags.APP_TAG + Tags.TAG_SUFFIX_START);
+    String FILE_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_START);
+    String FILE_END_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_END);
+    String FONTS_TAG = new String(Tags.TAG_PREFIX + Tags.FONTS_TAG + Tags.TAG_SUFFIX_START);
+    String INCLUDES_TAG = new String(Tags.TAG_PREFIX + Tags.INCLUDES_TAG + Tags.TAG_SUFFIX_START);
+    String INCLUDES_END_TAG = new String(Tags.TAG_PREFIX + Tags.INCLUDES_TAG + Tags.TAG_SUFFIX_END);
+    String CHECKBOXCB_TAG = new String(Tags.TAG_PREFIX + Tags.CHECKBOXCB_TAG + Tags.TAG_SUFFIX_START);
+    String CHECKBOXCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.CHECKBOXCB_TAG + Tags.TAG_SUFFIX_END);
+    String KEYPADCB_TAG = new String(Tags.TAG_PREFIX + Tags.KEYPADCB_TAG + Tags.TAG_SUFFIX_START);
+    String KEYPADCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.KEYPADCB_TAG + Tags.TAG_SUFFIX_END);
+    String SPINNERCB_TAG = new String(Tags.TAG_PREFIX + Tags.SPINNERCB_TAG + Tags.TAG_SUFFIX_START);
+    String SPINNERCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.SPINNERCB_TAG + Tags.TAG_SUFFIX_END);
+    String LISTBOXCB_TAG = new String(Tags.TAG_PREFIX + Tags.LISTBOXCB_TAG + Tags.TAG_SUFFIX_START);
+    String LISTBOXCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.LISTBOXCB_TAG + Tags.TAG_SUFFIX_END);
+    String STARTUP_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_START);
+    String STARTUP_END_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_END);
+    
+    try {
+      fr = new FileReader(appName);
+      br = new BufferedReader(fr);
+      String backupName = "";
+      String sTestTag = "";
+      String line = "";
+
+      line = br.readLine();
+      /*
+       * we have three conditions here 
+       * 1- line == "//<App !Start!>" no upgrade needed
+       * 2- line == "//<File !Start!>" upgrade may be needed, look deeper 
+       * 3- line not equal to either - needs upgrade
+       */
+      if (line.equals(APP_TAG)) {
+        fr.close();
+        br.close();
+        return;
+      }
+      if (line.equals(FILE_TAG)) {
+        /* We need to look deeper, search for INCLUDES_TAG 
+         * If we find it great, no update needed.
+         * If we find FONTS_TAG first we need upgrade
+         */
+        boolean bNeedUpgrade = false;
+        while ((line = br.readLine()) != null) {
+          if (line.equals(INCLUDES_TAG)) {
+            break;
+          }
+          if (line.equals(FONTS_TAG)) {
+            bNeedUpgrade = true;
+            break;
+          }
+        }
+        if (!bNeedUpgrade) {
+          fr.close();
+          br.close();
+          return;
+        }
+      } 
+      // We need to upgrade so first make a backup copy of app file
+      br.close();
+      fr.close();
+      backupName = new String(appName + ".beta");
+      File backupFile = new File(backupName);
+      appFile.renameTo(backupFile);
+      fr = new FileReader(backupName);
+      br = new BufferedReader(fr);
+      aw = new FileWriter(appName);
+      bwA = new BufferedWriter(aw);
+      line = br.readLine();
+      if (!line.equals(FILE_TAG)) {
+        bwA.write(FILE_TAG);
+        bwA.newLine();
+        bwA.write(line);
+        bwA.newLine();
+        while ((line = br.readLine()) != null) {
+          if (line.isEmpty())
+            break;
+          bwA.write(line);
+          bwA.newLine();
+        }
+        bwA.write(FILE_END_TAG);
+        bwA.newLine();
+        bwA.newLine();
+      } 
+
+      while ((line = br.readLine()) != null) {
+        if (line.equals("#include \"GUIslice_ex.h\"")) {
+          continue;
+        }
+        if (line.equals("#include <Adafruit_GFX.h>")) {
+          bwA.write(line);
+          bwA.newLine();
+          bwA.newLine();
+          bwA.write(INCLUDES_TAG);
+          bwA.newLine();
+          bwA.write(INCLUDES_END_TAG);
+          bwA.newLine();
+          bwA.newLine();
+          continue;
+        }
+        if (line.equals("// Common Button callback")) {
+          bwA.write(line);
+          bwA.newLine();
+          break;
+        }
+        bwA.write(line);
+        bwA.newLine();
+      }
+      while ((line = br.readLine()) != null) {
+        if (line.equals("}")) {
+          bwA.write(line);
+          bwA.newLine();
+          break;
+        }
+        bwA.write(line);
+        bwA.newLine();
+      }
+      bwA.newLine();
+      bwA.write(CHECKBOXCB_TAG);
+      bwA.newLine();
+      bwA.write(CHECKBOXCB_END_TAG);
+      bwA.newLine();
+
+      bwA.write(KEYPADCB_TAG);
+      bwA.newLine();
+      bwA.write(KEYPADCB_END_TAG);
+      bwA.newLine();
+
+      bwA.write(SPINNERCB_TAG);
+      bwA.newLine();
+      bwA.write(SPINNERCB_END_TAG);
+      bwA.newLine();
+
+      bwA.write(LISTBOXCB_TAG);
+      bwA.newLine();
+      bwA.write(LISTBOXCB_END_TAG);
+      bwA.newLine();
+
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals("InitGUI();")) {
+          bwA.write(line);
+          bwA.newLine();
+          bwA.newLine();
+          bwA.write(STARTUP_TAG);
+          bwA.newLine();
+          bwA.write(STARTUP_END_TAG);
+          bwA.newLine();
+          break;
+        }
+        bwA.write(line);
+        bwA.newLine();
+      }
+      // remove Quick_Access section
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals("//<Quick_Access !Start!>")) {
+          break;
+        }
+        bwA.write(line);
+        bwA.newLine();
+      }
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals("//<Quick_Access !End!>")) {
+          break;
+        }
+      }
+      // finish up by copying everything left over
+      while ((line = br.readLine()) != null) {
+        bwA.write(line);
+        bwA.newLine();
+      }
+      br.close();
+      bwA.close();
+      fr.close();
+      aw.close();
+    } catch (IOException e) {
+      throw new CodeGenException("IOException converting beta App: " + e.toString());
+    }
+  }
+
+  /**
+   * Modify the application to use a header
    * instead of a single file, if necessary
    * 
    * @param folder
    * @param appName
    * @param hdrName
    */
-  public void upgradeApp(String folder, String appName, String hdrName) 
-      throws CodeGenException {
+  public void modifyAppToUseHdr(String folder, String appName, String hdrName) throws CodeGenException {
     File appFile = new File(appName);
     if (!appFile.exists()) {
-      return;  // nothing to do here
+      return; // nothing to do here
     }
-    /* It exists so we need to read the first line.
-     * It will tell us if we need to upgrade or not. 
+    /*
+     * It exists so we need to read the first line. It will tell us if we need to
+     * upgrade or not.
      */
     try {
       FileReader fr = new FileReader(appFile);
       BufferedReader br = new BufferedReader(fr);
-      String line  = "";
+      String line = "";
       if ((line = br.readLine()) != null) {
-         /* we have three conditions here
-          * 1- line == "//<App !Start!>" no upgrade needed
-          * 2- line == "//<File !Start!>" upgrade needed
-          * 3- line not equal to either - really old project needs upgrade
-          */
-          if (!line.equals("//<App !Start!>")) {
-            if (!line.equals("//<File !Start!>")) {
-              br.close();
-              throw new CodeGenException("file: " + getTemplateName() + 
-                  "\n is corrupted missing tag: //<File !Start!>");
-            }
-            // Make a backup copy of app file
+        /*
+         * we have three conditions here 
+         * 1- line == "//<App !Start!>" no upgrade needed
+         * 2- line == "//<File !Start!>" upgrade needed 
+         * 3- line not equal to either - really old beta project should have been upgraded
+         */
+        if (!line.equals("//<App !Start!>")) {
+          if (!line.equals("//<File !Start!>")) {
             br.close();
-            fr.close();
-            String backupName = new String(appName + ".orig");
-            File backupFile = new File(backupName);
-            appFile.renameTo(backupFile);
-            /* now we want to split the backup file into two files.
-             * one is the new GUIslice_gen.h and the other is the
-             * new *ino or *.cpp app file
-             */
-            splitApp(appName, backupName, hdrName);
+            throw new CodeGenException("file: " + getTemplateName() + "\n is corrupted missing tag: //<File !Start!>");
           }
-      } 
+          // Make a backup copy of app file
+          br.close();
+          fr.close();
+          String backupName = new String(appName + ".orig");
+          File backupFile = new File(backupName);
+          appFile.renameTo(backupFile);
+          /*
+           * now we want to remove tags from the backup file.
+           * and create a new *.ino file. 
+           * The new header file will be created later using a template
+           */
+          removeTags(appName, backupName);
+        }
+      }
       br.close();
       fr.close();
       return;
@@ -605,18 +808,16 @@ public class CodeGenerator {
   }
 
   /**
-   * Split our app into two files, projectname.ino and projectname_GUI.h
+   * remove tags to create the new app file
+   * 
    * @param appName
    * @param backupName
    * @param hdrName
    * @param bOldApp
    */
-  public void splitApp(String appName, String backupName, String hdrName) 
-      throws CodeGenException, IOException {
+  public void removeTags(String appName, String backupName) throws CodeGenException, IOException {
     FileReader fr;
-    FileWriter hw;
     FileWriter aw;
-    BufferedWriter bwH;
     BufferedWriter bwA;
     BufferedReader br;
     String FILE_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_START);
@@ -625,188 +826,146 @@ public class CodeGenerator {
     String APP_END_TAG = new String(Tags.TAG_PREFIX + Tags.APP_TAG + Tags.TAG_SUFFIX_END);
     String HEADER_TAG = new String(Tags.TAG_PREFIX + Tags.HEADER_TAG + Tags.TAG_SUFFIX_START);
     String HEADER_END_TAG = new String(Tags.TAG_PREFIX + Tags.HEADER_TAG + Tags.TAG_SUFFIX_END);
-    String INITGUI_TAG = new String(Tags.TAG_PREFIX + Tags.INITGUI_TAG + Tags.TAG_SUFFIX_START);
-    String INITGUI_END_TAG = new String(Tags.TAG_PREFIX + Tags.INITGUI_TAG + Tags.TAG_SUFFIX_END);
     String LOADFONTS_TAG = new String(Tags.TAG_PREFIX + Tags.LOADFONTS_TAG + Tags.TAG_SUFFIX_START);
     String LOADFONTS_END_TAG = new String(Tags.TAG_PREFIX + Tags.LOADFONTS_TAG + Tags.TAG_SUFFIX_END);
     String STARTUP_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_START);
     String STARTUP_END_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_END);
-    
+    String COMMENTS_START = new String("// ------------------------------------------------");
     try {
       fr = new FileReader(backupName);
-      hw = new FileWriter(hdrName);
       aw = new FileWriter(appName);
       br = new BufferedReader(fr);
-      bwH = new BufferedWriter(hw);
       bwA = new BufferedWriter(aw);
-      String sTestTag= "";
-      String line  = "";
-
+      String sTestTag = "";
+      String line = "";
+      String line2 = "";
       line = br.readLine();
       sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
       if (sTestTag.equals(FILE_TAG)) {
-        bwH.write(line);
-        bwH.newLine();
-        findTag(br, FILE_END_TAG);
-        bwH.write(FILE_END_TAG);
-        bwH.newLine();
         bwA.write(APP_TAG);
         bwA.newLine();
+        while ((line = br.readLine()) != null) {
+          if (line.equals(FILE_END_TAG)) {
+            break;
+          }
+          bwA.write(line);
+          bwA.newLine();
+        }
         bwA.write(APP_END_TAG);
         bwA.newLine();
         bwA.newLine();
       } else {
         br.close();
         bwA.close();
-        bwH.close();
-        throw new CodeGenException("file: " + getTemplateName() + "\n is corrupted missing tag:" + FILE_TAG);
+        throw new CodeGenException("file: " + backupName + "\n is corrupted missing tag:" + FILE_TAG);
       }
 
       while ((line = br.readLine()) != null) {
         if (line.equals("#include \"GUIslice.h\"")) {
-          bwH.write(line);
-          bwH.newLine();
           bwA.write(HEADER_TAG);
           bwA.newLine();
           bwA.write(HEADER_END_TAG);
           bwA.newLine();
+          bwA.newLine();
           break;
         }
         bwA.write(line);
         bwA.newLine();
-        bwH.write(line);
-        bwH.newLine();
       }
-      // scan for globals
-      boolean bFoundGlobals = false;
+      // remove tags
+      int nBlankLines = 0;
       while ((line = br.readLine()) != null) {
-        if (line.equals("// Program Globals")) {
-          bwA.write("// ------------------------------------------------");
-          bwA.newLine();
-          bwH.write(line);
-          bwH.newLine();
-          bwH.write("// ------------------------------------------------");
-          bwH.newLine();
-          bwH.newLine();
-          bFoundGlobals = true;
-        } else if (line.equals("// Save some element references for direct access")) {
-          bwH.write(line);
-          bwH.newLine();
-          break;
-        }
-        if (bFoundGlobals) {
-          bwA.write(line);
-          bwA.newLine();
+        if (line.isEmpty()) {
+          nBlankLines++;
+          if (nBlankLines < 2) {
+            bwA.write(line);
+            bwA.newLine();
+         }
         } else {
-          bwH.write(line);
-          bwH.newLine();
-        }
+          if (line.equals("//<Includes !Start!>")) {
+            findTag(br, "//<Includes !End!>");
+          } else if (line.equals("//<Fonts !Start!>")) {
+              findTag(br, "//<Fonts !End!>");
+          } else if (line.equals("//<Resources !Start!>")) {
+            findTag(br, "//<Resources !End!>");
+          } else if (line.equals("//<Enum !Start!>")) {
+            findTag(br, "//<Enum !End!>");
+          } else if (line.equals("//<ElementDefines !Start!>")) {
+            findTag(br, "//<ElementDefines !End!>");
+          } else if (line.equals("//<GUI_Extra_Elements !Start!>")) {
+            findTag(br, "//<GUI_Extra_Elements !End!>");
+          } else if (line.equals("gslc_tsGui                      m_gui;")) {
+            findTag(br, "gslc_tsPage                     m_asPage[MAX_PAGE];");
+          } else if (line.equals("// Include any extended elements")) {
+            continue;
+          } else if (line.equals("#include \"GUIslice_drv.h\"")) {
+            continue;
+          } else if (line.equals(COMMENTS_START)) {
+            line2 = br.readLine();
+            if (line2.equals("// Headers and Defines for fonts")) {
+              findTag(br, COMMENTS_START);
+            } else if (line2.equals("// Defines for resources")) {
+              findTag(br, COMMENTS_START);
+            } else if (line2.equals("// Enumerations for pages, elements, fonts, images")) {
+              findTag(br, COMMENTS_START);
+            } else if (line2.equals("// Instantiate the GUI")) {
+              findTag(br, COMMENTS_START);
+            } else if (line2.equals("// Define the maximum number of elements and pages")) {
+              findTag(br, COMMENTS_START);
+            } else if (line2.equals("// Create element storage")) {
+              findTag(br, COMMENTS_START);
+            } else if (line2.equals("// Create page elements")) {
+              findTag(br, "}");
+              break;
+            } else {
+              bwA.write(line);
+              bwA.newLine();
+              bwA.write(line2);
+              bwA.newLine();
+              nBlankLines = 0;
+            }
+          } else {
+            bwA.write(line);
+            bwA.newLine();
+            nBlankLines = 0;
+          }
+        } 
       }
-      // scan for callbacks
+      // scan for gslc_Init and remove it
+      boolean bFoundInit = false;
       while ((line = br.readLine()) != null) {
-        if (line.equals("// Callback Methods")) {
-          bwA.write(line);
-          bwA.newLine();
-          bwH.write(line);
-          bwH.newLine();
-          bwH.write("// ------------------------------------------------");
-          bwH.newLine();
-          bwH.write("bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY);");
-          bwH.newLine();
-          bwH.write("bool CbCheckbox(void* pvGui, void* pvElemRef, int16_t nSelId, bool bState);");
-          bwH.newLine();
-          bwH.write("bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw);");
-          bwH.newLine();
-          bwH.write("bool CbKeypad(void* pvGui, void *pvElemRef, int16_t nState, void* pvData);");
-          bwH.newLine();
-          bwH.write("bool CbListbox(void* pvGui, void* pvElemRef, int16_t nSelId);");
-          bwH.newLine();
-          bwH.write("bool CbSlidePos(void* pvGui,void* pvElemRef,int16_t nPos);");
-          bwH.newLine();
-          bwH.write("bool CbSpinner(void* pvGui, void *pvElemRef, int16_t nState, void* pvData);");
-          bwH.newLine();
-          bwH.write("bool CbTickScanner(void* pvGui,void* pvScope);");
-          bwH.newLine();
-          bwH.newLine();
-          break;
-        }
-        bwH.write(line);
-        bwH.newLine();
-      }
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals("bool InitGUI()")) {
-          bwH.write("void InitGUIslice_gen()");
-          bwH.newLine();
-          bwH.write("{");
-          bwH.newLine();
-          bwH.write("  gslc_tsElemRef* pElemRef = NULL;");
-          bwH.newLine();
-          bwH.newLine();
-          bwH.write("  gslc_InitDebug(&DebugOut);");
-          bwH.newLine();
-          bwH.newLine();
-          bwH.write("  if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { return; }");
-          bwH.newLine();
-          bwH.newLine();
-          bwH.write(INITGUI_TAG);
-          bwH.newLine();
-          bwH.write(INITGUI_END_TAG);
-          bwH.newLine();
-          bwH.newLine();
-          bwH.write("  // ------------------------------------------------");
-          bwH.newLine();
-          bwH.write("  // Load Fonts");
-          bwH.newLine();
-          bwH.write("  // ------------------------------------------------");
-          bwH.newLine();
-          bwH.write(LOADFONTS_TAG);
-          bwH.newLine();
-          bwH.write(LOADFONTS_END_TAG);
-          bwH.newLine();
-          bwH.newLine();
-          bwH.write(STARTUP_TAG);
-          bwH.newLine();
-          bwH.write(STARTUP_END_TAG);
-          bwH.newLine();
-          bwH.newLine();
-          bwH.write("}");
-          bwH.newLine();
-          break;
-        }
-        bwA.write(line);
-        bwA.newLine();
-      }
-
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals("void setup()")) {
-          bwA.write(line);
-          bwA.newLine();
-          break;
-        }
-      }
-      while ((line = br.readLine()) != null) {
-        boolean bFound = false;
+        // break the line up into words
         if (!line.isEmpty()) {
           String[] words = line.split("\\W+");
-          for (String w : words) {
-            if (w.equals("gslc_InitDebug")) {
-              bFound = true;
+          if (words.length > 0) {
+            for (int i=0; i<words.length; i++) {
+              if (words[i].equals("gslc_Init")) {
+                bFoundInit = true;
+              }
             }
           }
         }
-        if (bFound) break;
-
+        if (bFoundInit) break;
+        bwA.write(line);
+        bwA.newLine();
+      }
+      // remove fonts tag
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals(LOADFONTS_TAG)) {
+          break;
+        }
         bwA.write(line);
         bwA.newLine();
       }
       while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        sTestTag = LTRIM.matcher(line
+            ).replaceAll(EMPTY_STRING);
         if (sTestTag.equals(LOADFONTS_END_TAG)) {
           break;
         }
       }
+      // rename InitGUI to InitGUIslice_gen
       while ((line = br.readLine()) != null) {
         sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
         if (sTestTag.equals("InitGUI();")) {
@@ -818,6 +977,7 @@ public class CodeGenerator {
         bwA.write(line);
         bwA.newLine();
       }
+      // remove STARTUP tag
       while ((line = br.readLine()) != null) {
         sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
         if (sTestTag.equals(STARTUP_TAG)) {
@@ -836,25 +996,20 @@ public class CodeGenerator {
         bwA.write(line);
         bwA.newLine();
       }
-      // finishup by copying whatever is leftover
-      
+
       br.close();
-      bwH.close();
       bwA.close();
       fr.close();
-      hw.close();
       aw.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new CodeGenException("removeTags IOException: " + e.toString());
     }
   }
 
   /**
   * findTag
   * Continue reading the buffered reader but throw away all input 
-  * until finding the end string. Then write the end string output
-  * to our StringBuilder object.
+  * up to and including the end string. 
   *
   * @param br
   *          the BufferedReader
