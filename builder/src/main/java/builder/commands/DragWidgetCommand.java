@@ -145,8 +145,12 @@ public class DragWidgetCommand extends Command {
      * Only if we have one object selected
      * Multiple objects get screwed up
      */
-    if (targets.size() == 1) {
-      pt[0] = targets.get(0).drop(pt[0]);
+    try {
+      if (targets.size() == 1) {
+        pt[0] = targets.get(0).drop(pt[0]);
+      }
+    } catch (NullPointerException e) {
+      return;
     }
   }
 
