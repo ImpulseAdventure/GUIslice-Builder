@@ -15,6 +15,9 @@
 //<Save_References !Start!>
 //<Save_References !End!>
 
+// Define debug message function
+static int16_t DebugOut(char ch) { if (ch == (char)'\n') Serial.println(""); else Serial.write(ch); return 0; }
+
 // ------------------------------------------------
 // Callback Methods
 // ------------------------------------------------
@@ -43,6 +46,8 @@ void setup()
   Serial.begin(9600);
   // Wait for USB Serial 
   //delay(1000);  // NOTE: Some devices require a delay after Serial.begin() before serial port can be used
+
+  gslc_InitDebug(&DebugOut);
 
   // ------------------------------------------------
   // Create graphic elements

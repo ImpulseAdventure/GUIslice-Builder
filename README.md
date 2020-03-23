@@ -29,8 +29,6 @@ Target Platform linux will continue to use a single [project name].c file. Also,
 
 Enhancement to File Chooser to maintain a list of recently accessed project files and to open the last accessed folder.
 
-NOTE: Any projects created with beta versions of the builder will no longer be supported.  Use an older Builder to upgrade your beta project before attempting to use the new Builder.
-
 #### Changes for 0.13.b020
 Fix for SnapTo grid will only work for dragging single object. Multiple objects being dragged will still ignore SnapTo setting otherwise spacing between objects would get distorted.
 

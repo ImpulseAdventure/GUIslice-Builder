@@ -63,7 +63,7 @@ gslc_tsPage                     m_asPage[MAX_PAGE];
 //<Extern_References !End!>
 
 // Define debug message function
-static int16_t DebugOut(char ch) { if (ch == (char)'\n') Serial.println(""); else Serial.write(ch); return 0; }
+static int16_t DebugOut(char ch);
 
 // ------------------------------------------------
 // Callback Methods
@@ -83,8 +83,6 @@ bool CbTickScanner(void* pvGui,void* pvScope);
 void InitGUIslice_gen()
 {
   gslc_tsElemRef* pElemRef = NULL;
-
-  gslc_InitDebug(&DebugOut);
 
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { return; }
 
