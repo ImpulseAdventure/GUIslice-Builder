@@ -133,7 +133,7 @@ public class HeaderPipe extends WorkFlowPipe {
   public void doCallback(BufferedReader br, StringBuilder sBd) throws IOException {
     TemplateManager tm = cg.getTemplateManager();
     List<String> templateLines = tm.loadTemplate(HDR_TEMPLATE);
-    String sFileName = new String(cg.getProjectName() + "_GUI.h");
+    String sFileName = new String(cg.getProjectName() + CodeGenerator.HEADER_EXT);
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
     map.put(FILENAME_MACRO, sFileName);
