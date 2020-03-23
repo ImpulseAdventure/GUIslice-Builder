@@ -560,47 +560,31 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    
 //      System.out.println("**Enter canImport");
       JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
-//      System.out.println("canImport dropLocation.getPath() " + dropLocation.getPath().toString() );
       int parentRow = tree.getRowForPath(dropLocation.getPath());
       if (parentRow == -1) {
-//        System.out.println("parentRow == -1");
         return true;  // weird to return true but this allows us to append to end of branch
       }
       TreePath parentPath = dropLocation.getPath();
 
       parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-//      TreeItem tiParent = );
-      System.out.println("parentNode: " + ((TreeItem)(parentNode.getUserObject())).toDebugString());
  
       // do not allow parent to be root
 //      if (tiParent.getKey().equals("Root"))
 //        return false;
-      // do not allow drop past end of branch
       dropIndex = dropLocation.getChildIndex();
       numberChildren = parentNode.getChildCount();
-      System.out.println("dropIndex: " + dropIndex + " nChildren: " + numberChildren);
       
-//      if (dropIndex == -1 || dropIndex >= numberChildren) {
-//      if (dropIndex >= numberChildren) {
-//        return false;
-//      }
-
       DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-//      TreeItem tiSelect = (TreeItem)(selectedNode.getUserObject());
-//      System.out.println("selectedNode: " + tiSelect.toDebugString());
       TreePath dropPath = new TreePath(selectedNode.getPath());
-//      System.out.println("dropPath: " + dropPath.toString());
 
       // Do not allow MOVE-action drops if a non-leaf node is selected
       // non-leaf node?
       if(!selectedNode.isLeaf()) {
-        System.out.println("!selectedNode.isLeaf()");
         return false;
       }
       
       // Do not allow moves between parent nodes
       if (!parentPath.isDescendant(dropPath)) {
-        System.out.println("!parentPath.isDescendant(dropPath)");
         return false;
       }
 
@@ -609,7 +593,6 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       if (bDraggingNode) {
         lastestBackup = backup(); // save for undo command
       }
-      System.out.println("bDraggingNode: " + bDraggingNode);
       return bDraggingNode;
     }
 
@@ -682,23 +665,17 @@ public class TreeView extends JInternalFrame implements iSubscriber {
        * easily. It is simple to prevent selecting and dragging the empty node though.    
        */
       TreePath newPath;
-//      int destIndex = dropLocation.getChildIndex();
       if (dropIndex == -1) {
         // getLastPathComponent() will find the parent node associated with the drop location
         dropIndex = treeModel.getChildCount(destPath.getLastPathComponent()); 
-        System.out.println("new dropIndex: " + dropIndex);
         parentNode = findParentNode(((TreeItem)newNode.getUserObject()).getKey(), root);
-        System.out.println("new parentNode: " + parentNode);
         dropIndex = treeModel.getChildCount(parentNode); 
-        System.out.println("new dropIndex: " + dropIndex);
         fromIndex = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
-        System.out.println("dropIndex: " + dropIndex + " fromIndex: " + fromIndex);
         // add the new node to the tree path
         treeModel.insertNodeInto(newNode, parentNode, dropIndex);
         newPath = getPath(newNode);
       } else {
         fromIndex = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
-        System.out.println("dropIndex: " + dropIndex + " fromIndex: " + fromIndex);
         treeModel.insertNodeInto(newNode, parentNode, dropIndex);
         newPath = destPath.pathByAddingChild(newNode);
         
@@ -757,23 +734,18 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
         ev.fromIdx = fromIndex;
         ev.toIdx = toRow;
-        System.out.println("exportDone: msg->" + ev.toString());
         MsgBoard.getInstance().publish(ev, "TreeView");
       }
       bDraggingNode = false;
     } 
 
     public DefaultMutableTreeNode findParentNode(String searchKey, DefaultMutableTreeNode root){
-      System.out.println("findparentnode: searchKey=" + searchKey + " parent: " 
-          + ((TreeItem) root.getUserObject()) .getKey()
-          + " children: " + root.getChildCount());
       DefaultMutableTreeNode parent=null;
       DefaultMutableTreeNode scan=null;
       for (int i=0;i<root.getChildCount();i++) {
         scan = ((DefaultMutableTreeNode)root.getChildAt(i));
         if(searchKey.equals(((TreeItem)scan.getUserObject()).getKey())){
           parent = root;
-          System.out.println("found ParentNode: scan=" + ((TreeItem)scan.getUserObject()).getKey());
           break;
         } else if (!treeModel.isLeaf(scan)) {
           parent=findParentNode(searchKey, (DefaultMutableTreeNode)root.getChildAt(i));
