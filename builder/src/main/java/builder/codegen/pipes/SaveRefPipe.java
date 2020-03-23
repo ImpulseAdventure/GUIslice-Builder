@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,14 @@ import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.WidgetModel;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class EnumPipe handles code generation
+ * The Class SaveRefPipe handles code generation
  * within the "Save_References" tag of our source code.
  * 
  * This section builds up a list of GUISlice Element References
@@ -50,10 +51,6 @@ import builder.models.WidgetModel;
  */
 public class SaveRefPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String SAVEREF_TAG              = "//<Save_References !Start!>";
-  private final static String SAVEREF_END_TAG          = "//<Save_References !End!>";
-  
   /** The Constants for templates. */
   private final static String ELEMENTREF_SAVE_TEMPLATE = "<ELEMENT_REF_SAVE>";
   private final static String ELEMREF_MACRO            = "ELEMREF";
@@ -69,8 +66,8 @@ public class SaveRefPipe extends WorkFlowPipe {
    */
   public SaveRefPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = SAVEREF_TAG;
-    this.MY_END_TAG = SAVEREF_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.SAVEREF_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.SAVEREF_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**

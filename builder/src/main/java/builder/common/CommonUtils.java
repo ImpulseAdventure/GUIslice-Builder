@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -252,7 +252,7 @@ public class CommonUtils {
    * @param file
    *          the file
    */
-  public void backupFile(File file)
+  static public void backupFile(File file)
   {
     String newTemplate = null;
     String backupName = null;
@@ -297,7 +297,7 @@ public class CommonUtils {
    * @param outFile
    *          the out file
    */
-  public void copyFile(File inFile, File outFile)
+  static public void copyFile(File inFile, File outFile)
   { 
     InputStream inStream = null;
     OutputStream outStream = null;

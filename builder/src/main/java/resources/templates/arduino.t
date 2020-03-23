@@ -1,3 +1,13 @@
+<APP_HDR>
+// FILE: [$<FILENAME>]
+// Created by GUIslice Builder version: [$<VERSION>]
+//
+// GUIslice Builder Generated File
+//
+// For the latest guides, updates and support view:
+// https://github.com/ImpulseAdventure/GUIslice
+//
+<STOP>
 <BACKGROUND>
   
   // Set Background to a flat color
@@ -245,6 +255,9 @@ bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
 <ELEMENT_REF_FIND_P>
   $<COM-019> = gslc_PageFindElemById(&m_gui,$<COM-000>,$<COM-002>);
 <STOP>
+<ELEMENT_REF_EXTERN>
+extern gslc_tsElemRef*  $<18>$<ELEMREF>;
+<STOP>
 <ELEMENT_REF_SAVE>
 gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
 <STOP>
@@ -252,7 +265,7 @@ gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
 // FILE: [$<FILENAME>]
 // Created by GUIslice Builder version: [$<VERSION>]
 //
-// GUIslice Builder Generated File
+// GUIslice Builder Generated GUI Framework File
 //
 // For the latest guides, updates and support view:
 // https://github.com/ImpulseAdventure/GUIslice
@@ -306,6 +319,10 @@ gslc_tsElemRef                  m_as$<STRIP_KEY>ElemRef[MAX_ELEM_$<STRIP_ENUM>];
 <STOP>
 <GROUP>
   gslc_ElemSetGroup(&m_gui,pElemRef,$<RBTN-101>);
+<STOP>
+<HDR_INCLUDE>
+#include "$<FILENAME>"
+
 <STOP>
 <IMAGE_DEFINE>
  
@@ -501,7 +518,7 @@ $<CALLBACK>
 <STOP>
 <PAGEBASE>
 
-  // Now mark $<COM-000> as a "base" page which means that it's elements
+  // Now mark $<PAGE_ENUM> as a "base" page which means that it's elements
   // are always visible. This is useful for common page elements.
   gslc_SetPageBase(&m_gui, $<PAGE_ENUM>);
 

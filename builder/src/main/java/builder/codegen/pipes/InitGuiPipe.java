@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.codegen.blocks.BoxCodeBlock;
 import builder.codegen.blocks.CheckBoxCodeBlock;
@@ -84,10 +85,6 @@ import builder.widgets.Widget;
  */
 public class InitGuiPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String INITGUI_TAG            = "//<InitGUI !Start!>";
-  private final static String INITGUI_END_TAG        = "//<InitGUI !End!>";
-  
   /** The Constants for templates. */
   private final static String BACKGROUND_TEMPLATE       = "<BACKGROUND>";
   private final static String BACKGROUND_IMAGE_TEMPLATE = "<BACKGROUND_IMAGE>";
@@ -131,8 +128,8 @@ public class InitGuiPipe extends WorkFlowPipe {
    */
   public InitGuiPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = INITGUI_TAG;
-    this.MY_END_TAG = INITGUI_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.INITGUI_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.INITGUI_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**

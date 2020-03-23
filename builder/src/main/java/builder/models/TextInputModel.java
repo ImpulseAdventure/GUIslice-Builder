@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -403,25 +403,16 @@ public class TextInputModel extends WidgetModel {
     for (int i=0; i<getTextStorage(); i++) {
       text = text + "W";
     }
-    // calculate the real sizes of our display text
-    Dimension d = ff.measureText(text, font);
+    // calculate the sizes of our display text
+    Dimension d = ff.measureText(item.getDisplayName(), font, text);
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
-      // now figure out the rect size needed on the target platform
-      // that we show to our user and also push out during code generation.
-      if (getFontDisplayName().startsWith("BuiltIn")) {
-        Dimension nChSz = ff.measureAdafruitText(text,getFontDisplayName());
-        setWidth(nChSz.width);
-        setHeight(nChSz.height);
-      } else {
-        // if font is not one of the built-in fonts than actual size is correct even though font is scaled.
-        setWidth(d.width);
-        setHeight(d.height);
-      }
-      if (fireUpdates) {
-        fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
-      }
+      // calculate the real sizes of our display text
+      Dimension nChSz = ff.measureText(getFontDisplayName(), font, text);
+      setWidth(nChSz.width);
+      setHeight(nChSz.height);
+      fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
   }
 

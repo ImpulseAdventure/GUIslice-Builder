@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
  */
 package builder.widgets;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -68,7 +69,6 @@ public class TextWidget extends Widget {
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
   public void draw(Graphics2D g2d) {
-    Font font = null;
     Rectangle b = super.getWinBounded();
     g2d.setColor(m.getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
@@ -77,18 +77,21 @@ public class TextWidget extends Widget {
       g2d.drawRect(b.x, b.y, b.width, b.height);
     }
     g2d.setColor(m.getTextColor());
+    Font font = ff.getFont(m.getFontDisplayName());
     String text = m.getText();
     if (text.isEmpty()) {
       if (m.getTextStorage() > 0) {
         for (int i=0; i<m.getTextStorage(); i++) {
           text = text + "?";
+          Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
+          if (d.width > b.width) {
+             text = text.substring(0, text.length() - 1);
+             break;
+          }
         }
       } else {
         text = "TODO";
       }
-      font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
-    } else {
-      font = ff.getFont(m.getFontDisplayName());
     }
     ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);

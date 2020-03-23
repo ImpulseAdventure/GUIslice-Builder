@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.WidgetModel;
@@ -48,10 +49,6 @@ import builder.models.WidgetModel;
  */
 public class PathStoragePipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String PATHSTORAGE_TAG                 = "//<PathStorage !Start!>";
-  private final static String PATHSTORAGE_END_TAG             = "//<PathStorage !End!>";
-  
   /** The Constants for templates. */
   private final static String IMAGE_PATH_TEMPLATE             = "<IMAGE_PATH>"; 
   private final static String IMGBUTTON_PATH_TEMPLATE         = "<IMGBUTTON_PATH>"; 
@@ -70,8 +67,8 @@ public class PathStoragePipe extends WorkFlowPipe {
    */
   public PathStoragePipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = PATHSTORAGE_TAG;
-    this.MY_END_TAG = PATHSTORAGE_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.PATHSTORAGE_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.PATHSTORAGE_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**

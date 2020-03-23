@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -749,7 +749,7 @@ public class Controller extends JInternalFrame
       String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
       topFrame.setTitle(frameTitle);
     } else {
-      CommonUtils.getInstance().backupFile(projectFile);
+      CommonUtils.backupFile(projectFile);
     }
     ObjectOutputStream out =  new ObjectOutputStream(new FileOutputStream(projectFile));
     // output current version so we can make changes on future updates
@@ -1050,7 +1050,7 @@ public class Controller extends JInternalFrame
     String skeleton=null;
     CodeGenerator cg = CodeGenerator.getInstance();
     if (projectFile != null) {
-      skeleton = cg.generateCode(projectFile, pages);
+      skeleton = cg.generateCode(projectFile, pages, generalEditor.isBackwardCompat());
       if (skeleton != null)
         Builder.postStatusMsg("Successful Code Generation into " + skeleton);
       else 

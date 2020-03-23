@@ -4,6 +4,8 @@ BuiltIn(2x)->10x16pt7b,NULL,NULL,E_FONT_TXT10,GSLC_FONTREF_PTR,NULL,2,Monospaced
 BuiltIn(3x)->15x24pt7b,NULL,NULL,E_FONT_TXT15,GSLC_FONTREF_PTR,NULL,3,Monospaced,15,PLAIN
 BuiltIn(4x)->20x32pt7b,NULL,NULL,E_FONT_TXT20,GSLC_FONTREF_PTR,NULL,4,Monospaced,20,PLAIN
 BuiltIn(5x)->25x40pt7b,NULL,NULL,E_FONT_TXT25,GSLC_FONTREF_PTR,NULL,5,Monospaced,25,PLAIN
+dosis_book8pt7b,Fonts/dosis_book8pt7b.h,NULL,E_FONT_DOSIS8,GSLC_FONTREF_PTR,&dosis_book8pt7b,1,SansSerif,8,PLAIN
+dosis_book10pt7b,Fonts/dosis_book10pt7b.h,NULL,E_FONT_DOSIS10,GSLC_FONTREF_PTR,&dosis_book10pt7b,1,SansSerif,10,PLAIN
 FreeMono9pt7b,Fonts/FreeMono9pt7b.h,NULL,E_FONT_MONO9,GSLC_FONTREF_PTR,&FreeMono9pt7b,1,Monospaced,9,PLAIN
 FreeMono12pt7b,Fonts/FreeMono12pt7b.h,NULL,E_FONT_MONO12,GSLC_FONTREF_PTR,&FreeMono12pt7b,1,Monospaced,12,PLAIN
 FreeMono18pt7b,Fonts/FreeMono18pt7b.h,NULL,E_FONT_MONO18,GSLC_FONTREF_PTR,&FreeMono18pt7b,1,Monospaced,18,PLAIN
@@ -16,8 +18,8 @@ FreeMonoOblique9pt7b,Fonts/FreeMonoOblique9pt7b.h,NULL,E_FONT_MONOI9,GSLC_FONTRE
 FreeMonoOblique12pt7b,Fonts/FreeMonoOblique12pt7b.h,NULL,E_FONT_MONOI12,GSLC_FONTREF_PTR,&FreeMonoOblique12pt7b,1,Monospaced,12,ITALIC
 FreeMonoOblique18pt7b,Fonts/FreeMonoOblique18pt7b.h,NULL,E_FONT_MONOI18,GSLC_FONTREF_PTR,&FreeMonoOblique18pt7b,1,Monospaced,18,ITALIC
 FreeMonoOblique24pt7b,Fonts/FreeMonoOblique24pt7b.h,NULL,E_FONT_MONOI24,GSLC_FONTREF_PTR,&FreeMonoOblique24pt7b,1,Monospaced,24,ITALIC
-FreeSans9pt7b,Fonts/FreeSans9pt7b.h,NULL,E_FONT_SANS9,GSLC_FONTREF_PTR,&FreeSans9pt7b,1,FreeSans,9,PLAIN
-FreeSans12pt7b,Fonts/FreeSans12pt7b.h,NULL,E_FONT_SANS12,GSLC_FONTREF_PTR,&FreeSans12pt7b,1,FreeSans,12,PLAIN
+FreeSans9pt7b,Fonts/FreeSans9pt7b.h,NULL,E_FONT_SANS9,GSLC_FONTREF_PTR,&FreeSans9pt7b,1,SansSerif,9,PLAIN
+FreeSans12pt7b,Fonts/FreeSans12pt7b.h,NULL,E_FONT_SANS12,GSLC_FONTREF_PTR,&FreeSans12pt7b,1,SansSerif,12,PLAIN
 FreeSans18pt7b,Fonts/FreeSans18pt7b.h,NULL,E_FONT_SANS18,GSLC_FONTREF_PTR,&FreeSans18pt7b,1,SansSerif,18,PLAIN
 FreeSans24pt7b,Fonts/FreeSans24pt7b.h,NULL,E_FONT_SANS24,GSLC_FONTREF_PTR,&FreeSans24pt7b,1,SansSerif,24,PLAIN
 FreeSansBold9pt7b,Fonts/FreeSansBold9pt7b.h,NULL,E_FONT_SANSB9,GSLC_FONTREF_PTR,&FreeSansBold9pt7b,1,SansSerif,9,BOLD

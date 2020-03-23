@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.GeneralModel;
@@ -52,10 +53,6 @@ import builder.models.WidgetModel;
  */
 public class ResourcesPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String RESOURCES_TAG                 = "//<Resources !Start!>";
-  private final static String RESOURCES_END_TAG             = "//<Resources !End!>";
-  
   /** The Constants for templates. */
   private final static String RESOURCE_DEFINE_TEMPLATE        = "<RESOURCE_DEFINE>"; 
   private final static String RESOURCE_EXTERN_TEMPLATE        = "<RESOURCE_EXTERN>"; 
@@ -77,8 +74,8 @@ public class ResourcesPipe extends WorkFlowPipe {
    */
   public ResourcesPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = RESOURCES_TAG;
-    this.MY_END_TAG = RESOURCES_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.RESOURCES_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.RESOURCES_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**

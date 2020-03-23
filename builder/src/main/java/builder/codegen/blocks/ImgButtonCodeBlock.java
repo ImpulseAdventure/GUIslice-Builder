@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
+import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
 import builder.models.ImgButtonModel;
 import builder.models.WidgetModel;
@@ -50,7 +51,7 @@ public final class ImgButtonCodeBlock implements CodeBlock {
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   private final static String FRAME_EN_TEMPLATE      = "<FRAME_EN>";
   private final static String COLOR_TEMPLATE         = "<COLOR_IMAGE>";
-
+  private final static String COUNT_MACRO            = "COUNT";
   /**
    * Instantiates a new check box code block.
    */
@@ -80,8 +81,9 @@ public final class ImgButtonCodeBlock implements CodeBlock {
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);
 
-    // now output creation API
+    map.put(COUNT_MACRO, CodeUtils.getKeyCount(m.getKey()));
 
+    // now output creation API
     if (m.getDefine() != null && !m.getDefine().isEmpty()) {
       template = tm.loadTemplate(IMGBUTTON_DEFINE_TEMPLATE);
     } else {

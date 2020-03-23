@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.BoxModel;
@@ -62,12 +63,6 @@ import builder.prefs.NumKeyPadEditor;
  */
 public class ButtonCbPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String BUTTONCB_TAG           = "//<Button Callback !Start!>";
-  private final static String BUTTONCB_END_TAG       = "//<Button Callback !End!>";
-  private final static String BUTTON_ENUMS_TAG       = "//<Button Enums !Start!>";
-  private final static String BUTTON_ENUMS_END_TAG   = "//<Button Enums !End!>";
-  
   /** The Constants for templates. */
   private final static String BUTTON_CB_TEMPLATE     = "<BUTTON_CB>";
   private final static String BUTTON_CASE_TEMPLATE   = "<BUTTON_CB_CASE>";
@@ -139,10 +134,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
    */
   @Override
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    MY_TAG = BUTTONCB_TAG;
-    MY_END_TAG = BUTTONCB_END_TAG;
-    MY_ENUM_TAG = BUTTON_ENUMS_TAG;
-    MY_ENUM_END_TAG = BUTTON_ENUMS_END_TAG;
+    this.MY_TAG     = Tags.TAG_PREFIX + Tags.BUTTONCB_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX + Tags.BUTTONCB_TAG + Tags.TAG_SUFFIX_END;
+    this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_START;
+    this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
     return super.processCB(input);
         
@@ -324,7 +319,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
      */
     WidgetModel m = null;
     String e = "";
-    for (int n=0; n<callbackList.size(); n++) {
+    for (int n = 0; n < callbackList.size(); n++) {
       // grab our model and enum
       m = callbackList.get(n);
       e = m.getEnum();
@@ -334,107 +329,108 @@ public class ButtonCbPipe extends WorkFlowPipe {
       // lookup our enum to see if we have an existing case statement
       int idx = findCaseStatement(e);
       if (idx != -1) {
-        /* we do have an existing case statement so now the fun begins
-         * need to parse it for case type and compare it to what our model now wants
-         * if everything matches just output the stored source code in case user 
-         * has modified it. This makes round trip edits possible.
+        /*
+         * we do have an existing case statement so now the fun begins need to parse it
+         * for case type and compare it to what our model now wants if everything
+         * matches just output the stored source code in case user has modified it. This
+         * makes round trip edits possible.
          */
         CaseInfo oldInfo = parseCaseType(e, idx);
-        switch(modelInfo.getCaseType()) {
-          case CT_UNDEFINED:  // better not happen
-            break;
-          case CT_STANDARD: 
-            if (oldInfo.getCaseType() == CT_STANDARD) {
-              // output what we have stored
+        switch (modelInfo.getCaseType()) {
+        case CT_UNDEFINED: // better not happen
+          break;
+        case CT_STANDARD:
+          if (oldInfo.getCaseType() == CT_STANDARD) {
+            // output what we have stored
+            outputLines = listOfCases[idx];
+            tm.codeWriter(sBd, outputLines);
+            bNeedOutput = false;
+          }
+          break;
+        case CT_CHGPAGE:
+          if (oldInfo.getCaseType() == CT_CHGPAGE) {
+            if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
               outputLines = listOfCases[idx];
               tm.codeWriter(sBd, outputLines);
               bNeedOutput = false;
             }
-            break;
-          case CT_CHGPAGE:
-            if (oldInfo.getCaseType() == CT_INPUTNUM) {
-              if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
-                outputLines = listOfCases[idx];
-                tm.codeWriter(sBd, outputLines);
-                bNeedOutput = false;
-              }
-            }
-            break;
-          case CT_INPUTNUM: 
-            if (oldInfo.getCaseType() == CT_INPUTNUM) {
-              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
-                outputLines = listOfCases[idx];
-                tm.codeWriter(sBd, outputLines);
-                bNeedOutput = false;
-              }
-            }
-            break;
-          case CT_INPUTTXT: 
-            if (oldInfo.getCaseType() == CT_INPUTNUM) {
-              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
-                outputLines = listOfCases[idx];
-                tm.codeWriter(sBd, outputLines);
-                bNeedOutput = false;
-              }
-            }
-            break;
-          case CT_SHOWPOPUP: 
-            if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
-              if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
-                outputLines = listOfCases[idx];
-                tm.codeWriter(sBd, outputLines);
-                bNeedOutput = false;
-              }
-            }
-            break;
-          case CT_HIDEPOPUP:
-            if (oldInfo.getCaseType() == CT_STANDARD) {
+          }
+          break;
+        case CT_INPUTNUM:
+          if (oldInfo.getCaseType() == CT_INPUTNUM) {
+            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
               outputLines = listOfCases[idx];
               tm.codeWriter(sBd, outputLines);
               bNeedOutput = false;
             }
-            break;
+          }
+          break;
+        case CT_INPUTTXT:
+          if (oldInfo.getCaseType() == CT_INPUTTXT) {
+            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+              outputLines = listOfCases[idx];
+              tm.codeWriter(sBd, outputLines);
+              bNeedOutput = false;
+            }
+          }
+          break;
+        case CT_SHOWPOPUP:
+          if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
+            if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
+              outputLines = listOfCases[idx];
+              tm.codeWriter(sBd, outputLines);
+              bNeedOutput = false;
+            }
+          }
+          break;
+        case CT_HIDEPOPUP:
+          if (oldInfo.getCaseType() == CT_HIDEPOPUP) {
+            outputLines = listOfCases[idx];
+            tm.codeWriter(sBd, outputLines);
+            bNeedOutput = false;
+          }
+          break;
         }
-      } 
+      }
       if (bNeedOutput) {
         // No existing case statement or we need to regenerate it.
         map.clear();
         map.put(ENUM_MACRO, modelInfo.getKey());
-        switch(modelInfo.getCaseType()) {
-          case CT_UNDEFINED:  // better not happen
-            break;
-          case CT_STANDARD: 
-            outputLines = tm.expandMacros(templateStandard, map);
-            tm.codeWriter(sBd, outputLines);
-            break;
-          case CT_CHGPAGE:
-            map.put(PAGE_ENUM_MACRO, modelInfo.getPageEnum());
-            outputLines = tm.expandMacros(templateChgPage, map);
-            tm.codeWriter(sBd, outputLines);
-            break;
-          case CT_INPUTNUM: 
-            map.put(ELEMREF_MACRO, modelInfo.getElementRef());
-            map.put(KEY_ENUM_MACRO, km.getEnum());
-            map.put(KEY_ELEMREF_MACRO, km.getElementRef());
-            outputLines = tm.expandMacros(templateInput, map);
-            tm.codeWriter(sBd, outputLines);
-            break;
-          case CT_INPUTTXT: 
-            map.put(ELEMREF_MACRO, modelInfo.getElementRef());
-            map.put(KEY_ENUM_MACRO, ktm.getEnum());
-            map.put(KEY_ELEMREF_MACRO, ktm.getElementRef());
-            outputLines = tm.expandMacros(templateInput, map);
-            tm.codeWriter(sBd, outputLines);
-            break;
-          case CT_SHOWPOPUP: 
-            map.put(PAGE_ENUM_MACRO, modelInfo.getPageEnum());
-            outputLines = tm.expandMacros(templateShowPopup, map);
-            tm.codeWriter(sBd, outputLines);
-            break;
-          case CT_HIDEPOPUP:
-            outputLines = tm.expandMacros(templateHidePopup, map);
-            tm.codeWriter(sBd, outputLines);
-            break;
+        switch (modelInfo.getCaseType()) {
+        case CT_UNDEFINED: // better not happen
+          break;
+        case CT_STANDARD:
+          outputLines = tm.expandMacros(templateStandard, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_CHGPAGE:
+          map.put(PAGE_ENUM_MACRO, modelInfo.getPageEnum());
+          outputLines = tm.expandMacros(templateChgPage, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_INPUTNUM:
+          map.put(ELEMREF_MACRO, modelInfo.getElementRef());
+          map.put(KEY_ENUM_MACRO, km.getEnum());
+          map.put(KEY_ELEMREF_MACRO, km.getElementRef());
+          outputLines = tm.expandMacros(templateInput, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_INPUTTXT:
+          map.put(ELEMREF_MACRO, modelInfo.getElementRef());
+          map.put(KEY_ENUM_MACRO, ktm.getEnum());
+          map.put(KEY_ELEMREF_MACRO, ktm.getElementRef());
+          outputLines = tm.expandMacros(templateInput, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_SHOWPOPUP:
+          map.put(PAGE_ENUM_MACRO, modelInfo.getPageEnum());
+          outputLines = tm.expandMacros(templateShowPopup, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_HIDEPOPUP:
+          outputLines = tm.expandMacros(templateHidePopup, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
         }
       }
     }
@@ -472,6 +468,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
            lines.add(scan);
            if (scan.isEmpty()) continue;
            String[] atoms = splitWords(scan);
+           if (atoms.length == 0) continue;
            if (atoms[0].equals("break")) 
              break;
         }
@@ -539,6 +536,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
     for (String line : caseList) {
       if (line.isEmpty()) continue;
       String split[] = splitWords(line);
+      if (split.length == 0) continue;
       if (split[0].equals("case")) continue;
       if (split[0].equals("gslc_SetPageCur")) {
         ci.setCaseType(CT_CHGPAGE);

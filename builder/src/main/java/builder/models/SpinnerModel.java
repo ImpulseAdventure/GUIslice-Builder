@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -306,19 +306,14 @@ public class SpinnerModel extends WidgetModel {
      if (text.length() < text_min.length())
        text = text_min;
      // calculate the real sizes of our display text
-     Dimension d = ff.measureText(text, font);
+     Dimension d = ff.measureText(item.getDisplayName(), font, text);
      // now figure out the rect size needed on the target platform
      // that we show to our user and also push out during code generation.
      if (getFontDisplayName().startsWith("BuiltIn")) {
-       Dimension nChSz = ff.measureAdafruitText(text,getFontDisplayName());
-       textWidth = nChSz.width;
-       nChSz.width = nChSz.width + 10 + (getButtonSize() * 2);
-       data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(nChSz.width);
-       // take the larger value for height.
-       if (nChSz.height >= d.height)
-         data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(nChSz.height);
-       else
-         data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(d.height);
+       textWidth = d.width;
+       d.width = d.width + 10 + (getButtonSize() * 2);
+       data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(d.width);
+       data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(d.height);
      } else {
        // if font is not one of the built-in fonts than actual size is correct even though font is scaled.
        textWidth = d.width;

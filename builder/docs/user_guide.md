@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.13.0
+        Ver: 0.13.b021
     </H3>
 </center>
 
@@ -21,7 +21,7 @@
 
 **Publication date and software version**
 
-Published February, 2020. Based on GUIslice API Library 0.13.0
+Published March, 2020. Based on GUIslice API Library 0.13.0
 
 **Copyright**
 
@@ -36,22 +36,21 @@ All trademarks within this guide belong to their legitimate owners.
 
 # 1.0  Introduction
 
-GUIslice library is a lightweight platform-independent GUI designed for embedded displays.  While it can support other systems it started with support for  use with Raspberry Pi and Arduino.  It's written and supported by Calvin Hass.  You can download the library and example files from github.  See the wiki pages 
+GUIslice library is a lightweight platform-independent GUI designed for embedded displays.  While it can support other systems it started with support for  use with Raspberry Pi and Arduino.  It's written and supported by Calvin Hass.  You can download the library and example files from github.  See the wiki pages for more details.
 
 GUIslice Wiki: <https://github.com/ImpulseAdventure/GUIslice/wiki>
-
-for more details.
 
 It's a nice package but the embedded design choice to eliminate dynamic memory allocation does mean additional care must be taken in the user code to manage the data structures.
 
 The GUIslice Builder creates a cross-platform desktop application that automates some of the boilerplate code generation and tracking of the UI pieces. For example, the Builder helps manage:
 - Defines, enums, UI storage declarations
 - Coordinates and dimensions of UI elements can be visually created
-- Colors and fonts can also be modeled within the Builder
+- Colors and fonts can also be modelled within the Builder
 
 The net result is that the Builder allows users to layout their UI visually and enables boilerplate GUI code to be generated quickly with a drag-and-drop desktop application and save the user from some of the bookkeeping and potential errors that might otherwise come up.
 
 It generate a skeleton file for the target platform, either 'project.ino' for Arduino, or 'project.c' for linux.
+A 'project_GSLC.h' header file will also be created for Arduino projects but generally, you won't need to view or edit this file.
 
 One additional target platform variation that is supported is the Arduino API with TFT_eSPI driver. This will simply replace Adafruit_GFX.h with TFT_eSPI.h.
 Thus your three Target Platforms available in the General Tab of User Preferences are:
@@ -59,7 +58,11 @@ Thus your three Target Platforms available in the General Tab of User Preference
 - arduino TFT_eSPI
 - linux
 
-Within the Arduino platform some UI Elements support Flash based versions that reduce SRAM requirements. See section 4.0 for details.
+Within the Arduino platform some UI Elements support Flash based versions that reduce RAM requirements. See section 4.0 for details.
+
+It should be noted that the Builder makes no attempt to support all GUIslice API calls or UI Elements. Simply a rich enough set to do useful work.  
+
+Remember, if you need to use any unsupported API calls or UI elements just keep them outside of the tags. This would be one reason why you would need to edit the 'project_GSLC.h' file so you can increase the storage for any unsupported UI elements.
 
 ---------------
 <div style="page-break-after: always;"></div>
@@ -68,17 +71,26 @@ An important design goal was to allow for incremental (round-trip) revisions bet
 
 You will notice in the generated C code various tags inserted by the builder such as:
 
-//<InitGUI !Start!>
-
-//<InitGUI !End!>
+```
+//<Save_References !Start!>
+//<Save_References !End!>
+```
 
 As long as you refrain from adding or modifying code between these auto-generated tags you can continue to add additional elements to your project and not lose any other edits you make.   The only exception is the button callbacks where the builder will test for existing ENUMs and not delete any code.
+
+The code you add between Enum tags will be kept safe unless you delete or rename a button's ENUM. 
 
 //<Button Enums !Start!>
 
 //<Button Enums !End!> 
 
-The code you add between these tags will be kept safe unless you delete or rename a button's ENUM. The Builder will delete case statements for any ENUM's not in use by your project. 
+However, if you ask for code injection for a Button, say with a 'Jump to Page?=true', Show 'Popup Page?=true', or 'Hide Popup Page?=true'; The Builder will examine any existing [project name].ino case statements to see if the required GUIslice API calls are present. 
+
+If not, the case statement will be deleted and recreated.  
+
+If the GUIslice API calls are present for 'Jump' or 'Show Popup' the call will be checked for the PAGE-ENUM name to see if your code matches what is currently in the 'Jump/Popup Page Enum' property. Assuming it matches no code changes will occur, otherwise the case statement will be deleted and recreated.
+
+The Builder will also delete case statements for any ENUM's not in use by your project. 
 
 ---------------
 <div style="page-break-after: always;"></div>
@@ -112,17 +124,30 @@ Install: <https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder>
 
 ## 2.2 Setting Screen parameters
 
-The builder is initially setup for Adafruit's TFT 2.8 Display.  It's display is 320px wide and 240px height with a DPI of about 144.   (I know the docs say 141 but I go with what works).
+You must setup the builder for your target screen's width and height; if its different than the default.  
 
-You must setup the builder for your target screen's width and height; if its different than the default.  I have tested the DPI of 144 on various screens up to 3.5 inches and my default of 144 seems to work just fine. See Appendex A for details on changing this value. It's purpose is to allow the builder to show users the fonts correctly scaled in the TFT Simulation and to correctly size the text bounding rectangle.
-
-using your mouse select edit->options
+To change the high and width of your display, and maybe the Target Platform.
+Select edit->options
 
 ![](images/edit_menu.png)
 
 Then set your target platform, your display's width and height, and point the project directory to where you will be storing output files.   The directory must already exist. For Arduino users I suggest pointing to your sketchbook folder.
 
 ![](images/hw_prefs.png)
+
+The builder is initially setup for Adafruit's TFT 2.8 Display.  It's display is 320px wide and 240px height with a DPI of about 144.   (I know the docs say 141 but I go with what works). I have tested the DPI of 144 on various screens up to 3.5 inches and my default of 144 seems to work just fine. 
+See Appendex A for details on changing this value (It's setting is just below height and width on the General Tab). It's purpose is to allow the builder to show users the fonts correctly scaled in the TFT Simulation and to correctly size the text bounding rectangle.
+
+Why may this be needed, because fonts are defined in points with 72 points per inch. DPI for TFT screens however are not a standard size. The Builder needs to simulate your TFT Display and try and show fonts as close as possible to the way they will look on your Display. So when I ask Java to create font I'll take your profile's DPI and use it to calculate a scale factor like so:
+```
+    /* AdaFruits's 2.8 screen is about DPI of 141. 
+     * Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
+     */
+    double scaleFactor = (double)dpi / 72.0d;
+    int size = (int) ((double)Integer.parseInt(logicalSize) * scaleFactor);
+    scaledSize = String.valueOf(size);
+    this.font = FontFactory.createFont(logicalName, scaledSize, logicalStyle);
+```  
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1416,18 +1441,56 @@ You are allowed to create your own fonts and add them to the builder.  In which 
 <div style="page-break-after: always;"></div>
 
 # Appendix A - Adjusting Builder's DPI
-This is a trail and error process.  Here I present a test project 'ex00_bld_fonttest.prj' to guide you in this process.
 
-Open in your Arduino IDE the GUIslice examples/builder/ex00_bld_fonttest.ino file and compile and run it.
-If you are on a different platform with a smaller or larger display screen open the projcet file in the builder instead. Then adjust the screen and platform to match yours. Export the code, compile and run.
+This is a trail and error process. Here I present how to write a project 'AlignText.prj' to guide you in this process.
+
+Start by creating a new project, and add three or four text boxes of various font sizes, choosing your favorite fonts, colors and backgrounds. Place them at the X margin 10, and using the Align Vertical Spacing button space them out by 20 pixels. 
+
+Now create a BOX the size of your display, change the colors to White for Frame, and Fill and check the 'Draw Funct' box in the Properties view. Select the Box in the Treeview and drag it just under the Page$1.
+Save the project as AlignText.prj and generate code.
+
+Now edit the AlignText.ino file and this line inside CbDrawScanner function under the 'add your drawing' comment.
+```
+//TODO - Add your drawing graphic primitives
+drawGrid(rInside.w, rInside.h);
+```
+Now before the CbDrawScanner function add this new function:
+```
+void drawGrid(int w, int h) {
+  int x, y;
+  int minor = 5;
+  int major = 50;
+  gslc_tsColor minorCol = GSLC_COL_GRAY;
+  gslc_tsColor majorCol = GSLC_COL_BLACK;
+  gslc_tsColor lineCol;
+  // draw X axis
+  for (x=0; x<w; x+=minor) {
+    if (x%major == 0) {
+      lineCol = majorCol;
+    } else {
+      lineCol = minorCol;
+    }
+    gslc_DrawLine(&m_gui, x, 0, x, h, lineCol);
+  }
+  // draw Y axis
+  for (y=0; y<h; y+=minor) {
+    if (y%major==0) {
+      lineCol = majorCol;
+    } else {
+      lineCol = minorCol;
+    }
+    gslc_DrawLine(&m_gui, 0, y, w, y, lineCol);
+  }
+}
+```
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
 
 Once you have the program running on your target platform you should see the text lined up in a grid.
 
-Now open the ex00_bld_fonttest.prj in the Builder, select the white box background and delete it (do not do a save). Now select the Page Layout tab and press the grid button and you should see the text lined up the same way as on your MCU screen.
-
-![](images/font_test.png)
-
-Now compare the Builder's screen to your MCU screen. If Text shown doesn't closely match the Builder you need to adjust the DPI inside the Edit->Options->General tab. If the Builder's text is too large you need to reduce the DPI, while increasing DPI will decrease the size of displayed text. The DPI has no effect on the target platform so don't re-generate the code, just keep adjusting the Builder's DPI until its a close enough match.
+Go back to the Builder and reopen this new project.  Delete the Box element and turn on the Grid. Now compare the Builder's screen to your MCU screen. If Text shown doesn't closely match the Builder you need to adjust the DPI inside the Edit->Options->General tab. If the Builder's text is too large you need to reduce the DPI, while increasing DPI will decrease the size of displayed text. The DPI has no effect on the target platform so don't re-generate the code, just keep adjusting the Builder's DPI until its a close enough match.
 
 You will likely get the best match in size if you install on the Builder's machine the same fonts that you will be running on your MCU. See Appendex B for more details.
 

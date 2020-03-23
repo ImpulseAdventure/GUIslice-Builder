@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.util.List;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.KeyPadModel;
@@ -51,10 +52,6 @@ import builder.views.PagePane;
  * 
  */
 public class EnumPipe extends WorkFlowPipe {
-
-  /** The Constants for tags. */
-  private final static String ENUM_TAG                 = "//<Enum !Start!>";
-  private final static String ENUM_END_TAG             = "//<Enum !End!>";
   
   /** The template manager. */
   TemplateManager tm = null;
@@ -67,8 +64,8 @@ public class EnumPipe extends WorkFlowPipe {
    */
   public EnumPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = ENUM_TAG;
-    this.MY_END_TAG = ENUM_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.ENUM_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.ENUM_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**

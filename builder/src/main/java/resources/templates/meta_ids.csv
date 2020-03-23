@@ -74,6 +74,8 @@ GEN-116,Use Background Image?
 GEN-117,Background Image
 GEN-118,Background Image File Name
 GEN-119,Insert Adafruit_GFX.h?
+GEN-120,Backward Compatibility
+GEN-121,Recent File List
 GRID-100,Grid
 GRID-101,Grid Snap To
 GRID-102,Grid Minor Width

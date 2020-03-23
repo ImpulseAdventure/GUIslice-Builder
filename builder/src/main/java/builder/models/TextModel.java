@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -453,11 +453,11 @@ public class TextModel extends WidgetModel {
   public void readModel(ObjectInputStream in, String widgetType) 
      throws IOException, ClassNotFoundException {
    super.readModel(in,  widgetType);
-    if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Left"))
+   if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("Left"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_LEFT;
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Right"))
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_RIGHT;
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Center"))
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_CENTER;
    if (useDefaultColors()) {
      data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
@@ -500,29 +500,18 @@ public class TextModel extends WidgetModel {
     if (getTextStorage() > 0) {
       text = "";
       for (int i=0; i<getTextStorage(); i++) {
-        text = text + "%";
+        text = text + "?";
       }
     } else {
       if (text.isEmpty()) 
         text = "TODO";
     }
-    // calculate the sizes of our display font
-    Dimension d = ff.measureText(text, font);
-//    scaledWidth  = d.width;
-//    scaledHeight = d.height;
-    // do not do these calculations when reloading our model from a file
+    // calculate the sizes of our display text
     if (fireUpdates) {
-      // now figure out the rect size needed on the target platform
-      // that we show to our user and also push out during code generation.
-      if (getFontDisplayName().startsWith("BuiltIn")) {
-        Dimension nChSz = ff.measureAdafruitText(text,getFontDisplayName());
-        setWidth(nChSz.width);
-        setHeight(nChSz.height);
-      } else {
-        // if font is not one of the built-in fonts than actual size is correct even though font is scaled.
-        setWidth(d.width);
-        setHeight(d.height);
-      }
+      // calculate the real sizes of our display text
+      Dimension nChSz = ff.measureText(getFontDisplayName(), font, text);
+      setWidth(nChSz.width);
+      setHeight(nChSz.height);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }

@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.ListBoxModel;
@@ -53,10 +54,6 @@ import builder.widgets.Widget;
  */
 public class ElementPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String ELEMENT_TAG            = "//<ElementDefines !Start!>";
-  private final static String ELEMENT_END_TAG        = "//<ElementDefines !End!>";
-  
   /** The Constants for templates. */
   private final static String PROGMEM_TEMPLATE           = "<PROGMEM>"; 
   private final static String DEFINE_ELEM_PAGE_TEMPLATE  = "<DEFINE_ELEM_PAGE>";
@@ -81,8 +78,8 @@ public class ElementPipe extends WorkFlowPipe {
    */
   public ElementPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = ELEMENT_TAG;
-    this.MY_END_TAG = ELEMENT_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.ELEMENT_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.ELEMENT_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**

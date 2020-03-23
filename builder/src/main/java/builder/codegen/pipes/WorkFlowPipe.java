@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,9 +67,6 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
   /** The cg. */
   CodeGenerator cg = null;
   
-  /** The enable this step flag. */
-  boolean bEnable = true;
-  
   /** The line. */
   String line  = "";
 
@@ -79,9 +76,6 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
    * @see builder.codegen.pipes.Pipe#process(java.lang.Object, java.lang.Object)
    */
   public StringBuilder process(StringBuilder input) throws CodeGenException {
-    if (!bEnable) {
-      return input;
-    }
     // bTagFound allows us to detect if we find our tag and error out on failure.
     boolean bTagFound = false;  // detect if we find our tag
     try {
@@ -108,7 +102,9 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
         }
       }
       if (!bTagFound) {
-        throw new CodeGenException("file: " + cg.getProjectTemplate() + "\n is corrupted missing tag:" + MY_TAG);
+//        throw new CodeGenException("file: " + cg.getTemplateName() + "\n is corrupted missing tag:" + MY_TAG);
+        throw new CodeGenException("file: " + cg.getTemplateName() + 
+            "\n corrupted:" + MY_TAG + " out: " + cg.getOutputName());
       }
       CodeUtils.findTag(br, processed, MY_END_TAG);
       CodeUtils.finishUp(br, processed);
@@ -125,9 +121,6 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
    * @see builder.codegen.pipes.Pipe#process(java.lang.Object, java.lang.Object)
    */
   public StringBuilder processCB(StringBuilder input) throws CodeGenException {
-    if (!bEnable) {
-      return input;
-    }
     // bTagFound allows us to detect if we find our tag and error out on failure.
     boolean bTagFound = false;  // detect if we find our tag
     try {
@@ -162,7 +155,7 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
         }
       }
       if (!bTagFound) {
-        throw new CodeGenException("file: " + cg.getProjectTemplate() + 
+        throw new CodeGenException("file: " + cg.getTemplateName() + 
             "\n is corrupted missing tag:" + MY_TAG);
       }
       CodeUtils.finishUp(br, processed);
@@ -308,20 +301,6 @@ public class WorkFlowPipe implements Pipe<StringBuilder> {
     }
     
     return enumMap; 
-  }
-
-  /**
-   * pipeEn will ignore processing a step if set to disable.
-   * This allows the workflow to be dynamically changed at runtime.
-   *
-   * The default should be enabled.
-   *
-   * @param bEnable
-   *          bEnable set to true to enable this step, false to disable
-   * @see builder.codegen.pipes.Pipe#pipeEn(java.lang.Object, java.lang.Object)
-   */
-  public void pipeEn(boolean bEnable) {
-    this.bEnable = bEnable;
   }
 
 }

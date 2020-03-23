@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import builder.common.CommonUtils;
 import builder.mementos.PositionMemento;
 import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
@@ -146,8 +145,12 @@ public class DragWidgetCommand extends Command {
      * Only if we have one object selected
      * Multiple objects get screwed up
      */
-    if (targets.size() == 1) {
-      pt[0] = targets.get(0).drop(pt[0]);
+    try {
+      if (targets.size() == 1) {
+        pt[0] = targets.get(0).drop(pt[0]);
+      }
+    } catch (NullPointerException e) {
+      return;
     }
   }
 

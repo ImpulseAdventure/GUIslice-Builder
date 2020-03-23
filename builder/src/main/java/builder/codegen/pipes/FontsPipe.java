@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
+import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.FontItem;
 import builder.common.EnumFactory;
@@ -55,10 +56,6 @@ import builder.prefs.NumKeyPadEditor;
  */
 public class FontsPipe extends WorkFlowPipe {
 
-  /** The Constants for tags. */
-  private final static String FONTS_TAG              = "//<Fonts !Start!>";
-  private final static String FONTS_END_TAG          = "//<Fonts !End!>";
-  
   /** The Constants for templates. */
   private final static String FONT_ADAFRUIT_TEMPLATE = "<FONT_ADAFRUIT>"; 
   private final static String FONT_TFT_ESPI_TEMPLATE = "<FONT_TFT_ESPI>"; 
@@ -81,8 +78,8 @@ public class FontsPipe extends WorkFlowPipe {
    */
   public FontsPipe(CodeGenerator cg) {
     this.cg = cg;
-    this.MY_TAG = FONTS_TAG;
-    this.MY_END_TAG = FONTS_END_TAG;
+    this.MY_TAG = Tags.TAG_PREFIX+Tags.FONTS_TAG+Tags.TAG_SUFFIX_START;
+    this.MY_END_TAG = Tags.TAG_PREFIX+Tags.FONTS_TAG+Tags.TAG_SUFFIX_END;
   }
   
   /**
