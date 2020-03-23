@@ -892,12 +892,12 @@ public class WidgetModel extends AbstractTableModel {
   public int mapMetaIDtoProperty(String metaID) {
     for (int i=0; i<data.length; i++) {
       if (metaID == null) {
-//        System.out.println(getType() + " error metaID == null");
+        System.out.println(getType() + " error metaID == null");
         return -1;
       }
       if (data[i][PROP_VAL_ID] == null) {
-//        System.out.println(getType() + " error data[" + i + ", " +
-//          PROP_VAL_ID + "] == null");
+        System.out.println(getType() + " error data[" + i + ", " +
+          PROP_VAL_ID + "] == null");
         return -1;
       }
       if (metaID.equals((String)data[i][PROP_VAL_ID])) {

@@ -453,11 +453,11 @@ public class TextModel extends WidgetModel {
   public void readModel(ObjectInputStream in, String widgetType) 
      throws IOException, ClassNotFoundException {
    super.readModel(in,  widgetType);
-    if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Left"))
+   if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("Left"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_LEFT;
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Right"))
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_RIGHT;
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Center"))
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_CENTER;
    if (useDefaultColors()) {
      data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
@@ -506,10 +506,8 @@ public class TextModel extends WidgetModel {
       if (text.isEmpty()) 
         text = "TODO";
     }
-    // calculate the sizes of our display font
-    Dimension d = ff.measureText(text, font);
-//    scaledWidth  = d.width;
-//    scaledHeight = d.height;
+    // calculate the sizes of our display text
+    Dimension d = ff.measureText(item.getDisplayName(), font, text);
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
       // now figure out the rect size needed on the target platform

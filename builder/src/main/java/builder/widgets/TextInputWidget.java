@@ -25,6 +25,7 @@
  */
 package builder.widgets;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -72,12 +73,17 @@ public class TextInputWidget extends Widget {
     g2d.fillRect(b.x, b.y, b.width, b.height);
     g2d.setColor(((TextInputModel) model).getFrameColor());
     g2d.drawRect(b.x, b.y, b.width, b.height);
-    Font font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
+    Font font = ff.getFont(m.getFontDisplayName());
     g2d.setColor(m.getTextColor());
     String text = m.getText();
     if (text.isEmpty()) {
       for (int i=0; i<m.getTextStorage(); i++) {
         text = text + "X";
+        Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
+        if (d.width > b.width) {
+           text = text.substring(0, text.length() - 1);
+           break;
+        }
       }
     }
     ff.alignString(g2d, m.getAlignment(), b, text, font);

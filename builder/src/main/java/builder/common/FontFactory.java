@@ -348,7 +348,7 @@ public class FontFactory {
       int size = Integer.parseInt(item.getFontSz());
       nChSz.width = (6 * size);
       nChSz.height = 8 * size;
-    } else {
+    } else if (fontName.startsWith("FreeMono")) {
       int idx = -1;
       switch (item.getLogicalSize()) {
         case "9":
@@ -381,15 +381,15 @@ public class FontFactory {
           nChSz = MonoPlainSizes[idx];
           break;
         }
-      } else {
-        String acHeight = "p$";
-        String acWidth  = "%";
-        Font tmpFont = createFont(item.getLogicalName(), item.getLogicalSize(), item.getLogicalStyle());
-        Dimension txtHeight = measureText(acHeight, tmpFont);
-        Dimension txtWidth = measureText(acWidth, tmpFont);
-        nChSz.width = txtWidth.width;
-        nChSz.height = txtHeight.height;
       }
+    } else {
+      String acHeight = "p$";
+      String acWidth  = "%";
+      Font tmpFont = createFont(item.getLogicalName(), item.getLogicalSize(), item.getLogicalStyle());
+      Dimension txtHeight = measureText(fontName, tmpFont,acHeight);
+      Dimension txtWidth = measureText(fontName, tmpFont,acWidth);
+      nChSz.width = txtWidth.width;
+      nChSz.height = txtHeight.height;
     }
     return nChSz;
   }
@@ -403,7 +403,7 @@ public class FontFactory {
    *          the font name
    * @return the <code>dimension</code> object
    */
-  public Dimension measureAdafruitText(String s, String fontName) {
+  public Dimension measureAdafruitText(String fontName, String s) {
     FontItem item = getFontItem(fontName);
     Dimension nChSz = new Dimension();
     int size = Integer.parseInt(item.getFontSz());
@@ -421,7 +421,10 @@ public class FontFactory {
    *          the font
    * @return the <code>dimension</code> object
    */
-  public Dimension measureText(String s, Font font) {
+  public Dimension measureText(String fontName, Font font, String s) {
+    if (fontName.startsWith("BuiltIn")) {
+        return measureAdafruitText(fontName, s);
+    }
     Canvas c = new Canvas();
     // get metrics from the Canvas
     FontMetrics metrics = c.getFontMetrics(font);

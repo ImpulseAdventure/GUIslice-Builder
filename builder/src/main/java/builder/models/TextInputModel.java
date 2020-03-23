@@ -403,8 +403,8 @@ public class TextInputModel extends WidgetModel {
     for (int i=0; i<getTextStorage(); i++) {
       text = text + "W";
     }
-    // calculate the real sizes of our display text
-    Dimension d = ff.measureText(text, font);
+    // calculate the sizes of our display text
+    Dimension d = ff.measureText(item.getDisplayName(), font, text);
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
       // now figure out the rect size needed on the target platform
@@ -418,10 +418,8 @@ public class TextInputModel extends WidgetModel {
         setWidth(d.width);
         setHeight(d.height);
       }
-      if (fireUpdates) {
-        fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
-      }
+      fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
   }
 
