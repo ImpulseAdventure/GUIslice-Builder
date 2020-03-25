@@ -4,8 +4,6 @@ BuiltIn(2x)->10x16pt7b,NULL,NULL,E_FONT_TXT10,GSLC_FONTREF_PTR,NULL,2,Monospaced
 BuiltIn(3x)->15x24pt7b,NULL,NULL,E_FONT_TXT15,GSLC_FONTREF_PTR,NULL,3,Monospaced,15,PLAIN
 BuiltIn(4x)->20x32pt7b,NULL,NULL,E_FONT_TXT20,GSLC_FONTREF_PTR,NULL,4,Monospaced,20,PLAIN
 BuiltIn(5x)->25x40pt7b,NULL,NULL,E_FONT_TXT25,GSLC_FONTREF_PTR,NULL,5,Monospaced,25,PLAIN
-dosis_book8pt7b,Fonts/dosis_book8pt7b.h,NULL,E_FONT_DOSIS8,GSLC_FONTREF_PTR,&dosis_book8pt7b,1,SansSerif,8,PLAIN
-dosis_book10pt7b,Fonts/dosis_book10pt7b.h,NULL,E_FONT_DOSIS10,GSLC_FONTREF_PTR,&dosis_book10pt7b,1,SansSerif,10,PLAIN
 FreeMono9pt7b,Fonts/FreeMono9pt7b.h,NULL,E_FONT_MONO9,GSLC_FONTREF_PTR,&FreeMono9pt7b,1,Monospaced,9,PLAIN
 FreeMono12pt7b,Fonts/FreeMono12pt7b.h,NULL,E_FONT_MONO12,GSLC_FONTREF_PTR,&FreeMono12pt7b,1,Monospaced,12,PLAIN
 FreeMono18pt7b,Fonts/FreeMono18pt7b.h,NULL,E_FONT_MONO18,GSLC_FONTREF_PTR,&FreeMono18pt7b,1,Monospaced,18,PLAIN
@@ -42,3 +40,5 @@ FreeSerifItalic9pt7b,Fonts/FreeSerifItalic9pt7b.h,NULL,E_FONT_SERIFI9,GSLC_FONTR
 FreeSerifItalic12pt7b,Fonts/FreeSerifItalic12pt7b.h,NULL,E_FONT_SERIFI12,GSLC_FONTREF_PTR,&FreeSerifItalic9pt7b,1,Serif,12,ITALIC
 FreeSerifItalic18pt7b,Fonts/FreeSerifItalic18pt7b.h,NULL,E_FONT_SERIFI18,GSLC_FONTREF_PTR,&FreeSerifItalic9pt7b,1,Serif,18,ITALIC
 FreeSerifItalic24pt7b,Fonts/FreeSerifItalic24pt7b.h,NULL,E_FONT_SERIFI24,GSLC_FONTREF_PTR,&FreeSerifItalic9pt7b,1,Serif,24,ITALIC
+dosis_book8pt7b,Fonts/dosis_book8pt7b.h,NULL,E_FONT_DOSIS8,GSLC_FONTREF_PTR,&dosis_book8pt7b,1,SansSerif,8,PLAIN
+dosis_book10pt7b,Fonts/dosis_book10pt7b.h,NULL,E_FONT_DOSIS10,GSLC_FONTREF_PTR,&dosis_book10pt7b,1,SansSerif,10,PLAIN

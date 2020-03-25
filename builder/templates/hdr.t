@@ -86,14 +86,14 @@ void InitGUIslice_gen()
 
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { return; }
 
-//<InitGUI !Start!>
-//<InitGUI !End!>
-
   // ------------------------------------------------
   // Load Fonts
   // ------------------------------------------------
 //<Load_Fonts !Start!>
 //<Load_Fonts !End!>
+
+//<InitGUI !Start!>
+//<InitGUI !End!>
 
 //<Startup !Start!>
 //<Startup !End!>

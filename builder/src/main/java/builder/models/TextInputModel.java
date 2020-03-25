@@ -403,8 +403,6 @@ public class TextInputModel extends WidgetModel {
     for (int i=0; i<getTextStorage(); i++) {
       text = text + "W";
     }
-    // calculate the sizes of our display text
-    Dimension d = ff.measureText(item.getDisplayName(), font, text);
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
       // calculate the real sizes of our display text
