@@ -1,30 +1,46 @@
-#DisplayName,IncludeFile,DefineFile,nFontId,eFontRefType,pvFontRef,nFontSz,LogicalFont,LogicalFontSize,LogicalFontStyle
-DroidSansMono8pt,NULL,/usr/share/fonts/truetype/droid/DroidSansMono.ttf,E_DROID_MONO8,GSLC_FONTREF_FNAME,FONT_DROID_MONO8,8,Monospaced,8,PLAIN
-DroidSansMono9pt,NULL,/usr/share/fonts/truetype/droid/DroidSansMono.ttf,E_DROID_MONO9,GSLC_FONTREF_FNAME,FONT_DROID_MONO9,9,Monospaced,9,PLAIN
-DroidSansMono10pt,NULL,/usr/share/fonts/truetype/droid/DroidSansMono.ttf,E_DROID_MONO10,GSLC_FONTREF_FNAME,FONT_DROID_MONO10,10,Monospaced,10,PLAIN
-DroidSansMono12pt,NULL,/usr/share/fonts/truetype/droid/DroidSansMono.ttf,E_DROID_MONO12,GSLC_FONTREF_FNAME,FONT_DROID_MONO12,12,Monospaced,12,PLAIN
-DroidSansMono18pt,NULL,/usr/share/fonts/truetype/droid/DroidSansMono.ttf,E_DROID_MONO18,GSLC_FONTREF_FNAME,FONT_DROID_MONO18,18,Monospaced,18,PLAIN
-DroidSansMono24pt,NULL,/usr/share/fonts/truetype/droid/DroidSansMono.ttf,E_DROID_MONO24,GSLC_FONTREF_FNAME,FONT_DROID_MONO24,24,Monospaced,24,PLAIN
-DroidSans9pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS9,GSLC_FONTREF_FNAME,FONT_DROID_SANS9,9,SansSerif,9,PLAIN
-DroidSans10pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS10,GSLC_FONTREF_FNAME,FONT_DROID_SANS10,10,SansSerif,10,PLAIN
-DroidSans12pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS12,GSLC_FONTREF_FNAME,FONT_DROID_SANS12,12,SansSerif,12,PLAIN
-DroidSans14pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS14,GSLC_FONTREF_FNAME,FONT_DROID_SANS14,14,SansSerif,14,PLAIN
-DroidSans18pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS18,GSLC_FONTREF_FNAME,FONT_DROID_SANS18,18,SansSerif,18,PLAIN
-DroidSans24pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS24,GSLC_FONTREF_FNAME,FONT_DROID_SANS24,24,SansSerif,24,PLAIN
-DroidSans36pt,NULL,/usr/share/fonts/truetype/droid/DroidSans.ttf,E_DROID_SANS36,GSLC_FONTREF_FNAME,FONT_DROID_SANS36,36,SansSerif,36,PLAIN
-DroidSans-Bold10pt,NULL,/usr/share/fonts/truetype/droid/DroidSans-Bold.ttf,E_DROID_SANSB10,GSLC_FONTREF_FNAME,FONT_DROID_SANSB10,10,SansSerif,10,BOLD
-DroidSans-Bold12pt,NULL,/usr/share/fonts/truetype/droid/DroidSans-Bold.ttf,E_DROID_SANSB12,GSLC_FONTREF_FNAME,FONT_DROID_SANSB12,12,SansSerif,12,BOLD
-DroidSans-Bold18pt,NULL,/usr/share/fonts/truetype/droid/DroidSans-Bold.ttf,E_DROID_SANSB18,GSLC_FONTREF_FNAME,FONT_DROID_SANSB18,18,SansSerif,18,BOLD
-DroidSans-Bold24pt,NULL,/usr/share/fonts/truetype/droid/DroidSans-Bold.ttf,E_DROID_SANSB24,GSLC_FONTREF_FNAME,FONT_DROID_SANSB24,24,SansSerif,24,BOLD
-DroidSerif-Regular10pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Regular.ttf,E_DROID_SERIF10,GSLC_FONTREF_FNAME,FONT_DROID_SERIF10,10,Serif,10,PLAIN
-DroidSerif-Regular12pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Regular.ttf,E_DROID_SERIF12,GSLC_FONTREF_FNAME,FONT_DROID_SERIF12,12,Serif,12,PLAIN
-DroidSerif-Regular18pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Regular.ttf,E_DROID_SERIF18,GSLC_FONTREF_FNAME,FONT_DROID_SERIF18,18,Serif,18,PLAIN
-DroidSerif-Regular24pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Regular.ttf,E_DROID_SERIF24,GSLC_FONTREF_FNAME,FONT_DROID_SERIF24,24,Serif,24,PLAIN
-DroidSerif-Bold10pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Bold.ttf,E_DROID_SERIFB10,GSLC_FONTREF_FNAME,FONT_DROID_SERIFB10,10,Serif,10,BOLD
-DroidSerif-Bold12pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Bold.ttf,E_DROID_SERIFB12,GSLC_FONTREF_FNAME,FONT_DROID_SERIFB12,12,Serif,12,BOLD
-DroidSerif-Bold18pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Bold.ttf,E_DROID_SERIFB18,GSLC_FONTREF_FNAME,FONT_DROID_SERIFB18,18,Serif,18,BOLD
-DroidSerif-Bold24pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Bold.ttf,E_DROID_SERIFB24,GSLC_FONTREF_FNAME,FONT_DROID_SERIFB24,24,Serif,24,BOLD
-DroidSerif-Italic10pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Italic.ttf,E_DROID_SERIFI10,GSLC_FONTREF_FNAME,FONT_DROID_SERIFI10,10,Serif,10,ITALIC
-DroidSerif-Italic12pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Italic.ttf,E_DROID_SERIFI12,GSLC_FONTREF_FNAME,FONT_DROID_SERIFI12,12,Serif,12,ITALIC
-DroidSerif-Italic18pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Italic.ttf,E_DROID_SERIFI18,GSLC_FONTREF_FNAME,FONT_DROID_SERIFI18,18,Serif,18,ITALIC
-DroidSerif-Italic24pt,NULL,/usr/share/fonts/truetype/droid/DroidSerif-Italic.ttf,E_DROID_SERIFI24,GSLC_FONTREF_FNAME,FONT_DROID_SERIFI24,24,Serif,24,ITALIC
+#FontName,#DisplayName,IncludeFile,DefineFile,nFontId,eFontRefType,pvFontRef,nFontSz,LogicalFont,LogicalFontSize,LogicalFontStyle
+FreeFont Monospaced,FreeMono9pt,NULL,/usr/share/fonts/truetype/freefont/FreeMono.ttf,E_FREE_MONO9,GSLC_FONTREF_FNAME,FONT_FREE_MONO9,9,Monospaced,9,PLAIN
+FreeFont Monospaced,FreeMono12pt,NULL,/usr/share/fonts/truetype/freefont/FreeMono.ttf,E_FREE_MONO12,GSLC_FONTREF_FNAME,FONT_FREE_MONO12,12,Monospaced,12,PLAIN
+FreeFont Monospaced,FreeMono18pt,NULL,/usr/share/fonts/truetype/freefont/FreeMono.ttf,E_FREE_MONO18,GSLC_FONTREF_FNAME,FONT_FREE_MONO18,18,Monospaced,18,PLAIN
+FreeFont Monospaced,FreeMono24pt,NULL,/usr/share/fonts/truetype/freefont/FreeMono.ttf,E_FREE_MONO24,GSLC_FONTREF_FNAME,FONT_FREE_MONO24,24,Monospaced,24,PLAIN
+FreeFont Monospaced,FreeMonoBold9pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf,E_FREE_MONOB9,GSLC_FONTREF_FNAME,FONT_FREE_MONOB9,9,Monospaced,9,BOLD
+FreeFont Monospaced,FreeMonoBold12pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf,E_FREE_MONOB12,GSLC_FONTREF_FNAME,FONT_FREE_MONOB12,12,Monospaced,12,BOLD
+FreeFont Monospaced,FreeMonoBold18pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf,E_FREE_MONOB18,GSLC_FONTREF_FNAME,FONT_FREE_MONOB18,18,Monospaced,18,BOLD
+FreeFont Monospaced,FreeMonoBold24pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf,E_FREE_MONOB24,GSLC_FONTREF_FNAME,FONT_FREE_MONOB24,24,Monospaced,24,BOLD
+FreeFont Monospaced,FreeMonoOblique9pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf,E_FREE_MONOI9,GSLC_FONTREF_FNAME,FONT_FREE_MONOI9,9,Monospaced,9,ITALIC
+FreeFont Monospaced,FreeMonoOblique12pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf,E_FREE_MONOI12,GSLC_FONTREF_FNAME,FONT_FREE_MONOI12,12,Monospaced,12,ITALIC
+FreeFont Monospaced,FreeMonoOblique18pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf,E_FREE_MONOI18,GSLC_FONTREF_FNAME,FONT_FREE_MONOI18,18,Monospaced,18,ITALIC
+FreeFont Monospaced,FreeMonoOblique24pt,NULL,/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf,E_FREE_MONOI24,GSLC_FONTREF_FNAME,FONT_FREE_MONOI24,24,Monospaced,24,ITALIC
+FreeFont Sans,FreeSans9pt,NULL,/usr/share/fonts/truetype/freefont/FreeSans.ttf,E_FREE_SANS9,GSLC_FONTREF_FNAME,FONT_FREE_SANS9,9,SansSerif,9,PLAIN
+FreeFont Sans,FreeSans12pt,NULL,/usr/share/fonts/truetype/freefont/FreeSans.ttf,E_FREE_SANS12,GSLC_FONTREF_FNAME,FONT_FREE_SANS12,12,SansSerif,12,PLAIN
+FreeFont Sans,FreeSans18pt,NULL,/usr/share/fonts/truetype/freefont/FreeSans.ttf,E_FREE_SANS18,GSLC_FONTREF_FNAME,FONT_FREE_SANS18,18,SansSerif,18,PLAIN
+FreeFont Sans,FreeSans24pt,NULL,/usr/share/fonts/truetype/freefont/FreeSans.ttf,E_FREE_SANS24,GSLC_FONTREF_FNAME,FONT_FREE_SANS24,24,SansSerif,24,PLAIN
+FreeFont Sans,FreeSansBold9pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansBold.ttf,E_FREE_SANSB9,GSLC_FONTREF_FNAME,FONT_FREE_SANSB9,9,SansSerif,9,BOLD
+FreeFont Sans,FreeSansBold12pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansBold.ttf,E_FREE_SANSB12,GSLC_FONTREF_FNAME,FONT_FREE_SANSB12,12,SansSerif,12,BOLD
+FreeFont Sans,FreeSansBold18pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansBold.ttf,E_FREE_SANSB18,GSLC_FONTREF_FNAME,FONT_FREE_SANSB18,18,SansSerif,18,BOLD
+FreeFont Sans,FreeSansBold24pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansBold.ttf,E_FREE_SANSB24,GSLC_FONTREF_FNAME,FONT_FREE_SANSB24,24,SansSerif,24,BOLD
+FreeFont Sans,FreeSansOblique9pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf,E_FREE_SANSI9,GSLC_FONTREF_FNAME,FONT_FREE_SANSI9,9,SansSerif,9,ITALIC
+FreeFont Sans,FreeSansOblique12pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf,E_FREE_SANSI12,GSLC_FONTREF_FNAME,FONT_FREE_SANSI12,12,SansSerif,12,ITALIC
+FreeFont Sans,FreeSansOblique18pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf,E_FREE_SANSI18,GSLC_FONTREF_FNAME,FONT_FREE_SANSI18,18,SansSerif,18,ITALIC
+FreeFont Sans,FreeSansOblique24pt,NULL,/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf,E_FREE_SANSI24,GSLC_FONTREF_FNAME,FONT_FREE_SANSI24,24,SansSerif,24,ITALIC
+FreeFont Serif,FreeSerif9pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerif.ttf,E_FREE_SERIF9,GSLC_FONTREF_FNAME,FONT_FREE_SERIF9,9,Serif,9,PLAIN
+FreeFont Serif,FreeSerif12pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerif.ttf,E_FREE_SERIF12,GSLC_FONTREF_FNAME,FONT_FREE_SERIF12,12,Serif,12,PLAIN
+FreeFont Serif,FreeSerif18pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerif.ttf,E_FREE_SERIF18,GSLC_FONTREF_FNAME,FONT_FREE_SERIF18,18,Serif,18,PLAIN
+FreeFont Serif,FreeSerif24pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerif.ttf,E_FREE_SERIF24,GSLC_FONTREF_FNAME,FONT_FREE_SERIF24,24,Serif,24,PLAIN
+FreeFont Serif,FreeSerifBold9pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf,E_FREE_SERIFB9,GSLC_FONTREF_FNAME,FONT_FREE_SERIFB9,9,Serif,9,BOLD
+FreeFont Serif,FreeSerifBold12pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf,E_FREE_SERIFB12,GSLC_FONTREF_FNAME,FONT_FREE_SERIFB12,12,Serif,12,BOLD
+FreeFont Serif,FreeSerifBold18pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf,E_FREE_SERIFB18,GSLC_FONTREF_FNAME,FONT_FREE_SERIFB18,18,Serif,18,BOLD
+FreeFont Serif,FreeSerifBold24pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf,E_FREE_SERIFB24,GSLC_FONTREF_FNAME,FONT_FREE_SERIFB24,24,Serif,24,BOLD
+FreeFont Serif,FreeSerifItalic9pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf,E_FREE_SERIFI9,GSLC_FONTREF_FNAME,FONT_FREE_SERIFI9,9,Serif,9,ITALIC
+FreeFont Serif,FreeSerifItalic12pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf,E_FREE_SERIFI12,GSLC_FONTREF_FNAME,FONT_FREE_SERIFI9,12,Serif,12,ITALIC
+FreeFont Serif,FreeSerifItalic18pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf,E_FREE_SERIFI18,GSLC_FONTREF_FNAME,FONT_FREE_SERIFI9,18,Serif,18,ITALIC
+FreeFont Serif,FreeSerifItalic24pt,NULL,/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf,E_FREE_SERIFI24,GSLC_FONTREF_FNAME,FONT_FREE_SERIFI9,24,Serif,24,ITALIC
+Noto Monospaced,NotoMono-Regular8pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO8,GSLC_FONTREF_FNAME,FONT_NOTO_MONO8,8,Monospaced,8,PLAIN
+Noto Monospaced,NotoMono-Regular10pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO10,GSLC_FONTREF_FNAME,FONT_NOTO_MONO10,10,Monospaced,10,PLAIN
+Noto Monospaced,NotoMono-Regular12pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO12,GSLC_FONTREF_FNAME,FONT_NOTO_MONO12,12,Monospaced,12,PLAIN
+Noto Monospaced,NotoMono-Regular14pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO14,GSLC_FONTREF_FNAME,FONT_NOTO_MONO14,14,Monospaced,14,PLAIN
+Noto Monospaced,NotoMono-Regular16pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO16,GSLC_FONTREF_FNAME,FONT_NOTO_MONO16,16,Monospaced,16,PLAIN
+Noto Monospaced,NotoMono-Regular18pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO18,GSLC_FONTREF_FNAME,FONT_NOTO_MONO18,18,Monospaced,18,PLAIN
+Noto Monospaced,NotoMono-Regular20pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO20,GSLC_FONTREF_FNAME,FONT_NOTO_MONO20,20,Monospaced,20,PLAIN
+Noto Monospaced,NotoMono-Regular22pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO22,GSLC_FONTREF_FNAME,FONT_NOTO_MONO22,22,Monospaced,22,PLAIN
+Noto Monospaced,NotoMono-Regular24pt,NULL,/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf,E_NOTO_MONO24,GSLC_FONTREF_FNAME,FONT_NOTO_MONO24,24,Monospaced,24,PLAIN

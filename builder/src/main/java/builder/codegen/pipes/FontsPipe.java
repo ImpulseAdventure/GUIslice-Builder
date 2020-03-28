@@ -57,10 +57,11 @@ import builder.prefs.NumKeyPadEditor;
 public class FontsPipe extends WorkFlowPipe {
 
   /** The Constants for templates. */
-  private final static String FONT_ADAFRUIT_TEMPLATE = "<FONT_ADAFRUIT>"; 
-  private final static String FONT_TFT_ESPI_TEMPLATE = "<FONT_TFT_ESPI>"; 
-  private final static String FONT_DEFINE_TEMPLATE   = "<FONT_DEFINE>"; 
-  private final static String FONT_INCLUDE_TEMPLATE  = "<FONT_INCLUDE>"; 
+  private final static String FONT_ADAFRUIT_TEMPLATE          = "<FONT_ADAFRUIT>"; 
+  private final static String FONT_ADAFRUIT_TFT_ESPI_TEMPLATE = "<FONT_ADAFRUIT_AND_TFT_ESPI>"; 
+  private final static String FONT_TFT_ESPI_TEMPLATE          = "<FONT_TFT_ESPI>"; 
+  private final static String FONT_DEFINE_TEMPLATE            = "<FONT_DEFINE>"; 
+  private final static String FONT_INCLUDE_TEMPLATE           = "<FONT_INCLUDE>"; 
    
   /** The Constants for macros. */
   private final static String DEFINE_FILE_MACRO      = "DEFINE_FILE";
@@ -142,7 +143,7 @@ public class FontsPipe extends WorkFlowPipe {
       for (FontItem f : fonts) {
         if (!f.getIncludeFile().equals("NULL")) {
           // This code only affects arduino implementation.
-          List<String> adafruitTemplate = tm.loadTemplate(FONT_ADAFRUIT_TEMPLATE);;
+          List<String> adafruitTemplate = tm.loadTemplate(FONT_ADAFRUIT_TEMPLATE);
           tm.codeWriter(sBd, adafruitTemplate);
           break;
         }
@@ -150,39 +151,62 @@ public class FontsPipe extends WorkFlowPipe {
     }
 
     // do we need to output TFT_eSPI include file?
+    boolean bTFT_ESPI_NEEDED = false;
+    boolean bADAFRUIT_TFT_ESPI_NEEDED = false;
     if (cg.getTargetPlatform().equals("arduino TFT_eSPI")) {
       /*   Rules for TFT_eSPI mode:
        * - If no fonts used: No include required
        * - If "built-in" / default font used: No include required
        * - If custom freefonts used: include <TFT_eSPI.h> only
        *   since they're already inside TFT_eSPI.h
+       * - If custom not freefonts used: include Adafruit Font/xxx.h only
+       *   since they're already inside TFT_eSPI.h
        */
       for (FontItem f : fonts) {
-        // A built-in font is indicated with a literal string of "NULL" 
+        // A built-in font is indicated with a literal string of "NULL"
         if (!f.getIncludeFile().equals("NULL")) {
-          // This code only affects TFT_eSPI implementation.
-          List<String> tft_espiTemplate = tm.loadTemplate(FONT_TFT_ESPI_TEMPLATE);;
-          tm.codeWriter(sBd, tft_espiTemplate);
-          return;
+          if (f.getName().startsWith("FreeFont")) {
+            bTFT_ESPI_NEEDED = true;
+          } else {
+            bADAFRUIT_TFT_ESPI_NEEDED = true;
+          }
         }
       }
     }
-
+    if (bTFT_ESPI_NEEDED || bADAFRUIT_TFT_ESPI_NEEDED) {
+      List<String> tft_espiTemplate = tm.loadTemplate(FONT_TFT_ESPI_TEMPLATE);
+      tm.codeWriter(sBd, tft_espiTemplate);
+    }
+    if (bADAFRUIT_TFT_ESPI_NEEDED) {
+      List<String> tft_espiTemplate = tm.loadTemplate(FONT_ADAFRUIT_TFT_ESPI_TEMPLATE);
+      tm.codeWriter(sBd, tft_espiTemplate);
+    }
     // we are ready to output our font information
     tm = cg.getTemplateManager();
     List<String> includeTemplate = null;
     List<String> defineTemplate = null;
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
-    
+
     for (FontItem f : fonts) {
-      if (!f.getIncludeFile().equals("NULL")) {
-        // This code only affects arduino implementation.
-        includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
-        map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
-        outputLines = tm.expandMacros(includeTemplate, map);
-        tm.codeWriter(sBd, outputLines);
-      } else if (!f.getDefineFile().equals("NULL") && cg.getTargetPlatform().equals("linux")) {
+      if (!f.getIncludeFile().equals("NULL") &&
+          cg.getTargetPlatform().equals("arduino TFT_eSPI")) {
+        if (!f.getName().startsWith("FreeFont")) {
+          // This code only affects arduino implementation.
+          includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
+          map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
+          outputLines = tm.expandMacros(includeTemplate, map);
+          tm.codeWriter(sBd, outputLines);
+        }
+      } else if (!f.getIncludeFile().equals("NULL") && 
+          cg.getTargetPlatform().equals("arduino")) {
+          // This code only affects arduino implementation.
+          includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
+          map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
+          outputLines = tm.expandMacros(includeTemplate, map);
+          tm.codeWriter(sBd, outputLines);
+      } else if (!f.getDefineFile().equals("NULL") && 
+          cg.getTargetPlatform().equals("linux")) {
         // This code only affects linux implementation.
         defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);;
         map.put(FONT_REF_MACRO, f.getFontRef());

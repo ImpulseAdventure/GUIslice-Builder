@@ -22,6 +22,13 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b023
+Added support for Google's Dosis and Noto(tm) fonts with their permissive licensing.  This is in addition to GNU's FreeFonts and their restrictive GNU General Public License version 3.0 or later license.
+
+To use these fonts with Adafruit GFX simply copy them from the Builder's installation folder GUIsliceBuilder/gfx_fonts to your Adafruit_GFX_Library/fonts folder.
+
+As before you may continue to add your own fonts to the Builder by following the instructions in the User Guide Appendix B.
+
 #### Changes for 0.13.b022
 Replaces 0.13.b021 which crashed due to fonts not installed.
 

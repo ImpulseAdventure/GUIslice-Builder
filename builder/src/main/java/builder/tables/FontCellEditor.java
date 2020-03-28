@@ -126,7 +126,8 @@ public class FontCellEditor extends AbstractCellEditor implements TableCellEdito
     if (EDIT.equals(e.getActionCommand())) {
       //The user has clicked the cell, so
       //bring up the dialog.
-      newName = chooser.showDialog(fontName);
+      chooser.setFontName(fontName);
+      newName = chooser.showDialog();
       if (newName != null) {
         fontName = newName;
       }
