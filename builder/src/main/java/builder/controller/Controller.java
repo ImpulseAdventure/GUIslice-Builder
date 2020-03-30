@@ -28,6 +28,8 @@ package builder.controller;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.datatransfer.Clipboard;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,7 +54,6 @@ import java.util.prefs.Preferences;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -124,9 +125,6 @@ public class Controller extends JInternalFrame
   /** tabbed panel that shows our pages */
   JTabbedPane tabbedPane;
   
-  /** top panel */
-  private JPanel topPanel;
-  
   /** The top frame. */
   private JRibbonFrame topFrame;  // used to set title when changing projects
 
@@ -177,7 +175,7 @@ public class Controller extends JInternalFrame
   
   /** The instance. */
   private static Controller instance = null;
-  
+
   /**
    * Gets the single instance of Controller.
    *
@@ -197,6 +195,17 @@ public class Controller extends JInternalFrame
     title = "Simulated TFT Panel";
     this.generalEditor = GeneralEditor.getInstance();
     MsgBoard.getInstance().subscribe(this, "Controller");
+
+    // trap frame resizing
+    this.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        GeneralEditor.getInstance().setTFTWinWidth(getWidth());
+        GeneralEditor.getInstance().setTFTWinHeight(getHeight());
+        Builder.splitPane.setDividerLocation(getWidth());
+      }
+    });
+
     // create our local clipboard
     clipboard = new Clipboard ("My clipboard");
     
@@ -210,11 +219,12 @@ public class Controller extends JInternalFrame
     tabbedPane.setPreferredSize(new Dimension(1200,1200));
     createFirstPage();
     tabbedPane.setSelectedIndex(0);
+    
     this.add(tabbedPane,BorderLayout.CENTER);
     this.setTitle(title);
     CommonUtils cu = CommonUtils.getInstance();
     this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
-    this.pack();
+//    this.pack();
     this.setVisible(true);
   }
   
@@ -230,15 +240,6 @@ public class Controller extends JInternalFrame
   
   public JRibbonFrame getFrame() {
     return topFrame;
-  }
-  
-  /**
-   * Gets the panel.
-   *
-   * @return the panel
-   */
-  public JPanel getPanel() {
-    return topPanel;
   }
   
   /**
@@ -1227,15 +1228,25 @@ public class Controller extends JInternalFrame
           generalEditor.getHeight() != displayHeight) {
         displayWidth = generalEditor.getWidth();
         displayHeight = generalEditor.getHeight();
-//        getPanel().setPreferredSize(new Dimension(displayWidth, displayHeight));
-        int width = Math.max(displayWidth+736, 1060);
-        int height = Math.max(displayHeight+360, 650);
+        int width = 1040;
+        if (GeneralEditor.getInstance().getAppWinWidth() > 0) 
+          width = GeneralEditor.getInstance().getAppWinWidth();
+        int height = 675;
+        if (GeneralEditor.getInstance().getAppWinHeight() > 0) 
+          height = GeneralEditor.getInstance().getAppWinHeight();
         Dimension d = new Dimension(width, height);
         topFrame.setPreferredSize(d);
-        topFrame.setMaximumSize(d);
-        topFrame.setMinimumSize(d);
-        Builder.CANVAS_WIDTH = displayWidth+160;
-        Builder.CANVAS_HEIGHT = displayHeight+80;
+        Builder.CANVAS_WIDTH = displayWidth;
+        Builder.CANVAS_HEIGHT = displayHeight;
+        width = displayWidth + 40;
+        if (GeneralEditor.getInstance().getTFTWinWidth() > 0) {
+            width = GeneralEditor.getInstance().getTFTWinWidth();
+        }
+        setPreferredSize(new Dimension(displayWidth, height));
+        System.out.println(" ");
+        System.out.println("TFT width=" + width);
+        Builder.splitPane.setDividerLocation(width);
+        PagePane.zoomOff();
         topFrame.revalidate();
         MsgBoard.getInstance().sendEvent("Controller",MsgEvent.CANVAS_MODEL_CHANGE);
         topFrame.repaint();
@@ -1279,25 +1290,23 @@ public class Controller extends JInternalFrame
     }
     if (key.equals("TFT Screen Width") ||
         key.equals("TFT Screen Height") ) {
-        displayWidth = generalEditor.getWidth();
+        displayWidth = generalEditor.getWidth() + 40;
         displayHeight = generalEditor.getHeight();
-        getPanel().setPreferredSize(new Dimension(displayWidth, displayHeight));
-        width = Math.max(displayWidth+736, 1060);
-        height = Math.max(displayHeight+360, 650);
+        int width = displayWidth + 30 + 240 + 210;
+        int height = Math.max(displayHeight+200, 675);
         Dimension d = new Dimension(width, height);
-        Builder.CANVAS_WIDTH = displayWidth+160;
-        Builder.CANVAS_HEIGHT = displayHeight+80;
-        Dimension canvasSz = new Dimension(Builder.CANVAS_WIDTH, Builder.CANVAS_HEIGHT);
-        CommonUtils.getInstance().setWinOffsets(canvasSz,
-            GeneralEditor.getInstance().getWidth(),
-            GeneralEditor.getInstance().getHeight());
-
+        topFrame.setPreferredSize(d);
+        Builder.CANVAS_WIDTH = displayWidth;
+        Builder.CANVAS_HEIGHT = displayHeight;
+        Builder.splitPane.setDividerLocation(Builder.CANVAS_WIDTH);
+        PagePane.zoomOff();
         topFrame.revalidate();
         MsgBoard.getInstance().sendEvent("Controller",MsgEvent.CANVAS_MODEL_CHANGE);
         topFrame.repaint();
-        refreshView();
-    }
-  }
+      }
+      refreshView();  // refresh view no matter what changed.
+   }
+ }
 */
   /**
    * Execute.

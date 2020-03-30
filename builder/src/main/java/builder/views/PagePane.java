@@ -258,6 +258,16 @@ public class PagePane extends JPanel implements iSubscriber {
   }
 
   /**
+   * Zoom off.
+   */
+  public static void zoomOff() {
+    zoomFactor = 1.0;
+    ribbon.btn_zoom_out.setEnabled(false);
+    ribbon.mini_zoom_out.setEnabled(false);
+    ZoomTransform();
+  }
+
+  /**
    * rectangularSelection.
    */
   public void rectangularSelection() {

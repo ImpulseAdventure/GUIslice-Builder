@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
@@ -160,6 +161,8 @@ public class Builder  extends JDesktopPane {
   /** The boolean indicating SubstanceLookAndFeel is supported */
   public static boolean isSubstanceSupported = false;
   
+  public static JSplitPane splitPane;
+  
   /**
    * The main method.
    *
@@ -276,7 +279,7 @@ public class Builder  extends JDesktopPane {
 
     // create our main frame and add our panels
     String frameTitle = PROGRAM_TITLE + NEW_PROJECT;
-    // create out ribbon
+    // create our ribbon
     frame = Ribbon.getInstance();
     
     // setup our listeners
@@ -302,12 +305,39 @@ public class Builder  extends JDesktopPane {
     controller.setUserPrefs(userPreferences);
     controller.initUI();  // now we can start the controller
     
+    // setup our canvas offsets
+    // NOTE: we can't use controller.getPanel().getSize()
+    // since it's scrollpane is much larger than actual screen size
+    CANVAS_WIDTH = GeneralEditor.getInstance().getWidth();
+    CANVAS_HEIGHT = GeneralEditor.getInstance().getHeight();
+
+    int width = 1040;
+    if (GeneralEditor.getInstance().getAppWinWidth() > 0) 
+      width = GeneralEditor.getInstance().getAppWinWidth();
+    int height = 675;
+    if (GeneralEditor.getInstance().getAppWinHeight() > 0) 
+      height = GeneralEditor.getInstance().getAppWinHeight();
+    frame.setPreferredSize(new Dimension(width, height));
+
+    // trap frame resizing
+    frame.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        GeneralEditor.getInstance().setAppWinWidth(frame.getWidth());
+        GeneralEditor.getInstance().setAppWinHeight(frame.getHeight());
+      }
+    });
+
 //    JRibbonFrame defaults to BorderLayout so no need to set it.
 //    frame.setLayout(new BorderLayout());
     // add our views to the frame
-    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
         controller,
-        propManager); 
+        propManager);
+    width = CANVAS_WIDTH + 40;
+    if (GeneralEditor.getInstance().getTFTWinWidth() > 0) 
+        width = GeneralEditor.getInstance().getTFTWinWidth();
+    splitPane.setDividerLocation(width);
     frame.add(splitPane,BorderLayout.CENTER);
 
 //    frame.add(propManager, BorderLayout.EAST);
@@ -339,16 +369,6 @@ public class Builder  extends JDesktopPane {
     });
     timee.start();
     
-    
-    // setup our canvas offsets
-    // NOTE: we can't use controller.getPanel().getSize()
-    // since it's scrollpane is much larger than actual screen size
-    CANVAS_WIDTH = GeneralEditor.getInstance().getWidth()+160;
-    CANVAS_HEIGHT = GeneralEditor.getInstance().getHeight()+100;
-
-    int width = Math.max(GeneralEditor.getInstance().getWidth()+716, 1040);
-    int height = Math.max(GeneralEditor.getInstance().getHeight()+360, 675);
-    frame.setPreferredSize(new Dimension(width, height));
     frame.pack();
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);

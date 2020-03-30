@@ -29,6 +29,8 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -40,6 +42,7 @@ import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.models.WidgetModel;
+import builder.prefs.GeneralEditor;
 import builder.views.PropEditor;
 
 /**
@@ -96,10 +99,27 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
     CommonUtils cu = CommonUtils.getInstance();
     this.setTitle("Property View");
     this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
-    this.setPreferredSize(new Dimension(300, 400));
+    int width = 227;
+    if (GeneralEditor.getInstance().getPropWinWidth() > 0) 
+      width = GeneralEditor.getInstance().getPropWinWidth();
+    int height = 441;
+    if (GeneralEditor.getInstance().getPropWinHeight() > 0) 
+      height = GeneralEditor.getInstance().getPropWinHeight();
+    this.setPreferredSize(new Dimension(width, height));
+
+    // trap frame resizing
+    this.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+          GeneralEditor.getInstance().setPropWinWidth(getWidth());
+          GeneralEditor.getInstance().setPropWinHeight(getHeight());
+      }
+    });
+
     this.pack();
     this.setVisible(true);
   }
+
 
   /**
    * Gets the parent panel.
