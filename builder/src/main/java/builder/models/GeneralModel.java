@@ -82,6 +82,16 @@ public class GeneralModel extends WidgetModel {
   // The following properties are hidden from users
   public static final int PROP_RECENT_COLORS        = 23; // LRU of recent colors choosen
   public static final int PROP_RECENT_FILES         = 24; // LRU of recent files choosen
+  /* window sizes are hidden from the users because if you change one
+   * the other values must change in proportion. It's much easier to
+   * simply keep track of when users drag a window and record the values.
+   */
+  public static final int PROP_SIZE_APP_WIDTH       = 25; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 26; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 27; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 28; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 29; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 30; 
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
@@ -207,7 +217,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[25][5];
+    data = new Object[31][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Theme",defThemeName);
@@ -250,6 +260,12 @@ public class GeneralModel extends WidgetModel {
     initProp(PROP_IMAGE_DIR, String.class, "GEN-113", Boolean.FALSE,"Last Image Directory Accessed","");
     initProp(PROP_RECENT_COLORS, String.class, "GEN-111", Boolean.TRUE,"Recent Colors","");
     initProp(PROP_RECENT_FILES, String.class, "GEN-121", Boolean.TRUE,"Recent Files","");
+    initProp(PROP_SIZE_APP_WIDTH, Integer.class,  "GEN-130", Boolean.FALSE,"App Win Width",Integer.valueOf(0));
+    initProp(PROP_SIZE_APP_HEIGHT, Integer.class, "GEN-131", Boolean.FALSE,"App Win Height",Integer.valueOf(0));
+    initProp(PROP_SIZE_TFT_WIDTH, Integer.class,  "GEN-132", Boolean.FALSE,"TFT Pane Width",Integer.valueOf(0));
+    initProp(PROP_SIZE_TFT_HEIGHT, Integer.class, "GEN-133", Boolean.FALSE,"TFT Pane Height",Integer.valueOf(0));
+    initProp(PROP_SIZE_PROPVIEW_WIDTH, Integer.class,  "GEN-134", Boolean.FALSE,"PropView Pane Width",Integer.valueOf(0));
+    initProp(PROP_SIZE_PROPVIEW_HEIGHT, Integer.class, "GEN-135", Boolean.FALSE,"PropView Pane Height",Integer.valueOf(0));
   }
   
   /**
@@ -315,15 +331,15 @@ public class GeneralModel extends WidgetModel {
   
   /**
    * getRowCount gives back the number of user visible properties
-   * its 2 less than the data[][] table size because we hide 
-   * recent colors and recent files list from the user.
+   * it's less than the data[][] table size because we hide 
+   * certain properties from users like recent colors.
    * 
    * @return the row count
    * @see javax.swing.table.TableModel#getRowCount()
    */
   @Override
   public int getRowCount() {
-    return data.length-2;  
+    return data.length-8;  
   }
 
   /**
@@ -510,6 +526,126 @@ public class GeneralModel extends WidgetModel {
   @Override
   public void setHeight(int h) {
     shortcutValue(Integer.valueOf(h), DISPLAY_HEIGHT);
+  }
+
+  /**
+   * getAppWinWidth
+   * 
+   * @return the width
+   */
+  public int getAppWinWidth() {
+    // return Integer.parseInt((String) data[PROP_WIDTH][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_APP_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setAppWinWidth
+   *
+   * @param w
+   *          the new width
+   */
+  public void setAppWinWidth(int w) {
+    shortcutValue(Integer.valueOf(w), PROP_SIZE_APP_WIDTH);
+  }
+
+  /**
+   * getAppWinHeight
+   *
+   * @return the height
+   */
+  public int getAppWinHeight() {
+    // return Integer.parseInt((String) data[PROP_HEIGHT][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_APP_HEIGHT][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setAppWinHeight
+   *
+   * @param h
+   *          the new height
+   */
+  public void setAppWinHeight(int h) {
+    shortcutValue(Integer.valueOf(h), PROP_SIZE_APP_HEIGHT);
+  }
+
+  /**
+   * getTFTWinWidth
+   * 
+   * @return the width
+   */
+  public int getTFTWinWidth() {
+    // return Integer.parseInt((String) data[PROP_WIDTH][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_TFT_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setTFTWinWidth
+   *
+   * @param w
+   *          the new width
+   */
+  public void setTFTWinWidth(int w) {
+    shortcutValue(Integer.valueOf(w), PROP_SIZE_TFT_WIDTH);
+  }
+
+  /**
+   * getTFTWinHeight
+   *
+   * @return the height
+   */
+  public int getTFTWinHeight() {
+    // return Integer.parseInt((String) data[PROP_HEIGHT][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_TFT_HEIGHT][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setTFTWinHeight
+   *
+   * @param h
+   *          the new height
+   */
+  public void setTFTWinHeight(int h) {
+    shortcutValue(Integer.valueOf(h), PROP_SIZE_TFT_HEIGHT);
+  }
+
+  /**
+   * getPropWinWidth
+   * 
+   * @return the width
+   */
+  public int getPropWinWidth() {
+    // return Integer.parseInt((String) data[PROP_WIDTH][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_PROPVIEW_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setPropWinWidth
+   *
+   * @param w
+   *          the new width
+   */
+  public void setPropWinWidth(int w) {
+    shortcutValue(Integer.valueOf(w), PROP_SIZE_PROPVIEW_WIDTH);
+  }
+
+  /**
+   * getPropWinHeight
+   *
+   * @return the height
+   */
+  public int getPropWinHeight() {
+    // return Integer.parseInt((String) data[PROP_HEIGHT][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_PROPVIEW_HEIGHT][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setPropWinHeight
+   *
+   * @param h
+   *          the new height
+   */
+  public void setPropWinHeight(int h) {
+    shortcutValue(Integer.valueOf(h), PROP_SIZE_PROPVIEW_HEIGHT);
   }
 
   /**

@@ -60,6 +60,7 @@ Name: "{app}\\logs"; Permissions: everyone-full
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\GUIslice.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\guislicebuilder.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\lib\\*"; DestDir: "{app}\\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\tmp\\windows\\GUIsliceBuilder\\gfx_fonts\\*"; DestDir: "{app}\\gfx_fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\..\\templates\\*"; DestDir: "{app}\\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\..\\arduino_res\\*"; DestDir: "{app}\\arduino_res"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\..\\linux_res\\*"; DestDir: "{app}\\linix_res"; Flags: ignoreversion recursesubdirs createallsubdirs

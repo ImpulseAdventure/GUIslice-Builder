@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.13.b021
+        Ver: 0.13.b023
     </H3>
 </center>
 
@@ -1506,16 +1506,17 @@ The files are in CSV Format with a column header line - See RFC 4180.  Using a '
 
 Column Titles:
 
-1.  DisplayName - refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
-2.  IncludeFile - on the arduino platform it points to where to find a font, ex: 'Fonts/FreeSansBold12pt7b.h' or NULL
-3.  DefineFile - on linux platform it points to the font, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
-4.  nFontId - GUIslice API parameter ENUM ID to use when referencing this font, Ex: E_FONT_TXT
-5.  eFontRefType - GUIslice API parameter Font reference type (eg. filename or pointer)
-6.  pvFontRef - GUIslice API parameter Reference pointer to identify the font. In the case of SDL mode, it is a filepath to the font file. In the case of Arduino it is a pointer value to the font bitmap array (GFXFont)
-7.  nFontSz - GUIslice API parameter Typeface size to use. For Arduino built-in fonts a number from 1 to 5, AdaFruit's freefonts its always a 1, while in SDL mode its actual size of font.
-8.  LogicalFont - the name java needs to use when accessing this font.
-9.  LogicalFontSize - the pre-scaling size to display in the builder.
-10. LogicalFontStyle - the font style, plain, bold, italic, bold+italic
+1.  FontName - refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
+2.  DisplayName - refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
+3.  IncludeFile - on the arduino platform it points to where to find a font, ex: 'Fonts/FreeSansBold12pt7b.h' or NULL
+4.  DefineFile - on linux platform it points to the font, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
+5.  nFontId - GUIslice API parameter ENUM ID to use when referencing this font, Ex: E_FONT_TXT
+6.  eFontRefType - GUIslice API parameter Font reference type (eg. filename or pointer)
+7.  pvFontRef - GUIslice API parameter Reference pointer to identify the font. In the case of SDL mode, it is a filepath to the font file. In the case of Arduino it is a pointer value to the font bitmap array (GFXFont)
+8.  nFontSz - GUIslice API parameter Typeface size to use. For Arduino built-in fonts a number from 1 to 5, AdaFruit's freefonts its always a 1, while in SDL mode its actual size of font.
+9.  LogicalFont - the name java needs to use when accessing this font.
+10. LogicalFontSize - the pre-scaling size to display in the builder.
+11. LogicalFontStyle - the font style, plain, bold, italic, bold+italic
 
 Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced.  I have chosen to use Monospaced to represent Adafruit's built-in fonts which are 5x8 and plain only.
 Adafruit GFX only scales them up from 1 to N. As an example scale of 2 gives you a character 10x16.

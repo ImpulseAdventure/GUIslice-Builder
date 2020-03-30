@@ -196,11 +196,131 @@ public class GeneralEditor extends ModelEditor {
   /**
    * Sets the height.
    *
-   * @param height
+   * @param h
    *          the new height
    */
-  public void setHeight(int height) {
-    ((GeneralModel) model).setHeight(height);
+  public void setHeight(int h) {
+    ((GeneralModel) model).setHeight(h);
+  }
+
+  /**
+   * getAppWinWidth.
+   *
+   * @return the width
+   */
+  public int getAppWinWidth() {
+    return ((GeneralModel) model).getAppWinWidth();
+  }
+  
+  /**
+   * setAppWinWidth.
+   *
+   * @param width
+   *          the new width
+   */
+  public void setAppWinWidth(int width) {
+    ((GeneralModel) model).setAppWinWidth(width);
+    savePreferences();
+  }
+
+  /**
+   * getAppWinHeight.
+   *
+   * @return the height
+   */
+  public int getAppWinHeight() {
+    return ((GeneralModel) model).getAppWinHeight();
+  }
+
+  /**
+   * setAppWinHeight.
+   *
+   * @param h
+   *          the new height
+   */
+  public void setAppWinHeight(int h) {
+    ((GeneralModel) model).setAppWinHeight(h);
+    savePreferences();
+  }
+
+  /**
+   * getTFTWinWidth.
+   *
+   * @return the width
+   */
+  public int getTFTWinWidth() {
+    return ((GeneralModel) model).getTFTWinWidth();
+  }
+  
+  /**
+   * setTFTWinWidth.
+   *
+   * @param width
+   *          the new width
+   */
+  public void setTFTWinWidth(int width) {
+    ((GeneralModel) model).setTFTWinWidth(width);
+    savePreferences();
+  }
+
+  /**
+   * getTFTWinHeight.
+   *
+   * @return the height
+   */
+  public int getTFTWinHeight() {
+    return ((GeneralModel) model).getTFTWinHeight();
+  }
+
+  /**
+   * setTFTWinHeight.
+   *
+   * @param h
+   *          the new height
+   */
+  public void setTFTWinHeight(int h) {
+    ((GeneralModel) model).setTFTWinHeight(h);
+    savePreferences();
+  }
+
+  /**
+   * getPropWinWidth.
+   *
+   * @return the width
+   */
+  public int getPropWinWidth() {
+    return ((GeneralModel) model).getPropWinWidth();
+  }
+  
+  /**
+   * setPropWinWidth.
+   *
+   * @param width
+   *          the new width
+   */
+  public void setPropWinWidth(int width) {
+    ((GeneralModel) model).setPropWinWidth(width);
+    savePreferences();
+  }
+
+  /**
+   * getPropWinHeight.
+   *
+   * @return the height
+   */
+  public int getPropWinHeight() {
+    return ((GeneralModel) model).getPropWinHeight();
+  }
+
+  /**
+   * setPropWinHeight.
+   *
+   * @param h
+   *          the new height
+   */
+  public void setPropWinHeight(int h) {
+    ((GeneralModel) model).setPropWinHeight(h);
+    savePreferences();
   }
 
   /**

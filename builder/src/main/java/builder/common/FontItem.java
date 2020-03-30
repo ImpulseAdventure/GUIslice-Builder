@@ -38,6 +38,9 @@ public class FontItem {
   /** The java font. */
   private Font   font;
   
+  /** The font family name. */
+  private String name;
+  
   /** The display name. */
   private String displayName;
   
@@ -75,6 +78,7 @@ public class FontItem {
    * Instantiates a new font item.
    *
    * @param dpi target display pixels per inch
+   * @param name of font family, like Noto,FreeFont
    * @param displayName name we show to user
    * @param includeFile name of any include file
    * @param defineFile  name of define file
@@ -87,6 +91,7 @@ public class FontItem {
    * @param logicalStyle java font style
    */
   public FontItem(int dpi,
+                  String name,
                   String displayName,
                   String includeFile,
                   String defineFile,
@@ -98,6 +103,7 @@ public class FontItem {
                   String logicalSize,
                   String logicalStyle) {
     this.font = null;
+    this.name = name;
     this.displayName = displayName;
     this.includeFile = includeFile;
     this.defineFile = defineFile;
@@ -149,6 +155,15 @@ public class FontItem {
    */
   public void setFont(Font font) {
     this.font = font;
+  }
+  
+  /**
+   * Gets the font family name.
+   *
+   * @return the name
+   */
+  public String getName() {
+    return name;
   }
   
   /**

@@ -76,6 +76,12 @@ GEN-118,Background Image File Name
 GEN-119,Insert Adafruit_GFX.h?
 GEN-120,Backward Compatibility
 GEN-121,Recent File List
+GEN-130,Width  of App Window
+GEN-131,Height of App Window
+GEN-132,Width  of TFT Simulation Window
+GEN-133,Height of TFT Simulation Window
+GEN-134,Width  of Property View Window
+GEN-135,Height of Property View Window
 GRID-100,Grid
 GRID-101,Grid Snap To
 GRID-102,Grid Minor Width

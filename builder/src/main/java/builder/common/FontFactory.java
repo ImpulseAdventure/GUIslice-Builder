@@ -312,6 +312,32 @@ public class FontFactory {
   }
   
   /**
+   * This method creates a Font's display name using the String values displayed to
+   * users of GUIsliceBuider by our various Widget Models.
+   *
+   * @param fontName
+   *          - is the GUIslice font name (family name) not the real java font name.
+   * @param fontSize
+   *          - is the point size of our font as a String value.
+   * @param fontStyle
+   *          - is the font style "PLAIN", "BOLD", "ITALIC", or "BOLD+ITALIC".
+   * @return font The java font we can use to display text
+   * @see java.awt.Font
+   * @see java.lang.String
+   */
+  public FontItem getFontItem(String fontName, String fontSize, String fontStyle) {
+    List<FontItem> list = arduinoFonts;
+    for (FontItem item : list) {
+      if (item.getName().equals(fontName)         &&
+          item.getLogicalSize().equals(fontSize)  &&
+          item.getLogicalStyle().equals(fontStyle)) {
+        return item;
+      }
+    }
+    return null;
+  }
+  
+  /**
    * Gets the font item.
    *
    * @param key
@@ -527,7 +553,7 @@ public class FontFactory {
           // use comma as separator
           String[] f = line.split(cvsSplitBy);
           item = new FontItem(generalModel.getDPI(),
-              f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9]);
+              f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9], f[10]);
           list.add(item);
         }
       }

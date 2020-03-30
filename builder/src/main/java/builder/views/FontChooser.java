@@ -1,42 +1,19 @@
-/**
- *
- * The MIT License
- *
- * Copyright 2018-2020 Paul Conti
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- */
 package builder.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -50,15 +27,9 @@ import javax.swing.border.TitledBorder;
 
 import builder.common.FontFactory;
 import builder.common.FontItem;
+import builder.views.FontChooserHelper;
 
-/**
- * The Class FontChooser - Allows users to pick fonts using GUIslice API library names.
- * 
- * @author Paul Conti
- * 
- */
 public class FontChooser extends JDialog {
-  
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
@@ -68,98 +39,144 @@ public class FontChooser extends JDialog {
   /** The ff. */
   FontFactory ff = null;
   
-  /** The current font. */
-  private Font   currentFont;
+  /** helper that store font data for screen display */
+  List<FontChooserHelper> helper;
+  
+  /** selected helper index */
+  int selectedHelper;
   
   /** The current name. */
   private String currentName;
+  private String selectedName;
+  private FontItem currentItem;
   
   /** The fonts. */
   List<FontItem> fonts;
+  List<String>   fontNames;
   
   /** The cb font. */
   JComboBox<String> cbFont;
+  DefaultComboBoxModel<String> dcmFont;
   
   /** The fill color. */
-  Color fillColor;
+  Color fillColor = Color.WHITE;
   
   /** The text color. */
-  Color textColor;
+  Color textColor = Color.BLACK;
   
   /** The b save dialog. */
-  boolean bSaveDialog;
+  boolean bSaveFont;
   
-  /** The b init UI. */
+  /** The boolean that tracks if the program is making changes to comboboxes. */
+  boolean bProgramChange;
+  
+  /** The boolean tracking if we have initialized UI. */
   boolean bInitUI = false;
 
   /** The preview label. */
   protected FontLabel previewLabel;
 
-  /**
-   * Instantiates a new font chooser.
-   *
-   * @param owner
-   *          the owner
-   */
+  JComboBox<String> cbFontSize;
+  DefaultComboBoxModel<String> dcmFontSize;
+  
+  JComboBox<String> cbFontStyle;
+  DefaultComboBoxModel<String> dcmFontStyle;
+
+  protected ButtonGroup styleGroup;
+  
   public FontChooser(JFrame owner) {
     super(owner, "Font Chooser", true);
     ff = FontFactory.getInstance();
+    helper = new ArrayList<FontChooserHelper>(); 
   }
   
-  /**
-   * Show dialog.
-   *
-   * @param fontName
-   *          the current font name
-   * @return the <code>String</code> object
-   */
-  public String showDialog(String fontName) {
-    bSaveDialog = false;
+  public String showDialog() {
+    this.setLocationRelativeTo(null);
+    this.setVisible(true);
+    return currentName;
+  }
+  
+  public void setFontName(String fontName) {
+    fontNames = new ArrayList<String>();
+    bSaveFont = false;
     currentName = fontName;
-    if (!bInitUI) {
+    if (bInitUI) {
+      scanFontLists();
+    } else {
       initUI();
       bInitUI = true;
     }
     updatePreview();
-    this.setLocationRelativeTo(null);
-    this.setVisible(true);
-    if (bSaveDialog) {
-      fontName = currentName;
-    }
-    this.setVisible(false);
-    return fontName;
   }
-  
-  /**
-   * Initializes the UI.
-   */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   private void initUI() {
+    bProgramChange = false;
     getContentPane().setLayout(
         new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-    JPanel p = new JPanel(new GridLayout(1, 2, 10, 2));
-    p.setBorder(new TitledBorder(new EtchedBorder(), "Font"));
-    
-    ActionListener previewListener = new ActionListener() {
+    ActionListener fontListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updatePreview();
+        updateFont();
       }
     };
 
-    fonts = ff.getFontList();
+    ActionListener previewListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (!bProgramChange) {
+          updatePreview();
+        }
+      }
+    };
+
+    // scan the fonts list and process it into something we can display on screen
+    scanFontLists();
+    FontChooserHelper h = helper.get(selectedHelper);    
+    dcmFont = new DefaultComboBoxModel<String>();
     cbFont = new JComboBox<String>();
-    for (FontItem fontItem : fonts) {
-      cbFont.addItem(fontItem.getDisplayName());
+    cbFont.setModel(dcmFont);
+    for (String s : fontNames) {
+      cbFont.addItem(s);
     }
-    cbFont.setSelectedItem(currentName);
-    cbFont.addActionListener(previewListener);
+    cbFont.setSelectedItem(h.getFontName());
+    cbFont.addActionListener(fontListener);
     cbFont.setToolTipText("Click to Select Font");
+
+    JPanel p = new JPanel(new GridLayout(2, 3, 10, 2));
+    JLabel lblFont = new JLabel("Font:");
+    p.add(lblFont);
+    JLabel lblFontSize = new JLabel("Font Size:");
+    p.add(lblFontSize);
+    JLabel lblFontStyle = new JLabel("Font Style:");
+    p.add(lblFontStyle);
+
     p.add(cbFont);
 
-    getContentPane().add(Box.createVerticalStrut(5));
-    
-    p.add(Box.createHorizontalStrut(10));
+    dcmFontSize = new DefaultComboBoxModel();
+    cbFontSize = new JComboBox<String>();
+    cbFontSize.setModel(dcmFontSize);
+    for (String sz : h.getFontSize()) {
+      cbFontSize.addItem(sz);
+    }
+    cbFontSize.setSelectedItem(currentItem.getLogicalSize());
+    cbFontSize.setToolTipText("Click to Select Font size");
+    cbFontSize.addActionListener(previewListener);
+    cbFontSize.setToolTipText("Click to Select Font Size");
+    p.add(cbFontSize);
     getContentPane().add(p);
 
+    dcmFontStyle = new DefaultComboBoxModel();
+    cbFontStyle = new JComboBox<String>();
+    cbFontStyle.setModel(dcmFontStyle);
+    for (String style : h.getFontStyle()) {
+      cbFontStyle.addItem(style);
+    }
+    cbFontStyle.setSelectedItem(currentItem.getLogicalStyle());
+    cbFontStyle.setToolTipText("Click to Select Font Style");
+    cbFontStyle.addActionListener(previewListener);
+    cbFontStyle.setToolTipText("Click to Select Font Style");
+    p.add(cbFontStyle);
+    getContentPane().add(p);
+
+    getContentPane().add(Box.createVerticalStrut(5));
     p = new JPanel(new BorderLayout());
     p.setBorder(new TitledBorder(new EtchedBorder(), "Preview"));
     previewLabel = new FontLabel("Preview Font");
@@ -169,82 +186,128 @@ public class FontChooser extends JDialog {
 
     p = new JPanel(new FlowLayout());
     JPanel p1 = new JPanel(new GridLayout(1, 2, 10, 2));
-    JButton btnOK = new JButton("OK");
-    btnOK.setToolTipText("Save and exit");
-    getRootPane().setDefaultButton(btnOK);
+    JButton btOK = new JButton("OK");
+    btOK.setToolTipText("Save and exit");
+    getRootPane().setDefaultButton(btOK);
     ActionListener actionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        bSaveDialog = true;
-        Closed_Option = JOptionPane.OK_OPTION;
+        currentName = selectedName;
+        setVisible(false);
         dispose();
       }
     };
-    btnOK.addActionListener(actionListener);
-    p1.add(btnOK);
+    btOK.addActionListener(actionListener);
+    p1.add(btOK);
 
-    JButton btnCancel = new JButton("Cancel");
-    btnCancel.setToolTipText("Exit without save");
+    JButton btCancel = new JButton("Cancel");
+    btCancel.setToolTipText("Exit without save");
     actionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Closed_Option = JOptionPane.CANCEL_OPTION;
+        setVisible(false);
         dispose();
       }
     };
-    btnCancel.addActionListener(actionListener);
-    p1.add(btnCancel);
+    btCancel.addActionListener(actionListener);
+    p1.add(btCancel);
     p.add(p1);
     getContentPane().add(p);
 
     pack();
     setResizable(false);
+    this.setVisible(false);
   }
 
-  /**
-   * Gets the option.
-   *
-   * @return the option
-   */
   public int getOption() {
     return Closed_Option;
   }
+
+  protected void updateFont() {
+    bProgramChange = true;
+    selectedHelper = cbFont.getSelectedIndex();
+    
+    FontChooserHelper h = helper.get(selectedHelper);
+    dcmFontSize.removeAllElements();
+    cbFontSize.setModel(dcmFontSize);
+    for (String sz : h.getFontSize()) {
+      cbFontSize.addItem(sz);
+    }
+    
+    dcmFontStyle.removeAllElements();
+    cbFontStyle.setModel(dcmFontStyle);
+    for (String style : h.getFontStyle()) {
+      cbFontStyle.addItem(style);
+    }
+
+    int i = cbFontSize.getSelectedIndex();
+    String sSize = cbFontSize.getItemAt(i);
+    i = cbFontStyle.getSelectedIndex();
+    String sStyle = cbFontStyle.getItemAt(i);
+    currentItem = ff.getFontItem(h.getFontName(),sSize, sStyle);
+    
+    bProgramChange = false;
+    updatePreview();
+  }
   
-  /**
-   * Update preview.
-   */
   protected void updatePreview() {
-    int nameIdx = cbFont.getSelectedIndex();
-    FontItem item = fonts.get(nameIdx);
-    currentName = item.getDisplayName();
-    currentFont = item.getFont();
-    previewLabel.setFont(currentFont);
-    previewLabel.setBackground(fillColor);
-    previewLabel.setForeground(textColor);
-    previewLabel.repaint();
+
+    FontChooserHelper h = helper.get(selectedHelper);
+    int i = cbFontSize.getSelectedIndex();
+    String sSize = cbFontSize.getItemAt(i);
+    i = cbFontStyle.getSelectedIndex();
+    String sStyle = cbFontStyle.getItemAt(i);
+    FontItem item = ff.getFontItem(h.getFontName(),sSize, sStyle);
+    previewLabel.setFont(item.getFont());
+    selectedName = item.getDisplayName();
+    repaint();
   }
 
-  /**
-   * The Class FontLabel.
-   */
+  protected void scanFontLists() {
+    String name = "";
+    fonts = ff.getFontList();
+    FontChooserHelper nextHelper = null;
+    int j=-1;
+    currentItem = null;
+    for (int i=0; i<fonts.size(); i++) {
+      FontItem fontItem = fonts.get(i);
+      if (!name.equals(fontItem.getName())) {
+        if (nextHelper != null) {
+          helper.add(nextHelper);
+        }
+        name = fontItem.getName();
+        nextHelper = new FontChooserHelper();
+        nextHelper.setFontName(name);
+        nextHelper.addFontSize(fontItem.getLogicalSize());
+        nextHelper.addFontStyle(fontItem.getLogicalStyle());
+        fontNames.add(name);
+        j++;
+      } else {
+        nextHelper.addFontSize(fontItem.getLogicalSize());
+        nextHelper.addFontStyle(fontItem.getLogicalStyle());
+      }
+      if (currentName.equals(fontItem.getDisplayName())) {
+        selectedHelper = j;
+        currentItem = fontItem;
+      }
+    }
+    helper.add(nextHelper);
+    if (currentItem == null) {
+      currentItem = fonts.get(0);
+      selectedHelper = 0;
+    }
+  }
+  
   class FontLabel extends JLabel {
-    
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiates a new font label.
-     *
-     * @param text
-     *          the text
-     */
     public FontLabel(String text) {
       super(text, JLabel.CENTER);
-      setBackground(Color.white);
-      setForeground(Color.black);
+      setBackground(fillColor);
+      setForeground(textColor);
       setOpaque(true);
       setBorder(new LineBorder(Color.black));
       setPreferredSize(new Dimension(120, 40));
     }
   }
- }
+}
 
 

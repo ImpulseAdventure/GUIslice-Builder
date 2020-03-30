@@ -15,7 +15,7 @@ apply plugin: 'eclipse'
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-version = '0.13.b022' 
+version = '0.13.b023' 
  
 repositories {
     mavenCentral()
@@ -107,6 +107,13 @@ task copyLinuxResToLinux(type: Copy) {
     into "${buildDir}/tmp/linux/GUIsliceBuilder/linux_res"
 }
 
+task copyFontsToLinux(type: Copy) {
+  dependsOn copyInstallScriptToLinux
+  description = "copy font resources to linux temp folder"
+    from "${projectDir}/gfx_fonts"
+    into "${buildDir}/tmp/linux/GUIsliceBuilder/gfx_fonts"
+}
+
 task copyTemplatesToLinux(type: Copy) {
   dependsOn copyInstallScriptToLinux
   description = "copy templates to linux temp folder"
@@ -115,7 +122,7 @@ task copyTemplatesToLinux(type: Copy) {
 }
 
 task copyLinuxScripts(type: Copy) {
-  dependsOn copyInstallScriptToLinux, copyArduinoResToLinux, copyLinuxResToLinux, copyTemplatesToLinux
+  dependsOn copyInstallScriptToLinux, copyArduinoResToLinux, copyLinuxResToLinux, copyFontsToLinux, copyTemplatesToLinux
   description = "copy start scripts and icons to linux temp folder"
     from "${projectDir}/scripts/desktop.template"
     into "${buildDir}/tmp/linux/GUIsliceBuilder/lib"
@@ -150,6 +157,13 @@ task copyArduinoResToMacOS(type: Copy) {
     into "${buildDir}/tmp/macApp/GUIsliceBuilder/arduino_res"
 }
 
+task copyFontsToMacOS(type: Copy) {
+  dependsOn copyMacOSDir
+  description = "copy font resources to macApp temp folder"
+    from "${projectDir}/gfx_fonts"
+    into "${buildDir}/tmp/macApp/GUIsliceBuilder/gfx_fonts"
+}
+
 task copyLinuxResToMacOS(type: Copy) {
   dependsOn copyMacOSDir
   description = "copy linux resources to macApp temp folder"
@@ -165,7 +179,7 @@ task copyTemplatesToMacOS(type: Copy) {
 }
 
 task buildMacOSInstall(type: Copy) {
-  dependsOn copyMacOSDir, copyArduinoResToMacOS, copyLinuxResToMacOS, copyTemplatesToMacOS
+  dependsOn copyMacOSDir, copyArduinoResToMacOS, copyLinuxResToMacOS, copyFontsToMacOS, copyTemplatesToMacOS
   description = "copy start scripts and icons to macApp temp folder"
     from "${buildDir}/scripts/GUIslice.icns"
     into "${buildDir}/tmp/macApp/GUIsliceBuilder"

@@ -16,14 +16,23 @@ The GUIslice Builder is a standalone desktop application that is designed to hel
 
 The cross-platform utility includes a graphical editor that enables drag & drop placement of UI elements. Once a GUI has been laid out, the Builder can then generate the functional GUIslice skeleton framework code, for both Arduino and LINUX targets.
 
-The generated output code (.c, .ino) includes all of the necessary defines, UI storage elements and initialization in addition to the placement of the UI elements. This should greatly improve the ease in creating a new GUI.
+The generated output code (*.c, *.ino, *_GSLC.h) includes all of the necessary defines, UI storage elements and initialization in addition to the placement of the UI elements. This should greatly improve the ease in creating a new GUI.
 
 You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b023
+Enhancement that will now save and restore window frame and panel resizing.
+
+Added support for Google's Dosis and Noto(tm) fonts with their permissive licensing.  This is in addition to GNU's FreeFonts and their restrictive GNU General Public License version 3.0 or later license.
+
+To use these fonts with Adafruit GFX simply copy them from the Builder's installation folder GUIsliceBuilder/gfx_fonts to your Adafruit_GFX_Library/fonts folder.
+
+As before you may continue to add your own fonts to the Builder by following the instructions in the User Guide Appendix B.
+
 #### Changes for 0.13.b022
-Replaces 0.13.b021 which crashed due to fonts not installed.
+Replaces 0.13.b021 which crashed if you used FreeFonts or any other custom fonts due to fonts not installed correctly in the *_GSLC.h file.
 
 Enhancement to split [project name].ino file into  [project name].ino and [project name]_GSLC.h header that contains GUIslice API storage, Fonts, Element Initialization and other items users generally don't need to modify.  While [project name].ino will remain where users must do their code injections.
 
@@ -61,7 +70,7 @@ Enhancement to Button Callbacks to better determine when case statements need to
 ##### Bug Fixes
  - Bug No. 141 Input + Text fields need default colors turned off to see frame box at runtime.
  - Bug No. 142 Improve button callback generation vs existing source code.
- 
+
 #### Changes for 0.13.b016
 Added Grid, Zoom In and Zoom Out icons to the mini-toolbar to better support non-english keyboards.
 
@@ -147,7 +156,7 @@ The Listbox edit list items dialog (entered by pressing '...' in its property ta
  - Bug No. 113 Flash _P() macros with custom color parameters needs to be wrapped with parentheses
  - Bug No. 114 Builder should validate image formats to be sure they are supported
  - Bug No. 115 Builder should validate Page ENUM is used for jump page on Text+Image Button Callbacks
- 
+
 #### Changes for 0.13.0.4 Hot Fix for Use Flash API calls
 
 ##### Bug Fixes
@@ -164,7 +173,7 @@ The Listbox edit list items dialog (entered by pressing '...' in its property ta
  - Bug No. 109 Can't Install GUIsliceBuilder as a NON-Admin user
  - Bug No. 110 (Issue 28) Compilation error in Adafruit-GFX.h fonts include typo 
  - Bug No. 111 (Issue 26) Compilation error: gslc_ElemXRingGaugeSetAngleRange(&m_gui,pElemRef, 270, 360, RING-102);
- 
+
 #### Changes for 0.13.0.2 Hot Fix for projects created with early beta versions of the builder
 
 ##### Bug Fixes
@@ -197,7 +206,7 @@ The Listbox edit list items dialog (entered by pressing '...' in its property ta
  - Text Input
  - Base Page
  - PopUp Dialog Page
- 
+
 #### Removed Features
  - Import Button for importing non-builder created projects. Round trip edits of builder created files are still supported. Maintence costs for the Import feature were too high to continue support.
 
@@ -230,4 +239,4 @@ The Listbox edit list items dialog (entered by pressing '...' in its property ta
  - Bug No. 96 Fatal error can cause crash log loop 
  - Bug No. 97 Install not change project directory
  - Bug No. 99 Progress Bar Frame not showing up on TFT simulation screen
- 
+
