@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.13.b023
+        Ver: 0.13.b024
     </H3>
 </center>
 
@@ -21,7 +21,7 @@
 
 **Publication date and software version**
 
-Published March, 2020. Based on GUIslice API Library 0.13.0
+Published April, 2020. Based on GUIslice API Library 0.13.0
 
 **Copyright**
 
@@ -29,6 +29,7 @@ This document is Copyright © 2020,2019,2018 by Paul Conti. You may distribute o
 
 GUIslice Copyright (c) Calvin Hass 2016-2020
 
+Copyright Notices for third party libraries are included in Appendixes C and D.
 All trademarks within this guide belong to their legitimate owners.
 
 ---------
@@ -64,6 +65,10 @@ It should be noted that the Builder makes no attempt to support all GUIslice API
 
 Remember, if you need to use any unsupported API calls or UI elements just keep them outside of the tags. This would be one reason why you would need to edit the 'project_GSLC.h' file so you can increase the storage for any unsupported UI elements.
 
+The Code Templates the Builder uses are exposed inside GUIsliceBuilder/templates.
+
+The two files are arduino.t and linux.t.  Some documentation is included in Appendix D in case you need to make edits.
+
 ---------------
 <div style="page-break-after: always;"></div>
 
@@ -78,19 +83,14 @@ You will notice in the generated C code various tags inserted by the builder suc
 
 As long as you refrain from adding or modifying code between these auto-generated tags you can continue to add additional elements to your project and not lose any other edits you make.   The only exception is the button callbacks where the builder will test for existing ENUMs and not delete any code.
 
-The code you add between Enum tags will be kept safe unless you delete or rename a button's ENUM. 
+The code you add between Enum tags will be kept safe unless you delete the button or rename the button's ENUM. 
 
 //<Button Enums !Start!>
 
 //<Button Enums !End!> 
 
-However, if you ask for code injection for a Button, say with a 'Jump to Page?=true', Show 'Popup Page?=true', or 'Hide Popup Page?=true'; The Builder will examine any existing [project name].ino case statements to see if the required GUIslice API calls are present. 
+See Appendix E Case Statement Generation for detailed examples. 
 
-If not, the case statement will be deleted and recreated.  
-
-If the GUIslice API calls are present for 'Jump' or 'Show Popup' the call will be checked for the PAGE-ENUM name to see if your code matches what is currently in the 'Jump/Popup Page Enum' property. Assuming it matches no code changes will occur, otherwise the case statement will be deleted and recreated.
-
-The Builder will also delete case statements for any ENUM's not in use by your project. 
 
 ---------------
 <div style="page-break-after: always;"></div>
@@ -147,7 +147,7 @@ Why may this be needed, because fonts are defined in points with 72 points per i
     int size = (int) ((double)Integer.parseInt(logicalSize) * scaleFactor);
     scaledSize = String.valueOf(size);
     this.font = FontFactory.createFont(logicalName, scaledSize, logicalStyle);
-```  
+```
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -638,7 +638,7 @@ See example ex06_bld_callback.  Also ex32_bld_spinner for usage of a background 
 
 ## 4.7 Image Button ![](images/controls/imgbutton_32x.png)
 
-See examples ex03_bld_btn_img and ex28_bld_btn_img_flash. For full details on your options see section 4.17 Text Button.
+See examples ex03_bld_btn_img and ex28_bld_btn_img_flash. For full details on your options see section 4.18 Text Button and Appendix E.
 The button callback will look like:
 ```
 // Common Button callback
@@ -681,10 +681,9 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
 | Image Select Memory |                                                   |
 | Image Format        | GSLC_IMGREF_FMT_BMP24                             |
 | Transparent?        | false                                             |
-| Jump to Page?       | false, If true, gslc_SetPageCur(PAGE) created     |
-| Show Popup Page?    | false, If true, gslc_PopupShow(PAGE) created      |
-| Jump/Popup Page Enum| PAGE enum inside gslc_SetPageCur or gslc_PopupShow|
-| Hide Popup Page?    | false, If true gslc_PopupHide current page issued |
+| Jump Page Enum      | PAGE ENUM used for gslc_SetPageCur  call          |
+| Popup Page ENUM     | PAGE ENUM used for gslc_PopupShow call            |
+| Hide Popup Page?    | false, set=true->gslc_PopupHide() current page    |
 | Frame Enabled?      | false                                             |
 | Frame Color         | Frame color with this color                       |
 
@@ -1083,8 +1082,8 @@ The Builder will generate most of the code for some of the more simple cases.
 
 Options available
 
- - If you just want the button to jump to a new page set the 'Jump to Page?' = true and then also set 'Jump/Popup Page Enum' to the page ENUM that you desire, eex05_bld_pages.
- - To start a Popup Dialog Page set 'Show Popup Page?' = true and then also set 'Jump/Popup Page Enum' to the page ENUM that you desire, ex25_bld_popup.
+ - If you just want the button to jump to a new page set the 'Jump Page ENUM' equal to the target Page ENUM, eex05_bld_pages.
+ - To start a Popup Dialog Page set 'Popup Page ENUM' to the Page ENUM that you desire, ex25_bld_popup.
  - To return from a Popup Dialog set 'Hide Popup Page?' = true.
  - To save SRAM on an Arduino you can use the flash version by setting 'Use Flash?' = true.
 
@@ -1125,6 +1124,7 @@ While the Jump to Page callback will look like:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
+
 And the return from a Popup
 ```
 //<Button Enums !Start!>
@@ -1133,6 +1133,8 @@ And the return from a Popup
         gslc_PopupHide(&m_gui);
         break;
 ```
+A fuller explanation of when the Builder will create, delete or modify a case statement will be found in Appendix E.
+
 
 | NAME                  | VALUE                                          |
 |-----------------------|------------------------------------------------|
@@ -1156,9 +1158,8 @@ And the return from a Popup
 
 | NAME                  | VALUE                                          |
 |-----------------------|------------------------------------------------|
-| Jump to Page?         | false, set=true ->gslc_SetPageCur(PAGE) created|
-| Show Popup Page?      | false, set=true ->gslc_PopupShow(PAGE) created |
-| Jump/Popup Page Enum  | PG enum used gslc_SetPageCur or gslc_PopupShow |
+| Jump Page ENUM        | PAGE ENUM used for gslc_SetPageCur  call       |
+| Popup Page ENUM       | PAGE ENUM used for gslc_PopupShow call         |
 | Hide Popup Page?      | false, set=true->gslc_PopupHide() current page |
 | Use Flash API?        | false                                          |
 | Use Default Colors?   | true                                           |
@@ -1306,20 +1307,26 @@ You can modify your UI preferences  by the edit->options menu item. Most of the 
 ## 5.1 General Preferences
 | NAME                               | VALUE                                                     |
 |------------------------------------|-----------------------------------------------------------|
-| Theme                              | Windows,Metal,Nimbus,Classic Windows                      |
+| Themes                             | FlatLaf or Java Built-In Themes like: Windows or Metal    |
 | Target Platform                    | arduino,arduino minimum, linux                            |
 | TFT Screen Width                   | 320                                                       |
 | TFT Screen Height                  | 240                                                       |
 | TFT Screen DPI                     | 144                                                       |
-| Project Directory                  | Project                                                   |
+| Project Directory                  | Your top-level Arduino Sketch Folder                      |
 | Target's Image Directory           | Directory on target platform where you have stored images |
-| Background Color                   | Gray                                                      |
+| Background Color                   | Black is default                                          |
 | Image Transparency Color           | For transparent images GSLC_COL_MAGENTA (r=255,g=0,b=255) |
 | Screen Margins                     | 10 pixels top, bottom, right and left                     |
 | Horizontal Spacing between elements| Used by alignment commands as the default value           |
 | Vertical Spacing between elements  | Used by alignment commands as the default value           |
 | MAX_STR                            | Used inside C program for maximum storage of strings      |
 | Screen Rotation [0-3]              | -1 is default. If needed, forces gslc_GuiRotate() call.   |
+| Backward Compatibility Mode?       | false is default. If true Builder will not create _GSLC.h |
+| Preserve Button Callbacks?         | If true callback code is only changed if model changed    |
+
+The FlatLaf project provides the support for non built-in themes: 
+<https://github.com/JFormDesigner/FlatLaf>
+The full Copyright is included in Appendix C.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1431,11 +1438,9 @@ The builder uses two files inside GUIsliceBuilder/templates to manage fonts:
 arduinofonts.csv for Arduino target platform
 linuxfonts.csv for Linux target platform
 
-Two other files are present but not used, freefonts.csv and droidfonts.csv.  Depending upon your font choices you can copy them to either arduinofonts.csv or linuxfonts.csv or to both.
-
-When you restart the Builder it will use the new font files.
-
 You are allowed to create your own fonts and add them to the builder.  In which case you will need to modify arduinofonts or linuxfonts csv files.  The format is documented in Appendix B.
+
+If you edit these files you must restart the Builder it will then use the new font files.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1524,18 +1529,77 @@ I have supported scales of 1 to 5.  You can edit this as you desire.
 
 One thing you should keep in mind is that non built-in fonts take up a fair amount of memory so you should limit your selection to one or two non built-in fonts if your target platform is an Arduino.  
 
-Use '\#' to comment out any you don't want to expose or simply delete them.
+Some additional documentation is available in "GUIsliceBuilder/templates/fonts_readme.txt".
 
 WARNING! No error checking exists in the code so be very careful with any edits.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix C - CopyRight Notices for third party Libraries
+# Appendix C - Ribbon Support
+
+The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project written by Kirill Grouchnikov. This project is no longer supported and has been replaced by Radiance project which requires Java 9 or Higher so we can't use it. The Insubstantial jar files involved are:
+
+- flamingo-7.3.1-SNAPSHOT.jar
+- trident-7.3.1-SNAPSHOT.jar
+- substance-7.3.1-SNAPSHOT.jar
+
+The CopyRight Notice is reproduced in full here:
+
+Copyright (c) 2005-2010 Kirill Grouchnikov. All Rights Reserved.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ - Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer. 
+   
+ - Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation 
+   and/or other materials provided with the distribution. 
+   
+ - Neither the name of Flamingo Kirill Grouchnikov nor the names of 
+   its contributors may be used to endorse or promote products derived 
+   from this software without specific prior written permission. 
+   
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+# Appendix D - Theme Support
 
 The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
 
 - flatlaf-0.29.jar
+
+The FlatLaf project is on GitHub: 
+<https://github.com/JFormDesigner/FlatLaf>
+
+**FlatLaf** is a modern **open-source** cross-platform Look and Feel for Java
+Swing desktop applications.
+
+It looks almost flat (no shadows or gradients), clean, simple and elegant.
+FlatLaf comes with **Light**, **Dark**, **IntelliJ** and **Darcula** themes,
+scales on **HiDPI** displays and runs on Java 8 or newer.
+
+The look is heavily inspired by **Darcula** and **IntelliJ** themes from
+IntelliJ IDEA 2019.2+ and uses almost the same colors and icons.
+
+FlatLaf can use 3rd party themes created for IntelliJ Platform.
+
+The Builder will look inside the folder GUIsliceBuilder/templates/intellijthemes
+and scan for any files that end with ".theme.json" and load them for your use.
 
 The CopyRight Notice is reproduced in full here:
 
@@ -1573,6 +1637,9 @@ The CopyRight Notice is reproduced in full here:
       not limited to compiled object code, generated documentation,
       and conversions to other media types.
 
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
       "Work" shall mean the work of authorship, whether in Source or
       Object form, made available under the License, as indicated by a
       copyright notice that is included in or attached to the work
@@ -1585,7 +1652,7 @@ The CopyRight Notice is reproduced in full here:
       of this License, Derivative Works shall not include works that remain
       separable from, or merely link (or bind by name) to the interfaces of,
       the Work and Derivative Works thereof.
-
+    
       "Contribution" shall mean any work of authorship, including
       the original version of the Work and any modifications or additions
       to that Work or Derivative Works thereof, that is intentionally
@@ -1599,7 +1666,7 @@ The CopyRight Notice is reproduced in full here:
       Licensor for the purpose of discussing and improving the Work, but
       excluding communication that is conspicuously marked or otherwise
       designated in writing by the copyright owner as "Not a Contribution."
-
+    
       "Contributor" shall mean Licensor and any individual or Legal Entity
       on behalf of whom a Contribution has been received by Licensor and
       subsequently incorporated within the Work.
@@ -1610,9 +1677,6 @@ The CopyRight Notice is reproduced in full here:
       copyright license to reproduce, prepare Derivative Works of,
       publicly display, publicly perform, sublicense, and distribute the
       Work and such Derivative Works in Source or Object form.
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
 
    3. Grant of Patent License. Subject to the terms and conditions of
       this License, each Contributor hereby grants to You a perpetual,
@@ -1630,39 +1694,42 @@ The CopyRight Notice is reproduced in full here:
       granted to You under this License for that Work shall terminate
       as of the date such litigation is filed.
 
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
    4. Redistribution. You may reproduce and distribute copies of the
       Work or Derivative Works thereof in any medium, with or without
       modifications, and in Source or Object form, provided that You
       meet the following conditions:
 
       (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
+      ​    Derivative Works a copy of this License; and
 
       (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
+      ​    stating that You changed the files; and
 
       (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
+      ​    that You distribute, all copyright, patent, trademark, and
+      ​    attribution notices from the Source form of the Work,
+      ​    excluding those notices that do not pertain to any part of
+      ​    the Derivative Works; and
 
       (d) If the Work includes a "NOTICE" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
+      ​    distribution, then any Derivative Works that You distribute must
+      ​    include a readable copy of the attribution notices contained
+      ​    within such NOTICE file, excluding those notices that do not
+      ​    pertain to any part of the Derivative Works, in at least one
+      ​    of the following places: within a NOTICE text file distributed
+      ​    as part of the Derivative Works; within the Source form or
+      ​    documentation, if provided along with the Derivative Works; or,
+      ​    within a display generated by the Derivative Works, if and
+      ​    wherever such third-party notices normally appear. The contents
+      ​    of the NOTICE file are for informational purposes only and
+      ​    do not modify the License. You may add Your own attribution
+      ​    notices within Derivative Works that You distribute, alongside
+      ​    or as an addendum to the NOTICE text from the Work, provided
+      ​    that such additional attribution notices cannot be construed
+      ​    as modifying the License.
 
       You may add Your own copyright statement to Your modifications and
       may provide additional or different license terms and conditions
@@ -1750,41 +1817,292 @@ The CopyRight Notice is reproduced in full here:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
+# Appendix E - Case Statement Generation
 
-The GUIsliceBuilder's Ribbon code is supported the Insubstantial project written by Kirill Grouchnikov. The jar files involved are:
+The Builder supports a richer set of functions for Button callbacks like Jump to Page, Show Popup page and Hide Popup Page and since users can set these values on/off in many different editing sessions the Builder attempts to do a more intelligent update for the Button callbacks. 
 
-- flamingo-7.3.1-SNAPSHOT.jar
-- trident-7.3.1-SNAPSHOT.jar
-- substance-7.3.1-SNAPSHOT.jar
+The rules here apply only to the Button callbacks.  All other callbacks simply look for existing case statement with ENUM and if it finds it within your *.ino file the code is left unchanged. If a UI Element is deleted the code generator will remove it's case statement.
 
-The CopyRight Notice is reproduced in full here:
+**Example** **One**
 
-Copyright (c) 2005-2010 Kirill Grouchnikov. All Rights Reserved.
+You create a simple button in the Builder with no Jump, Popup, or Hide Page like the Quit button used in the examples and do a code generation.
+```
+      case E_ELEM_BTN_QUIT:
+        //TODO- Check the code to see what else you may need to add
+        break;
+```
+What if you delete this button?
 
-Redistribution and use in source and binary forms, with or without 
-modification, are permitted provided that the following conditions are met:
+The case statement will be removed.
 
- - Redistributions of source code must retain the above copyright notice, 
-   this list of conditions and the following disclaimer. 
-   
- - Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
-   and/or other materials provided with the distribution. 
-   
- - Neither the name of Flamingo Kirill Grouchnikov nor the names of 
-   its contributors may be used to endorse or promote products derived 
-   from this software without specific prior written permission. 
-   
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+What if you rename the Button's ENUM, say from E_ELEM_BTN_QUIT to E_QUIT? 
+
+It will detect that E_ELEM_BTN_QUIT is no longer in your project so it will Delete it.
+It will then find what it believes is a new button and create a new case statement.
+
+Unfortunately the Code Generator doesn't have any semantic information to identify
+a relationship of E_QUIT to E_ELEM_BTN_QUIT so this is the best it can do.
+
+**Example** **Two**
+
+Once again we start with Example's One simple button and now we edit the case statement:
+```
+      case E_ELEM_BTN_QUIT:
+        // Output a message when the button is pressed
+        Serial.println("Quit button pressed");
+        // Set a variable flag that we can use elsewhere        
+        m_bQuit = true;
+        break;
+```
+You go back into the builder and set “Jump Page ENUM = E_PG2_MainMenu".
+
+Here it will simply place the gslc_SetPageCur call before the break and leave everything else alone.
+
+```
+      case E_ELEM_BTN_QUIT:
+        // Output a message when the button is pressed
+        Serial.println("Quit button pressed");
+        // Set a variable flag that we can use elsewhere        
+        m_bQuit = true;
+        gslc_SetPageCur(&m_gui,E_PG2_MainMenu);
+        break;
+``` 
+Time passes and you now want a jump to E_PG4_Schedule instead so you edit the E_ELEM_BTN_QUIT Jump Page ENUM property and replace E_PG2_MainMenu with E_PG4_Schedule.
+
+During a new code generation the Builder checks the existing case statement and sees E_PG2_MainMenu so it deletes just the gslc_SetPageCur statement and replaces it with the new value.
+```
+      case E_ELEM_BTN_QUIT:
+        Serial.println("E_ELEM_BTN_QUIT touched");
+        // Set a variable flag that we can use elsewhere        
+        m_bQuit = true;
+        gslc_SetPageCur(&m_gui,E_PG4_Schedule);
+        break;
+``` 
+**Example** **Three**
+
+Now what if instead you made so many edits to this case statement you don’t want the Builder to look at it any more.
+```
+case E_IMGBTN_SETTINGS:
+   if (!isGrinding)
+   {
+     SetMode(CliveNormal);
+     setNewPage(E_PG_SETTINGS);
+     BluetoothStartSettings();
+     UpdateSettingsText();
+     hideSetPositionPanel();
+     needSensorRepaint = false;
+   }
+   break;
+```
+Just clear out "Jump Page ENUM = " and the Builder will leave it alone.
+
+**Example** **Four**
+
+I love cutting and pasting code any way to maximize my work?
+
+Seriously though, lets say these rules are just too hard for you to work with or you really do love to cut and paste code. Yes, there is an option for you. On the User Preferences "General" tab there is an option "Preserve Button Callbacks?". Just set this to false and the Builder will start fresh for Button callbacks during code generation wiping out all code inside the Builder's "//<Button Enums" tags.
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+# Appendix F - Code Templates
+
+There are two platform specific templates for code generation inside GUIsliceBuilder/templates. They are "arduino.t" for Arduino and compatibles and "linux.t" for RaspberryPI.
+
+The templates are used for creating the various sections of your application. They start with a name enclosed with angle brackets `<>` and end with a `<STOP>`.
+
+In between is the actual code to be output.  Now most code will require properties from the specific UI Element you created for your User Interface.  These properties are not referred by the user exposed names since they may change or get translated some day to another language.  Instead, we use meta-ids which are documented below inside a meta-id table mapping. 
+
+The Java UI Element Models use these meta-ids to replace macros within the code blocks with actual property values.
+
+The macros are identified by starting with a `$<` and ending with a bracket `>`.  In between is the meta-id to be replaced.
+
+Now there are some common properties to all UI Elements like ENUM meta-id "COM-002", and X + Y Positions meta-ids "COM-003", "COM-004".
+
+While many UI Elements have at least some properties unique to them; Like the Progress Bar which has a property "is Vertical?" meta-is "BAR-100". Of course, without looking at source code you are not likely to identify or make use of such things.  
+
+Nevertheless, they may be cases where simple edits will allow you some degree of customization.  Say you have replaced Adafruit's GFX fonts and you don't want code to generated with 
+`#include <Adafruit_GFX.h>`. You find the code segment:
+```
+<FONT_ADAFRUIT>
+#if defined(DRV_DISP_TFT_ESPI)
+  #error Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
+#endif 
+#include <Adafruit_GFX.h>
+// Note that these files are located within the Adafruit-GFX library folder:
+<STOP>
+```
+and you can edit it so no mention of GFX is made like so:
+```
+<FONT_ADAFRUIT>
+#if defined(DRV_DISP_TFT_ESPI)
+  #error Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
+#endif 
+<STOP>
+```
+There are some cases where meta-id is not used and a few places where templates are also not used in code generation. This is due mostly to older beta code and my general lazyness and lack of motivation. 
 
 
+| META ID    | PROPERTY NAME                             |
+|------------|-------------------------------------------|
+| BAR-100    | Vertical?                                 |
+| BAR-101    | Ramp Style (not used)                     |
+| BAR-102    | Min value                                 |
+| BAR-103    | Max value                                 |
+| BAR-104    | Starting value                            |
+| BAR-105    | Style                                     |
+| BAR-106    | Tick Divisions                            |
+| BAR-107    | Tick Size                                 |
+| BAR-108    | Tick Color                                |
+| BAR-109    | Indicator Length                          |
+| BAR-110    | Indicator Tip Size                        |
+| BAR-111    | Indicator Fill?                           |
+| BAR-112    | Add Scrollbar?                            |
+| BAR-113    | Embedded Scrollbar ENUM                   |
+| BAR-114    | Embedded Scrollbar ElemRef                |
+| BAR-115    | Embedded Max value                        |
+| BAR-116    | Embedded Frame Color                      |
+| BAR-117    | Embedded Fill Color                       |
+| BAR-118    | Direction Clockwise?                      |
+| BOX-100    | Draw Function                             |
+| BOX-101    | Tick Function                             |
+| CBOX-100   | Checked?                                  |
+| COL-300    | Use Default Colors?                       |
+| COL-301    | Text Color                                |
+| COL-302    | Frame Color                               |
+| COL-303    | Fill Color                                |
+| COL-304    | Selected Color                            |
+| COL-305    | Check Mark Color                          |
+| COL-306    | Tick Color                                |
+| COL_307    | Trim Color                                |
+| COL_308    | Gauge Color                               |
+| COL-309    | Graph Color                               |
+| COL-310    | Background Color                          |
+| COL-311    | Grid Major Color                          |
+| COL-312    | Grid Minor Color                          |
+| COL-313    | Grid Background Color                     |
+| COL-314    | Transparency Color                        |
+| COM-000    | Page Enum                                 |
+| COM-001    | Key                                       |
+| COM-002    | ENUM                                      |
+| COM-003    | X                                         |
+| COM-004    | Y                                         |
+| COM-005    | Width                                     |
+| COM-006    | HEIGHT                                    |
+| COM-010    | Frame Enable                              |
+| COM-011    | Fill Enabled                              |
+| COM-012    | Button Rounded                            |
+| COM-013    | Button Size                               |
+| COM-014    | Button GapX                               |
+| COM-015    | Button GapY                               |
+| COM-016    | Touch En                                  |
+| COM-017    | Callback En                               |
+| COM-018    | Key Count (Number in the Key after the $) |
+| COM-019    | ELEMENT REF                               |
+| COM-020    | Use Flash API                             |
+| GEN-100    | Theme                                     |
+| GEN-101    | Target Platform                           |
+| GEN-102    | TFT Screen Width                          |
+| GEN-103    | TFT Screen Height                         |
+| GEN-104    | TFT Screen DPI                            |
+| GEN-105    | Project Directory                         |
+| GEN-106    | Target’s Image Directory                  |
+| GEN-107    | Screen Margins                            |
+| GEN-108    | Horizontal Spacing                        |
+| GEN-109    | Vertical Spacing                          |
+| GEN-110    | MAX_STR                                   |
+| GEN-111    | Recent Colors                             |
+| GEN-112    | Rotation                                  |
+| GEN-113    | Source Image Directory                    |
+| GEN-116    | Use Background Image?                     |
+| GEN-117    | Background Image                          |
+| GEN-118    | Background Image File Name                |
+| GEN-119    | Insert Adafruit_GFX.h?                    |
+| GEN-120    | Backward Compatibility                    |
+| GEN-121    | Recent File List                          |
+| GEN-130    | Width  of App Window                      |
+| GEN-131    | Height of App Window                      |
+| GEN-132    | Width  of TFT Simulation Window           |
+| GEN-133    | Height of TFT Simulation Window           |
+| GEN-134    | Width  of Property View Window            |
+| GEN-135    | Height of Property View Window            |
+| GRID-100   | Grid                                      |
+| GRID-101   | Grid Snap To                              |
+| GRID-102   | Grid Minor Width                          |
+| GRID-103   | Grid Minor Height                         |
+| GRID-104   | Grid Major Width                          |
+| GRID_105   | Grid Major Height                         |
+| GRID-106   | Grid State                                |
+| GRPH-100   | Maximum Points                            |
+| GRPH-102   | Graph Style                               |
+| LINE-100   | Line Length                               |
+| LINE-101   | is Vertical?                              |
+| LIST-100   | Text Margin Width                         |
+| LIST-101   | Text Margin Height                        |
+| LIST-102   | Default Selected Item                     |
+| LIST-103   | Item List                                 |
+| LIST-104   | Storage Size                              |
+| LIST-106   | Item Gap                                  |
+| LIST-107   | Item Gap Color                            |
+| IBTN-100   | Image                                     |
+| IBTN-101   | Image When Selected                       |
+| IBTN-102   | Image defines                             |
+| IBTN-103   | Select Image defines                      |
+| IBTN-104   | Image Format                              |
+| IBTN-107   | Transparency                              |
+| IBTN-108   | Image Extern                              |
+| IBTN-109   | Select Image Extern                       |
+| IBTN-110   | Image Memory Type                         |
+| IBTN-111   | Select Image Memory Type                  |
+| IMG-100    | Image                                     |
+| IMG-101    | Image defines                             |
+| IMG-102    | Image Format                              |
+| IMG-107    | Image Transparency                        |
+| IMG-108    | Image Extern                              |
+| IMG-109    | Image Memory Type                         |
+| KEY-102    | Keypad ENUM                               |
+| KEY-019    | Keypad EREF                               |
+| PAD-100    | Floating Point                            |
+| PAD-101    | Minus Sign                                |
+| RBTN-100   | Checked?                                  |
+| RBTN-101   | Group ID                                  |
+| RBTN-305   | Check Mark Color                          |
+| RING-100   | Starting Angle                            |
+| RING-101   | Angular Range                             |
+| RING-102   | Direction Clockwise?                      |
+| RING-103   | Min                                       |
+| RING-104   | Max                                       |
+| RING-105   | Starting Value                            |
+| RING-106   | Number of Segments                        |
+| RING-107   | Line Thickness                            |
+| RING-108   | Use Gradient Color                        |
+| RING-109   | Active Flat Color                         |
+| RING-110   | Active Gradient Color Start               |
+| RING-111   | Active Gradient Color End                 |
+| RING-112   | Inactive Color                            |
+| SLD-100    | Min                                       |
+| SLD-101    | Max                                       |
+| SLD-102    | Value                                     |
+| SLD-103    | Thumb Sz                                  |
+| SLD-104    | Vertical?                                 |
+| SLD-105    | Tick Divisions                            |
+| SLD-106    | Tick Size                                 |
+| SLD-107    | Trim Style                                |
+| SPIN-100   | Increment                                 |
+| SPIN-101   | Button Size                               |
+| TXT-200    | Font                                      |
+| TXT-201    | Text                                      |
+| TXT-202    | Label                                     |
+| TXT-203    | UTF8                                      |
+| TXT-204    | Fill Enabled                              |
+| TXT-205    | External Storage Size                     |
+| TXT-207    | Text Alignment (old do not use)           |
+| TXT-208    | Wrap Text                                 |
+| TXT-209    | Text Rows                                 |
+| TXT-210    | Text Columns                              |
+| TXT-211    | Font Enum                                 |
+| TXT-212    | Text Margin                               |
+| TXT-213    | Text Alignment                            |
+| TBNT-101   | Jump/Popup To Page ENUM                   |
+| TBNT-103   | Hide Popup Page Function                  |
+| TBNT-104   | Show Popup Page ENUM                      |

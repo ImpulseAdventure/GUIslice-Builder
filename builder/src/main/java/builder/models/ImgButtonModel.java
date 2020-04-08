@@ -69,12 +69,11 @@ public class ImgButtonModel extends WidgetModel {
   static private final int PROP_MEMORY_SEL      = 14;
   static private final int PROP_FORMAT          = 15;
   static private final int PROP_TRANSPARENCY    = 16;
-  static private final int PROP_CHANGE_PAGE     = 17;
-  static private final int PROP_POPUP_SHOW      = 18;
-  static private final int PROP_PAGE            = 19;
-  static private final int PROP_POPUP_HIDE      = 20;
-  static private final int PROP_FRAME_EN        = 21;
-  static private final int PROP_FRAME_COLOR     = 22;
+  static private final int PROP_JUMP_PAGE       = 17;
+  static private final int PROP_POPUP_PAGE      = 18;
+  static private final int PROP_POPUP_HIDE      = 19;
+  static private final int PROP_FRAME_EN        = 20;
+  static private final int PROP_FRAME_COLOR     = 21;
 
   /** The Property Defaults */
   static public  final String  DEF_IMAGE             = "";
@@ -87,9 +86,6 @@ public class ImgButtonModel extends WidgetModel {
   static public  final String  DEF_MEMORY_SEL        = "";
   static public  final String  DEF_FORMAT            = "";
   static public  final Boolean DEF_TRANSPARENCY      = Boolean.FALSE;
-  static public  final Boolean DEF_CHANGE_PAGE       = Boolean.FALSE;
-  static public  final Boolean DEF_POPUP_SHOW        = Boolean.FALSE;
-  static public  final String  DEF_PAGE              = "";
   static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = Color.WHITE;
@@ -142,7 +138,7 @@ public class ImgButtonModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.IMAGEBUTTON;
-    data = new Object[23][5];
+    data = new Object[22][5];
     
     initCommonProps(0, 0);
     
@@ -165,9 +161,8 @@ public class ImgButtonModel extends WidgetModel {
     initProp(PROP_FORMAT, String.class, "IBTN-104", Boolean.FALSE,"Image Format",DEF_FORMAT);
     initProp(PROP_TRANSPARENCY, Boolean.class, "IBTN-107", Boolean.FALSE,"Transparent?",DEF_TRANSPARENCY);
 
-    initProp(PROP_CHANGE_PAGE, Boolean.class, "TBTN-100", Boolean.FALSE,"Jump to Page?",DEF_CHANGE_PAGE);
-    initProp(PROP_POPUP_SHOW, Boolean.class, "IBTN-105", Boolean.FALSE,"Show Popup Page?",DEF_POPUP_SHOW);
-    initProp(PROP_PAGE, String.class, "IBNT-106", Boolean.TRUE,"Jump/Popup Page Enum",DEF_PAGE);
+    initProp(PROP_JUMP_PAGE, String.class, "TBNT-101", Boolean.FALSE,"Jump Page ENUM","");
+    initProp(PROP_POPUP_PAGE, String.class, "TBTN-104", Boolean.TRUE,"Popup Page Enum","");
     initProp(PROP_POPUP_HIDE, Boolean.class, "TBTN-103", Boolean.FALSE,"Hide Popup Page?",DEF_POPUP_HIDE);
 
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
@@ -351,7 +346,7 @@ public class ImgButtonModel extends WidgetModel {
           return;
         }
       }
-      if (row == PROP_PAGE) {
+      if (row == PROP_POPUP_PAGE) {
         String pageEnum = (String)value;
         if (!Controller.getInstance().isValidPageEnum(pageEnum)) {
           JOptionPane.showMessageDialog(null, "You must select an existing Page ENUM like: E_PG_MAIN.", 
@@ -380,64 +375,50 @@ public class ImgButtonModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, 1);
-    if (row == PROP_CHANGE_PAGE) {
-      if (isChangePage()) {
-        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    if (row == PROP_JUMP_PAGE) {
+      if (getJumpPage().isEmpty()) {
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
         data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
       } else {
-        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_PAGE][PROP_VAL_VALUE]="";
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
         data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
       }
-      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_POPUP_SHOW, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
     }
-    if (row == PROP_POPUP_SHOW) {
-      if (isShowPopup()) {
-        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+    if (row == PROP_POPUP_PAGE) {
+      if (getPopupPage().isEmpty()) {
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
         data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
-      } else {
-        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_PAGE][PROP_VAL_VALUE]="";
         data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+      } else {
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
       }
-      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_CHANGE_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_JUMP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
     }
     if (row == PROP_POPUP_HIDE) {
       if (isHidePopup()) {
-        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
       } else {
-        data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]=Boolean.FALSE;
-        data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_PAGE][PROP_VAL_VALUE]="";
-        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
       }
-      fireTableCellUpdated(PROP_CHANGE_PAGE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_PAGE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_POPUP_SHOW, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_JUMP_PAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_POPUP_PAGE, COLUMN_VALUE);
     }
     if (row == PROP_FRAME_EN) {
       if (isFrameEnabled()) {
@@ -466,24 +447,6 @@ public class ImgButtonModel extends WidgetModel {
   }
 
   /**
-   * Checks if is change page funct.
-   *
-   * @return true, if is change page funct
-   */
-  public boolean isChangePage() {
-    return ((Boolean) data[PROP_CHANGE_PAGE][PROP_VAL_VALUE]).booleanValue();
-  }
-
-  /**
-   * Checks if is popup page funct.
-   *
-   * @return true, if is popup page funct
-   */
-  public boolean isShowPopup() {
-    return ((Boolean) data[PROP_POPUP_SHOW][PROP_VAL_VALUE]).booleanValue();
-  }
-
-  /**
    * Checks if is hide popup page funct.
    *
    * @return true, if is hide popup page funct
@@ -497,8 +460,17 @@ public class ImgButtonModel extends WidgetModel {
    *
    * @return the change page enum
    */
-  public String getChangePageEnum() {
-    return ((String) data[PROP_PAGE][PROP_VAL_VALUE]);
+  public String getJumpPage() {
+    return ((String) data[PROP_JUMP_PAGE][PROP_VAL_VALUE]);
+  }
+
+  /**
+   * Gets the change page enum.
+   *
+   * @return the change page enum
+   */
+  public String getPopupPage() {
+    return ((String) data[PROP_POPUP_PAGE][PROP_VAL_VALUE]);
   }
 
   /**
@@ -760,31 +732,101 @@ public class ImgButtonModel extends WidgetModel {
   @Override
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
-    super.readModel(in,  widgetType);
+//  System.out.println("WM readModel() " + getKey());
+    if (widgetType != null)
+      this.widgetType = widgetType;
+    bSendEvents = in.readBoolean();
+//  System.out.println("bSendEvents: " + bSendEvents);
+    int rows = in.readInt();
+    String metaID = null;
+    Object objectData = null;
+    int row;
+//  System.out.println("WM rows: " + rows);
+
+    // in case of upgrade make sure we start fresh
+    data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
+    data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
+
+    /*
+     * This is complicated because I decided to remove two booleans
+     * Jump to Page? and Show Popup Page? and replace them
+     * with simply storing the Jump Page Enum and Popup Page Enum.
+     * This avoids the case where someone sets one of the values true
+     * but never fills in the page enum to change to.
+     * This is further complicated by me changing the meta-ids to 
+     * match the ones used inside TxtButtonModel.  Doing so does
+     * however make code generation easier.
+     * Nevertheless it does make it hard to do an update to a project 
+     * with the old booleans and meta-ids.
+     */
+    
+    boolean bPopup = false;
+    boolean bJump = false;
+    boolean bUpgradePage = false;
+    String pageEnum = "";
+    for (int i = 0; i < rows; i++) {
+      metaID = (String) in.readObject();
+      objectData = in.readObject();
+      if (metaID.equals("TBTN-100")) {
+        if (((Boolean)objectData).booleanValue()) {
+          bJump = true;
+          continue;
+        }
+      }
+      if (metaID.equals("IBTN-105")) {
+        if (((Boolean)objectData).booleanValue()) {
+          bPopup = true;
+          continue;
+        }
+      }
+      if (metaID.equals("IBNT-106")) {
+        if (((String) objectData) != null &&
+            !((String) objectData).isEmpty()) {
+          pageEnum = ((String) objectData); 
+        }
+        bUpgradePage = true;
+        continue;
+      }
+      row = mapMetaIDtoProperty(metaID);
+      if (row >= 0) {
+        data[row][PROP_VAL_VALUE] = objectData;
+        
+//  System.out.println(data[row][PROP_VAL_NAME].toString() + ": " +
+//           data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
+        
+      }
+    }
+    if (bJump) {
+      data[PROP_JUMP_PAGE][PROP_VAL_VALUE]=pageEnum;
+      data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
+      data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+    } else if (bPopup) {
+      data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
+      data[PROP_POPUP_PAGE][PROP_VAL_VALUE]=pageEnum;
+      data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+    } else if (bUpgradePage) {
+      data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
+      data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
+    }
     String imageString = (String)in.readObject();
     image = CommonUtils.getInstance().decodeToImage(imageString);
     String imageSelectedString = (String)in.readObject();
     imageSelected = CommonUtils.getInstance().decodeToImage(imageSelectedString);
-    if (isChangePage()) {
-      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+    if (!getJumpPage().isEmpty()) {
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else if (isShowPopup()) {
-      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+    } else if (!getPopupPage().isEmpty()) {
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
     } else if (isHidePopup()) {
-      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
-      data[PROP_CHANGE_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_POPUP_SHOW][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]="";
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]="";
     }
     if (getDefine() != null && !getDefine().isEmpty()) {
       data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;

@@ -26,6 +26,8 @@
 package builder.codegen;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import builder.common.CommonUtils;
 
 /**
  * The Class TemplateManager handles all functions related to 
@@ -94,13 +98,20 @@ public class TemplateManager {
    */
   public void storeTemplates(String templateFileName) throws CodeGenException {
     templateMap = new HashMap<String, Integer>(64);
-    String pathName = RESOURCES_PATH + templateFileName;
-    BufferedReader tbr = new BufferedReader(new InputStreamReader(
-                  this.getClass().getResourceAsStream(pathName)));
+//    String pathName = RESOURCES_PATH + templateFileName;
+    String pathName = CommonUtils.getInstance().getWorkingDir() +
+        "templates" + System.getProperty("file.separator") 
+        + templateFileName;
+    File file = new File(pathName);
+    BufferedReader tbr=null;
+//    BufferedReader tbr = new BufferedReader(new InputStreamReader(
+//                  this.getClass().getResourceAsStream(pathName)));
     String l = "";
     String templateName = "";
     int i = 0;
     try {
+      tbr = new BufferedReader(new InputStreamReader(
+          new FileInputStream(file), "UTF8"));
       while((templateName = tbr.readLine()) != null) {
         if (templateName.equals(END_TEMPLATE))
           break;
@@ -118,7 +129,7 @@ public class TemplateManager {
       throw new CodeGenException(e.toString());
     } finally {
       try {
-        tbr.close();
+        if (tbr != null) tbr.close();
       } catch (IOException e) {
         throw new CodeGenException(e.toString());
       }
@@ -239,6 +250,43 @@ public class TemplateManager {
    */
   public void codeWriter(StringBuilder sBd, List<String> lines) {
     for (String l : lines) {
+      sBd.append(l);
+      sBd.append(System.lineSeparator());
+    }
+  }
+ 
+  /**
+   * codeReplaceLine 
+   *    Writes out code block replacing one line with a new one.
+   * 
+   * @param sBd
+   * @param lines
+   * @param replacement
+   * @param line_no
+   */
+  public void codeReplaceLine(StringBuilder sBd, List<String> lines, 
+      String replacement, int line_no) {
+    int n = -1;
+    for (String l : lines) {
+      n++;
+      if (n == line_no) {
+        sBd.append(replacement);
+      } else {
+        sBd.append(l);
+      }
+      sBd.append(System.lineSeparator());
+    }
+  }
+ 
+  public void codeAppendLine(StringBuilder sBd, List<String> lines, 
+      String replacement) {
+    int n = -1;
+    for (String l : lines) {
+      n++;
+      if (lines.size() == n ) {
+        sBd.append(replacement);
+        sBd.append(System.lineSeparator());
+      } 
       sBd.append(l);
       sBd.append(System.lineSeparator());
     }

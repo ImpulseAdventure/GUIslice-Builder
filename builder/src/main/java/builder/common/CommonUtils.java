@@ -228,6 +228,19 @@ public class CommonUtils {
   }
 
   /**
+   * Gets the resizable icon.
+   *
+   * @param resource
+   *          the resource
+   * @return the resizable icon
+   */
+  public ResizableIcon getResizableSmallIcon(String resource) {
+
+    return ImageWrapperResizableIcon.getIcon(Builder.class.getClassLoader().getResource(resource),
+        new Dimension(24, 24));
+  }
+
+  /**
    * getWorkingDir - attempts to find the directory where our executable is
    * running.
    *

@@ -98,7 +98,7 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
     add(cards);
     CommonUtils cu = CommonUtils.getInstance();
     this.setTitle("Property View");
-    this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
+    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png"));
     int width = 227;
     if (GeneralEditor.getInstance().getPropWinWidth() > 0) 
       width = GeneralEditor.getInstance().getPropWinWidth();
