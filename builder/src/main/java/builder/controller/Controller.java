@@ -202,7 +202,7 @@ public class Controller extends JInternalFrame
       public void componentResized(ComponentEvent e) {
         GeneralEditor.getInstance().setTFTWinWidth(getWidth());
         GeneralEditor.getInstance().setTFTWinHeight(getHeight());
-        Builder.splitPane.setDividerLocation(getWidth());
+//        Builder.splitPane.setDividerLocation(getWidth());
       }
     });
 
