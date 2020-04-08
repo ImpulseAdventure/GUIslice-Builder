@@ -29,9 +29,13 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -434,7 +438,9 @@ public class CodeGenerator {
           sTemplateFileName = appFullPath;
           sOutputFileName = appName;
           code = workFlow_Linux.process(sBd);
-          bw = new BufferedWriter(new FileWriter(appFile));
+//          bw = new BufferedWriter(new FileWriter(appFile));
+          bw = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(appFile), "UTF-8"));
           bw.write(code.toString());
           bw.flush();
           bw.close();
@@ -464,7 +470,9 @@ public class CodeGenerator {
           // run our pipe line
           sOutputFileName = appName;
           code = workFlow_Compat.process(sBd);
-          bw = new BufferedWriter(new FileWriter(appFile));
+//          bw = new BufferedWriter(new FileWriter(appFile));
+          bw = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(appFile), "UTF-8"));
           bw.write(code.toString());
           bw.flush();
           bw.close();
@@ -512,7 +520,9 @@ public class CodeGenerator {
           // run our pipe line
           sOutputFileName = appName;
           code = workFlow_ArduinoIno.process(sBd);
-          bw = new BufferedWriter(new FileWriter(appFile));
+//          bw = new BufferedWriter(new FileWriter(appFile));
+          bw = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(appFile), "UTF-8"));
           bw.write(code.toString());
           bw.flush();
           bw.close();
@@ -521,7 +531,9 @@ public class CodeGenerator {
           sTemplateFileName = hdrTemplate;  // for any error messages
           sOutputFileName = hdrName;
           code = workFlow_ArduinoHdr.process(sBd);
-          bw = new BufferedWriter(new FileWriter(hdrFile));
+//          bw = new BufferedWriter(new FileWriter(hdrFile));
+          bw = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(hdrFile), "UTF-8"));
           bw.write(code.toString());
           bw.flush();
           bw.close();
@@ -541,17 +553,21 @@ public class CodeGenerator {
    * @throws IOException
    */
   public StringBuilder copyFileToBuffer(File file) throws CodeGenException, IOException {
-    FileReader fr = new FileReader(file);
+//    FileReader fr = new FileReader(file);
+    BufferedReader br = new BufferedReader(
+        new InputStreamReader(
+            new FileInputStream(file), "UTF8"));
+  
     // open our source code template and copy its contents into a StringBuider for our workflow.
     StringBuilder sBd = new StringBuilder();
-    BufferedReader br = new BufferedReader(fr);
+//    BufferedReader br = new BufferedReader(fr);
     String line  = "";
     while ((line = br.readLine()) != null) {
       sBd.append(line);
       sBd.append(System.lineSeparator());
     } 
     br.close();
-    fr.close();
+//    fr.close();
     return sBd;
   }
  

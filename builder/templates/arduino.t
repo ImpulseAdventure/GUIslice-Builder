@@ -75,7 +75,7 @@ $<CALLBACK>
 <BUTTON_CB_CHGPAGE>
       case $<COM-002>:
         //TODO- Check the code to see what else you may need to add
-        gslc_SetPageCur(&m_gui,$<COM-000>);
+        gslc_SetPageCur(&m_gui,$<TBTN-101>);
         break;
 <STOP>
 <BUTTON_CB_INPUT>
@@ -91,7 +91,7 @@ $<CALLBACK>
 <BUTTON_CB_SHOWPOPUP>
       case $<COM-002>:
         //TODO- Check the code to see what else you may need to add
-        gslc_PopupShow(&m_gui, $<COM-000>, true);
+        gslc_PopupShow(&m_gui, $<TBTN-104>, true);
         break;
 <STOP>
 <BUTTON_CB_HIDEPOPUP>
@@ -281,6 +281,10 @@ gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
 #if defined(DRV_DISP_TFT_ESPI)
   #error Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
 #endif 
+#include <Adafruit_GFX.h>
+// Note that these files are located within the Adafruit-GFX library folder:
+<STOP>
+<FONT_ADAFRUIT_AND_TFT_ESPI>
 #include <Adafruit_GFX.h>
 // Note that these files are located within the Adafruit-GFX library folder:
 <STOP>
