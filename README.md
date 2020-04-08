@@ -22,6 +22,23 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.13.b024
+
+Update to User Guide for version 0.13.b024
+
+Support for new Themes based upon the FlatLaf project also supporting user loading of Intellij Themes.  The existing custom themes have been removed due to the lack of support. See Appendix D of the new User Guide.
+
+Further enhancements to the code generation of Button callbacks.  See Appendix E of the User Guide for more details.
+
+Button callbacks "Jump to Page? True/False" and "Show Popup Page? True/False" have been replaced with simply specifying the Target Page to go to.  See Section 4.18 Text Button of the User Guide for more detalls.
+
+Code Generation templates are now exposed and editable for customization. See Appendix F of the User Guide.
+
+##### Bug Fixes
+ - Bug No. 154 Jump to Page?=true for button then not setting PAGE ENUM crashes code gen
+ - Bug No. 153 Unable to generate UTF-8 character Literals
+ - Bug No. 152 Windows 7 users can't resize Builder's TFT Simulation display
+ 
 #### Changes for 0.13.b023
 Enhancement that will now save and restore window frame and panel resizing.
 

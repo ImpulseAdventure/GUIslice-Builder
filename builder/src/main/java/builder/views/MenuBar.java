@@ -32,7 +32,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
+//import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -41,7 +41,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import builder.Builder;
+//import builder.Builder;
+import builder.common.CommonUtils;
 
 /**
  * The Class MenuBar.
@@ -67,7 +68,7 @@ public class MenuBar extends JMenuBar {
   /** The about menu item. */
   private JMenuItem miAbout;
   
-  private JMenuItem miZoomIn, miZoomOut, miGrid;
+  public static JMenuItem miZoomIn, miZoomOut, miGrid;
   
   /**
    * Instantiates a new menu bar.
@@ -86,54 +87,69 @@ public class MenuBar extends JMenuBar {
     mbFile = new JMenu("File");
     
     miNew = new JMenuItem("New", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/new.png")));
+        CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/new.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/new.png")));
     miNew.setActionCommand("new");
     miNew.setAccelerator(KeyStroke.getKeyStroke(
         'N', ActionEvent.CTRL_MASK));
+    miNew.setToolTipText("Create New Project File");
     mbFile.add(miNew);
     
+
     miOpen = new JMenuItem("Open", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/open.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/open.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/open.png")));
     miOpen.setActionCommand("open");
     miOpen.setAccelerator(KeyStroke.getKeyStroke(
         'O', ActionEvent.CTRL_MASK));
+    miOpen.setToolTipText("Open Project File");
     mbFile.add(miOpen);
     
     miClose = new JMenuItem("Close", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/close.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/close.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/close.png")));
     miClose.setActionCommand("close");
     miClose.setAccelerator(KeyStroke.getKeyStroke(
         'W', ActionEvent.CTRL_MASK));
+    miClose.setToolTipText("Close Project File");
     mbFile.add(miClose);
     
     miSave = new JMenuItem("Save", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/save.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/save.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/save.png")));
     miSave.setActionCommand("save");
     miSave.setAccelerator(KeyStroke.getKeyStroke(
         'S', ActionEvent.CTRL_MASK));
+    miSave.setToolTipText("Save Project File");
     mbFile.add(miSave);
     
     miSaveAs = new JMenuItem("Save As...", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/saveas.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/saveas.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/saveas.png")));
     miSaveAs.setActionCommand("saveas");
+    miSaveAs.setToolTipText("Save As Renaming Project File");
     mbFile.add(miSaveAs);
     
     mbFile.add(new JSeparator()); 
     
     miCode = new JMenuItem("Generate Code", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/export.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/export.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/export.png")));
     miCode.setActionCommand("code");
     miCode.setAccelerator(KeyStroke.getKeyStroke(
         'G', ActionEvent.CTRL_MASK));
+    miCode.setToolTipText("Create C Code Output Files");
     mbFile.add(miCode);
     
     mbFile.add(new JSeparator()); 
     
     miExit = new JMenuItem("Exit", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/file/logout.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/file/logout.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/file/logout.png")));
     miExit.setActionCommand("exit");
     miExit.setAccelerator(KeyStroke.getKeyStroke(
         'E', ActionEvent.CTRL_MASK));
+    miExit.setToolTipText("Exit Program");
     mbFile.add(miExit);
     
     this.add(mbFile);
@@ -142,20 +158,29 @@ public class MenuBar extends JMenuBar {
   public void initViewMenus() {
     mbView = new JMenu("View");
     miGrid = new JMenuItem("Grid",
-        new ImageIcon(Builder.class.getResource("/resources/icons/view/grid.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/view/grid.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/view/grid.png")));
     miGrid.setActionCommand("grid");
     miGrid.setAccelerator(KeyStroke.getKeyStroke(
         'L', ActionEvent.CTRL_MASK));
+    miGrid.setToolTipText("Toggle Grid ON/OFF");
     mbView.add(miGrid);
     miZoomIn = new JMenuItem("Zoom In",
-        new ImageIcon(Builder.class.getResource("/resources/icons/view/zoom_in.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/view/zoom_in.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/view/zoom_in.png")));
     miZoomIn.setActionCommand("zoomin");
     miZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
+    miZoomIn.setToolTipText("Zoom In TFT Simulation page");
     mbView.add(miZoomIn);
     miZoomOut = new JMenuItem("Zoom Out",
-        new ImageIcon(Builder.class.getResource("/resources/icons/view/zoom_out.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/view/zoom_out.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/view/zoom_out.png")));
+    miZoomOut.setDisabledIcon(
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/view/disable_zoom_out.png"));
+    miZoomOut.setEnabled(false);
     miZoomOut.setActionCommand("zoomout");
     miZoomOut.setAccelerator(KeyStroke.getKeyStroke('-', ActionEvent.CTRL_MASK));
+    miZoomOut.setToolTipText("Zoom Out TFT Simulation page");
     mbView.add(miZoomOut);
     this.add(mbView);
   }
@@ -167,24 +192,30 @@ public class MenuBar extends JMenuBar {
     mbEdit = new JMenu("Edit");
     
     miCopy = new JMenuItem("Copy", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/edit/copy.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/copy.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/edit/copy.png")));
     miCopy.setActionCommand("copy");
     miCopy.setAccelerator(KeyStroke.getKeyStroke(
         'C', ActionEvent.CTRL_MASK));
+    miCopy.setToolTipText("Copy element selections to clipboard.");
     mbEdit.add(miCopy);
 
     miCut = new JMenuItem("Cut", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/edit/cut.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/cut.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/edit/cut.png")));
     miCut.setActionCommand("cut");
     miCut.setAccelerator(KeyStroke.getKeyStroke(
         'X', ActionEvent.CTRL_MASK));
+    miCut.setToolTipText("Cut element selections from page.");
     mbEdit.add(miCut);
 
     miPaste = new JMenuItem("Paste", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/edit/paste.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/paste.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/edit/paste.png")));
     miPaste.setActionCommand("paste");
     miPaste.setAccelerator(KeyStroke.getKeyStroke(
         'V', ActionEvent.CTRL_MASK));
+    miPaste.setToolTipText("Paste element(s) from the clipboard.");
     mbEdit.add(miPaste);
 
     mbEdit.add(new JSeparator()); 
@@ -203,7 +234,9 @@ public class MenuBar extends JMenuBar {
      *  but No, can't cast from AbstractAction to Action
      *  so I create a class and extend instead.
      */
-    Icon deleteIcon = new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png"));
+//    Icon deleteIcon = new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png"));
+    Icon deleteIcon = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/delete.png");
+
     DeleteAction deleteAction = new DeleteAction("Delete", deleteIcon);
     /*
      *  Nothing happens unless we also place the KeyStroke into 
@@ -214,7 +247,8 @@ public class MenuBar extends JMenuBar {
         keyStrokeDeleteCtrl);
     // Obviously, we need to create the menuitem
     miDelete = new JMenuItem("Delete", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/delete.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png")));
     // set menuitem to use our delete action
     miDelete.setAction(deleteAction);
     /*
@@ -226,13 +260,16 @@ public class MenuBar extends JMenuBar {
     // Finally we add the second keyStroke to the input map and DONE!
     im.put(keyStrokeDeleteCmd, im.get(keyStrokeDeleteCtrl));
     // well we do need to add the menuitem to our menu...
+    miDelete.setToolTipText("Delete selected element(s) from your project file.");
     mbEdit.add(miDelete);
     
     mbEdit.add(new JSeparator()); 
     
     miOptions = new JMenuItem("Options", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/misc/options.png")));
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/options.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/misc/options.png")));
     miOptions.setActionCommand("options");
+    miOptions.setToolTipText("View/Edit User Preferences.");
     mbEdit.add(miOptions);
     
     this.add(mbEdit);
@@ -245,7 +282,8 @@ public class MenuBar extends JMenuBar {
     mbHelp = new JMenu("Help");
     
     miAbout= new JMenuItem("About", 
-        new ImageIcon(Builder.class.getResource("/resources/icons/misc/about.png")));
+        CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/about.png"));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/misc/about.png")));
     miAbout.setActionCommand("about");
     mbHelp.add(miAbout);
     

@@ -202,7 +202,6 @@ public class Controller extends JInternalFrame
       public void componentResized(ComponentEvent e) {
         GeneralEditor.getInstance().setTFTWinWidth(getWidth());
         GeneralEditor.getInstance().setTFTWinHeight(getHeight());
-        Builder.splitPane.setDividerLocation(getWidth());
       }
     });
 
@@ -223,7 +222,7 @@ public class Controller extends JInternalFrame
     this.add(tabbedPane,BorderLayout.CENTER);
     this.setTitle(title);
     CommonUtils cu = CommonUtils.getInstance();
-    this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
+    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png"));
 //    this.pack();
     this.setVisible(true);
   }

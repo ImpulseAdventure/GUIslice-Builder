@@ -210,7 +210,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     add(scrollPane);
     this.setTitle("Tree View");        
      CommonUtils cu = CommonUtils.getInstance();
-    this.setFrameIcon(cu.getResizableIcon("resources/icons/guislicebuilder.png"));
+    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png"));
     this.setPreferredSize(new Dimension(210, 400));
     this.pack();
     this.setVisible(true);

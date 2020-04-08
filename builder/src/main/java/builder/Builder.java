@@ -36,10 +36,12 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -53,37 +55,29 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import builder.common.CommonUtils;
+import builder.common.ThemeInfo;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
-import builder.models.GeneralModel;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
 import builder.views.Ribbon;
 import builder.views.TreeView;
 
-import org.pushingpixels.substance.api.skin.AutumnSkin;
-import org.pushingpixels.substance.api.skin.BusinessBlackSteelSkin;
-import org.pushingpixels.substance.api.skin.BusinessBlueSteelSkin;
-import org.pushingpixels.substance.api.skin.ChallengerDeepSkin;
-import org.pushingpixels.substance.api.skin.CremeCoffeeSkin;
-import org.pushingpixels.substance.api.skin.DustSkin;
-import org.pushingpixels.substance.api.skin.GraphiteAquaSkin;
-import org.pushingpixels.substance.api.skin.MarinerSkin;
-import org.pushingpixels.substance.api.skin.MistAquaSkin;
-import org.pushingpixels.substance.api.skin.OfficeBlack2007Skin;
-import org.pushingpixels.substance.api.skin.OfficeBlue2007Skin;
-import org.pushingpixels.substance.api.skin.OfficeSilver2007Skin;
-import org.pushingpixels.substance.api.skin.SaharaSkin;
-
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.IntelliJTheme;
 
 /**
  * GUIsliceBuilder is the main class of the application.
@@ -116,7 +110,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.13.b023";
+  public static final String VERSION = "0.13.b024";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-13";
@@ -139,6 +133,9 @@ public class Builder  extends JDesktopPane {
   /** The frame. */
   private Ribbon frame;
   
+  /** The themes. */
+  public static List<ThemeInfo> themes;
+  
   /** The status bar */
   public JPanel statusBar;
   public JLabel welcomeDate;
@@ -158,9 +155,6 @@ public class Builder  extends JDesktopPane {
   
   public static String NO_OPTIONAL_LAFS = "NO_OPTIONAL_LAFS";
   
-  /** The boolean indicating SubstanceLookAndFeel is supported */
-  public static boolean isSubstanceSupported = false;
-  
   public static JSplitPane splitPane;
   
   /**
@@ -179,7 +173,7 @@ public class Builder  extends JDesktopPane {
     }
     String osName = System.getProperty("os.name").toLowerCase();
     isMAC = osName.startsWith("mac os x");
-    isSubstanceSupported = osName.contains("win");
+    loadThemes();
 /*  Use this code for Java 9 and above
     if (version < 9) {
       String msg = String.format("Java 9 or higher is needed to run. Yours is %.2f", version);
@@ -389,104 +383,76 @@ public class Builder  extends JDesktopPane {
   
   public static void setLookAndFeel(String selectedLaf) {
     try {
-      if (isSubstanceSupported) {
-        switch (selectedLaf) {
-        case GeneralModel.LAF_AUTUMNSKIN:
-          SubstanceLookAndFeel.setSkin(new AutumnSkin());
-          break;
-        case GeneralModel.LAF_BUSINESSBLACKSTEELSKIN:
-          SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
-          break;
-        case GeneralModel.LAF_BUSINESSBLUESTEELSKIN:
-          SubstanceLookAndFeel.setSkin(new BusinessBlueSteelSkin());
-          break;
-        case GeneralModel.LAF_CHALLENGERDEEPSKIN:
-          SubstanceLookAndFeel.setSkin(new ChallengerDeepSkin());
-          break;
-        case GeneralModel.LAF_CREMECOFFEESKIN:
-          SubstanceLookAndFeel.setSkin(new CremeCoffeeSkin());
-          break;
-        case GeneralModel.LAF_DUSTSKIN:
-          SubstanceLookAndFeel.setSkin(new DustSkin());
-          break;
-        case GeneralModel.LAF_GRAPHITEAQUASKIN:
-          SubstanceLookAndFeel.setSkin(new GraphiteAquaSkin());
-          break;
-        case GeneralModel.LAF_MARINERSKIN:
-          SubstanceLookAndFeel.setSkin(new MarinerSkin());
-          break;
-        case GeneralModel.LAF_MISTAQUASKIN:
-          SubstanceLookAndFeel.setSkin(new MistAquaSkin());
-          break;
-        case GeneralModel.LAF_OFFICEBLACK2007SKIN:
-          SubstanceLookAndFeel.setSkin(new OfficeBlack2007Skin());
-          break;
-        case GeneralModel.LAF_OFFICEBLUE2007SKIN:
-          SubstanceLookAndFeel.setSkin(new OfficeBlue2007Skin());
-          break;
-        case GeneralModel.LAF_OFFICESILVER2007SKIN:
-          SubstanceLookAndFeel.setSkin(new OfficeSilver2007Skin());
-          break;
-        case GeneralModel.LAF_SAHARASKIN:
-          SubstanceLookAndFeel.setSkin(new SaharaSkin());
-          break;
-        default:
-          UIManager.setLookAndFeel(selectedLaf);
-          break;
-        }
-      } else {
-        if (isSubstanceLookAndFeel(selectedLaf)) {
-          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } else {
-          UIManager.setLookAndFeel(selectedLaf);
+      // scan themes for a match
+      ThemeInfo themeInfo = null;
+      for (ThemeInfo ti : themes) {
+         if (ti.name.equals(selectedLaf)) {
+           themeInfo = ti;
+         }
+      }
+      if (themeInfo != null) {
+        if( themeInfo.lafClassName != null ) {
+          UIManager.setLookAndFeel( themeInfo.lafClassName );
+          return;
+        } else if( themeInfo.themeFile != null ) {
+          FlatLaf.install(IntelliJTheme.createLaf(new FileInputStream(themeInfo.themeFile)));
+          return;
         }
       }
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception ex) {
-      ex.printStackTrace();
+      try {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   } // end setLookAndFeel
-  
-  public static boolean isSubstanceLookAndFeel(String selectedLaf) {
-    boolean ret = true;
-    try {
-      switch(selectedLaf) {
-        case GeneralModel.LAF_AUTUMNSKIN:
-          break;
-        case GeneralModel.LAF_BUSINESSBLACKSTEELSKIN:
-          break;
-        case GeneralModel.LAF_BUSINESSBLUESTEELSKIN:
-          break;
-        case GeneralModel.LAF_CHALLENGERDEEPSKIN:
-          break;
-        case GeneralModel.LAF_CREMECOFFEESKIN:
-          break;
-        case GeneralModel.LAF_DUSTSKIN:
-          break;
-        case GeneralModel.LAF_GRAPHITEAQUASKIN:
-          break;
-        case GeneralModel.LAF_MARINERSKIN:
-          break;
-        case GeneralModel.LAF_MISTAQUASKIN:
-          break;
-        case GeneralModel.LAF_OFFICEBLACK2007SKIN:
-          break;
-        case GeneralModel.LAF_OFFICEBLUE2007SKIN:
-          break;
-        case GeneralModel.LAF_OFFICESILVER2007SKIN:
-          break;
-        case GeneralModel.LAF_SAHARASKIN:
-          break;
-        default:
-          ret = false;
-          break;
-      }
+/*  
+  public static void dumpUI(String name) {
+    System.out.println("Theme: " + name);
+    UIDefaults defaults = UIManager.getDefaults();
+    System.out.println(defaults.size()+ " properties defined !");
+    String[ ] colName = {"Key", "Value"};
+    String[ ][ ] rowData = new String[ defaults.size() ][ 2 ];
+    int i = 0;
+    for(Enumeration e = defaults.keys(); e.hasMoreElements(); i++){
+        Object key = e.nextElement();
+        rowData[ i ] [ 0 ] = key.toString();
+        rowData[ i ] [ 1 ] = ""+defaults.get(key);
+        System.out.println(rowData[i][0]+" ,, "+rowData[i][1]);
     }
-    catch (Exception ex) {
-        ex.printStackTrace();
+  }
+*/
+  public static void loadThemes() {
+    themes = new ArrayList<ThemeInfo>();
+    // add system look an feels
+    for (LookAndFeelInfo look_and_feel : UIManager.getInstalledLookAndFeels()) {
+      themes.add(new ThemeInfo(look_and_feel.getName(),
+        null, look_and_feel.getClassName()));
     }
-    return ret;
-  } // end isSubstanceLookAndFeel
-  
+
+    // add core themes next
+    themes.add( new ThemeInfo( "Flat Light"   , null, FlatLightLaf.class.getName() ) );
+    themes.add( new ThemeInfo( "Flat Dark"    , null, FlatDarkLaf.class.getName() ) );
+    themes.add( new ThemeInfo( "Flat IntelliJ", null, FlatIntelliJLaf.class.getName() ) );
+    themes.add( new ThemeInfo( "Flat Darcula" , null, FlatDarculaLaf.class.getName() ) );
+
+    // now add Intellij Themes
+    String themesPath = CommonUtils.getInstance().getWorkingDir() +
+        "templates" + System.getProperty("file.separator") + "intellijthemes";
+    File directory = new File(themesPath);
+    File[] themeFiles = directory.listFiles( (dir, name) -> name.endsWith( ".theme.json" ) );
+    if( themeFiles == null )
+      return;
+    for( File f : themeFiles ) {
+      String name = f.getName();
+      int n = name.indexOf(".theme.json");
+      name = name.substring(0, n);
+      themes.add(new ThemeInfo( name, f, null));
+    }
+    
+  }
   /**
    * The Class FrameListen traps the resize frame event so we can
    * reset our point mapping function to the new settings.

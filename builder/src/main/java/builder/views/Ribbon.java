@@ -215,9 +215,7 @@ public class Ribbon extends JRibbonFrame {
         mb.sendActionCommand("Ribbon", "open");
       }
     });
-    btn_open.setActionRichTooltip(new RichTooltip(
-        "Open", 
-        "Open project file"));
+//    btn_open.setToolTipText("Open Project File");
     this.getRibbon().addTaskbarComponent(btn_open);
 
     btn_close = new JCommandButton("",
@@ -230,9 +228,7 @@ public class Ribbon extends JRibbonFrame {
         mb.sendActionCommand("Ribbon", "close");
       }
     });
-    btn_close.setActionRichTooltip(new RichTooltip(
-        "Close", 
-        "Close project file"));
+//    btn_close.setToolTipText("Close Project File");
     this.getRibbon().addTaskbarComponent(btn_close);
 
     btn_save = new JCommandButton("",
@@ -359,7 +355,7 @@ public class Ribbon extends JRibbonFrame {
     });
     btn_delete.setActionRichTooltip(new RichTooltip(
         "Delete", 
-        "Delete widgets from your project file"));
+        "Delete selected element(s) from your project file."));
     this.getRibbon().addTaskbarComponent(btn_delete);
 
     this.getRibbon().addTaskbarComponent(
@@ -476,7 +472,7 @@ public class Ribbon extends JRibbonFrame {
       cu.getResizableIcon("resources/icons/edit/paste.png"));
     btn_paste.setActionRichTooltip(new RichTooltip(
       "Paste",
-      "Paste an element from the clipboard."));
+      "Paste element(s) from the clipboard."));
     btn_paste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -817,17 +813,17 @@ public class Ribbon extends JRibbonFrame {
    */
   public void initControls(JRibbonBand band) {
     btn_txtbtn = new JCommandButton("Text Button",
-      cu.getResizableIcon("resources/icons/controls/button_32x.png"));
-		btn_txtbtn.addActionListener(new ActionListener() {
-			@Override
-      public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "textbutton");
-			}
-		});
-		btn_txtbtn.setActionRichTooltip(new RichTooltip(
-        "Text Button",
-        "Add clickable element that has a textual label with frame and fill."));
-    band.addCommandButton(btn_txtbtn, TOP);
+        cu.getResizableIcon("resources/icons/controls/button_32x.png"));
+      btn_txtbtn.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "textbutton");
+        }
+      });
+      btn_txtbtn.setActionRichTooltip(new RichTooltip(
+          "Text Button",
+          "Add clickable element that has a textual label with frame and fill."));
+      band.addCommandButton(btn_txtbtn, TOP);
 
     btn_imgbtn = new JCommandButton("Image Button",
       cu.getResizableIcon("resources/icons/controls/imgbutton_32x.png"));

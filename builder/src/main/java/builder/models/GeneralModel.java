@@ -29,20 +29,18 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.table.TableCellEditor;
 
 import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
+import builder.common.ThemeInfo;
 import builder.tables.ImageCellEditor;
 
 /**
@@ -78,20 +76,21 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_MAX_STRING           = 19;
   public static final int PROP_ROTATION             = 20;
   public static final int PROP_BACKWARD_COMPAT      = 21;
-  public static final int PROP_IMAGE_DIR            = 22; // last folder used to load image
+  public static final int PROP_PRESERVE_BTN_CALLBACKS = 22;
+  public static final int PROP_IMAGE_DIR            = 23; // last folder used to load image
   // The following properties are hidden from users
-  public static final int PROP_RECENT_COLORS        = 23; // LRU of recent colors choosen
-  public static final int PROP_RECENT_FILES         = 24; // LRU of recent files choosen
+  public static final int PROP_RECENT_COLORS        = 24; // LRU of recent colors choosen
+  public static final int PROP_RECENT_FILES         = 25; // LRU of recent files choosen
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_SIZE_APP_WIDTH       = 25; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 26; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 27; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 28; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 29; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 30; 
+  public static final int PROP_SIZE_APP_WIDTH       = 26; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 27; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 28; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 29; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 30; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 31; 
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
@@ -115,48 +114,6 @@ public class GeneralModel extends WidgetModel {
   static public  final Integer DEF_ROTATION            = Integer.valueOf(-1);
   static public  final Boolean DEF_BACKWARD_COMPAT     = Boolean.valueOf(false);
   
-  /* Look and Feel */
-  public static final String LAF_AUTUMNSKIN             = "AutumnSkin";
-  public static final String LAF_BUSINESSBLACKSTEELSKIN = "BusinessBlackSteelSkin";
-  public static final String LAF_BUSINESSBLUESTEELSKIN  = "BusinessBlueSteelSkin";
-  public static final String LAF_CHALLENGERDEEPSKIN     = "ChallengerDeepSkin";
-  public static final String LAF_CREMECOFFEESKIN        = "CremeCoffeeSkin";
-  public static final String LAF_DUSTSKIN               = "DustSkin";
-  public static final String LAF_GRAPHITEAQUASKIN       = "GraphiteAquaSkin";
-  public static final String LAF_MARINERSKIN            = "MarinerSkin";
-  public static final String LAF_MISTAQUASKIN           = "MistAquaSkin";
-  public static final String LAF_MISTSILVERSKIN         = "MistSilverSkin";
-  public static final String LAF_OFFICEBLACK2007SKIN    = "OfficeBlack2007Skin";
-  public static final String LAF_OFFICEBLUE2007SKIN     = "OfficeBlue2007Skin";
-  public static final String LAF_OFFICESILVER2007SKIN   = "OfficeSilver2007Skin";
-  public static final String LAF_SAHARASKIN             = "SaharaSkin";
-
-  /** The type strings. */
-  static public String[] lafObjs = {
-    LAF_AUTUMNSKIN,
-    LAF_BUSINESSBLACKSTEELSKIN,
-    LAF_BUSINESSBLUESTEELSKIN,
-    LAF_CHALLENGERDEEPSKIN,
-    LAF_CREMECOFFEESKIN,
-    LAF_DUSTSKIN,
-    LAF_GRAPHITEAQUASKIN,
-    LAF_MARINERSKIN,
-    LAF_MISTAQUASKIN,
-    LAF_OFFICEBLACK2007SKIN,
-    LAF_OFFICEBLUE2007SKIN,
-    LAF_OFFICESILVER2007SKIN,
-    LAF_SAHARASKIN
-  };
-    
-  /** The themes. */
-  public static List<String> themes;
-  
-  /** The theme class names. */
-  public static List<String> themeClassNames;
-  
-  /** The idx theme. */
-  public static int idxTheme = 0;
-  
   /** The cb themes. */
   public static JComboBox<String> cbThemes;
   
@@ -171,9 +128,6 @@ public class GeneralModel extends WidgetModel {
   
   /** The default theme name */
   public static String defThemeName;
-
-  /** The default theme class */
-  public static String defThemeClass;
 
   /** The background image. */
   private BufferedImage image = null;
@@ -217,10 +171,10 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[31][5];
+    data = new Object[32][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Theme",defThemeName);
+    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Themes","");
     if (Builder.isMAC) {
       data[PROP_THEME][PROP_VAL_READONLY]= Boolean.TRUE;
     }
@@ -257,6 +211,8 @@ public class GeneralModel extends WidgetModel {
         "Screen Rotation [0-3 or -1 default]",DEF_ROTATION);
     initProp(PROP_BACKWARD_COMPAT, Boolean.class, "GEN-120", Boolean.FALSE,
         "Backward Compatibility Mode?",DEF_BACKWARD_COMPAT);
+    initProp(PROP_PRESERVE_BTN_CALLBACKS, Boolean.class, "GEN-136", Boolean.FALSE,
+        "Preserve Button Callbacks?",Boolean.TRUE);
     initProp(PROP_IMAGE_DIR, String.class, "GEN-113", Boolean.FALSE,"Last Image Directory Accessed","");
     initProp(PROP_RECENT_COLORS, String.class, "GEN-111", Boolean.TRUE,"Recent Colors","");
     initProp(PROP_RECENT_FILES, String.class, "GEN-121", Boolean.TRUE,"Recent Files","");
@@ -273,40 +229,18 @@ public class GeneralModel extends WidgetModel {
    */
   protected void initThemes()
   {
-    themes = new ArrayList<String>();
-    themeClassNames = new ArrayList<String>();
-    defThemeClass = UIManager.getSystemLookAndFeelClassName();
-    idxTheme = 0;
-    if (!Builder.isMAC) {
-      for (LookAndFeelInfo look_and_feel : UIManager.getInstalledLookAndFeels()) {
-        themes.add(look_and_feel.getName());
-        themeClassNames.add(look_and_feel.getClassName());
-      }
-      if (Builder.isSubstanceSupported) {
-     		for (int i = 0; i < lafObjs.length; i++) {
-          themes.add(lafObjs[i]);
-          themeClassNames.add(lafObjs[i]);
-        }
-      }
-        
-      cbThemes = new JComboBox<String>();
-      int i = 0;
-      String testClass;
-      for(String t : themes) {
-        cbThemes.addItem(t);
-        testClass = themeClassNames.get(i);
-        if (testClass.equals(defThemeClass)) {
-          defThemeName = t;
-          idxTheme = i;
-        }
-        i++;
-      }
-      cbThemes.setSelectedIndex(idxTheme);
-      
-      themeCellEditor =  new DefaultCellEditor(cbThemes);
-    } else {
-      defThemeName = defThemeClass;
+    defThemeName = "Flat IntelliJ";
+    
+    cbThemes = new JComboBox<String>();
+    for(ThemeInfo ti : Builder.themes) {
+      cbThemes.addItem(ti.name);
     }
+    themeCellEditor =  new DefaultCellEditor(cbThemes);
+
+    if (Builder.isMAC) {
+      defThemeName = UIManager.getSystemLookAndFeelClassName();
+    }
+    
     cbTarget = new JComboBox<String>();
     cbTarget.addItem("arduino");
     cbTarget.addItem("arduino TFT_eSPI");
@@ -385,16 +319,12 @@ public class GeneralModel extends WidgetModel {
   public String getThemeClassName() {
     // look-and-feel user setting
     if (Builder.isMAC) {
-      return defThemeClass;
+      return defThemeName;
     }
     String currentTheme = (String) data[PROP_THEME][PROP_VAL_VALUE];
-    if (currentTheme == null)
-      return defThemeClass;
-    for (int j = 0; j < themes.size(); j++) {
-      if (currentTheme.equals(themes.get(j)))
-        idxTheme = j;
-    }
-    return themeClassNames.get(idxTheme);
+    if (currentTheme == null || currentTheme.isEmpty())
+      return defThemeName;
+    return currentTheme;
   }
   
   /**
@@ -726,6 +656,15 @@ public class GeneralModel extends WidgetModel {
    */
   public boolean isBackwardCompat() {
     return ((Boolean) data[PROP_BACKWARD_COMPAT][PROP_VAL_VALUE]).booleanValue();
+  }
+  
+  /**
+   * isRoundTripEdits
+   *
+   * @return <code>true</code>, if user wants Round Trip Edits for Existing Code
+   */
+  public boolean isPreserveButtonCallbacks() {
+    return ((Boolean) data[PROP_PRESERVE_BTN_CALLBACKS][PROP_VAL_VALUE]).booleanValue();
   }
   
   /**

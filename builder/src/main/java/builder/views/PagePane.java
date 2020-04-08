@@ -243,6 +243,7 @@ public class PagePane extends JPanel implements iSubscriber {
     ZoomTransform();
     ribbon.btn_zoom_out.setEnabled(true);
     ribbon.mini_zoom_out.setEnabled(true);
+    MenuBar.miZoomOut.setEnabled(true);
   }
   
   /**
@@ -253,6 +254,7 @@ public class PagePane extends JPanel implements iSubscriber {
     if (zoomFactor < 1.1) {
       ribbon.btn_zoom_out.setEnabled(false);
       ribbon.mini_zoom_out.setEnabled(false);
+      MenuBar.miZoomOut.setEnabled(false);
     }
     ZoomTransform();
   }
