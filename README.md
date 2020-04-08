@@ -30,6 +30,8 @@ Support for new Themes based upon the FlatLaf project also supporting user loadi
 
 Further enhancements to the code generation of Button callbacks.  See Appendix E of the User Guide for more details.
 
+Button callbacks "Jump to Page? True/False" and "Show Popup Page? True/False" have been replaced with simply specifying the Target Page to go to.  See Section 4.18 Text Button of the User Guide for more detalls.
+
 Code Generation templates are now exposed and editable for customization. See Appendix F of the User Guide.
 
 ##### Bug Fixes
