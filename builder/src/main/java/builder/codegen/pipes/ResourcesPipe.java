@@ -36,10 +36,10 @@ import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
-import builder.models.GeneralModel;
-import builder.prefs.GeneralEditor;
+import builder.controller.Controller;
 import builder.models.ImageModel;
 import builder.models.ImgButtonModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 
 /**
@@ -92,10 +92,10 @@ public class ResourcesPipe extends WorkFlowPipe {
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
     // deal with background image, if any
-    GeneralModel generalModel = ((GeneralModel)GeneralEditor.getInstance().getModel());
-    if (generalModel.useBackgroundImage()) { 
-       map.put(DEFINE_MACRO, generalModel.getBackgroundDefine());
-       map.put(IMAGE_NAME_MACRO, generalModel.getBackgroundImageTName()); // use target name
+    ProjectModel pm = Controller.getInstance().getProjectModel();
+    if (pm.useBackgroundImage()) { 
+       map.put(DEFINE_MACRO, pm.getBackgroundDefine());
+       map.put(IMAGE_NAME_MACRO, pm.getBackgroundImageTName()); // use target name
        outputLines = tm.expandMacros(defineTemplate, map);
        resources.add(outputLines.get(0));
     }

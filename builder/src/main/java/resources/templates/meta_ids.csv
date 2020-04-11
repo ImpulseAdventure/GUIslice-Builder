@@ -1,4 +1,4 @@
-#TYPE,META ID,PROPERTY NAME
+META ID,PROPERTY NAME
 BAR-100,Vertical?
 BAR-101,Ramp Style (not used)
 BAR-102,Min value
@@ -82,6 +82,7 @@ GEN-132,Width  of TFT Simulation Window
 GEN-133,Height of TFT Simulation Window
 GEN-134,Width  of Property View Window
 GEN-135,Height of Property View Window
+GEN-136,Remove existing Code
 GRID-100,Grid
 GRID-101,Grid Snap To
 GRID-102,Grid Minor Width
@@ -106,8 +107,8 @@ IBTN-101,Image When Selected
 IBTN-102,Image #defines
 IBTN-103,Select Image #defines
 IBTN-104,Image Format
-IBTN-105,Change Page Function
-IBTN-106,Jump To Page ENUM
+IBTN-105,Show Popup Page (not used)
+IBTN-106,Jump To Page ENUM (not used) replace with TBNT-101
 IBTN-107,Transparency
 IBTN-108,Image Extern
 IBTN-109,Select Image Extern
@@ -148,7 +149,8 @@ SLD-105,Tick Divisions
 SLD-106,Tick Size
 SLD-107,Trim Style
 SPIN-100,Increment
-SPIN-101,Button SizeTXT-200,Font
+SPIN-101,Button Size
+TXT-200,Font
 TXT-201,Text
 TXT-202,Label
 TXT-203,UTF8
@@ -161,7 +163,8 @@ TXT-210,Text Columns
 TXT-211,Font Enum
 TXT-212,Text Margin
 TXT-213,Text Alignment
-TBNT-100,Jump Page Function
-TBNT-101,Jump/Popup To Page ENUM
-TBNT-102,Show Popup Page Function
+TBNT-100,Jump Page Function (Not Used)
+TBNT-101,Jump to Page ENUM
+TBNT-102,Show Popup Page Function (Not used)
 TBNT-103,Hide Popup Page Function
+TBTN-104,Popup to Page Enum

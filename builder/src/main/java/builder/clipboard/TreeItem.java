@@ -44,9 +44,11 @@ public class TreeItem implements java.io.Serializable {
  
  /** The strEnum. */
  String strEnum;
+ 
+ String strType;
 
  /**
-  * Instantiates a new pair.
+  * Instantiates a newType = pair.
   *
   * @param strKey
   *          the strKey
@@ -56,8 +58,22 @@ public class TreeItem implements java.io.Serializable {
  public TreeItem(String strKey, String strEnum) {
    this.strKey = strKey;
    this.strEnum = strEnum;
+   int n = strKey.indexOf("$");
+   if (n == -1)
+     this.strType = strKey;
+   else
+     this.strType = (strKey.substring(0, n));
  }
 
+ /**
+  * Gets the Type.
+  *
+  * @return the strKey
+  */
+ public String getType() {
+   return strType;
+ }
+ 
  /**
   * Gets the Key.
   *
@@ -128,7 +144,7 @@ public class TreeItem implements java.io.Serializable {
   * @return the <code>string</code> object
   */
  public String toDebugString() {
-   return String.format("Node: key=%s enum=%s", getKey(), getEnum());
+   return String.format("Node: key=%s enum=%s type=%s", getKey(), getEnum(), getType());
  }
 
  /**

@@ -52,20 +52,19 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragWidgetCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
-import builder.models.GeneralModel;
 import builder.models.GridModel;
 import builder.models.PageModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
-import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
@@ -106,14 +105,14 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The dragging indicator. */
   private boolean bDragging = false;
 
-  /** The general model. */
-  private GeneralModel generalModel = null;
+  /** The project model. */
+  private ProjectModel pm = null;
   
   /** The grid model. */
   private GridModel gridModel;
   
-  /** The model. */
-  private PageModel model=null;
+  /** The page model */
+  PageModel model = null;
   
   /** The instance. */
   private PagePane instance = null;
@@ -141,12 +140,6 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The inverse AffineTransform at. */
   public static AffineTransform inv_at;
   
-  /** The canvas width */
-  int canvasWidth;
-  
-  /** The canvas height */
-  int canvasHeight;
-  
   MsgBoard msg = null;
   
   /**
@@ -155,14 +148,12 @@ public class PagePane extends JPanel implements iSubscriber {
   public PagePane() {
     instance = this;
     ribbon = Ribbon.getInstance();
-    generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
+    pm = Controller.getInstance().getProjectModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
     msg = MsgBoard.getInstance();
     model = new PageModel();
-    mousePt = new Point(generalModel.getWidth() / 2, generalModel.getHeight() / 2);
+    mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
     dragPt = mousePt;
-    canvasWidth = Builder.CANVAS_WIDTH;
-    canvasHeight = Builder.CANVAS_HEIGHT;
     crossHairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     this.addMouseListener(new MouseHandler());
     this.addMouseMotionListener(new MouseMotionHandler());
@@ -185,19 +176,24 @@ public class PagePane extends JPanel implements iSubscriber {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
+    if (getPageType().equals(EnumFactory.PROJECT)) {
+      return;
+    }
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.transform(at);
-    int width = generalModel.getWidth();
-    int height = generalModel.getHeight();
-    if (generalModel.useBackgroundImage() && !gridModel.getGrid()) {
-      g2d.drawImage(generalModel.getImage(), 0, 0, null);
+    int width = pm.getWidth();
+    int height = pm.getHeight();
+    if (pm.useBackgroundImage() && !gridModel.getGrid()) {
+      g2d.setColor(Color.BLACK);
+      g2d.fillRect(0, 0, width, height);
+      g2d.drawImage(pm.getImage(), 0, 0, null);
     } else {
       if (gridModel.getGrid()) {
         g2d.setColor(gridModel.getBackGroundColor());
         g2d.fillRect(0, 0, width, height);
         drawCoordinates(g2d, width, height);
       } else {
-        g2d.setColor(generalModel.getBackgroundColor());
+        g2d.setColor(pm.getBackgroundColor());
         g2d.fillRect(0,  0, width, height);
       }
     }
@@ -323,11 +319,20 @@ public class PagePane extends JPanel implements iSubscriber {
   }
   
   /**
+   * sets the page model.
+   *
+   * @return the <code>PageModel</code> object
+   */
+  public void setModel(PageModel model) {
+    this.model = model;
+  }
+
+  /**
    * Gets the page model.
    *
    * @return the <code>PageModel</code> object
    */
-  public WidgetModel getModel() {
+  public PageModel getModel() {
     return model;
   }
 

@@ -74,13 +74,10 @@ public class Widget {
   }
 
   /**
-   * Sets the user prefs.
+   * setUserPrefs from PrefsEditor stored model
    *
    * @param peModel
    *          the new user prefs
-   */
-  /*
-   * setUserPrefs from PrefsEditor stored model
    */
   public void setUserPrefs(WidgetModel peModel) {
      // merge user preference into our model

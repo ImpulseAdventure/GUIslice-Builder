@@ -35,7 +35,9 @@ import builder.codegen.CodeGenerator;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.ColorFactory;
+import builder.controller.Controller;
 import builder.models.GeneralModel;
+import builder.models.ProjectModel;
 import builder.prefs.GeneralEditor;
 
 /**
@@ -81,7 +83,7 @@ public class StartupPipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     // grab our user preferences
-    GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
+    ProjectModel pm = Controller.getInstance().getProjectModel();
     // setup    
     tm = cg.getTemplateManager();
     List<String> templateLines = null;
@@ -101,10 +103,10 @@ public class StartupPipe extends WorkFlowPipe {
     }
 
     // do we need to rotate display?
-    if (gm.getScreenRotation() != -1) {
+    if (pm.getScreenRotation() != -1) {
       // seems so.. 
       map.clear();
-      map.put(ROTATION_MACRO, String.valueOf(gm.getScreenRotation()));      
+      map.put(ROTATION_MACRO, String.valueOf(pm.getScreenRotation()));      
       templateLines = tm.loadTemplate(ROTATE_TEMPLATE);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);

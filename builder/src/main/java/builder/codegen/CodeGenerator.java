@@ -69,9 +69,9 @@ import builder.codegen.pipes.SpinnerCbPipe;
 import builder.codegen.pipes.StartupPipe;
 import builder.codegen.pipes.TickCbPipe;
 import builder.common.CommonUtils;
-import builder.models.GeneralModel;
+import builder.controller.Controller;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
-import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
 import builder.widgets.Widget;
 
@@ -361,8 +361,8 @@ public class CodeGenerator {
     // create our template manager
     tm = new TemplateManager();
     // grab user's defaults from the General model so we can determine our target platform.
-    GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
-    target = gm.getTarget();  
+    ProjectModel pm = Controller.getInstance().getProjectModel();
+    target =pm.getTarget();  
     try {
       // set our FSM state
       if(target.equals("linux")) {

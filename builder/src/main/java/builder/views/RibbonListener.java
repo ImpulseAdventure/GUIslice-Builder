@@ -104,6 +104,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
       currentDirectory = new File(folderPath);
     }
     JFileChooser chooser = new JFileChooser(folderPath);
+    recentFileList = new RecentFilePanel();
     chooser.addChoosableFileFilter(new FileFilter() {
       public String getDescription() {
         String descr = new String("GUIslice Builder Project Folder");
@@ -134,6 +135,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
     File project = new File(new String(currentDirectory.toString()
         + System.getProperty("file.separator")
         + strProjectFolder + ".prj"));
+    recentFileList.add(project);
     return project;
   }
   
