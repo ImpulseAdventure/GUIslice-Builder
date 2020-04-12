@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.13.b024
+        Ver: 0.13.b025
     </H3>
 </center>
 
@@ -21,7 +21,7 @@
 
 **Publication date and software version**
 
-Published April, 2020. Based on GUIslice API Library 0.13.0
+Published April 12, 2020. Based on GUIslice API Library 0.13.0
 
 **Copyright**
 
@@ -1302,9 +1302,36 @@ Add a new Popup Page for the overlay layer in the page stack. This is the contai
 # 5.0 Customizing
 
 There are a few ways of customizing your experience with the builder.   
-You can modify your UI preferences  by the edit->options menu item. Most of the UI Widgets also have a tab in the Options dialog allowing you to set size, color, font, and some other options depending upon the element in question.
 
-## 5.1 General Preferences
+You can modify your UI preferences by the editing your Project Options Property View.  
+This is the available as "Project" tab in your TFT Simulation Display or the Top Level object in your TreeView 
+with the ENUM `E_PROJECT_OPTIONS`. 
+
+Some of the UI Elements also have a tab in the Options dialog allowing you to set size, color, font, and some other options depending upon the element in question.
+
+## 5.1 Project Options ![](images/controls/project.png)
+When you first create a new project these values are filled in with values from the General Preferences tab (Section 5.2) available by edit->options menu item.
+
+| NAME                               | VALUE                                                     |
+|------------------------------------|-----------------------------------------------------------|
+| Target Platform                    | arduino,arduino minimum, linux                            |
+| TFT Screen Width                   | 320                                                       |
+| TFT Screen Height                  | 240                                                       |
+| Project Directory                  | Your top-level Arduino Sketch Folder                      |
+| Target's Image Directory           | Directory on target platform where you have stored images |
+| Background Color                   | Black is default                                          |
+| Image Transparency Color           | For transparent images GSLC_COL_MAGENTA (r=255,g=0,b=255) |
+| Screen Margins                     | 10 pixels top, bottom, right and left                     |
+| Horizontal Spacing between elements| Used by alignment commands as the default value           |
+| Vertical Spacing between elements  | Used by alignment commands as the default value           |
+| MAX_STR                            | Used inside C program for maximum storage of strings      |
+| Screen Rotation [0-3]              | -1 is default. If needed, forces gslc_GuiRotate() call.   |
+
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+## 5.2 General Preferences
 | NAME                               | VALUE                                                     |
 |------------------------------------|-----------------------------------------------------------|
 | Themes                             | FlatLaf or Java Built-In Themes like: Windows or Metal    |
@@ -1331,7 +1358,7 @@ The full Copyright is included in Appendix C.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.2 Grid Preferences
+## 5.3 Grid Preferences
 | NAME                  | VALUE                                          |
 |-----------------------|------------------------------------------------|
 | Grid                  | false=OFF, set=true for ON                     |
@@ -1347,7 +1374,7 @@ The full Copyright is included in Appendix C.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.3 UI Element Customizing
+## 5.4 UI Element Customizing
 
 A few elements allow you to change their default properties on a global basis.  Going into the Options tabbed dialog there are tabs for Box, Text, TextButton, Checkbox, and RadioButton.
 If you modify any properties on these tabs when you drop the modified elements onto the TFT Simulation the values will be set according to your new settings.  The property values will also be set on any further projects you create or edit.  They will not modify any elements previously used in your projects.
@@ -1358,18 +1385,19 @@ One of the directories created and populated by the builder is called templates.
 
 Files are created here:
 
-- ino.t Arduino Template
-- c.t Linux Template
-- default_colors.csv
-- arduinofonts.csv
-- linuxfonts.csv
-- freefonts.csv You can delete arduinofonts.csv and rename this file to arduinofonts.csv if you have GNU's Freefonts installed on your system.
-- droidfonts.csv You can delete linuxfonts.csv and rename this file to linuxfonts.csv if you have Driod fonts installed on your system.
-- \*.ods are the source speadsheets for the each csv file in case you need to perform edits. I strongly suggest you use a spreadsheet program for edits and export the resulting csv files.
+- **ino2.t** Arduino `*.ino` Template
+- **hdr.t** Arduino `*_GSLC.h` Template
+- **c.t** Linux Template
+- **arduino.t** Arduino code blocks
+- **linux.t** linux code blocks
+- **default_colors.csv**
+- **arduinofonts.csv**
+- **linuxfonts.csv**
+- `*.ods` are the source speadsheets for the each csv file in case you need to perform edits. I strongly suggest you use a spreadsheet program for edits and export the resulting csv files.
 
 See Appendix B for format of the font files.
 
-The files ino.t and c.t are the skeleton programs for the supported platforms.  You can edit them to include your name, copyright, and whtaever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
+The files **ino2.t**, **hdr.t** and **c.t** are the skeleton programs for the supported platforms.  You can edit them to include your name, copyright, and whtaever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1378,7 +1406,7 @@ The files ino.t and c.t are the skeleton programs for the supported platforms.  
 
 This file lists the mapping of colors in RGB format to the GUIslice API names.  For example, rgb (0,0,0) is GSLC_COL_BLACK.  The top 7 rows are the default values the library uses, although these are spread about in the code base.  If you don't like the default color scheme you can use the builder to override them on an individual element basis.  Inside the Properties View will be "Use Default Colors?=true". You simply click the property value to change it to false and you can then edit the Frame, Fill, and Select colors.
 
-## 5.6 Images
+## 5.6 Images ![](images/controls/image_32x.png)
 
 Many UI's, if not most, will require images and icons.  You can place them inside the directories GUIsliceBuilder/arduino_res or linux_res depending upon your target platform. You can, of course, create your own folder.  The arduino_res and linux_res simply exist to provide you with some samples. Once you travel to another folder to find your images the system will remember your last accessed folder and always return to it.   
 
@@ -1386,118 +1414,77 @@ The only formats currently supported by the GUIslice API library are:
 ```
 - GSLC_IMGREF_FMT_BMP16 
 - GSLC_IMGREF_FMT_BMP24
+- GSLC_IMGREF_FMT_JPG 
 - GSLC_IMGREF_FMT_RAW
 ```
 
-The C Library only supports these BMP files so don't try any others.  The builder will not check!
+The GUIslice C Library only supports what the chosen driver implements on the Target Platform. Standard Arduino only supports
+ BMP24 files either from SD card or embedded C files and Mono (RAW) BMP bitmaps in C files. The arduino TFT_eSPI supports BMP24 Bitmaps loaded from SD card
+ or as an embedded C File and JPG loaded from SPIFFS file system on a ESP8366 or ESP32. Linux on a RaspberryPI using SDL 
+ supports BMP16 Bitmaps from the file system and may support others. 
+
+Since drivers come and go the Builder isn't going to do much checking. So do your research and choose wisely.
 
 Now displaying images on the TFT Simulation is one issue, finding them on the target platform is another.  The builder defaults to root '/' on the SD card for Arduino appended to the image's location.  You can change the target's image directory from '/' for arduino by modifying: 
 
+```
 edit->options->General->Target's Platform Image Directory
-
-The code generator will append whatever string you include so be sure to add folder separators.
+```
+The code generator will append whatever string you include so be sure to add folder separators.  The default value is "/".
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
 ## 5.7 Fonts
 
-The font implementation is somewhat challenging.  The builder can't actually run the target platform fonts at the actual size since the DPI's won't match.  So the builder has to scale them for use.  The scaling can't be perfect since the scaling might require decimal sizes like, 6.24dp which must be converted to an integer, either 6 or 7.  Stll the builder will give a pretty good approximation as long as users give a little space between text and elements.  If the text appears way off Appendix A gives a sample project that will allow discovery of a better DPI using trail and error.
+The font implementation is somewhat challenging.  The builder can't actually run the target platform fonts at the actual size since the DPI's won't match.  So the builder has to scale them for use.  The scaling can't be perfect since the scaling might require decimal sizes like, 6.24dp which must be converted to an integer, either 6 or 7.  Stll the builder will give a pretty good approximation as long as users give a little space between text and elements.  If the text appears way off Appendix G gives a sample project that will allow discovery of a better DPI using trail and error.
 
-Appearance is yet another issue.  The builder will default to using Java's built-in fonts to simulate the target fonts.  If you are only interested in generating code this should be fine.  However, if you want an accurate display you need to install the fonts that will be used on the builders machine.  
-
-For example, say the target platform is arduino and you are using AdaFruit's copy of GNU Free Fonts you can download them to your PC running the Builder from:
-
-- http://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip
-- http://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.tar.gz
-
-While for the target linux platform the Droid Fonts are available at:
-
-- https://www.1001freefonts.com/droid-sans.font
-- https://www.1001freefonts.com/droid-serif.font
-- https://www.1001fonts.com/droid-sans-mono-font.html
-
-On Windows you can install by:
-1. From the Start menu, open Control Panels
-2. Drag-n-drop unziped font files onto Fonts control panel
-   You may get a dialog saying
-    	"Windows needs your permission to continue"
-   a) Click Continue
-3. On any windows platform before Windows 10 you may need to turn on ClearType to avoid fuzzy fonts.  
-
-On Linux the fonts may already be installed.  If not, GNU Free Fonts can be installed by:
-
-apt-get install ttf-freefont
-
-avoiding a separate step for downloading.
-
-Once you have loaded the correct fonts you will need to inform the Builder to use them.
+Appearance is yet another issue.  The builder will use Java's built-in fonts to simulate the target fonts.
 
 The builder uses two files inside GUIsliceBuilder/templates to manage fonts:
 
 arduinofonts.csv for Arduino target platform
 linuxfonts.csv for Linux target platform
 
-You are allowed to create your own fonts and add them to the builder.  In which case you will need to modify arduinofonts or linuxfonts csv files.  The format is documented in Appendix B.
+You are allowed to create your own fonts and add them to the builder.  In which case you will need to modify
+ arduinofonts or linuxfonts csv files.  The format is documented in Appendix B.
 
 If you edit these files you must restart the Builder it will then use the new font files.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix A - Adjusting Builder's DPI
+# Appendix A - Acknowledgements
 
-This is a trail and error process. Here I present how to write a project 'AlignText.prj' to guide you in this process.
+## Insubstantial Project
 
-Start by creating a new project, and add three or four text boxes of various font sizes, choosing your favorite fonts, colors and backgrounds. Place them at the X margin 10, and using the Align Vertical Spacing button space them out by 20 pixels. 
+The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project written by Kirill Grouchnikov. This project is no longer supported and has been replaced by Radiance project which requires Java 9 or Higher so we can't use it. The Insubstantial jar files involved are:
 
-Now create a BOX the size of your display, change the colors to White for Frame, and Fill and check the 'Draw Funct' box in the Properties view. Select the Box in the Treeview and drag it just under the Page$1.
-Save the project as AlignText.prj and generate code.
+- **flamingo-7.3.1-SNAPSHOT.jar**
+- **trident-7.3.1-SNAPSHOT.jar**
+- **substance-7.3.1-SNAPSHOT.jar**
 
-Now edit the AlignText.ino file and this line inside CbDrawScanner function under the 'add your drawing' comment.
-```
-//TODO - Add your drawing graphic primitives
-drawGrid(rInside.w, rInside.h);
-```
-Now before the CbDrawScanner function add this new function:
-```
-void drawGrid(int w, int h) {
-  int x, y;
-  int minor = 5;
-  int major = 50;
-  gslc_tsColor minorCol = GSLC_COL_GRAY;
-  gslc_tsColor majorCol = GSLC_COL_BLACK;
-  gslc_tsColor lineCol;
-  // draw X axis
-  for (x=0; x<w; x+=minor) {
-    if (x%major == 0) {
-      lineCol = majorCol;
-    } else {
-      lineCol = minorCol;
-    }
-    gslc_DrawLine(&m_gui, x, 0, x, h, lineCol);
-  }
-  // draw Y axis
-  for (y=0; y<h; y+=minor) {
-    if (y%major==0) {
-      lineCol = majorCol;
-    } else {
-      lineCol = minorCol;
-    }
-    gslc_DrawLine(&m_gui, 0, y, w, y, lineCol);
-  }
-}
-```
+## FlatLaf Project
 
------------------------------------------------
-<div style="page-break-after: always;"></div>
+The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
 
+- **flatlaf-0.29.jar**
 
-Once you have the program running on your target platform you should see the text lined up in a grid.
+The FlatLaf project is on GitHub: 
+<https://github.com/JFormDesigner/FlatLaf>
 
-Go back to the Builder and reopen this new project.  Delete the Box element and turn on the Grid. Now compare the Builder's screen to your MCU screen. If Text shown doesn't closely match the Builder you need to adjust the DPI inside the Edit->Options->General tab. If the Builder's text is too large you need to reduce the DPI, while increasing DPI will decrease the size of displayed text. The DPI has no effect on the target platform so don't re-generate the code, just keep adjusting the Builder's DPI until its a close enough match.
+## Icon Attribution
 
-You will likely get the best match in size if you install on the Builder's machine the same fonts that you will be running on your MCU. See Appendex B for more details.
+Virtually all icon's used by the Builder were created by Paul Conti. However, a small set have been made by other people.
+
+The "Project" (Light Bulb with gears) icon used in the TreeView was created by
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/ddara" title="dDara">dDara</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+The "Page" (Tablet) and "Image" (Camera) and "Widget" (Puzzle) icons were provided by:
+
+https://github.com/icons8/flat-color-icons
+
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1536,15 +1523,11 @@ WARNING! No error checking exists in the code so be very careful with any edits.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix C - Ribbon Support
+# Appendix C - CopyRight Notices
 
-The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project written by Kirill Grouchnikov. This project is no longer supported and has been replaced by Radiance project which requires Java 9 or Higher so we can't use it. The Insubstantial jar files involved are:
+## Insubstantial project CopyRight
 
-- flamingo-7.3.1-SNAPSHOT.jar
-- trident-7.3.1-SNAPSHOT.jar
-- substance-7.3.1-SNAPSHOT.jar
-
-The CopyRight Notice is reproduced in full here:
+The CopyRight Notice for the Insubstantial project is reproduced in full here:
 
 Copyright (c) 2005-2010 Kirill Grouchnikov. All Rights Reserved.
 
@@ -1577,31 +1560,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix D - Theme Support
+## FlatLaf project CopyRight
 
-The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
-
-- flatlaf-0.29.jar
-
-The FlatLaf project is on GitHub: 
-<https://github.com/JFormDesigner/FlatLaf>
-
-**FlatLaf** is a modern **open-source** cross-platform Look and Feel for Java
-Swing desktop applications.
-
-It looks almost flat (no shadows or gradients), clean, simple and elegant.
-FlatLaf comes with **Light**, **Dark**, **IntelliJ** and **Darcula** themes,
-scales on **HiDPI** displays and runs on Java 8 or newer.
-
-The look is heavily inspired by **Darcula** and **IntelliJ** themes from
-IntelliJ IDEA 2019.2+ and uses almost the same colors and icons.
-
-FlatLaf can use 3rd party themes created for IntelliJ Platform.
-
-The Builder will look inside the folder GUIsliceBuilder/templates/intellijthemes
-and scan for any files that end with ".theme.json" and load them for your use.
-
-The CopyRight Notice is reproduced in full here:
+The CopyRight Notice for the FlatLaf project is reproduced in full here:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -1813,6 +1774,28 @@ The CopyRight Notice is reproduced in full here:
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+# Appendix D - Theme Support
+
+**FlatLaf** is a modern **open-source** cross-platform Look and Feel for Java
+Swing desktop applications.
+
+It looks almost flat (no shadows or gradients), clean, simple and elegant.
+FlatLaf comes with **Light**, **Dark**, **IntelliJ** and **Darcula** themes,
+scales on **HiDPI** displays and runs on Java 8 or newer.
+
+The look is heavily inspired by **Darcula** and **IntelliJ** themes from
+IntelliJ IDEA 2019.2+ and uses almost the same colors and icons.
+
+FlatLaf can use 3rd party themes created for IntelliJ Platform.
+
+The Builder will look inside the folder GUIsliceBuilder/templates/intellijthemes
+and scan for any files that end with ".theme.json".
+
+You can add you own themes simply by loading into the intellijthemes folder.  The Builder will make them avaible upon the next startup.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -2106,3 +2089,61 @@ There are some cases where meta-id is not used and a few places where templates 
 | TBNT-101   | Jump/Popup To Page ENUM                   |
 | TBNT-103   | Hide Popup Page Function                  |
 | TBNT-104   | Show Popup Page ENUM                      |
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+# Appendix G - Adjusting Builder's DPI
+
+This is a trail and error process. Here I present how to write a project 'AlignText.prj' to guide you in this process.
+
+Start by creating a new project, and add three or four text boxes of various font sizes, choosing your favorite fonts, colors and backgrounds. Place them at the X margin 10, and using the Align Vertical Spacing button space them out by 20 pixels. 
+
+Now create a BOX the size of your display, change the colors to White for Frame, and Fill and check the 'Draw Funct' box in the Properties view. Select the Box in the Treeview and drag it just under the Page$1.
+Save the project as AlignText.prj and generate code.
+
+Now edit the AlignText.ino file and this line inside CbDrawScanner function under the 'add your drawing' comment.
+```
+//TODO - Add your drawing graphic primitives
+drawGrid(rInside.w, rInside.h);
+```
+Now before the CbDrawScanner function add this new function:
+```
+void drawGrid(int w, int h) {
+  int x, y;
+  int minor = 5;
+  int major = 50;
+  gslc_tsColor minorCol = GSLC_COL_GRAY;
+  gslc_tsColor majorCol = GSLC_COL_BLACK;
+  gslc_tsColor lineCol;
+  // draw X axis
+  for (x=0; x<w; x+=minor) {
+    if (x%major == 0) {
+      lineCol = majorCol;
+    } else {
+      lineCol = minorCol;
+    }
+    gslc_DrawLine(&m_gui, x, 0, x, h, lineCol);
+  }
+  // draw Y axis
+  for (y=0; y<h; y+=minor) {
+    if (y%major==0) {
+      lineCol = majorCol;
+    } else {
+      lineCol = minorCol;
+    }
+    gslc_DrawLine(&m_gui, 0, y, w, y, lineCol);
+  }
+}
+```
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+
+Once you have the program running on your target platform you should see the text lined up in a grid.
+
+Go back to the Builder and reopen this new project.  Delete the Box element and turn on the Grid. Now compare the Builder's screen to your MCU screen. If Text shown doesn't closely match the Builder you need to adjust the DPI inside the Edit->Options->General tab. If the Builder's text is too large you need to reduce the DPI, while increasing DPI will decrease the size of displayed text. The DPI has no effect on the target platform so don't re-generate the code, just keep adjusting the Builder's DPI until its a close enough match.
+
+You will likely get the best match in size if you install on the Builder's machine the same fonts that you will be running on your MCU. See Appendex B for more details.
+

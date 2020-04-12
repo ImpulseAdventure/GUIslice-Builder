@@ -22,7 +22,20 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
-#### Changes for 0.13.b024
+#### Changes for 0.13.b025
+
+Update to User Guide for version 0.13.b025
+
+A major new feature is the addition of a Project Options tab that allows you to set options specific to the project
+such as target platform, screen size, background color or image and screen rotation.
+
+UI Element Icons are now shown in the TreeView for each element.
+
+##### Bug Fixes
+ - Bug No. 155 Newly created projects not added to recent file list
+ - Bug No. 151 Support saving configurations in the project
+
+ #### Changes for 0.13.b024
 
 Update to User Guide for version 0.13.b024
 

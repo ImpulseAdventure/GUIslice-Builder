@@ -232,12 +232,14 @@ public class CommonUtils {
    *
    * @param resource
    *          the resource
+   * @param d
+   *          the dimensuion of the icon to return
    * @return the resizable icon
    */
-  public ResizableIcon getResizableSmallIcon(String resource) {
+  public ResizableIcon getResizableSmallIcon(String resource, Dimension d) {
 
     return ImageWrapperResizableIcon.getIcon(Builder.class.getClassLoader().getResource(resource),
-        new Dimension(24, 24));
+        d);
   }
 
   /**

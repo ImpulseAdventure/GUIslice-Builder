@@ -60,6 +60,9 @@ public class EnumFactory {
   static final public int numberOfTypes  = 29;
   
   /** The Constant GENERAL. */
+  static final public String PROJECT     = "Project"; 
+  
+  /** The Constant GENERAL. */
   static final public String GENERAL     = "General"; 
   
   /** The Constant GRID. */

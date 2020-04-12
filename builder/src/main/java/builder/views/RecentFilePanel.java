@@ -28,6 +28,13 @@ public class RecentFilePanel extends JPanel {
   private FileListModel listModel = null;
   private JFileChooser fileChooser;
 
+  public RecentFilePanel() {
+    if (listModel == null) {
+      listModel = new FileListModel();
+    }
+    list = new JList<>(listModel);
+  }
+  
   public RecentFilePanel(JFileChooser chooser) {
     fileChooser = chooser;
     JLabel title = new JLabel("Recent Files", JLabel.CENTER);

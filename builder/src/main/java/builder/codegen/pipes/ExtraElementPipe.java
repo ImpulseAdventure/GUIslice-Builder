@@ -35,12 +35,12 @@ import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
-import builder.models.GeneralModel;
+import builder.controller.Controller;
 import builder.models.GraphModel;
 import builder.models.ListBoxModel;
+import builder.models.ProjectModel;
 import builder.models.TextBoxModel;
 import builder.models.WidgetModel;
-import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
 
 /**
@@ -270,10 +270,10 @@ public class ExtraElementPipe extends WorkFlowPipe {
       }
     }
     // output MAX String size
-    GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
+    ProjectModel pm = Controller.getInstance().getProjectModel();
     strElement = "MAX_STR";
     sBd.append(System.lineSeparator());
-    sBd.append(String.format("#define %-24s%d", strElement, gm.getMaxStr()));
+    sBd.append(String.format("#define %-24s%d", strElement, pm.getMaxStr()));
     sBd.append(System.lineSeparator());
     sBd.append(System.lineSeparator());
   }

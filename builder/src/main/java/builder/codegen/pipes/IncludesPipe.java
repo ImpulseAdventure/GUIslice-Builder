@@ -36,10 +36,10 @@ import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
-import builder.models.GeneralModel;
-import builder.prefs.GeneralEditor;
+import builder.controller.Controller;
 import builder.models.ImageModel;
 import builder.models.ImgButtonModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 
 /**
@@ -188,10 +188,12 @@ public class IncludesPipe extends WorkFlowPipe {
     }
     
     // output any warnings required
-    GeneralModel generalModel = ((GeneralModel)GeneralEditor.getInstance().getModel());
-    if (generalModel.useBackgroundImage() && 
-        generalModel.getBackgroundMemory().equals(GeneralModel.SRC_SD)) 
+    ProjectModel pm = Controller.getInstance().getProjectModel();
+    if (pm.useBackgroundImage() && 
+        pm.getBackgroundMemory().equals(ProjectModel.SRC_SD)) {
       bSD = true;
+      bWarning = true;
+    }
     if (bWarning) {
       template = tm.loadTemplate(WARNING_CONFIG_TEMPLATE);
       tm.codeWriter(sBd, template);

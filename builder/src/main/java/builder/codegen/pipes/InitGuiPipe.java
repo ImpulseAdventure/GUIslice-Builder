@@ -63,12 +63,12 @@ import builder.codegen.flash.Text_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.models.KeyPadTextModel;
-import builder.models.GeneralModel;
+import builder.models.ProjectModel;
 import builder.models.KeyPadModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
-import builder.prefs.GeneralEditor;
 import builder.prefs.NumKeyPadEditor;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -159,7 +159,8 @@ public class InitGuiPipe extends WorkFlowPipe {
     }
     // now standard pages
     for (PagePane p : cg.getPages()) {
-      if (!p.getPageType().equals(EnumFactory.BASEPAGE)) {
+      if (!p.getPageType().equals(EnumFactory.BASEPAGE) &&
+          !p.getPageType().equals(EnumFactory.PROJECT)) {
         map.clear();
         map.put(PAGE_ENUM_MACRO, p.getEnum());
         map.put(STRIP_KEY_MACRO, CodeUtils.convertKey(p.getKey()));
@@ -216,17 +217,17 @@ public class InitGuiPipe extends WorkFlowPipe {
     tm.codeWriter(sBd, outputLines);
     
     // deal with background
-    GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
-    if (gm.useBackgroundImage()) {
+    ProjectModel pm = Controller.getInstance().getProjectModel();
+    if (pm.useBackgroundImage()) {
       map.clear();
-      map.put(MEMORY_MACRO, gm.getBackgroundMemory());
-      map.put(DEFINE_MACRO, gm.getBackgroundDefine());
-      map.put(FORMAT_MACRO, gm.getBackgroundFormat());
+      map.put(MEMORY_MACRO, pm.getBackgroundMemory());
+      map.put(DEFINE_MACRO, pm.getBackgroundDefine());
+      map.put(FORMAT_MACRO, pm.getBackgroundFormat());
       templateLines = tm.loadTemplate(BACKGROUND_IMAGE_TEMPLATE);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
     } else {
-      Color bCol = (Color) gm.getBackgroundColor();
+      Color bCol = (Color) pm.getBackgroundColor();
       String color = ColorFactory.getInstance().colorAsString(bCol);
       map.clear();
       map.put(BACKGROUND_COLOR_MACRO, color);
@@ -237,13 +238,15 @@ public class InitGuiPipe extends WorkFlowPipe {
     
     // output ui widget creation APIs for each page
     for (PagePane p : cg.getPages()) {
-      map.clear();
-      map.put(PAGE_ENUM_MACRO, p.getEnum());
-      templateLines = tm.loadTemplate(PAGECOMMENT_TEMPLATE);
-      outputLines = tm.expandMacros(templateLines, map);
-      tm.codeWriter(sBd, outputLines);
-      for (Widget w : p.getWidgets()) {
-        outputAPI(sBd, p.getEnum(), w.getModel());
+      if (!p.getPageType().equals(EnumFactory.PROJECT)) {
+        map.clear();
+        map.put(PAGE_ENUM_MACRO, p.getEnum());
+        templateLines = tm.loadTemplate(PAGECOMMENT_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+        for (Widget w : p.getWidgets()) {
+          outputAPI(sBd, p.getEnum(), w.getModel());
+        }
       }
     }
     

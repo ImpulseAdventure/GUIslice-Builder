@@ -87,9 +87,12 @@ import builder.common.FontFactory;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
+import builder.models.GeneralModel;
 import builder.models.GridModel;
 import builder.models.PageModel;
+import builder.models.ProjectModel;
 import builder.models.TextModel;
+import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.BoxEditor;
 //import builder.prefs.CheckBoxEditor;
@@ -143,14 +146,11 @@ public class Controller extends JInternalFrame
   /** The target DPI. */
   private int targetDPI;
   
-  /** The display width. */
-  private int displayWidth;
-  
-  /** The display height. */
-  private int displayHeight;
-  
   /** The current page. */
   private PagePane currentPage;
+  
+  /** The project page which hold all options */
+  private PagePane projectPage;
   
   /** The project file. */
   private File projectFile = null;
@@ -160,6 +160,9 @@ public class Controller extends JInternalFrame
   
   /** The local clipboard */
   private Clipboard clipboard;
+  
+  /** The project's model */
+  ProjectModel pm;
   
   /** The pages. */
   List<PagePane> pages = new ArrayList<PagePane>();
@@ -217,12 +220,12 @@ public class Controller extends JInternalFrame
     nBasePages = 0;
     tabbedPane.setPreferredSize(new Dimension(1200,1200));
     createFirstPage();
-    tabbedPane.setSelectedIndex(0);
+//    tabbedPane.setSelectedIndex(0);
     
     this.add(tabbedPane,BorderLayout.CENTER);
     this.setTitle(title);
     CommonUtils cu = CommonUtils.getInstance();
-    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png"));
+    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
 //    this.pack();
     this.setVisible(true);
   }
@@ -259,7 +262,46 @@ public class Controller extends JInternalFrame
   public void setUserPrefs(UserPrefsManager userPreferences) {
     this.userPreferences = userPreferences;
   }
-
+  
+  /**
+   * get project model
+   * @return
+   */
+  public ProjectModel getProjectModel() {
+    return pm;
+  }
+  
+  /**
+   * 
+   */
+  public void createProjectModel() {
+    GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
+    Object[][] gmData = gm.getData();
+    pm = new ProjectModel();
+    Object[][] pmData = pm.getData();
+    pm.TurnOffEvents();
+    int rows = gm.getRowCount();
+    int mapRow = 0;
+    String metaID = null;
+    Object objectData = null;
+    for (int i=1; i<rows; i++) {
+      metaID = (String)gmData[i][WidgetModel.PROP_VAL_ID];
+      objectData = gm.getValueAt(i, 1);;
+      mapRow = pm.mapMetaIDtoProperty(metaID);
+      if (mapRow >= 0) {
+        pmData[mapRow][WidgetModel.PROP_VAL_VALUE] = objectData;
+      }
+    }
+    pm.TurnOnEvents();
+    PagePane p = new PagePane();
+    p.setLayout(null);
+    p.setModel(pm);
+    p.setPageType(EnumFactory.PROJECT);
+    projectPage = p;
+    addPage(p);
+  }
+  
+  
   /**
    * Refresh view.
    */
@@ -470,9 +512,10 @@ public class Controller extends JInternalFrame
    */
   // It prevents user from undo'ing our Page_1
   public void createFirstPage() {
+    createProjectModel();
     PagePane page = new PagePane();
     page.setLayout(null);
-    PageModel m = (PageModel) page.getModel();
+    PageModel m = page.getModel();
     String pageKey = EnumFactory.getInstance().createKey(EnumFactory.PAGE);
     m.setKey(pageKey);
     String pageEnum = EnumFactory.getInstance().createEnum(EnumFactory.PAGE);
@@ -481,6 +524,7 @@ public class Controller extends JInternalFrame
     addPageToView(page);
     PropManager.getInstance().addPropEditor(page.getModel());
     TreeView.getInstance().addPage(page.getKey(), pageEnum);
+    currentPage.refreshView();
   }
   
   /**
@@ -628,15 +672,15 @@ public class Controller extends JInternalFrame
       if (p.getKey().equals(page.getKey())) {
         litr.remove();
         idx = findPageIdx(page.getKey());
-        if (idx > 0) {
+        if (idx > 1) {
           tabbedPane.remove(idx);
           tabbedPane.repaint();
         }
         TreeView.getInstance().delPage(page.getKey());
         if (p.getPageType().equals(EnumFactory.BASEPAGE))
           nBasePages=0;
-        if (pages.size() > 0)
-          changePage(pages.get(0).getKey());
+        if (pages.size() > 1)
+          changePage(pages.get(1).getKey());
         break;
       }
     }
@@ -666,6 +710,17 @@ public class Controller extends JInternalFrame
     return page;
   }
   
+  private PagePane restoreProject(){
+    PagePane p = new PagePane();
+    p.setLayout(null);
+    p.setModel(pm);
+    p.setPageType(EnumFactory.PROJECT);
+    projectPage = p;
+    addPageToView(p);
+    PropManager.getInstance().addPropEditor(pm);
+    return p;
+  }
+  
   /**
    * Adds the widget.
    *
@@ -673,6 +728,12 @@ public class Controller extends JInternalFrame
    *          the w
    */
   public void addWidget(Widget w) {
+    if (currentPage == projectPage) {
+      JOptionPane.showMessageDialog(null, 
+         "You can't add UI Elements to your Project Options Panel", 
+         "Add Failed", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
     AddWidgetCommand c = new AddWidgetCommand(currentPage);
     c.add(w);
     currentPage.execute(c);
@@ -727,6 +788,7 @@ public class Controller extends JInternalFrame
     }
     pages.clear();
     currentPage = null;
+    pm = null;
     nBasePages=0;
     EnumFactory.getInstance().clearCounts();
     TreeView.getInstance().closeProject();
@@ -755,8 +817,15 @@ public class Controller extends JInternalFrame
     // output current version so we can make changes on future updates
     out.writeObject(Builder.FILE_VERSION_NO);
 //    System.out.println("FILE_VERSION_NO: " + Builder.FILE_VERSION_NO);
-    out.writeObject(currentPage.getKey());  // save last page accessed.
+    // save last page accessed unless its the project options page
+    String tmpKey = currentPage.getKey();
+    if (tmpKey.equals("Project$1")) {
+      out.writeObject((String)"Page$1");  
+    } else {
+      out.writeObject(tmpKey);  
+    }
 //    System.out.println("currentPageKey: " + currentPage.getKey());
+    pm.writeModel(out);
     out.writeInt(pages.size());
     String pageKey = null;
     String pageEnum = null;
@@ -806,8 +875,8 @@ public class Controller extends JInternalFrame
       return;
     }
     nBasePages = 0;
-    PropManager pm = PropManager.getInstance();
-    pm.openProject();
+    PropManager propMgr = PropManager.getInstance();
+    propMgr.openProject();
     String pageKey = null;
     String pageEnum = null;
     String pageType = null;
@@ -823,6 +892,12 @@ public class Controller extends JInternalFrame
       }
       openPage = (String)in.readObject();
 //      System.out.println("currentpage Key: " + currentPage.getKey());
+      if (strVersion.equals("13.025")) {
+        pm = new ProjectModel();
+        pm.readModel(in);
+      } else {
+        createProjectModel();
+      }
       int cnt = in.readInt();
 //    System.out.println("pages: " + cnt);
       for (int i=0; i<cnt; i++) {
@@ -838,7 +913,11 @@ public class Controller extends JInternalFrame
             nBasePages++;
           }
         }
-        p = restorePage(pageKey, pageEnum, pageType);
+        if (pageType.equals(EnumFactory.PROJECT)) {
+          p = restoreProject();
+        } else {
+          p = restorePage(pageKey, pageEnum, pageType);
+        }
         p.restore((String)in.readObject(), false);
         p.selectNone();
         if (pageType != null) p.setPageType(pageType);
@@ -1027,9 +1106,7 @@ public class Controller extends JInternalFrame
     numkeypadEditor.addObserver(this);
     strTheme = generalEditor.getThemeClassName();
     targetDPI = generalEditor.getDPI();
-    displayWidth = generalEditor.getWidth();
-    displayHeight = generalEditor.getHeight();
-   return prefEditors;
+    return prefEditors;
   }
   
   /**
@@ -1223,34 +1300,6 @@ public class Controller extends JInternalFrame
           }
         }
       }
-      if (generalEditor.getWidth() != displayWidth || 
-          generalEditor.getHeight() != displayHeight) {
-        displayWidth = generalEditor.getWidth();
-        displayHeight = generalEditor.getHeight();
-        int width = 1040;
-        if (GeneralEditor.getInstance().getAppWinWidth() > 0) 
-          width = GeneralEditor.getInstance().getAppWinWidth();
-        int height = 675;
-        if (GeneralEditor.getInstance().getAppWinHeight() > 0) 
-          height = GeneralEditor.getInstance().getAppWinHeight();
-        Dimension d = new Dimension(width, height);
-        topFrame.setPreferredSize(d);
-        Builder.CANVAS_WIDTH = displayWidth;
-        Builder.CANVAS_HEIGHT = displayHeight;
-        width = displayWidth + 40;
-        if (GeneralEditor.getInstance().getTFTWinWidth() > 0) {
-            width = GeneralEditor.getInstance().getTFTWinWidth();
-        }
-        setPreferredSize(new Dimension(displayWidth, height));
-        System.out.println(" ");
-        System.out.println("TFT width=" + width);
-        Builder.splitPane.setDividerLocation(width);
-        PagePane.zoomOff();
-        topFrame.revalidate();
-        MsgBoard.getInstance().sendEvent("Controller",MsgEvent.CANVAS_MODEL_CHANGE);
-        topFrame.repaint();
-      }
-      refreshView();  // refresh view no matter what changed.
     }
   }
 /* replace update() with this routine for Java 9 and above
@@ -1287,24 +1336,6 @@ public class Controller extends JInternalFrame
       }
       refreshView();
     }
-    if (key.equals("TFT Screen Width") ||
-        key.equals("TFT Screen Height") ) {
-        displayWidth = generalEditor.getWidth() + 40;
-        displayHeight = generalEditor.getHeight();
-        int width = displayWidth + 30 + 240 + 210;
-        int height = Math.max(displayHeight+200, 675);
-        Dimension d = new Dimension(width, height);
-        topFrame.setPreferredSize(d);
-        Builder.CANVAS_WIDTH = displayWidth;
-        Builder.CANVAS_HEIGHT = displayHeight;
-        Builder.splitPane.setDividerLocation(Builder.CANVAS_WIDTH);
-        PagePane.zoomOff();
-        topFrame.revalidate();
-        MsgBoard.getInstance().sendEvent("Controller",MsgEvent.CANVAS_MODEL_CHANGE);
-        topFrame.repaint();
-      }
-      refreshView();  // refresh view no matter what changed.
-   }
  }
 */
   /**

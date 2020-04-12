@@ -45,7 +45,6 @@ import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.DropMode;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
@@ -61,10 +60,12 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import builder.Builder;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+
 import builder.clipboard.TreeItem;
 import builder.clipboard.TreeItemSelection;
 import builder.common.CommonUtils;
+import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
@@ -99,17 +100,11 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   /** The tree model. */
   protected DefaultTreeModel treeModel;
   
-  /** The image icon. */
-  private ImageIcon imageIcon;
-  
-  /** The parent icon. */
-  private ImageIcon parentIcon;
-  
   /** The scroll pane. */
   private JScrollPane scrollPane;
   
-  /** The lastest backup. */
-  private String lastestBackup = null;
+  /** The latest backup. */
+  private String latestBackup = null;
   
   /** The b dragging node. */
   private boolean bDraggingNode = false;
@@ -155,22 +150,19 @@ public class TreeView extends JInternalFrame implements iSubscriber {
 
     // create the tree by passing in our tree model
     tree = new JTree(treeModel);
-    imageIcon = new ImageIcon(Builder.class.getResource("/resources/icons/misc/widget.png"));
-    parentIcon = new ImageIcon(Builder.class.getResource("/resources/icons/misc/brick.png"));
     
-    DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-    renderer.setOpenIcon(parentIcon);
-    renderer.setClosedIcon(parentIcon);
-    renderer.setLeafIcon(imageIcon);
+    MyTreeRenderer renderer = new MyTreeRenderer();
     tree.setCellRenderer(renderer);
 
     tree.setRootVisible(false);
     tree.setEditable(true);
     tree.setDragEnabled(true);
     tree.setDropMode(DropMode.ON_OR_INSERT);
+
     MyTreeCellEditor editor = new MyTreeCellEditor(tree,
         (DefaultTreeCellRenderer) tree.getCellRenderer());
     tree.setCellEditor(editor);
+
     tree.setTransferHandler(new TreeTransferHandler());
     tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 //    tree.setRootVisible(false);
@@ -210,8 +202,8 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     add(scrollPane);
     this.setTitle("Tree View");        
      CommonUtils cu = CommonUtils.getInstance();
-    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png"));
-    this.setPreferredSize(new Dimension(210, 400));
+    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png",new Dimension(24,24)));
+    this.setPreferredSize(new Dimension(250, 400));
     this.pack();
     this.setVisible(true);
  }
@@ -337,7 +329,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * @return the saved backup
    */
   public String getSavedBackup() {
-    return lastestBackup;
+    return latestBackup;
   }
   
   /**
@@ -477,11 +469,163 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     
   }
 
+/**
+ * MyTreeRenderer
+ * This allows us to display custom icons for each type of object
+ *
+ */
+  private class MyTreeRenderer extends DefaultTreeCellRenderer {
+    private static final long serialVersionUID = 1L;
+    private final CommonUtils cu;
+    private final ResizableIcon widgetIcon;
+    private final ResizableIcon projectIcon;
+    private final ResizableIcon pageIcon;
+    private final ResizableIcon basepageIcon;
+    private final ResizableIcon popupIcon;
+    private final ResizableIcon labelIcon;
+    private final ResizableIcon textinputIcon;
+    private final ResizableIcon numinputIcon;
+    private final ResizableIcon textboxIcon;
+    private final ResizableIcon txtbuttonIcon;
+    private final ResizableIcon imgbuttonIcon;
+    private final ResizableIcon checkboxIcon;
+    private final ResizableIcon radiobuttonIcon;
+    private final ResizableIcon imageIcon;
+    private final ResizableIcon listboxIcon;
+    private final ResizableIcon sliderIcon;
+    private final ResizableIcon spinnerIcon;
+    private final ResizableIcon ringgaugeIcon;
+    private final ResizableIcon progressbarIcon;
+    private final ResizableIcon radialIcon;
+    private final ResizableIcon rampIcon;
+    private final ResizableIcon boxIcon;
+    private final ResizableIcon lineIcon;
+    private final ResizableIcon graphIcon;
+
+    public MyTreeRenderer() {
+      Dimension iconSz = new Dimension(24,24);
+      cu = CommonUtils.getInstance();
+      projectIcon = cu.getResizableSmallIcon("resources/icons/misc/project.png",new Dimension(48,48));
+      pageIcon = cu.getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
+      basepageIcon = cu.getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
+      boxIcon = cu.getResizableSmallIcon("resources/icons/shapes/box_32x.png", iconSz);
+      checkboxIcon = cu.getResizableSmallIcon("resources/icons/controls/checkbox_32x.png", iconSz);
+      graphIcon = cu.getResizableSmallIcon("resources/icons/controls/graph_32x.png", iconSz);
+      imageIcon = cu.getResizableSmallIcon("resources/icons/controls/image_32x.png", iconSz);
+      imgbuttonIcon = cu.getResizableSmallIcon("resources/icons/controls/imgbutton_32x.png", iconSz);
+      lineIcon = cu.getResizableSmallIcon("resources/icons/shapes/line_32x.png", iconSz);
+      listboxIcon = cu.getResizableSmallIcon("resources/icons/controls/listbox_32x.png", iconSz);
+      numinputIcon = cu.getResizableSmallIcon("resources/icons/text/numinput_32x.png", iconSz);
+      popupIcon = cu.getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
+      progressbarIcon = cu.getResizableSmallIcon("resources/icons/gauges/progressbar_32x.png", iconSz);
+      radiobuttonIcon = cu.getResizableSmallIcon("resources/icons/controls/radiobutton_32x.png", iconSz);
+      radialIcon = cu.getResizableSmallIcon("resources/icons/gauges/radial_32x.png", iconSz);
+      rampIcon = cu.getResizableSmallIcon("resources/icons/gauges/ramp_32x.png", iconSz);
+      ringgaugeIcon = cu.getResizableSmallIcon("resources/icons/gauges/ringgauge_32x.png", iconSz);
+      sliderIcon = cu.getResizableSmallIcon("resources/icons/controls/slider_32x.png", iconSz);
+      spinnerIcon = cu.getResizableSmallIcon("resources/icons/controls/spinner_32x.png", iconSz);
+      labelIcon = cu.getResizableSmallIcon("resources/icons/text/label_32x.png", iconSz);
+      textboxIcon = cu.getResizableSmallIcon("resources/icons/text/textbox_32x.png", iconSz);
+      txtbuttonIcon = cu.getResizableSmallIcon("resources/icons/controls/button_32x.png", iconSz);
+      textinputIcon = cu.getResizableSmallIcon("resources/icons/text/textinput_32x.png", iconSz);
+      
+      widgetIcon = cu.getResizableSmallIcon("resources/icons/misc/widget.png",iconSz);
+   }
+
+    @Override
+    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                                                  boolean leaf, int row, boolean hasFocus) {
+      super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+      Object userObject = node.getUserObject();
+      if (userObject instanceof TreeItem) {
+        TreeItem item = (TreeItem) userObject;
+        String widgetType = item.getType();
+        switch(widgetType) {
+          case EnumFactory.BASEPAGE:
+            this.setIcon(basepageIcon);
+            break;
+          case EnumFactory.BOX:
+            this.setIcon(boxIcon);
+            break;
+          case EnumFactory.CHECKBOX:
+            this.setIcon(checkboxIcon);
+            break;
+          case EnumFactory.GRAPH:
+            this.setIcon(graphIcon);
+            break;
+          case EnumFactory.IMAGE:
+            this.setIcon(imageIcon);
+            break;
+          case EnumFactory.IMAGEBUTTON:
+            this.setIcon(imgbuttonIcon);
+            break;
+          case EnumFactory.LINE:
+            this.setIcon(lineIcon);
+            break;
+          case EnumFactory.LISTBOX:
+            this.setIcon(listboxIcon);
+            break;
+          case EnumFactory.NUMINPUT:
+            this.setIcon(numinputIcon);
+            break;
+          case EnumFactory.PAGE:
+            this.setIcon(pageIcon);
+            break;
+          case EnumFactory.POPUP:
+            this.setIcon(popupIcon);
+            break;
+          case EnumFactory.PROGRESSBAR:
+            this.setIcon(progressbarIcon);
+            break;
+          case EnumFactory.PROJECT:
+            this.setIcon(projectIcon);
+            break;
+          case EnumFactory.RADIOBUTTON:
+            this.setIcon(radiobuttonIcon);
+            break;
+          case EnumFactory.RADIALGAUGE:
+            this.setIcon(radialIcon);
+            break;
+          case EnumFactory.RAMPGAUGE:
+            this.setIcon(rampIcon);
+            break;
+          case EnumFactory.RINGGAUGE:
+            this.setIcon(ringgaugeIcon);
+            break;
+          case EnumFactory.SLIDER:
+            this.setIcon(sliderIcon);
+            break;
+          case EnumFactory.SPINNER:
+            this.setIcon(spinnerIcon);
+            break;
+          case EnumFactory.TEXT:
+            this.setIcon(labelIcon);
+            break;
+          case EnumFactory.TEXTBOX:
+            this.setIcon(textboxIcon);
+            break;
+          case EnumFactory.TEXTBUTTON:
+            this.setIcon(txtbuttonIcon);
+            break;
+          case EnumFactory.TEXTINPUT:
+            this.setIcon(textinputIcon);
+            break;
+          default:
+            this.setIcon(widgetIcon);
+            break;
+        }
+        this.setText("<html>" + item.getEnum() + "</html>");
+      }
+      return this;
+    }
+  }
+
   /**
    * The Class MyTreeCellEditor will prevent anyone from editing a widget node.
    * Since we only show keys; A user changing a key value would crash the system.
    */
-  private static class MyTreeCellEditor extends DefaultTreeCellEditor {
+  private class MyTreeCellEditor extends DefaultTreeCellEditor {
 
     /**
      * Instantiates a new my tree cell editor.
@@ -591,7 +735,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       // make sure we have a valid drop point
       bDraggingNode = dropLocation.getPath() != null;
       if (bDraggingNode) {
-        lastestBackup = backup(); // save for undo command
+        latestBackup = backup(); // save for undo command
       }
       return bDraggingNode;
     }
