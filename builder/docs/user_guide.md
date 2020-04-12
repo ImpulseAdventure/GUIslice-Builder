@@ -1385,19 +1385,19 @@ One of the directories created and populated by the builder is called templates.
 
 Files are created here:
 
-- **ino2.t Arduino `*.ino` Template
-- **hdr.t Arduino `*_GSLC.h` Template
-- **c.t Linux Template
-- **arduino.t Arduino code blocks
-- **linux.t linux code blocks
-- **default_colors.csv
-- **arduinofonts.csv
-- **linuxfonts.csv
+- **ino2.t** Arduino `*.ino` Template
+- **hdr.t** Arduino `*_GSLC.h` Template
+- **c.t** Linux Template
+- **arduino.t** Arduino code blocks
+- **linux.t** linux code blocks
+- **default_colors.csv**
+- **arduinofonts.csv**
+- **linuxfonts.csv**
 - `*.ods` are the source speadsheets for the each csv file in case you need to perform edits. I strongly suggest you use a spreadsheet program for edits and export the resulting csv files.
 
 See Appendix B for format of the font files.
 
-The files ino2.t, hdr.t and c.t are the skeleton programs for the supported platforms.  You can edit them to include your name, copyright, and whtaever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
+The files **ino2.t**, **hdr.t** and **c.t** are the skeleton programs for the supported platforms.  You can edit them to include your name, copyright, and whtaever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1457,28 +1457,32 @@ If you edit these files you must restart the Builder it will then use the new fo
 # Appendix A - Acknowledgements
 
 ## Insubstantial Project
+
 The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project written by Kirill Grouchnikov. This project is no longer supported and has been replaced by Radiance project which requires Java 9 or Higher so we can't use it. The Insubstantial jar files involved are:
 
-- **flamingo-7.3.1-SNAPSHOT.jar
-- **trident-7.3.1-SNAPSHOT.jar
-- **substance-7.3.1-SNAPSHOT.jar
+- **flamingo-7.3.1-SNAPSHOT.jar**
+- **trident-7.3.1-SNAPSHOT.jar**
+- **substance-7.3.1-SNAPSHOT.jar**
 
 ## FlatLaf Project
+
 The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
 
-- **flatlaf-0.29.jar
+- **flatlaf-0.29.jar**
 
 The FlatLaf project is on GitHub: 
 <https://github.com/JFormDesigner/FlatLaf>
 
 ## Icon Attribution
 
-Virtual all icon's used by the Builder were created by Paul Conti. However, a small set have been made by other people.
+Virtually all icon's used by the Builder were created by Paul Conti. However, a small set have been made by other people.
 
 The "Project" (Light Bulb with gears) icon used in the TreeView was created by
+
 <div>Icons made by <a href="https://www.flaticon.com/authors/ddara" title="dDara">dDara</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 The "Page" (Tablet) and "Image" (Camera) and "Widget" (Puzzle) icons were provided by:
+
 https://github.com/icons8/flat-color-icons
 
 
