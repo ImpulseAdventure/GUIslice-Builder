@@ -22,6 +22,9 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### HOTFIX 0.13.b025.1
+ - Bug No. 156 Generation for SetPageCur includes $<TBNT-101>
+
 #### Changes for 0.13.b025
 
 Update to User Guide for version 0.13.b025
