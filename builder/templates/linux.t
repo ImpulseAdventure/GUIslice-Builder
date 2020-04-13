@@ -41,7 +41,7 @@ $<CALLBACK>
 <BUTTON_CB_CHGPAGE>
       case $<COM-002>:
         //TODO- Check the code to see what else you may need to add
-        gslc_SetPageCur(&m_gui,$<TBTN-101>);
+        gslc_SetPageCur(&m_gui,$<TBNT-101>);
         break;
 <STOP>
 <BUTTON_CB_INPUT>
