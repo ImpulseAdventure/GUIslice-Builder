@@ -22,8 +22,11 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### HOTFIX 0.13.b025.2
+ - Bug No. 158 Preserve Button Callbacks?=true was ignored and callbacks were deleted and recreated
+
 #### HOTFIX 0.13.b025.1
- - Bug No. 156 Generation for SetPageCur includes $<TBNT-101>
+ - Bug No. 156 Generation for SetPageCur includes `$<TBNT-101>`
 
 #### Changes for 0.13.b025
 

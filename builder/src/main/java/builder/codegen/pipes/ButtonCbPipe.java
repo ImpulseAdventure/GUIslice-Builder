@@ -80,7 +80,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static String KEY_ENUM_MACRO         = "KEY-002";
   private final static String KEY_ELEMREF_MACRO      = "KEY-019";
   private final static String JUMPPAGE_ENUM_MACRO    = "TBNT-101";
-  private final static String POPUPPAGE_ENUM_MACRO   = "TBNT-104";
+  private final static String POPUPPAGE_ENUM_MACRO   = "TBTN-104";
   
   /** The template manager. */
   TemplateManager tm = null;
@@ -339,7 +339,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
       // lookup our enum to see if we have an existing case statement
       int idx = -1;
       if (bPreserveCode) {
-        findCaseStatement(e);
+        idx = findCaseStatement(e);
       }
       if (idx != -1) {
         /*
