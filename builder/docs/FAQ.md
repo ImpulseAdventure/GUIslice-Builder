@@ -12,6 +12,22 @@ GUIslice API
 
 ## Using the GUIsliceBuilder
 
+### I switched a project over to using flash for UI Elements and it's not working.
+
+If you have an older project one thing to check for inside your callbacks is a statement to access your Element, say for pElem->Id, and you see:
+```
+  gslc_tsElem*    pElem     = pElemRef->pElem;
+```
+You will need to change this for Flash based elements and instead use:
+```
+  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);
+```
+The newer Builder will no longer generate the `pElement->pElem` code and all examples have also been update with the new code.
+
+
+---------
+<div style="page-break-after: always;"></div>
+
 ### Can you change a Text String at runtime?
 
 Yes. You just need to first assign storage to the text string inside the property view and optionally you should assign a meaningful name to the ElementRef so you can better keep track.
@@ -82,10 +98,8 @@ The Builder supports the following target platforms:
 
 Just follow the error message's guidance to reset your target platform. This allows the Builder to correctly handle fonts between the different packages.
 
-
 ---------
 <div style="page-break-after: always;"></div>
-
 
 ## GUIslice API
 

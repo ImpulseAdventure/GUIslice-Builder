@@ -98,21 +98,17 @@ public final class TextInputCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    /* BUG 141 For input fields which always have frame enabled you still 
-     * need to turn off default colors to see frame box at runtime
-     * since GUIslice API default color for text frame is black not gray.
-     */
-//    if (!m.useDefaultColors()) {
+    if (!m.getTextColor().equals(TextInputModel.DEF_TEXT_COLOR)) {
       template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
+    }
+    if ((!m.getFrameColor().equals(TextInputModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(TextInputModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(TextInputModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
-//    }
-    if (m.isUTF8()) {
-      template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
-      tm.codeWriter(sBd, template);
     }
     if (!m.isFillEnabled()) {
       template = tm.loadTemplate(FILL_EN_TEMPLATE);
@@ -133,6 +129,11 @@ public final class TextInputCodeBlock implements CodeBlock {
       template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
+      if (m.isUTF8()) {
+        template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
+        outputLines = tm.expandMacros(template, map);
+        tm.codeWriter(sBd, outputLines);
+      }
     }
 
     template.clear();

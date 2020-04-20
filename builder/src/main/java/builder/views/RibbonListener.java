@@ -474,6 +474,10 @@ public class RibbonListener implements ActionListener, iSubscriber {
         controller.copyWidgets();
         break;
       
+      case "copyprops":
+        controller.copyProps();
+        break;
+      
       case "cut":
         controller.cutWidgets();
         break;
@@ -639,7 +643,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
         break;
         
         default:
-          throw new IllegalArgumentException("Unkmown Ribbon Action: " + e.toString());
+          throw new IllegalArgumentException("Unknown Ribbon Action: " + e.toString());
       }
     
   }

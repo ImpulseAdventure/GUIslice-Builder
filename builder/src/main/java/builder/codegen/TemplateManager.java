@@ -257,24 +257,28 @@ public class TemplateManager {
  
   /**
    * codeReplaceLine 
-   *    Writes out code block replacing one line with a new one.
+   *    Writes out code block replacing lines with a new one.
    * 
    * @param sBd
    * @param lines
    * @param replacement
    * @param line_no
+   * @param stop_no
    */
   public void codeReplaceLine(StringBuilder sBd, List<String> lines, 
-      String replacement, int line_no) {
+      String replacement, int line_no, int stop_no) {
     int n = -1;
     for (String l : lines) {
       n++;
       if (n == line_no) {
         sBd.append(replacement);
+        sBd.append(System.lineSeparator());
+      } else if (n >= line_no && n <= stop_no){
+        continue;
       } else {
         sBd.append(l);
+        sBd.append(System.lineSeparator());
       }
-      sBd.append(System.lineSeparator());
     }
   }
  

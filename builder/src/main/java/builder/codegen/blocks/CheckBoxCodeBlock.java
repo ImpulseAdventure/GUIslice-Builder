@@ -92,7 +92,9 @@ public final class CheckBoxCodeBlock implements CodeBlock {
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
 
-    if (!m.useDefaultColors()) {
+    if ((!m.getFrameColor().equals(CheckBoxModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(CheckBoxModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(CheckBoxModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

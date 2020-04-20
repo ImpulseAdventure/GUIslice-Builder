@@ -23,7 +23,7 @@ BOX-101,Tick Function
 CBOX-100,Checked?
 CBOX-101,Group ID (old not used))
 CIRCLE-100,Radius
-COL-300,Use Default Colors?
+COL-300,Use Default Colors? (old not used)
 COL-301,Text Color
 COL-302,Frame Color
 COL-303,Fill Color
@@ -163,8 +163,8 @@ TXT-210,Text Columns
 TXT-211,Font Enum
 TXT-212,Text Margin
 TXT-213,Text Alignment
-TBNT-100,Jump Page Function (Not Used)
+TBNT-100,Jump Page Function (Old Not Used)
 TBNT-101,Jump to Page ENUM
-TBNT-102,Show Popup Page Function (Not used)
+TBNT-102,Show Popup Page Function (Old Not used)
 TBNT-103,Hide Popup Page Function
 TBTN-104,Popup to Page Enum

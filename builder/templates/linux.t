@@ -17,8 +17,10 @@
 // Common Button callback
 bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY)
 {
+  // Typecast the parameters to match the GUI and element types
+  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem* pElem = pElemRef->pElem;
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
 
   if ( eTouch == GSLC_TOUCH_UP_IN ) {
     // From the element's ID we can determine which button was pressed.
@@ -46,12 +48,7 @@ $<CALLBACK>
 <STOP>
 <BUTTON_CB_INPUT>
       case $<COM-002>:
-        //TODO- Check the code to see what else you may need to add
-        // Clicked on edit field, so show popup box and associate with this text field
-        gslc_ElemXKeyPadTargetIdSet(&m_gui, $<KEY-019>, $<COM-002>);
-        gslc_PopupShow(&m_gui, $<KEY-002>, true);
-        // Preload current value
-        gslc_ElemXKeyPadValSet(&m_gui, $<KEY-019>, gslc_ElemGetTxtStr(&m_gui, $<COM-019>));
+        gslc_ElemXKeyPadInputAsk(&m_gui, $<KEY-019>, $<KEY-002>, $<COM-019>);
         break;
 <STOP>
 <BUTTON_CB_SHOWPOPUP>
@@ -149,7 +146,7 @@ bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   // Typecast the parameters to match the GUI and element types
   gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem     = pElemRef->pElem;
+  gslc_tsElem*    pElem     = gslc_GetElemFromRef(pGui,pElemRef);
 
   // Create shorthand variables for the origin
   int16_t  nX = pElem->rElem.x;
@@ -269,9 +266,9 @@ char m_strImgBtnSelPath$<COUNT>[MAX_PATH];
 // KeyPad Input Ready callback
 bool CbKeypad(void* pvGui, void *pvElemRef, int16_t nState, void* pvData)
 {
+  gslc_tsGui*     pGui     = (gslc_tsGui*)pvGui;
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem* pElem = pElemRef->pElem;
-  gslc_tsGui* pGui = (gslc_tsGui*)pvGui;
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
 
   // From the pvData we can get the ID element that is ready.
   int16_t nTargetElemId = gslc_ElemXKeyPadDataTargetIdGet(pGui, pvData);
@@ -295,9 +292,8 @@ $<CALLBACK>
 <STOP>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
-        gslc_ElemSetTxtStr(pGui, $<COM-019>, gslc_ElemXKeyPadDataValGet(pGui, pvData)); 
-        gslc_PopupHide(&m_gui);
-      break;
+        gslc_ElemXKeyPadInputGet(pGui, $<COM-019>, pvData);
+        break;
 <STOP>
 <KEYPAD_CONFIG>
   gslc_tsXKeyPadCfg sCfg = gslc_ElemXKeyPadCfgInit_Num();
@@ -359,9 +355,9 @@ gslc_tsElemRef                  $<STORAGE>Ref[1];
 <LISTBOX_CB>
 bool CbListbox(void* pvGui, void* pvElemRef, int16_t nSelId)
 {
-  gslc_tsGui*     pGui = (gslc_tsGui*)(pvGui);
+  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui, pElemRef);
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui, pElemRef);
   char            acTxt[MAX_STR + 1];
   
   if (pElemRef == NULL) {
@@ -542,7 +538,7 @@ bool CbSlidePos(void* pvGui,void* pvElemRef,int16_t nPos)
 {
   gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem     = pElemRef->pElem;
+  gslc_tsElem*    pElem     = gslc_GetElemFromRef(pGui,pElemRef);
   int16_t         nVal;
 
   // From the element's ID we can determine which slider was updated.
@@ -574,9 +570,9 @@ $<CALLBACK>
 // Spinner Input Ready callback
 bool CbSpinner(void* pvGui, void *pvElemRef, int16_t nState, void* pvData)
 {
+  gslc_tsGui*     pGui     = (gslc_tsGui*)pvGui;
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem* pElem = pElemRef->pElem;
-  gslc_tsGui* pGui = (gslc_tsGui*)pvGui;
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
 
   // NOTE: pvData is NULL
   if (nState == XSPINNER_CB_STATE_UPDATE) {
@@ -664,15 +660,15 @@ $<CALLBACK>
     (char*)m_sDisplayText$<COM-018>,$<TXT-205>,$<TXT-211>);
 <STOP>
 <TEXT_UTF8>
-  gslc_ElemSetTxtEnc(&m_gui,pElemRef,GSLC_TXT_ENC_UTF8);
+  gslc_ElemSetTxtEnc(&m_gui,$<COM-019>,GSLC_TXT_ENC_UTF8);
 <STOP>
 <TICK_CB>
 
 bool CbTickScanner(void* pvGui,void* pvScope)
 {
-  gslc_tsGui*   pGui      = (gslc_tsGui*)(pvGui);
+  gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvScope);
-  gslc_tsElem*    pElem     = pElemRef->pElem;
+  gslc_tsElem*    pElem     = gslc_GetElemFromRef(pGui,pElemRef);
 
   //TODO add your custom code here 
 

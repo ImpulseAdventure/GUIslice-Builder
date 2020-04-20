@@ -29,7 +29,7 @@
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     $<COL-302>,$<COL-303>,true,true,NULL,NULL);
 <STOP>
-<BOX_ALL_P>
+<BOX_ALL_FUNCT_P>
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
@@ -51,8 +51,10 @@
 // Common Button callback
 bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY)
 {
+  // Typecast the parameters to match the GUI and element types
+  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem* pElem = pElemRef->pElem;
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
 
   if ( eTouch == GSLC_TOUCH_UP_IN ) {
     // From the element's ID we can determine which button was pressed.
@@ -69,34 +71,25 @@ $<CALLBACK>
 <STOP>
 <BUTTON_CB_CASE>
       case $<COM-002>:
-        //TODO- Replace with button handling code
         break;
 <STOP>
 <BUTTON_CB_CHGPAGE>
       case $<COM-002>:
-        //TODO- Check the code to see what else you may need to add
         gslc_SetPageCur(&m_gui,$<TBNT-101>);
         break;
 <STOP>
 <BUTTON_CB_INPUT>
       case $<COM-002>:
-        //TODO- Check the code to see what else you may need to add
-        // Clicked on edit field, so show popup box and associate with this text field
-        gslc_ElemXKeyPadTargetIdSet(&m_gui, $<KEY-019>, $<COM-002>);
-        gslc_PopupShow(&m_gui, $<KEY-002>, true);
-        // Preload current value
-        gslc_ElemXKeyPadValSet(&m_gui, $<KEY-019>, gslc_ElemGetTxtStr(&m_gui, $<COM-019>));
+        gslc_ElemXKeyPadInputAsk(&m_gui, $<KEY-019>, $<KEY-002>, $<COM-019>);
         break;
 <STOP>
 <BUTTON_CB_SHOWPOPUP>
       case $<COM-002>:
-        //TODO- Check the code to see what else you may need to add
         gslc_PopupShow(&m_gui, $<TBTN-104>, true);
         break;
 <STOP>
 <BUTTON_CB_HIDEPOPUP>
       case $<COM-002>:
-        //TODO- Check the code to see what else you may need to add
         gslc_PopupHide(&m_gui);
         break;
 <STOP>
@@ -158,7 +151,6 @@ $<CALLBACK>
 <STOP>
 <CHECKBOX_CB_CASE>
     case $<COM-002>:
-      //TODO- Replace with your handling code
       break;
 <STOP>
 <CLICK_EN>
@@ -213,9 +205,9 @@ bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   int nInd;
 
   // Typecast the parameters to match the GUI and element types
-  gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
-  gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem     = pElemRef->pElem;
+  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
+  gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef); 
 
   // Create shorthand variables for the origin
   int16_t  nX = pElem->rElem.x;
@@ -256,10 +248,10 @@ bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   $<COM-019> = gslc_PageFindElemById(&m_gui,$<COM-000>,$<COM-002>);
 <STOP>
 <ELEMENT_REF_EXTERN>
-extern gslc_tsElemRef*  $<18>$<ELEMREF>;
+extern gslc_tsElemRef* $<ELEMREF>;
 <STOP>
 <ELEMENT_REF_SAVE>
-gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
+gslc_tsElemRef* $<18>$<ELEMREF>= NULL;
 <STOP>
 <FILE_HDR>
 // FILE: [$<FILENAME>]
@@ -369,9 +361,9 @@ gslc_tsElemRef                  m_as$<STRIP_KEY>ElemRef[MAX_ELEM_$<STRIP_ENUM>];
 // KeyPad Input Ready callback
 bool CbKeypad(void* pvGui, void *pvElemRef, int16_t nState, void* pvData)
 {
+  gslc_tsGui*     pGui     = (gslc_tsGui*)pvGui;
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem* pElem = pElemRef->pElem;
-  gslc_tsGui* pGui = (gslc_tsGui*)pvGui;
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
 
   // From the pvData we can get the ID element that is ready.
   int16_t nTargetElemId = gslc_ElemXKeyPadDataTargetIdGet(pGui, pvData);
@@ -395,9 +387,8 @@ $<CALLBACK>
 <STOP>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
-        gslc_ElemSetTxtStr(pGui, $<COM-019>, gslc_ElemXKeyPadDataValGet(pGui, pvData)); 
-        gslc_PopupHide(&m_gui);
-      break;
+        gslc_ElemXKeyPadInputGet(pGui, $<COM-019>, pvData);
+        break;
 <STOP>
 <KEYPAD_CONFIG>
   gslc_tsXKeyPadCfg sCfg = gslc_ElemXKeyPadCfgInit_Num();
@@ -457,9 +448,9 @@ gslc_tsElemRef                  $<STORAGE>Ref[1];
 <LISTBOX_CB>
 bool CbListbox(void* pvGui, void* pvElemRef, int16_t nSelId)
 {
-  gslc_tsGui*     pGui = (gslc_tsGui*)(pvGui);
+  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui, pElemRef);
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui, pElemRef);
   char            acTxt[MAX_STR + 1];
   
   if (pElemRef == NULL) {
@@ -479,7 +470,6 @@ $<CALLBACK>
 <STOP>
 <LISTBOX_CB_CASE>
     case $<COM-002>:
-      //TODO: Add your listbox selection code here
       if (nSelId != XLISTBOX_SEL_NONE) {
         gslc_ElemXListboxGetItem(&m_gui, pElemRef, nSelId, acTxt, MAX_STR);
       }
@@ -649,9 +639,9 @@ extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
 // Callback function for when a slider's position has been updated
 bool CbSlidePos(void* pvGui,void* pvElemRef,int16_t nPos)
 {
-  gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
-  gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem     = pElemRef->pElem;
+  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
+  gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
+  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
   int16_t         nVal;
 
   // From the element's ID we can determine which slider was updated.
@@ -670,7 +660,6 @@ $<CALLBACK>
     case $<COM-002>:
       // Fetch the slider position
       nVal = gslc_ElemXSliderGetPos(pGui,$<COM-019>);
-      //TODO- Replace with slider handling code
       break;
 <STOP>
 <SPINNER>
@@ -683,9 +672,9 @@ $<CALLBACK>
 // Spinner Input Ready callback
 bool CbSpinner(void* pvGui, void *pvElemRef, int16_t nState, void* pvData)
 {
+  gslc_tsGui*     pGui = (gslc_tsGui*)pvGui;
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem* pElem = pElemRef->pElem;
-  gslc_tsGui* pGui = (gslc_tsGui*)pvGui;
+  gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
 
   // NOTE: pvData is NULL
   if (nState == XSPINNER_CB_STATE_UPDATE) {
@@ -768,12 +757,30 @@ $<CALLBACK>
   pElemRef = gslc_ElemCreateTxt(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
     (char*)m_sInputText$<COM-018>,$<TXT-205>,$<TXT-211>);
 <STOP>
+<TEXT_INPUT_P>
+  
+  // Create $<COM-002> text input field
+  static char m_sInputText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
+  gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
+    m_sInputText$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,0,0,
+    true,true,true,false,NULL,NULL,&CbBtnCommon,NULL);
+<STOP>
 <TEXT_INPUT_NUM>
   
   // Create $<COM-002> numeric input field
   static char m_sInputNumber$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   pElemRef = gslc_ElemCreateTxt(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
     (char*)m_sInputNumber$<COM-018>,$<TXT-205>,$<TXT-211>);
+<STOP>
+<TEXT_INPUT_NUM_P>
+  
+  // Create $<COM-002> numeric input field
+  static char m_sInputNumber$<COM-018>[$<TXT-205>] = "$<TXT-201>";
+  gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
+    m_sInputNumber$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,0,0,
+    true,true,true,false,NULL,NULL,&CbBtnCommon,NULL);
 <STOP>
 <TEXT_UPDATE>
   
@@ -791,18 +798,18 @@ $<CALLBACK>
     $<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<COM-010>,$<COM-011>);
 <STOP>
 <TEXT_UTF8>
-  // gslc_ElemSetTxtEnc(); UTF8 characters currently not supported by ADAfruit GFX
+  gslc_ElemSetTxtEnc(&m_gui,$<COM-019>,GSLC_TXT_ENC_UTF8);
 <STOP>
 <TEXT_UTF8_P>
-  // gslc_ElemSetTxtEnc(); currently not supported by the FLASH _P calls.
+  gslc_ElemSetTxtEnc(&m_gui,$<COM-019>,GSLC_TXT_ENC_UTF8);
 <STOP>
 <TICK_CB>
 
 bool CbTickScanner(void* pvGui,void* pvScope)
 {
-  gslc_tsGui*   pGui      = (gslc_tsGui*)(pvGui);
+  gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvScope);
-  gslc_tsElem*    pElem     = pElemRef->pElem;
+  gslc_tsElem*    pElem     = gslc_GetElemFromRef(pGui,pElemRef);
 
   //TODO add your custom code here 
 
@@ -850,7 +857,7 @@ bool CbTickScanner(void* pvGui,void* pvScope)
   static char m_strbtn$<COM-018>[$<TXT-205>] = "$<TXT-202>";
   gslc_ElemCreateBtnTxt_P_R(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_strbtn$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-302>,$<COL-303>,$<COL-302>,
+    $<COL-301>,$<COL-302>,$<COL-303>,$<COL-302>,$<COL-304>,
     $<TXT-213>,$<COM-010>,$<COM-011>,&CbBtnCommon,NULL);
 <STOP>
 <WARNING_CONFIG>

@@ -138,7 +138,7 @@ public class CodeGenerator {
   public  final static String ARDUINO_EXT             = ".ino";
   
   /** The Constant HEADER_EXT. */
-  public  final static String HEADER_EXT              = "_GLSC.h";
+  public  final static String HEADER_EXT              = "_GSLC.h";
   
   /** The Constant LINUX_EXT. */
   public  final static String LINUX_EXT               = ".c";
@@ -479,6 +479,18 @@ public class CodeGenerator {
           sMessage = new String(appName);
           break;
         case ST_ARDUINO_HDR:
+          /* due to my dyslexia I created files with _GLSC.h
+           * instead of _GSLC.h so I check here and delete
+           * them if found.
+           */
+          hdrName = new String(sProjectName + "_GLSC.h");
+          hdrFullPath = folder + System.getProperty("file.separator") + hdrName;
+          hdrFile = new File(hdrFullPath);
+          if (hdrFile.exists()) {
+            hdrFile.delete();
+          }
+          /* Back to business - create app + header pathnames 
+           */
           appName = new String(sProjectName + ARDUINO_EXT);
           appFullPath = folder + System.getProperty("file.separator") + appName;
           hdrName = new String(sProjectName + HEADER_EXT);

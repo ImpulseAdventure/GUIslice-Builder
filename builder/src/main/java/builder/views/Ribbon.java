@@ -90,7 +90,7 @@ public class Ribbon extends JRibbonFrame {
   public JCommandButton btn_undo,btn_redo,btn_delete;
   
   /** The edit buttons. */
-  public JCommandButton btn_copy,btn_cut,btn_paste;
+  public JCommandButton btn_copy,btn_cut,btn_paste,btn_copy_props;
   public JCommandButton mini_copy,mini_cut,mini_paste;
   
   /** The alignment buttons. */
@@ -653,6 +653,19 @@ public class Ribbon extends JRibbonFrame {
     });
     band.addCommandButton(btn_selection, TOP);
 
+    btn_copy_props = new JCommandButton("Copy Properties",
+        cu.getResizableIcon("resources/icons/edit/copy_props.png"));
+    btn_copy_props.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "copyprops");
+        }
+      });
+    btn_copy_props.setActionRichTooltip(new RichTooltip(
+          "Copy Properties",
+          "Copy a UI Element's common properties to selected elements."));
+    band.addCommandButton(btn_copy_props, TOP);
+
   }
 
   /**
@@ -1068,17 +1081,7 @@ public class Ribbon extends JRibbonFrame {
    * @param selectedGroupCnt is the number of checkboxes selected on the page
    */
 
-  public void setEditButtons(int selectedCnt, int selectedGroupCnt) {
-/*
-    if (selectedCnt <= 0) {
-      disableSingleEdits();
-    } else if (selectedCnt == 1) {
-      disableMultiEdits();
-      enableSingleEdits();
-    } else {
-      enableMultiEdits();
-    }
-*/
+  public void setEditButtons(int selectedGroupCnt) {
     if (selectedGroupCnt > 1) {
       btn_group.setEnabled(true);
     } else {
@@ -1086,70 +1089,6 @@ public class Ribbon extends JRibbonFrame {
     }
   }
   
-  public void enableSingleEdits() {
- /*
-    btn_aligntop.setEnabled(true);
-    btn_alignbottom.setEnabled(true);
-    btn_aligncenter.setEnabled(true);
-    btn_alignleft.setEnabled(true);
-    btn_alignright.setEnabled(true);
- */
-  }
-  
-  public void disableSingleEdits() {
-/*
-    btn_aligntop.setEnabled(false);
-    btn_alignbottom.setEnabled(false);
-    btn_aligncenter.setEnabled(false);
-    btn_alignleft.setEnabled(false);
-    btn_alignright.setEnabled(false);
-    btn_alignhspace.setEnabled(false);
-    btn_alignvspace.setEnabled(false);
-    btn_alignwidth.setEnabled(false);
-    btn_alignheight.setEnabled(false);
-*/
-  }
-
-  public void enableMultiEdits() {
-/*
-    btn_aligntop.setEnabled(true);
-    btn_alignbottom.setEnabled(true);
-    btn_aligncenter.setEnabled(false);
-    btn_alignleft.setEnabled(true);
-    btn_alignright.setEnabled(true);
-    btn_alignhspace.setEnabled(true);
-    btn_alignvspace.setEnabled(true);
-    btn_alignwidth.setEnabled(true);
-    btn_alignheight.setEnabled(true);
-*/
-  }
-  
-  public void disableMultiEdits() {
-/*
-    btn_aligncenter.setEnabled(true);
-    btn_alignhspace.setEnabled(false);
-    btn_alignvspace.setEnabled(false);
-    btn_alignwidth.setEnabled(false);
-    btn_alignheight.setEnabled(false);
-*/
-  }
-  
-  public void enableUndo() {
-//    btn_undo.setEnabled(true);
-  }
-  
-  public void disableUndo() {
-//    btn_undo.setEnabled(false);
-  }
-  
-  public void enableRedo() {
-//    btn_redo.setEnabled(true);
-  }
-  
-  public void disableRedo() {
-//    btn_redo.setEnabled(false);
-  }
-
   public void enablePaste() {
     btn_paste.setEnabled(true);
     mini_paste.setEnabled(true);

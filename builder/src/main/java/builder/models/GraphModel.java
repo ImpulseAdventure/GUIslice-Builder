@@ -62,16 +62,14 @@ public class GraphModel extends WidgetModel {
   static private final int PROP_ROWS              = 8;
   static private final int PROP_STYLE             = 9;
   static private final int PROP_GRAPH_COLOR       = 10;
-  static private final int PROP_DEFAULT_COLORS    = 11;
-  static private final int PROP_FRAME_COLOR       = 12;
-  static private final int PROP_FILL_COLOR        = 13;
-  static private final int PROP_SELECTED_COLOR    = 14;
+  static private final int PROP_FRAME_COLOR       = 11;
+  static private final int PROP_FILL_COLOR        = 12;
+  static private final int PROP_SELECTED_COLOR    = 13;
 
   /** The Property Defaults */
   static public  final Integer DEF_ROWS              = Integer.valueOf(0);
   static public  final String  DEF_STYLE             = "GSLCX_GRAPH_STYLE_DOT";
   static public  final Color   DEF_GRAPH_COLOR       = Color.ORANGE;
-  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
   static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
@@ -99,7 +97,7 @@ public class GraphModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GRAPH;
-    data = new Object[15][5];
+    data = new Object[14][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
@@ -110,10 +108,9 @@ public class GraphModel extends WidgetModel {
 
     initProp(PROP_GRAPH_COLOR, Color.class, "COL-309", Boolean.FALSE,"Color of Graph",DEF_GRAPH_COLOR);
 
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
     cbStyle = new JComboBox<String>();
     cbStyle.addItem(STYLE_DOT);
@@ -137,25 +134,6 @@ public class GraphModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_DEFAULT_COLORS) {
-      // check for switching back and forth
-      if (useDefaultColors()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=cf.getDefFrameCol(); 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=cf.getDefFillCol();
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=cf.getDefGlowCol(); 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      }
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }     
-
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -200,15 +178,6 @@ public class GraphModel extends WidgetModel {
    */
   public String getGraphStyle() {
     return (String) data[PROP_STYLE][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return ((Boolean) data[PROP_DEFAULT_COLORS][PROP_VAL_VALUE]).booleanValue();
   }
   
  /**
@@ -268,15 +237,6 @@ public class GraphModel extends WidgetModel {
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
-    if (useDefaultColors()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-    } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-    }   
     String strKey = "";
     int n = 0;
     String strCount = ""; 

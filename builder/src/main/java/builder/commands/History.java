@@ -29,8 +29,6 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-import builder.views.Ribbon;
-
 /**
  * The Class History implements undo and redo functionality.
  * <p>
@@ -71,9 +69,6 @@ public class History {
   /** The instance. */
   private static History instance = null;
   
-  /** The Ribbon. */
-  private static Ribbon ribbon;
-
   /**
    * Gets the single instance of History.
    *
@@ -82,7 +77,6 @@ public class History {
   public static synchronized History getInstance() {
     if (instance == null) {
       instance = new History();
-      ribbon = Ribbon.getInstance();
     }
     return instance;
   }
@@ -105,8 +99,6 @@ public class History {
   public void clearHistory() {
     undoStack.clear();
     redoStack.clear();
-    ribbon.disableUndo();
-    ribbon.disableRedo();
   }
   
   /**
@@ -117,9 +109,7 @@ public class History {
    */
   public void push(Command c) {
     undoStack.push(c);
-    ribbon.enableUndo();
     redoStack.clear();
-    ribbon.disableRedo();
   }
   
   /**
@@ -134,16 +124,13 @@ public class History {
           "Nothing to undo",
           "Information",
           JOptionPane.INFORMATION_MESSAGE);
-      ribbon.disableUndo();
       return false;
     }
     Command c = undoStack.pop();
-    if (undoStack.size() == 0) ribbon.disableUndo();
     if (c == null) {
       return false;
     }
     redoStack.push(c);
-    ribbon.enableRedo();
 //    System.out.println("Undoing: " + c.toString());
     c.restore();
     return true;
@@ -161,17 +148,14 @@ public class History {
           "Nothing to redo",
           "Information",
           JOptionPane.INFORMATION_MESSAGE);
-      ribbon.disableRedo();
       return false;
     }
     Command c = redoStack.pop();
-    if (redoStack.size() == 0) ribbon.disableRedo();
     if (c == null) {
       return false;
     }
 //    System.out.println("Redoing: " + c.toString());
     undoStack.push(c);
-    ribbon.enableUndo();
     c.restore();
     c.execute();
     return true;

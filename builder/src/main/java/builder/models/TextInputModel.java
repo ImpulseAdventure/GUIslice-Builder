@@ -64,7 +64,7 @@ public class TextInputModel extends WidgetModel {
   static private final int PROP_TEXT_SZ           = 10;
   static private final int PROP_TEXT_ALIGN        = 11;
   static private final int PROP_FILL_EN           = 12;
-  static private final int PROP_DEFAULT_COLORS    = 13;
+  static private final int PROP_USE_FLASH         = 13;
   static private final int PROP_TEXT_COLOR        = 14;
   static private final int PROP_FRAME_COLOR       = 15;
   static private final int PROP_FILL_COLOR        = 16;
@@ -76,7 +76,7 @@ public class TextInputModel extends WidgetModel {
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(10);
   static public  final String  DEF_TEXT_ALIGN        = "GSLC_ALIGN_MID_LEFT";
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
-  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
+  static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_TEXT_COLOR        = Color.YELLOW;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
@@ -141,11 +141,12 @@ public class TextInputModel extends WidgetModel {
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
     initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
 
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
-    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.TRUE,"Text Color",DEF_TEXT_COLOR);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
+    initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
+    
+    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.FALSE,"Text Color",DEF_TEXT_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
   }
 
@@ -202,29 +203,6 @@ public class TextInputModel extends WidgetModel {
     if (row == PROP_TEXT_SZ) {
       calcSizes(true);
     }
-    if (row == PROP_DEFAULT_COLORS) {
-      // check for switching back and forth
-      if (useDefaultColors()) {
-        data[PROP_TEXT_COLOR][PROP_VAL_VALUE]=DEF_TEXT_COLOR; 
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
-        data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      } else {
-        data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      }
-      fireTableCellUpdated(PROP_TEXT_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }
-    
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -234,6 +212,16 @@ public class TextInputModel extends WidgetModel {
     } 
   }
 
+  /**
+   * Use Flash API.
+   *
+   * @return <code>true</code>, if flash is to be used
+   */
+  @Override
+  public boolean useFlash() {
+    return ((Boolean) data[PROP_USE_FLASH][PROP_VAL_VALUE]).booleanValue();
+  }
+  
   /**
    * Checks if is utf8.
    *
@@ -308,15 +296,6 @@ public class TextInputModel extends WidgetModel {
     return (((Color) data[PROP_TEXT_COLOR][PROP_VAL_VALUE]));
   }
 
-  /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return ((Boolean) data[PROP_DEFAULT_COLORS][PROP_VAL_VALUE]).booleanValue();
-  }
-  
  /**
   * Gets the fill color.
   *
@@ -362,17 +341,6 @@ public class TextInputModel extends WidgetModel {
  public void readModel(ObjectInputStream in, String widgetType) 
      throws IOException, ClassNotFoundException {
    super.readModel(in,  widgetType);
-   if (useDefaultColors()) {
-     data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-     data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-     data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-     data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-   } else {
-     data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-     data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-     data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-     data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-   }   
    calcSizes(false);
  }
 
@@ -412,6 +380,34 @@ public class TextInputModel extends WidgetModel {
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
+  }
+
+  /**
+   * Copy selected properties from another model.
+   * Called by the CopyPropsCommand.
+   * @param checklistData
+   *          the widget model
+   */
+  @Override
+  public void copyProperties(Object checklistData[][]) {
+    super.copyProperties(checklistData);
+    calcSizes(true);
+  }
+  
+  /**
+   * Paste properties from the PasteCommand.
+   *
+   * @param m
+   *          the widget model
+   * @param x
+   *          the x
+   * @param y
+   *          the y
+   */
+  @Override
+  public void pasteProps(WidgetModel m, int x, int y) {
+    super.pasteProps(m,x,y);
+    calcSizes(false);
   }
 
 }

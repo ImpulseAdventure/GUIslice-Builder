@@ -26,9 +26,12 @@
 package builder.codegen.pipes;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.StringBuilder;
-
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +41,7 @@ import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
@@ -82,6 +86,13 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static String JUMPPAGE_ENUM_MACRO    = "TBNT-101";
   private final static String POPUPPAGE_ENUM_MACRO   = "TBTN-104";
   
+  private final static String BUTTON_CB = 
+      "// Common Button callback";
+  private final static String PROGMEM_ELEMREF_ERROR  =
+      "gslc_tsElem* pElem = pElemRef->pElem;";
+  private final static String PROGMEM_ELEMREF_FIX  =
+      "  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);";
+  
   /** The template manager. */
   TemplateManager tm = null;
 
@@ -98,6 +109,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static int CT_INPUTTXT   = 4;
   private final static int CT_SHOWPOPUP  = 5;
   private final static int CT_HIDEPOPUP  = 6;
+  private final static int CT_UPDINPUTNUM = 7;
+  private final static int CT_UPDINPUTTXT = 8;
 
   /** The case statement map. */
   HashMap<String, Integer> caseMap;
@@ -142,8 +155,73 @@ public class ButtonCbPipe extends WorkFlowPipe {
     this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_START;
     this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
-    return super.processCB(input);
-        
+    // bTagFound allows us to detect if we find our tag and error out on failure.
+    boolean bTagFound = false;  // detect if we find our tag
+    try {
+      /*
+       * To convert StringBuilder to InputStream in Java, first get bytes
+       * from StringBuilder after converting it into String object.
+       */
+      byte[] bytes = input.toString().getBytes(StandardCharsets.UTF_8);
+      /*
+       * Get ByteArrayInputStream from byte array.
+       */
+      InputStream is = new ByteArrayInputStream(bytes);
+      BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+      StringBuilder processed = new StringBuilder();
+      String sTestTag= "";
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.equals(MY_TAG)) {
+          bTagFound = true;
+          doCbCommon(br, processed);
+          break;
+        } else if (sTestTag.equals(BUTTON_CB)) {
+          /* here we need to check for code that may need updating
+           * original code failed for PROGMEM elements
+           */
+          processed.append(line);
+          processed.append(System.lineSeparator());
+          while (!bTagFound) {
+            line = br.readLine();
+            sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+            if (sTestTag.equals(MY_ENUM_TAG)) {
+              bTagFound = true;
+              processed.append(sTestTag); // output our BUTTON_ENUMS_TAG
+              processed.append(System.lineSeparator());  
+              doEnums(br, processed);
+              processed.append(MY_ENUM_END_TAG); 
+              processed.append(System.lineSeparator());  
+            } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR)) {
+              processed.append(PROGMEM_ELEMREF_FIX);
+              processed.append(System.lineSeparator());
+            } else {
+              processed.append(line);
+              processed.append(System.lineSeparator());
+            }
+          }          
+        } else if (sTestTag.equals(MY_ENUM_TAG)) {
+          bTagFound = true;
+          processed.append(sTestTag); // output our BUTTON_ENUMS_TAG
+          processed.append(System.lineSeparator());  
+          doEnums(br, processed);
+          processed.append(MY_ENUM_END_TAG); 
+          processed.append(System.lineSeparator());  
+        } else {
+          processed.append(line);
+          processed.append(System.lineSeparator());
+        }
+      }
+      if (!bTagFound) {
+        throw new CodeGenException("file: " + cg.getTemplateName() + 
+            "\n is corrupted missing tag:" + MY_TAG);
+      }
+      CodeUtils.finishUp(br, processed);
+      br.close();
+      return processed;   
+    } catch (IOException e) {
+      throw new CodeGenException(e.toString());
+    }      
   }
 
   /**
@@ -371,7 +449,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
                 // output what is stored but replace the one line that is wrong
                 replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
                 outputLines = listOfCases[idx];
-                tm.codeReplaceLine(sBd, outputLines, replacement, oldInfo.getLineNo());
+                tm.codeReplaceLine(sBd, outputLines, replacement, 
+                    oldInfo.getLineNo(), oldInfo.getLineNo());
                 bNeedOutput = false;
               }
             }
@@ -380,7 +459,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
               // output what is stored but replace the one line that is wrong
               replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
               outputLines = listOfCases[idx];
-              tm.codeReplaceLine(sBd, outputLines, replacement, oldInfo.getLineNo());
+              tm.codeReplaceLine(sBd, outputLines, replacement, 
+                  oldInfo.getLineNo(), oldInfo.getLineNo());
               bNeedOutput = false;
             }
           } else if (oldInfo.getCaseType() == CT_STANDARD) {
@@ -401,12 +481,42 @@ public class ButtonCbPipe extends WorkFlowPipe {
               bNeedOutput = false;
             }
           }
+          if (oldInfo.getCaseType() == CT_UPDINPUTNUM) {
+            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+              outputLines = listOfCases[idx];
+              // our old input template was 4 lines long, if match reduce to one line
+              if (oldInfo.getLineNo()+3 <= oldInfo.getStopNo()) {
+                replacement = String.format("        gslc_ElemXKeyPadInputAsk(&m_gui, %s, %s, %s);", 
+                  oldInfo.getKeyElementRef(),oldInfo.getPageEnum(),oldInfo.getElementRef());
+                tm.codeReplaceLine(sBd, outputLines, replacement, 
+                    oldInfo.getLineNo(), oldInfo.getStopNo());
+              } else {
+                tm.codeWriter(sBd, outputLines);
+              }
+              bNeedOutput = false;
+            }
+          }
           break;
         case CT_INPUTTXT:
           if (oldInfo.getCaseType() == CT_INPUTTXT) {
             if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
               outputLines = listOfCases[idx];
               tm.codeWriter(sBd, outputLines);
+              bNeedOutput = false;
+            }
+          }
+          if (oldInfo.getCaseType() == CT_UPDINPUTTXT) {
+            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+              outputLines = listOfCases[idx];
+              // our old input template was 4 lines long, if match reduce to one line
+              if (oldInfo.getLineNo()+3 <= oldInfo.getStopNo()) {
+                replacement = String.format("        gslc_ElemXKeyPadInputAsk(&m_gui, %s, %s, %s);", 
+                  oldInfo.getKeyElementRef(),oldInfo.getPageEnum(),oldInfo.getElementRef());
+                tm.codeReplaceLine(sBd, outputLines, replacement, 
+                    oldInfo.getLineNo(), oldInfo.getStopNo());
+              } else {
+                tm.codeWriter(sBd, outputLines);
+              }
               bNeedOutput = false;
             }
           }
@@ -422,7 +532,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
                 // output what is stored but replace the one line that is wrong
                 replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
                 outputLines = listOfCases[idx];
-                tm.codeReplaceLine(sBd, outputLines, replacement, oldInfo.getLineNo());
+                tm.codeReplaceLine(sBd, outputLines, replacement, 
+                    oldInfo.getLineNo(), oldInfo.getLineNo());
                 bNeedOutput = false;
               }
             }
@@ -431,7 +542,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
               // output what is stored but replace the one line that is wrong
               replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
               outputLines = listOfCases[idx];
-              tm.codeReplaceLine(sBd, outputLines, replacement, oldInfo.getLineNo());
+              tm.codeReplaceLine(sBd, outputLines, replacement, 
+                  oldInfo.getLineNo(), oldInfo.getLineNo());
               bNeedOutput = false;
             }
           } else if (oldInfo.getCaseType() == CT_STANDARD) {
@@ -606,6 +718,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
       String split[] = splitWords(line);
       if (split.length == 0) continue;
       if (split[0].equals("case")) continue;
+      if (split[0].equals("break")) break;
       if (split[0].equals("gslc_SetPageCur")) {
         if (split.length > 2) {
           ci.setCaseType(CT_CHGPAGE);
@@ -615,12 +728,20 @@ public class ButtonCbPipe extends WorkFlowPipe {
           ci.setCaseType(CT_UNDEFINED);
         }
       }
+      if (split[0].equals("gslc_ElemXKeyPadTargetIdSet")) {
+        if (split.length > 3) {
+          ci.setKeyElementRef(split[2]);
+          ci.setLineNo(n);
+        }
+      }
       if (split[0].equals("gslc_PopupShow")) {
         if (split.length > 2) {
           if (split[2].equals("E_POP_KEYPAD")) {
-            ci.setCaseType(CT_INPUTNUM);
+            ci.setCaseType(CT_UPDINPUTNUM);
+            ci.setPageEnum(split[2]);
           } else if (split[2].equals("E_POP_AKEYPAD")) {
-            ci.setCaseType(CT_INPUTTXT);
+            ci.setPageEnum(split[2]);
+            ci.setCaseType(CT_UPDINPUTTXT);
           } else {
             ci.setCaseType(CT_SHOWPOPUP);
             ci.setPageEnum(split[2]);
@@ -630,12 +751,24 @@ public class ButtonCbPipe extends WorkFlowPipe {
           ci.setCaseType(CT_UNDEFINED);
         }
       }
+      if (split[0].equals("gslc_ElemXKeyPadInputAsk")) {
+        if (split.length > 5) {
+          if (split[4].equals("E_POP_KEYPAD")) {
+            ci.setCaseType(CT_INPUTNUM);
+          } else {
+            ci.setCaseType(CT_INPUTTXT);
+          }
+          ci.setKeyElementRef(split[3]);
+          ci.setPageEnum(split[4]);
+          ci.setElementRef(split[5]);
+          ci.setLineNo(n);
+        }
+      }
       if (split[0].equals("gslc_ElemXKeyPadValSet") && 
-          ci.getCaseType() == CT_INPUTNUM) {
+          (ci.getCaseType() == CT_UPDINPUTNUM || ci.getCaseType() == CT_UPDINPUTTXT)) {
+        ci.setStopNo(n);
         if (split.length > 5) {
           ci.setElementRef(split[5]);
-        } else {
-          ci.setCaseType(CT_UNDEFINED);
         }
       }
       if (split[0].equals("gslc_PopupHide")) {
@@ -683,10 +816,19 @@ public class ButtonCbPipe extends WorkFlowPipe {
     /** The element ref */
     String elementRef;
     
-    /** The line number tracks where we found a matching statement 
+    /** The keypad element ref */
+    String keyElementRef;
+    
+    /** 
+     * The line number tracks where we found a matching statement 
      * like gslc_SetPageCur or gslc_PopupShow
      */
     int  line_no;
+    
+    /**
+     *  The stop number tracks where we stop matching
+     */
+    int  stop_no;
     
     /**
      * Instantiates a new CaseInfo.
@@ -696,7 +838,9 @@ public class ButtonCbPipe extends WorkFlowPipe {
       this.caseType = CT_UNDEFINED;
       this.pageEnum = "";
       this.elementRef = "";
+      this.keyElementRef = "";
       this.line_no = -1;
+      this.stop_no = -1;
     }
  
     /**
@@ -741,13 +885,6 @@ public class ButtonCbPipe extends WorkFlowPipe {
     }
 
     /**
-     * Sets the elementRef.
-     */
-    public void setElementRef(String elementRef) {
-      this.elementRef = elementRef;
-    }
-
-    /**
      * Gets the elementRef.
      *
      * @return the elementRef
@@ -756,12 +893,43 @@ public class ButtonCbPipe extends WorkFlowPipe {
       return elementRef;
     }
 
+    /**
+     * Sets the elementRef.
+     */
+    public void setElementRef(String elementRef) {
+      this.elementRef = elementRef;
+    }
+
+    /**
+     * Gets the keypad elementRef.
+     *
+     * @return the elementRef
+     */
+    public String getKeyElementRef() {
+      return keyElementRef;
+    }
+
+    /**
+     * Sets the keypad elementRef.
+     */
+    public void setKeyElementRef(String keyElementRef) {
+      this.keyElementRef = keyElementRef;
+    }
+
     public int getLineNo() {
       return line_no;
     }
     
     public void setLineNo(int line_no) {
       this.line_no = line_no;
+    }
+    
+    public int getStopNo() {
+      return stop_no;
+    }
+    
+    public void setStopNo(int stop_no) {
+      this.stop_no = stop_no;
     }
     
   }

@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.13.b025
+        Ver: 0.14.b000
     </H3>
 </center>
 
@@ -21,11 +21,11 @@
 
 **Publication date and software version**
 
-Published April 12, 2020. Based on GUIslice API Library 0.13.0
+Published April 21, 2020. Based on GUIslice API Library 0.14.0
 
 **Copyright**
 
-This document is Copyright © 2020,2019,2018 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
+This document is Copyright © 2018-2020 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
 
 GUIslice Copyright (c) Calvin Hass 2016-2020
 
@@ -90,7 +90,6 @@ The code you add between Enum tags will be kept safe unless you delete the butto
 //<Button Enums !End!> 
 
 See Appendix E Case Statement Generation for detailed examples. 
-
 
 ---------------
 <div style="page-break-after: always;"></div>
@@ -168,10 +167,19 @@ Now start by picking your first UI piece on the Toolbox. I suggest you first tur
 
 Say you start with a Text Button, you will notice its been randomly placed on the canvas. Using your mouse select this Text Button by moving the mouse pointer over the Text Button and clicking the left key. It will now have a dashed red rectangle around it to indicate its been selected.  Now press and hold the mouse left key and drag the Button approximately where you want it. You can refer to section 3.4 Layout Band for using the various alignment controls for further alignment.   
 
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
 Off to the right of the TFT Simulation screen you will see all of the properties for this element.  
 Anything with a rose color is something you can't edit.  When you were dragging your button you might have noticed the x and y coordinates changing dynamically.  Then when you released the mouse a slight jump occurred snapping  the UI Button to the grid's snapTo points.  Instead of dragging the Text Button around you could also have  simply typed in the new x and y positions within the properties table. Modifying the x or y coordinates directly will also override the Grid's SnapTo and its Margin setting.
 
-One thing you should consider as you add UI elements is changing the ENUM names for Button and any other element.  It will make your life a lot easier if they have meaningful names.  For example, this new Text Button might be your QUIT button.  So change the ENUM from its default to E_ELEM_BTNQUIT, while also changing Text to Quit.  Also, any element you plan on directly accessing at runtime should have a meaningful element reference name. Like in example ex04_bld_ctrls where the text counter's reference is named m_pElemCount. By the way the 'm_' signifies a global variable. 
+One thing you should consider as you add UI elements is changing the ENUM names for Button and any other element.  It will make your life a lot easier if they have meaningful names.  
+
+For example, this new Text Button might be your QUIT button.  
+
+So change the ENUM from its default to E_ELEM_BTNQUIT, while also changing Text to Quit.  
+
+Also, any element you plan on directly accessing at runtime should have a meaningful element reference name.  Like in example ex04_bld_ctrls where the text counter's reference is named m_pElemCount.  By the way the 'm_' signifies a global variable and the lowercase 'p' means a pointer.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -241,7 +249,7 @@ The easiest way I can think of to show how to use the alignment buttons is with 
 
 ![](images/align_before.png)
 
-Now press the Align Top button.
+Now click the Align Top button.
 
 ![](images/toolbar_top.png)
 
@@ -249,7 +257,7 @@ This gives you:
 
 ![](images/top_after.png)
 
-If you press it a second time the elements move to the top margin (set as a default of 5).  You can change the size of margins in the General tab. You can press the UNDO button to get back to the original position and test the other alignment buttons.
+If you click it a second time the elements move to the top margin (set as a default of 5).  You can change the size of margins in the General tab. You can click the UNDO button to get back to the original position and test the other alignment buttons.
 
 ![](images/top_after2.png)
 
@@ -261,7 +269,7 @@ Before:
 
 ![](images/align_before.png)
 
-Now press the Align Bottom button.
+Now click the Align Bottom button.
 
 ![](images/toolbar_bottom.png)
 
@@ -269,7 +277,7 @@ This gives you:
 
 ![](images/bottom_after.png)
 
-If you press it a second time the elements move to the bottom margin.
+If you click it a second time the elements move to the bottom margin.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -280,7 +288,7 @@ You can only center one element at a time.
 
 ![](images/center_before.png)
 
-Now press the Align Center button.
+Now click the Align Center button.
 
 ![](images/toolbar_center.png)
 
@@ -299,7 +307,7 @@ Before:
 
 ![](images/align_before.png)
 
-Now press the Align Left button.
+Now click the Align Left button.
 
 ![](images/toolbar_left.png)
 
@@ -307,7 +315,7 @@ This gives you:
 
 ![](images/left_after.png)
 
-If you press it a second time the elements move to the left margin.
+If you click it a second time the elements move to the left margin.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -318,7 +326,7 @@ Before:
 
 ![](images/align_before.png)
 
-Now press the Align Right button.
+Now click the Align Right button.
 
 ![](images/toolbar_right.png)
 
@@ -326,7 +334,7 @@ This gives you:
 
 ![](images/right_after.png)
 
-If you press it a second time the elements move to the right margin.
+If you click it a second time the elements move to the right margin.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -337,7 +345,7 @@ Before:
 
 ![](images/horz_before.png)
 
-Now press the Align Horizontal Spacing button.
+Now click the Align Horizontal Spacing button.
 
 ![](images/toolbar_horz.png)
 
@@ -358,7 +366,7 @@ Before:
 
 ![](images/vert_before.png)
 
-Now press the Align Vertical Spacing button.
+Now click the Align Vertical Spacing button.
 
 ![](images/toolbar_vert.png)
 
@@ -379,7 +387,7 @@ Before:
 
 ![](images/width_before.png)
 
-Now press the Align Width button.
+Now click the Align Width button.
 
 ![](images/toolbar_width.png)
 
@@ -396,7 +404,7 @@ Before:
 
 ![](images/height_before.png)
 
-Now press the Align Height button.
+Now click the Align Height button.
 
 ![](images/toolbar_height.png)
 
@@ -407,11 +415,34 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.10 Rectangular Selection ![](images/layout/selection.png)
+## 3.4.10 Rectangular Selection ![](images/layout/copy_props.png)
 
-Pressing the Rectangular Selection button changes your cursor to a cross and allows you to create a rubber band that you can drag over UI elements to select them.  You start by pressing and holding the left mouse button then dragging the rubber band over yourUI Elements.  Once you release the left mouse button the transaction ends.
+Clicking the Rectangular Selection button changes your cursor to a cross and allows you to create a rubber band that you can drag over UI elements to select them.  You start by pressing and holding the left mouse button then dragging the rubber band over yourUI Elements.  Once you release the left mouse button the transaction ends.
 
 ![](images/layout/rectangle_select.png)
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+## 3.4.11 Copy Properties ![](images/layout/copy_props.png)
+
+Clicking the Copy Properties button after selecting a UI Element that has one or more properties that you wish to 
+propagate to other UI Elements will bring up a Checklist dialog.  
+
+
+![](images/layout/checklist.png)
+
+You mark the properties you wish copied and click OK. 
+ 
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+Once you have done that a second dialog will come up:
+
+![](images/layout/copyprops_select.png)
+
+Now you to select the Target UI Elements you want to modify. After you have made your selections, click copy and the properties you marked earlier will be copied. 
+
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -434,7 +465,7 @@ Now the solution to this issue is to select the Box element in the Treeview and 
 # 4.0 UI Elements
 This section outlines the various properties you can set and their usage for each type of element. Images are discussed in section 5.4. During run-time any properties shown in a rose color are read-only.
 
-Some of the UI elements also support a Flash version to minimize SRAM usage on a Arduino platform.  These UI Elements will have a 'Use Flash?' property you can set equal to 'true'.  
+Most of the UI elements also support a Flash version to minimize RAM usage.  These UI Elements will have a 'Use Flash API?' property you can set equal to 'true'.  
 
 ## 4.1 Common Properties
 These are the basic common properties for all elements with the exception of Page.
@@ -453,15 +484,8 @@ These are the basic common properties for all elements with the exception of Pag
 
 NOTE: Width and Height are system set to default values when placed on the TFT Simulation.
 
-Most also have the Default colors option along with a set new colors you can set.
-
-| NAME                | VALUE                                            |
-|---------------------|--------------------------------------------------|
-| Use Default Colors? | true, Use the default color scheme               |
-| Text Color          | Override Text color with this color              |
-| Frame Color         | Override Frame color with this color             |
-| Fill Color          | Override Fill color with this color              |
-| Selected Color      | Override Selected color with this color          |
+When you first create a UI Element you will be shown its set of Default Colors.
+GUIslice API has a different set of colors for each UI Element but you can override them and set to your preferences.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -561,7 +585,6 @@ See example ex04_bld_ctrls.
 | Callback Enabled?   | false                                             |
 | Check Mark Color    | Color.ORANGE Determines the color of check mark   |
 | Use Flash API?      | false                                             |
-| Use Default Colors? | true                                              |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -583,7 +606,6 @@ See example ex11_bld_graph.
 | Maximum Points      | 0 Maximum number of points in buffer              |
 | Graph Style         | GSLCX_GRAPH_STYLE_DOT - Dot, Line or Fill.        |
 | Color of Graph      | Color.ORANGE Set color of graph dots or fill.     |
-| Use Default Colors? | true                            |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -750,7 +772,6 @@ Draws a progress bar element that represents a proportion value (nVal) between n
 | Starting Value        | 0                                              |
 | Gauge Indicator Color | Color.GREEN                                    |
 | Use Flash API?        | false                                          |
-| Use Default Colors?   | true                                           |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -781,7 +802,6 @@ See example ex09_bld_radial.
 | Indicator Tipe Size   | Default 3                                      |
 | Indicator File?	      | Default false                                  |
 | Gauge Indicator Color | Color.GREEN                                    |
-| Use Default Colors?   | true                                           |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -818,7 +838,6 @@ See example ex04_bld_ctrls.
 | Callback Enabled?   | false                                             |
 | Check Mark Color    | Color.ORANGE Determines the color of check mark   |
 | Use Flash API?      | false                                             |
-| Use Default Colors? | true                                              |
 | Group ID            | GSLC_GROUP_ID_NONE                                |
 
 -----------------------------------------------
@@ -1032,7 +1051,7 @@ Most of the builder examples use text fields as labels while some use them to di
 | Text Alignment        | GSLC_ALIGN_MID_LEFT (can be RIGHT or CENTERED) |                          |
 | Fill Enabled?         | true                                           |
 | Frame Enabled?        | false                                          |
-| Use Flash API?        | false set to true if you need to save storage  |
+| Use Flash API?        | false set to true if you need to save ram      |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1162,7 +1181,6 @@ A fuller explanation of when the Builder will create, delete or modify a case st
 | Popup Page ENUM       | PAGE ENUM used for gslc_PopupShow call         |
 | Hide Popup Page?      | false, set=true->gslc_PopupHide() current page |
 | Use Flash API?        | false                                          |
-| Use Default Colors?   | true                                           |
 | Text Color            | Color.WHITE                                    |
 | Frame Color           | GSLC_COL_BLUE_DK2                              |
 | Fill Color            | GSLC_COL_BLUE_DK4                              |
@@ -1215,10 +1233,10 @@ See ex26_bld_calc for an example of usage.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-| NAME                  | VALUE                                          |
-|-----------------------|------------------------------------------------|
+| NAME                  | VALUE                                            |
+|-----------------------|--------------------------------------------------|
 | Fill Enabled?         | true                                             |
-| Use Default Colors?   | true                                             |
+| Use Flash API?        | false set to true if you need to save ram        |
 | Text Color            | Color.YELLOW                                     |
 | Frame Color           | Color.GRAY                                       |
 | Fill Color            | Color.BLACK                                      |
@@ -1270,12 +1288,12 @@ See ex26_bld_alpha for an example.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-| NAME                  | VALUE                                          |
-|-----------------------|------------------------------------------------|
+| NAME                  | VALUE                                            |
+|-----------------------|--------------------------------------------------|
 | Field Size            | 10                                               |
 | Text Alignment        | GSLC_ALIGN_MID_LEFT                              |
 | Fill Enabled?         | true                                             |
-| Use Default Colors?   | true                                             |
+| Use Flash API?        | false set to true if you need to save ram        |
 | Text Color            | Color.YELLOW                                     |
 | Frame Color           | Color.GRAY                                       |
 | Fill Color            | Color.BLACK                                      |
@@ -1326,7 +1344,6 @@ When you first create a new project these values are filled in with values from 
 | Vertical Spacing between elements  | Used by alignment commands as the default value           |
 | MAX_STR                            | Used inside C program for maximum storage of strings      |
 | Screen Rotation [0-3]              | -1 is default. If needed, forces gslc_GuiRotate() call.   |
-
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1477,14 +1494,15 @@ The FlatLaf project is on GitHub:
 
 Virtually all icon's used by the Builder were created by Paul Conti. However, a small set have been made by other people.
 
-The "Project" (Light Bulb with gears) icon used in the TreeView was created by
-
+The "Project" (Light Bulb with gears) icon ![project](images/controls/project.png) used in the TreeView was created by
 <div>Icons made by <a href="https://www.flaticon.com/authors/ddara" title="dDara">dDara</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
-The "Page" (Tablet) and "Image" (Camera) and "Widget" (Puzzle) icons were provided by:
+The "Copy Properties" (exam) icon ![](images/layout/copy_props.png) was created by
+<div>Icons made by <a href="https://www.flaticon.com/authors/zlatko-najdenovski" title="Zlatko Najdenovski">Zlatko Najdenovski</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+The "Page" (Tablet) ![](images/controls/page_32x.png) and "Image" (Camera) ![](images/controls/image_32x.png) and "Widget" (Puzzle) icons ![](images/controls/widget.png) were provided by:
 
 https://github.com/icons8/flat-color-icons
-
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1605,7 +1623,7 @@ The CopyRight Notice for the FlatLaf project is reproduced in full here:
       Object form, made available under the License, as indicated by a
       copyright notice that is included in or attached to the work
       (an example is provided in the Appendix below).
-
+    
       "Derivative Works" shall mean any work, whether in Source or Object
       form, that is based on (or derived from) the Work and for which the
       editorial revisions, annotations, elaborations, or other modifications
@@ -1849,7 +1867,7 @@ Here it will simply place the gslc_SetPageCur call before the break and leave ev
         m_bQuit = true;
         gslc_SetPageCur(&m_gui,E_PG2_MainMenu);
         break;
-``` 
+```
 Time passes and you now want a jump to E_PG4_Schedule instead so you edit the E_ELEM_BTN_QUIT Jump Page ENUM property and replace E_PG2_MainMenu with E_PG4_Schedule.
 
 During a new code generation the Builder checks the existing case statement and sees E_PG2_MainMenu so it deletes just the gslc_SetPageCur statement and replaces it with the new value.
@@ -1860,7 +1878,7 @@ During a new code generation the Builder checks the existing case statement and 
         m_bQuit = true;
         gslc_SetPageCur(&m_gui,E_PG4_Schedule);
         break;
-``` 
+```
 **Example** **Three**
 
 Now what if instead you made so many edits to this case statement you don’t want the Builder to look at it any more.
@@ -1950,7 +1968,6 @@ There are some cases where meta-id is not used and a few places where templates 
 | BOX-100    | Draw Function                             |
 | BOX-101    | Tick Function                             |
 | CBOX-100   | Checked?                                  |
-| COL-300    | Use Default Colors?                       |
 | COL-301    | Text Color                                |
 | COL-302    | Frame Color                               |
 | COL-303    | Fill Color                                |

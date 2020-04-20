@@ -88,13 +88,14 @@ public class ColorCellRenderer extends JLabel
           if (isSelected) {
               if (selectedBorder == null) {
                   selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                                            table.getSelectionBackground());
+                      Color.LIGHT_GRAY);
               }
+                
               setBorder(selectedBorder);
           } else {
               if (unselectedBorder == null) {
                   unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                                            table.getBackground());
+                                            Color.LIGHT_GRAY);
               }
               setBorder(unselectedBorder);
           }

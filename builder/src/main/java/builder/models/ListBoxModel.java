@@ -544,7 +544,19 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   }
 
   /**
-   * Copy properties.
+   * Copy selected properties from another model.
+   * Called by the CopyPropsCommand.
+   * @param checklistData
+   *          the widget model
+   */
+  @Override
+  public void copyProperties(Object checklistData[][]) {
+    super.copyProperties(checklistData);
+    calcSizes();
+  }
+  
+  /**
+   * Paste properties from the PasteCommand.
    *
    * @param m
    *          the widget model
@@ -554,8 +566,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
    *          the y
    */
   @Override
-  public void copyProperties(WidgetModel m, int x, int y) {
-    super.copyProperties(m,x,y);
+  public void pasteProps(WidgetModel m, int x, int y) {
+    super.pasteProps(m,x,y);
     calcSizes();
   }
   
