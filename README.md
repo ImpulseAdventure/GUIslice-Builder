@@ -32,7 +32,7 @@ Added new feature "Copy Properties" in the layout tab. You pick a UI Element to 
 
 The Property "Use Default Colors?" has been removed from all UI models in order to facilitate the implementation of Copy Properties.
 
-GUIslice API has added a new call gslc_ElemCreateTxt_P_R_ext(). This now allows the Builder to support NumberInput and TextInput Fields created in Flash indicated by the `Use Flash API?=true` property.  THis can greatly reduce RAM requirements if you have a large number of input fields.
+GUIslice API has added a new call gslc_ElemCreateTxt_P_R_ext(). This now allows the Builder to support NumberInput and TextInput Fields created in Flash indicated by the `Use Flash API?=true` property.  This can greatly reduce RAM requirements if you have a large number of input fields.
 
 The Builder's boiler plate code for Keypad input fields have also been greatly reduced with GUIslice API now supporting Builder specific calls that wrap many input support calls into one call.
 For example, the Builder now uses in the CbBtnCommon callback something like:
