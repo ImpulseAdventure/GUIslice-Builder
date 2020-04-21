@@ -198,7 +198,7 @@ Yes.
   gslc_ElemSetTxtStr(&m_gui, m_pMyBTN, "????");
 ```
 
-Do note however, The button can't dynamically change size at runtime so don't place more characters then will fit in the button's frame.
+Note however, The button can't dynamically change size at runtime so don't place more characters then will fit in the button's frame.
 
 ### How can I reset the buffer of the XTextBox element?
 
