@@ -106,10 +106,8 @@ public class HeaderPipe extends WorkFlowPipe {
       while ((line = br.readLine()) != null) {
         sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
         if (sTestTag.equals(MY_TAG)) {
-          doCallback(br, processed, false);
+          doCallback(br, processed);
           break;
-        } else if(sTestTag.endsWith("_GLSC.h\"")) {
-          doCallback(br, processed, true);
         } else {
           processed.append(line);
           processed.append(System.lineSeparator());
@@ -132,7 +130,7 @@ public class HeaderPipe extends WorkFlowPipe {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public void doCallback(BufferedReader br, StringBuilder sBd, boolean bSkipEndTag) throws IOException {
+  public void doCallback(BufferedReader br, StringBuilder sBd) throws IOException {
     TemplateManager tm = cg.getTemplateManager();
     List<String> templateLines = tm.loadTemplate(HDR_TEMPLATE);
     String sFileName = new String(cg.getProjectName() + CodeGenerator.HEADER_EXT);
@@ -146,8 +144,6 @@ public class HeaderPipe extends WorkFlowPipe {
     outputLines.clear();
     map.clear();
 
-    if (bSkipEndTag) return;
-    
     // now remove the existing HEADER_END_TAG
     String sTestTag= "";
     while ((line = br.readLine()) != null) {

@@ -26,17 +26,12 @@
 package builder.codegen.pipes;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.StringBuilder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import builder.codegen.CodeGenException;
@@ -86,18 +81,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static String JUMPPAGE_ENUM_MACRO    = "TBNT-101";
   private final static String POPUPPAGE_ENUM_MACRO   = "TBTN-104";
   
-  private final static String BUTTON_CB = 
-      "// Common Button callback";
-  private final static String PROGMEM_ELEMREF_ERROR  =
-      "gslc_tsElem* pElem = pElemRef->pElem;";
-  private final static String PROGMEM_ELEMREF_FIX  =
-      "  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);";
-  
   /** The template manager. */
   TemplateManager tm = null;
 
   /** The regex word patterns */
-  private static final Pattern WORD_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
   private final static Pattern LTRIM = Pattern.compile("^\\s+");
   private final static String EMPTY_STRING = "";
 
@@ -155,73 +142,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
     this.MY_ENUM_TAG     = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_START;
     this.MY_ENUM_END_TAG = Tags.TAG_PREFIX + Tags.BUTTON_ENUMS_TAG + Tags.TAG_SUFFIX_END;
     
-    // bTagFound allows us to detect if we find our tag and error out on failure.
-    boolean bTagFound = false;  // detect if we find our tag
-    try {
-      /*
-       * To convert StringBuilder to InputStream in Java, first get bytes
-       * from StringBuilder after converting it into String object.
-       */
-      byte[] bytes = input.toString().getBytes(StandardCharsets.UTF_8);
-      /*
-       * Get ByteArrayInputStream from byte array.
-       */
-      InputStream is = new ByteArrayInputStream(bytes);
-      BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-      StringBuilder processed = new StringBuilder();
-      String sTestTag= "";
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals(MY_TAG)) {
-          bTagFound = true;
-          doCbCommon(br, processed);
-          break;
-        } else if (sTestTag.equals(BUTTON_CB)) {
-          /* here we need to check for code that may need updating
-           * original code failed for PROGMEM elements
-           */
-          processed.append(line);
-          processed.append(System.lineSeparator());
-          while (!bTagFound) {
-            line = br.readLine();
-            sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-            if (sTestTag.equals(MY_ENUM_TAG)) {
-              bTagFound = true;
-              processed.append(sTestTag); // output our BUTTON_ENUMS_TAG
-              processed.append(System.lineSeparator());  
-              doEnums(br, processed);
-              processed.append(MY_ENUM_END_TAG); 
-              processed.append(System.lineSeparator());  
-            } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR)) {
-              processed.append(PROGMEM_ELEMREF_FIX);
-              processed.append(System.lineSeparator());
-            } else {
-              processed.append(line);
-              processed.append(System.lineSeparator());
-            }
-          }          
-        } else if (sTestTag.equals(MY_ENUM_TAG)) {
-          bTagFound = true;
-          processed.append(sTestTag); // output our BUTTON_ENUMS_TAG
-          processed.append(System.lineSeparator());  
-          doEnums(br, processed);
-          processed.append(MY_ENUM_END_TAG); 
-          processed.append(System.lineSeparator());  
-        } else {
-          processed.append(line);
-          processed.append(System.lineSeparator());
-        }
-      }
-      if (!bTagFound) {
-        throw new CodeGenException("file: " + cg.getTemplateName() + 
-            "\n is corrupted missing tag:" + MY_TAG);
-      }
-      CodeUtils.finishUp(br, processed);
-      br.close();
-      return processed;   
-    } catch (IOException e) {
-      throw new CodeGenException(e.toString());
-    }      
+    return super.processCB(input);
+        
   }
 
   /**
@@ -631,7 +553,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
         break;
       // break the line up into words
       if (scan.isEmpty()) continue;
-      String[] words = splitWords(scan);
+      String[] words = CodeUtils.splitWords(scan);
       // first word must be "case"
       if (words[0].equals("case")) {
         enumName = words[1];
@@ -640,7 +562,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
         while((scan = br.readLine()) != null) {
            lines.add(scan);
            if (scan.isEmpty()) continue;
-           String[] atoms = splitWords(scan);
+           String[] atoms = CodeUtils.splitWords(scan);
            if (atoms.length == 0) continue;
            if (atoms[0].equals("break")) 
              break;
@@ -715,7 +637,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
     for (String line : caseList) {
       n++;
       if (line.isEmpty()) continue;
-      String split[] = splitWords(line);
+      String split[] = CodeUtils.splitWords(line);
       if (split.length == 0) continue;
       if (split[0].equals("case")) continue;
       if (split[0].equals("break")) break;
@@ -779,23 +701,6 @@ public class ButtonCbPipe extends WorkFlowPipe {
     return ci;  
   }
   
-  public String[] splitWords(String s) {
-    ArrayList<String> wordList = new ArrayList<String>();
-    
-    Matcher m = WORD_PATTERN.matcher(s);
-    while (m.find()) {
-      String sWord = s.substring(m.start(), m.end());
-      wordList.add(sWord);
-    }
-    
-    String[] wordArray = new String[wordList.size()];
-    int i=0;
-    for (String w : wordList) {
-      wordArray[i++] = w;
-    }
-    return wordArray;
-  }
-
   /**
    * The Private Class CaseInfo used to store Case Enum (key) 
    * with Case Type, Page ENUM and Element Reference, if any.

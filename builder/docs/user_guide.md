@@ -21,7 +21,7 @@
 
 **Publication date and software version**
 
-Published April 21, 2020. Based on GUIslice API Library 0.14.0
+Published April 22, 2020. Based on GUIslice API Library 0.14.0
 
 **Copyright**
 
