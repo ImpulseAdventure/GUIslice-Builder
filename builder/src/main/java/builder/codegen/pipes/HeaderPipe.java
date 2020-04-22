@@ -144,7 +144,6 @@ public class HeaderPipe extends WorkFlowPipe {
     outputLines.clear();
     map.clear();
 
-    
     // now remove the existing HEADER_END_TAG
     String sTestTag= "";
     while ((line = br.readLine()) != null) {

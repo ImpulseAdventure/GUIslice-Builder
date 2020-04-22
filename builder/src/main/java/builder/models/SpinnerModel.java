@@ -244,15 +244,6 @@ public class SpinnerModel extends WidgetModel {
   }
 
   /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return false;
-  }
-  
-  /**
    * Gets the fill color.
    *
    * @return the fill color
@@ -344,7 +335,19 @@ public class SpinnerModel extends WidgetModel {
   }
 
   /**
-   * Copy properties.
+   * Copy selected properties from another model.
+   * Called by the CopyPropsCommand.
+   * @param checklistData
+   *          the widget model
+   */
+  @Override
+  public void copyProperties(Object checklistData[][]) {
+    super.copyProperties(checklistData);
+    calcSizes();
+  }
+  
+  /**
+   * Paste properties from the PasteCommand.
    *
    * @param m
    *          the widget model
@@ -354,8 +357,8 @@ public class SpinnerModel extends WidgetModel {
    *          the y
    */
   @Override
-  public void copyProperties(WidgetModel m, int x, int y) {
-    super.copyProperties(m,x,y);
+  public void pasteProps(WidgetModel m, int x, int y) {
+    super.pasteProps(m,x,y);
     calcSizes();
   }
   

@@ -31,7 +31,6 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
-import builder.common.ColorFactory;
 import builder.models.TxtButtonModel;
 import builder.models.WidgetModel;
 
@@ -81,7 +80,6 @@ public final class TxtButtonCodeBlock implements CodeBlock {
    */
   static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum, WidgetModel wm) {
     TxtButtonModel m = (TxtButtonModel)wm;
-    ColorFactory cf = ColorFactory.getInstance();
     List<String> template = null;
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);
@@ -105,12 +103,14 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    if (!m.useDefaultColors()) {
-      if (!cf.getDefTextCol().equals(m.getTextColor())) {
-        template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
-        outputLines = tm.expandMacros(template, map);
-        tm.codeWriter(sBd, outputLines);
-      }
+    if (!m.getTextColor().equals(TxtButtonModel.DEF_TEXT_COLOR)) {
+      template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    if ((!m.getFrameColor().equals(TxtButtonModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(TxtButtonModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(TxtButtonModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

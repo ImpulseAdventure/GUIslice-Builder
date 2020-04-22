@@ -82,12 +82,14 @@ public final class GraphCodeBlock implements CodeBlock {
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
     
-    if (!m.useDefaultColors()) {
+    if ((!m.getFrameColor().equals(GraphModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(GraphModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(GraphModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    
+
     if (!m.getElementRef().isEmpty()) {
       template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
       outputLines = tm.expandMacros(template, map);

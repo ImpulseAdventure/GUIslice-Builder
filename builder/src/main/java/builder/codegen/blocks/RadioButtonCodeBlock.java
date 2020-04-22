@@ -84,7 +84,9 @@ public final class RadioButtonCodeBlock implements CodeBlock {
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
 
-    if (!m.useDefaultColors()) {
+    if ((!m.getFrameColor().equals(RadioButtonModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(RadioButtonModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(RadioButtonModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

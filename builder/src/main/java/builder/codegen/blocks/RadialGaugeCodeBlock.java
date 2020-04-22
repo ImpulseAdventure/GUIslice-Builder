@@ -84,14 +84,16 @@ public class RadialGaugeCodeBlock implements CodeBlock {
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
 
-    if (!m.useDefaultColors()) {
-      template = tm.loadTemplate(RADIALGAUGEFLIP_TEMPLATE);
+    if ((!m.getFrameColor().equals(RadialGaugeModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(RadialGaugeModel.DEF_FILL_COLOR))   || 
+        (!m.getSelectedColor().equals(RadialGaugeModel.DEF_SELECTED_COLOR))) {
+      template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
     
     if (!m.isClockwise()) {
-      template = tm.loadTemplate(COLOR_TEMPLATE);
+      template = tm.loadTemplate(RADIALGAUGEFLIP_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

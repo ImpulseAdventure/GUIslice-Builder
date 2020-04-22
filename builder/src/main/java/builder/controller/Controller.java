@@ -75,6 +75,7 @@ import builder.commands.AlignWidthCommand;
 import builder.commands.ChangeZOrderCommand;
 import builder.commands.Command;
 import builder.commands.CopyCommand;
+import builder.commands.CopyPropsCommand;
 import builder.commands.CutCommand;
 import builder.commands.DelPageCommand;
 import builder.commands.DelWidgetCommand;
@@ -1159,7 +1160,7 @@ public class Controller extends JInternalFrame
    * rectangularSelection.
    */
   public void rectangularSelection() {
-    currentPage.rectangularSelection();
+    currentPage.rectangularSelection(true);
   }
   
   /**
@@ -1186,6 +1187,27 @@ public class Controller extends JInternalFrame
     CopyCommand c = new CopyCommand(this, currentPage);
     if (c.copy()) {
       execute(c);
+    }
+  }
+  
+  /**
+   * copy properties
+   */
+  public void copyProps() {
+    CopyPropsCommand c = new CopyPropsCommand(topFrame, this);
+    if (c.copy(currentPage)) {
+      currentPage.rectangularSelection(true);
+    }
+  }
+  
+  /**
+   * copy properties part two
+   */
+  public void copyProps2(CopyPropsCommand c) {
+    if (c.copy2(currentPage)) {
+      execute(c);
+    } else {
+      currentPage.rectangularSelection(false);
     }
   }
   

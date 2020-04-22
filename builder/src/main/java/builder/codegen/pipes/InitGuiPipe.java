@@ -57,8 +57,10 @@ import builder.codegen.blocks.TextInputCodeBlock;
 import builder.codegen.blocks.TxtButtonCodeBlock;
 import builder.codegen.flash.Box_P_CodeBlock;
 import builder.codegen.flash.CheckBox_P_CodeBlock;
+import builder.codegen.flash.NumberInput_P_CodeBlock;
 import builder.codegen.flash.ProgressBar_P_CodeBlock;
 import builder.codegen.flash.RadioButton_P_CodeBlock;
+import builder.codegen.flash.TextInput_P_CodeBlock;
 import builder.codegen.flash.Text_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
 import builder.common.ColorFactory;
@@ -346,7 +348,11 @@ public class InitGuiPipe extends WorkFlowPipe {
         ListBoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.NUMINPUT:
-        NumberInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+          NumberInput_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
+        } else {
+          NumberInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        }
         break;
       case EnumFactory.PROGRESSBAR:
         if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
@@ -395,7 +401,11 @@ public class InitGuiPipe extends WorkFlowPipe {
         }
         break;
       case EnumFactory.TEXTINPUT:
-        TextInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+          TextInput_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
+        } else {
+          TextInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        }
         break;
       default:
         break;

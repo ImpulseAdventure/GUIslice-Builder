@@ -26,12 +26,16 @@
 package builder.codegen;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import builder.models.WidgetModel;
@@ -47,6 +51,8 @@ import builder.widgets.Widget;
  */
 public final class CodeUtils {
   
+  /** The regex word patterns */
+  private static final Pattern WORD_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
   private final static Pattern LTRIM = Pattern.compile("^\\s+");
   private final static String EMPTY_STRING = "";
 
@@ -231,6 +237,29 @@ public final class CodeUtils {
   }
 
   /**
+  * discardTag
+  * Continue reading the buffered reader but throw away all input 
+  * up to and including the end string. 
+  *
+  * @param br
+  *          the BufferedReader
+  * @param endString
+  *          the end string
+  * @throws IOException
+  *           Signals that an I/O exception has occurred.
+  */
+  static public void discardTag(BufferedReader br, String endString) throws IOException {
+    String line = null;
+    String sTestTag = "";
+    while ((line = br.readLine()) != null) {
+      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+      if (sTestTag.equals(endString)) {
+        break;
+      }
+    }
+  }
+
+  /**
   * Sort list and remove duplicates.
   *
   * @param list
@@ -251,5 +280,45 @@ public final class CodeUtils {
       }
     }
   }
+
+  /**
+   * copyFileToBuffer for our workflow
+   * @param file
+   * @return
+   * @throws IOException
+   */
+  static public StringBuilder copyFileToBuffer(File file) throws CodeGenException, IOException {
+    BufferedReader br = new BufferedReader(
+        new InputStreamReader(
+            new FileInputStream(file), "UTF8"));
+  
+    // open our source code template and copy its contents into a StringBuider for our workflow.
+    StringBuilder sBd = new StringBuilder();
+    String line  = "";
+    while ((line = br.readLine()) != null) {
+      sBd.append(line);
+      sBd.append(System.lineSeparator());
+    } 
+    br.close();
+    return sBd;
+  }
+
+  static public String[] splitWords(String s) {
+    ArrayList<String> wordList = new ArrayList<String>();
+    
+    Matcher m = WORD_PATTERN.matcher(s);
+    while (m.find()) {
+      String sWord = s.substring(m.start(), m.end());
+      wordList.add(sWord);
+    }
+    
+    String[] wordArray = new String[wordList.size()];
+    int i=0;
+    for (String w : wordList) {
+      wordArray[i++] = w;
+    }
+    return wordArray;
+  }
+
 
 }

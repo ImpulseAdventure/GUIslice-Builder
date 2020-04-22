@@ -237,15 +237,6 @@ public class SliderModel extends WidgetModel {
   }
   
   /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return false;
-  }
-  
-  /**
    * Gets the fill color.
    *
    * @return the fill color

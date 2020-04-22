@@ -63,11 +63,10 @@ public class TxtButtonModel extends WidgetModel {
   static private final int PROP_POPUP_PAGE        = 16;
   static private final int PROP_POPUP_HIDE        = 17;
   static private final int PROP_USE_FLASH         = 18;
-  static private final int PROP_DEFAULT_COLORS    = 19;
-  static private final int PROP_TEXT_COLOR        = 20;
-  static private final int PROP_FRAME_COLOR       = 21;
-  static private final int PROP_FILL_COLOR        = 22;
-  static private final int PROP_SELECTED_COLOR    = 23;
+  static private final int PROP_TEXT_COLOR        = 19;
+  static private final int PROP_FRAME_COLOR       = 20;
+  static private final int PROP_FILL_COLOR        = 21;
+  static private final int PROP_SELECTED_COLOR    = 22;
   
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
@@ -79,7 +78,6 @@ public class TxtButtonModel extends WidgetModel {
   static public  final String  DEF_TEXT_ALIGN        = TextModel.ALIGN_CENTER;
   static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
-  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
   static public  final Color   DEF_TEXT_COLOR        = Color.WHITE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(0,0,192); // GSLC_COL_BLUE_DK2
   static public  final Color   DEF_FILL_COLOR        = new Color(0,0,128); // GSLC_COL_BLUE_DK4
@@ -125,7 +123,7 @@ public class TxtButtonModel extends WidgetModel {
   {
     widgetType = EnumFactory.TEXTBUTTON;
     
-    data = new Object[24][5];
+    data = new Object[23][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -152,11 +150,10 @@ public class TxtButtonModel extends WidgetModel {
 
     initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
     
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
-    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.TRUE,"Text Color",DEF_TEXT_COLOR);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
+    initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.FALSE,"Text Color",DEF_TEXT_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
   }
 
@@ -187,28 +184,6 @@ public class TxtButtonModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_DEFAULT_COLORS) {
-      // check for switching back and forth
-      if (useDefaultColors()) {
-        data[PROP_TEXT_COLOR][PROP_VAL_VALUE]=DEF_TEXT_COLOR; 
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
-        data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      } else {
-        data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      }
-      fireTableCellUpdated(PROP_TEXT_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }     
     if (row == PROP_JUMP_PAGE) {
       if (getJumpPage().isEmpty()) {
         data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -424,15 +399,6 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return ((Boolean) data[PROP_DEFAULT_COLORS][PROP_VAL_VALUE]).booleanValue();
-  }
-  
-  /**
    * Gets the fill color.
    *
    * @return the fill color
@@ -539,38 +505,30 @@ public class TxtButtonModel extends WidgetModel {
       data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
     }
     if (!getJumpPage().isEmpty()) {
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
     } else if (!getPopupPage().isEmpty()) {
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
     } else if (isHidePopup()) {
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]="";
+      data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]="";
+      data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
     }
-    if (useDefaultColors()) {
-      data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-    } else {
-      data[PROP_TEXT_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-    }
-    if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Left"))
-      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = "GSLC_ALIGN_MID_LEFT";
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Right"))
-      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = "GSLC_ALIGN_MID_RIGHT";
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).equals("Center"))
-      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = "GSLC_ALIGN_MID_MID";
+   if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("left"))
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_LEFT;
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_RIGHT;
+     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_CENTER;
   }     
 
 }

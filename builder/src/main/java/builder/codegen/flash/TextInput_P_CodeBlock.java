@@ -32,31 +32,28 @@ import java.util.Map;
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
 import builder.codegen.blocks.CodeBlock;
-import builder.models.TextModel;
+import builder.models.TextInputModel;
 import builder.models.WidgetModel;
 
 /**
- * The Class Text_P_CodeBlock outputs the code block
- * for GUIslice API gslc_ElemCreateTxt_P() and 
- * gslc_ElemCreateTxt_P_R() calls.
+ * The Class TextInput_P_CodeBlock outputs the code block
+ * for GUIslice API gslc_ElemCreateTxt() calls that bring
+ * up the alpha (text based) keypad.
  * 
  * @author Paul Conti
  * 
  */
-public final class Text_P_CodeBlock implements CodeBlock {
+public final class TextInput_P_CodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
-  private final static String TEXT_TEMPLATE            = "<TEXT_P>";
-  private final static String TEXT_UPDATE_TEMPLATE     = "<TEXT_UPDATE_P>";
-  private final static String TEXTUTF8_TEMPLATE        = "<TEXT_UTF8_P>";
-  private final static String FILL_EN_TEMPLATE         = "<FILL_EN_P>";
-  private final static String FRAME_EN_TEMPLATE        = "<FRAME_EN_P>";
-  private final static String ELEMENTREF_FIND_TEMPLATE = "<ELEMENT_REF_FIND_P>";
+  private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF_FIND_P>";
+  private final static String TEXT_INPUT_TEMPLATE    = "<TEXT_INPUT_P>";
+  private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
 
   /**
    * Instantiates a new check box code block.
    */
-  public Text_P_CodeBlock() {
+  public TextInput_P_CodeBlock() {
   }
 
   /**
@@ -77,37 +74,18 @@ public final class Text_P_CodeBlock implements CodeBlock {
    * @return the <code>string builder</code> object
    */
   static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum, WidgetModel wm) {
-    TextModel m = (TextModel)wm;
+    TextInputModel m = (TextInputModel)wm;
     List<String> template = null;
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);
 
     // now output creation API
-    int ts = m.getTextStorage();
-    String templateName = null;
-    if (ts > 0) {
-      templateName = TEXT_UPDATE_TEMPLATE;
-    } else {
-      templateName = TEXT_TEMPLATE;
-    }
-    template = tm.loadTemplate(templateName);
+    template = tm.loadTemplate(TEXT_INPUT_TEMPLATE);
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
     
-    if (!m.isFillEnabled()) {
-      template = tm.loadTemplate(FILL_EN_TEMPLATE);
-      outputLines = tm.expandMacros(template, map);
-      tm.codeWriter(sBd, outputLines);
-    }
-    if (m.isFrameEnabled()) {
-      template = tm.loadTemplate(FRAME_EN_TEMPLATE);
-      outputLines = tm.expandMacros(template, map);
-      tm.codeWriter(sBd, outputLines);
-    }
-
     if (!m.getElementRef().isEmpty()) {
-      // we need to do a gslc_PageFindElemById
-      template = tm.loadTemplate(ELEMENTREF_FIND_TEMPLATE);
+      template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
       if (m.isUTF8()) {
@@ -115,7 +93,7 @@ public final class Text_P_CodeBlock implements CodeBlock {
         outputLines = tm.expandMacros(template, map);
         tm.codeWriter(sBd, outputLines);
       }
-    } 
+    }
 
     template.clear();
     outputLines.clear();

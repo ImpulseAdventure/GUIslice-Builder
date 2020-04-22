@@ -22,6 +22,44 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+#### Changes for 0.14.b000
+
+Update to User Guide for version 0.14.b000
+
+This version of the Builder requires GUIslice 0.14.0 or higher to run.
+
+Added new feature "Copy Properties" in the layout tab. You pick a UI Element to copy from and then fill out a checklist marking properties to copy, then select the target elements to modify.
+
+The Property "Use Default Colors?" has been removed from all UI models in order to facilitate the implementation of Copy Properties.
+
+GUIslice API has added a new call gslc_ElemCreateTxt_P_R_ext(). This now allows the Builder to support NumberInput and TextInput Fields created in Flash indicated by the `Use Flash API?=true` property.  This can greatly reduce RAM requirements if you have a large number of input fields.
+
+The Builder's boiler plate code for Keypad input fields have also been greatly reduced with GUIslice API now supporting Builder specific calls that wrap many input support calls into one call.
+For example, the Builder now uses in the CbBtnCommon callback something like:
+```
+gslc_ElemXKeyPadInputAsk(&m_gui, m_pElemKeyPad, E_POP_KEYPAD, m_pElemVal1);
+```
+instead of:
+```
+gslc_ElemXKeyPadTargetIdSet(&m_gui, m_pElemKeyPad, E_TXT_VAL1);
+gslc_PopupShow(&m_gui, E_POP_KEYPAD, true);
+// Preload current value
+gslc_ElemXKeyPadValSet(&m_gui, m_pElemKeyPad, gslc_ElemGetTxtStr(&m_gui, m_pElemVal1));
+```
+While in the CbKeypad callback three calls like:
+```
+gslc_ElemSetTxtStr(pGui, m_pElemVal1, gslc_ElemXKeyPadDataValGet(pGui, pvData));
+gslc_PopupHide(&m_gui);
+```
+Becomes:
+```
+gslc_ElemXKeyPadInputGet(pGui, m_pElemVal1, pvData);
+```
+
+##### Bug Fixes
+ - Bug No. 157 Enhancement request for Flash-based Numeric/Alpha input Fields
+ - Bug No. 94  Enhancement request for Multi-element property update
+
 #### HOTFIX 0.13.b025.2
  - Bug No. 158 Preserve Button Callbacks?=true was ignored and callbacks were deleted and recreated
 

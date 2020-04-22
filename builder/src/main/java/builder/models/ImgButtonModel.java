@@ -813,20 +813,23 @@ public class ImgButtonModel extends WidgetModel {
     String imageSelectedString = (String)in.readObject();
     imageSelected = CommonUtils.getInstance().decodeToImage(imageSelectedString);
     if (!getJumpPage().isEmpty()) {
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
     } else if (!getPopupPage().isEmpty()) {
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
     } else if (isHidePopup()) {
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]="";
+      data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]="";
+      data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
     }
     if (getDefine() != null && !getDefine().isEmpty()) {
       data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;

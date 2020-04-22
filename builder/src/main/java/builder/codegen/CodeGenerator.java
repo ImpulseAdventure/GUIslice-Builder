@@ -31,8 +31,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -138,7 +136,7 @@ public class CodeGenerator {
   public  final static String ARDUINO_EXT             = ".ino";
   
   /** The Constant HEADER_EXT. */
-  public  final static String HEADER_EXT              = "_GLSC.h";
+  public  final static String HEADER_EXT              = "_GSLC.h";
   
   /** The Constant LINUX_EXT. */
   public  final static String LINUX_EXT               = ".c";
@@ -433,7 +431,7 @@ public class CodeGenerator {
             // Make a backup copy of project's file
             CommonUtils.backupFile(appFile);
           }
-          sBd = copyFileToBuffer(appFile);
+          sBd = CodeUtils.copyFileToBuffer(appFile);
           // run our pipe line
           sTemplateFileName = appFullPath;
           sOutputFileName = appName;
@@ -466,7 +464,7 @@ public class CodeGenerator {
             // Make a backup copy of project's file
             CommonUtils.backupFile(appFile);
           }
-          sBd = copyFileToBuffer(appFile);
+          sBd = CodeUtils.copyFileToBuffer(appFile);
           // run our pipe line
           sOutputFileName = appName;
           code = workFlow_Compat.process(sBd);
@@ -479,11 +477,26 @@ public class CodeGenerator {
           sMessage = new String(appName);
           break;
         case ST_ARDUINO_HDR:
+          /* due to my dyslexia I created files with _GLSC.h
+           * instead of _GSLC.h so I check here and delete
+           * them if found.
+           */
+          hdrName = new String(sProjectName + "_GLSC.h");
+          hdrFullPath = folder + System.getProperty("file.separator") + hdrName;
+          hdrFile = new File(hdrFullPath);
+          if (hdrFile.exists()) {
+            hdrFile.delete();
+          }
+          /* Back to business - create app + header pathnames 
+           */
           appName = new String(sProjectName + ARDUINO_EXT);
           appFullPath = folder + System.getProperty("file.separator") + appName;
           hdrName = new String(sProjectName + HEADER_EXT);
           hdrFullPath = folder + System.getProperty("file.separator") + hdrName;
           sTemplateFileName = appFullPath;
+          /* Do we need to repair the application file?
+           */
+          removePastSins(appFullPath);
           /* Do we need to upgrade a beta application file?
            */
           upgradeBetaApp(appFullPath);
@@ -516,22 +529,20 @@ public class CodeGenerator {
             // Make a backup copy of project's header file
             CommonUtils.backupFile(hdrFile);
           }
-          sBd = copyFileToBuffer(appFile);
+          sBd = CodeUtils.copyFileToBuffer(appFile);
           // run our pipe line
           sOutputFileName = appName;
           code = workFlow_ArduinoIno.process(sBd);
-//          bw = new BufferedWriter(new FileWriter(appFile));
           bw = new BufferedWriter(new OutputStreamWriter(
               new FileOutputStream(appFile), "UTF-8"));
           bw.write(code.toString());
           bw.flush();
           bw.close();
-          sBd = copyFileToBuffer(hdrFile);
+          sBd = CodeUtils.copyFileToBuffer(hdrFile);
           // run our pipe line
           sTemplateFileName = hdrTemplate;  // for any error messages
           sOutputFileName = hdrName;
           code = workFlow_ArduinoHdr.process(sBd);
-//          bw = new BufferedWriter(new FileWriter(hdrFile));
           bw = new BufferedWriter(new OutputStreamWriter(
               new FileOutputStream(hdrFile), "UTF-8"));
           bw.write(code.toString());
@@ -547,31 +558,6 @@ public class CodeGenerator {
   }
   
   /**
-   * copyFileToBuffer for our workflow
-   * @param file
-   * @return
-   * @throws IOException
-   */
-  public StringBuilder copyFileToBuffer(File file) throws CodeGenException, IOException {
-//    FileReader fr = new FileReader(file);
-    BufferedReader br = new BufferedReader(
-        new InputStreamReader(
-            new FileInputStream(file), "UTF8"));
-  
-    // open our source code template and copy its contents into a StringBuider for our workflow.
-    StringBuilder sBd = new StringBuilder();
-//    BufferedReader br = new BufferedReader(fr);
-    String line  = "";
-    while ((line = br.readLine()) != null) {
-      sBd.append(line);
-      sBd.append(System.lineSeparator());
-    } 
-    br.close();
-//    fr.close();
-    return sBd;
-  }
- 
-  /**
    * upgrade our beta version of app to current single file app 
    * @param appName
    * @param backupName
@@ -583,10 +569,8 @@ public class CodeGenerator {
     if (!appFile.exists()) {
       return; // nothing to do here
     }
-    FileReader fr;
-    FileWriter aw;
-    BufferedWriter bwA;
     BufferedReader br;
+    BufferedWriter bwA;
     String APP_TAG = new String(Tags.TAG_PREFIX + Tags.APP_TAG + Tags.TAG_SUFFIX_START);
     String FILE_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_START);
     String FILE_END_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_END);
@@ -605,8 +589,10 @@ public class CodeGenerator {
     String STARTUP_END_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_END);
     
     try {
-      fr = new FileReader(appName);
-      br = new BufferedReader(fr);
+      br = new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(appFile), "UTF8"));
+
       String backupName = "";
       String sTestTag = "";
       String line = "";
@@ -619,7 +605,6 @@ public class CodeGenerator {
        * 3- line not equal to either - needs upgrade
        */
       if (line.equals(APP_TAG)) {
-        fr.close();
         br.close();
         return;
       }
@@ -639,21 +624,21 @@ public class CodeGenerator {
           }
         }
         if (!bNeedUpgrade) {
-          fr.close();
           br.close();
           return;
         }
       } 
       // We need to upgrade so first make a backup copy of app file
       br.close();
-      fr.close();
       backupName = new String(appName + ".beta");
       File backupFile = new File(backupName);
       appFile.renameTo(backupFile);
-      fr = new FileReader(backupName);
-      br = new BufferedReader(fr);
-      aw = new FileWriter(appName);
-      bwA = new BufferedWriter(aw);
+      br = new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(backupFile), "UTF8"));
+      appFile = new File(appName);
+      bwA = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(appFile), "UTF-8"));
       line = br.readLine();
       if (!line.equals(FILE_TAG)) {
         bwA.write(FILE_TAG);
@@ -761,8 +746,6 @@ public class CodeGenerator {
       }
       br.close();
       bwA.close();
-      fr.close();
-      aw.close();
     } catch (IOException e) {
       throw new CodeGenException("IOException converting beta App: " + e.toString());
     }
@@ -785,9 +768,11 @@ public class CodeGenerator {
      * It exists so we need to read the first line. It will tell us if we need to
      * upgrade or not.
      */
+    BufferedReader br;
     try {
-      FileReader fr = new FileReader(appFile);
-      BufferedReader br = new BufferedReader(fr);
+      br = new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(appFile), "UTF8"));
       String line = "";
       if ((line = br.readLine()) != null) {
         /*
@@ -803,7 +788,6 @@ public class CodeGenerator {
           }
           // Make a backup copy of app file
           br.close();
-          fr.close();
           String backupName = new String(appName + ".orig");
           File backupFile = new File(backupName);
           appFile.renameTo(backupFile);
@@ -816,7 +800,6 @@ public class CodeGenerator {
         }
       }
       br.close();
-      fr.close();
       return;
     } catch (IOException e) {
       e.printStackTrace();
@@ -828,14 +811,12 @@ public class CodeGenerator {
    * 
    * @param appName
    * @param backupName
-   * @param hdrName
-   * @param bOldApp
    */
   public void removeTags(String appName, String backupName) throws CodeGenException, IOException {
-    FileReader fr;
-    FileWriter aw;
-    BufferedWriter bwA;
+    File appFile = new File(appName);
+    File backupFile = new File(backupName);
     BufferedReader br;
+    BufferedWriter bwA;
     String FILE_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_START);
     String FILE_END_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_END);
     String APP_TAG = new String(Tags.TAG_PREFIX + Tags.APP_TAG + Tags.TAG_SUFFIX_START);
@@ -848,10 +829,11 @@ public class CodeGenerator {
     String STARTUP_END_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_END);
     String COMMENTS_START = new String("// ------------------------------------------------");
     try {
-      fr = new FileReader(backupName);
-      aw = new FileWriter(appName);
-      br = new BufferedReader(fr);
-      bwA = new BufferedWriter(aw);
+      br = new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(backupFile), "UTF8"));
+      bwA = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(appFile), "UTF-8"));
       String sTestTag = "";
       String line = "";
       String line2 = "";
@@ -899,19 +881,19 @@ public class CodeGenerator {
          }
         } else {
           if (line.equals("//<Includes !Start!>")) {
-            findTag(br, "//<Includes !End!>");
+            CodeUtils.discardTag(br, "//<Includes !End!>");
           } else if (line.equals("//<Fonts !Start!>")) {
-              findTag(br, "//<Fonts !End!>");
+              CodeUtils.discardTag(br, "//<Fonts !End!>");
           } else if (line.equals("//<Resources !Start!>")) {
-            findTag(br, "//<Resources !End!>");
+            CodeUtils.discardTag(br, "//<Resources !End!>");
           } else if (line.equals("//<Enum !Start!>")) {
-            findTag(br, "//<Enum !End!>");
+            CodeUtils.discardTag(br, "//<Enum !End!>");
           } else if (line.equals("//<ElementDefines !Start!>")) {
-            findTag(br, "//<ElementDefines !End!>");
+            CodeUtils.discardTag(br, "//<ElementDefines !End!>");
           } else if (line.equals("//<GUI_Extra_Elements !Start!>")) {
-            findTag(br, "//<GUI_Extra_Elements !End!>");
+            CodeUtils.discardTag(br, "//<GUI_Extra_Elements !End!>");
           } else if (line.equals("gslc_tsGui                      m_gui;")) {
-            findTag(br, "gslc_tsPage                     m_asPage[MAX_PAGE];");
+            CodeUtils.discardTag(br, "gslc_tsPage                     m_asPage[MAX_PAGE];");
           } else if (line.equals("// Include any extended elements")) {
             continue;
           } else if (line.equals("#include \"GUIslice_drv.h\"")) {
@@ -919,19 +901,19 @@ public class CodeGenerator {
           } else if (line.equals(COMMENTS_START)) {
             line2 = br.readLine();
             if (line2.equals("// Headers and Defines for fonts")) {
-              findTag(br, COMMENTS_START);
+              CodeUtils.discardTag(br, COMMENTS_START);
             } else if (line2.equals("// Defines for resources")) {
-              findTag(br, COMMENTS_START);
+              CodeUtils.discardTag(br, COMMENTS_START);
             } else if (line2.equals("// Enumerations for pages, elements, fonts, images")) {
-              findTag(br, COMMENTS_START);
+              CodeUtils.discardTag(br, COMMENTS_START);
             } else if (line2.equals("// Instantiate the GUI")) {
-              findTag(br, COMMENTS_START);
+              CodeUtils.discardTag(br, COMMENTS_START);
             } else if (line2.equals("// Define the maximum number of elements and pages")) {
-              findTag(br, COMMENTS_START);
+              CodeUtils.discardTag(br, COMMENTS_START);
             } else if (line2.equals("// Create element storage")) {
-              findTag(br, COMMENTS_START);
+              CodeUtils.discardTag(br, COMMENTS_START);
             } else if (line2.equals("// Create page elements")) {
-              findTag(br, "}");
+              CodeUtils.discardTag(br, "}");
               break;
             } else {
               bwA.write(line);
@@ -1015,33 +997,129 @@ public class CodeGenerator {
 
       br.close();
       bwA.close();
-      fr.close();
-      aw.close();
     } catch (IOException e) {
       throw new CodeGenException("removeTags IOException: " + e.toString());
     }
   }
 
   /**
-  * findTag
-  * Continue reading the buffered reader but throw away all input 
-  * up to and including the end string. 
-  *
-  * @param br
-  *          the BufferedReader
-  * @param endString
-  *          the end string
-  * @throws IOException
-  *           Signals that an I/O exception has occurred.
-  */
-  public void findTag(BufferedReader br, String endString) throws IOException {
-    String line = null;
-    String sTestTag = "";
-    while ((line = br.readLine()) != null) {
-      sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-      if (sTestTag.equals(endString)) {
-        break;
+   * remove past sins to create the new app file.
+   * Over time we have made few mistakes that need cleaning up.
+   * This routine will scan and repair them for future use.
+   * It will first check the builder version number and if its
+   * 14 or higher we do nothing. Otherwise we do a full scan
+   * and if we don't find anything, great we just bail out.
+   * Once we find the first problem we stop scanning and make
+   * a backup copy with the extension ".bad" and then make our 
+   * repairs to a new file with original appName.
+   * 
+   * @param appName
+   */
+  public void removePastSins(String appName) throws CodeGenException, IOException {
+    String PROGMEM_ELEMREF_ERROR1  =
+        "gslc_tsElem* pElem = pElemRef->pElem;";
+    String PROGMEM_ELEMREF_ERROR2 =
+        "gslc_tsElem*    pElem     = pElemRef->pElem;";
+    String PROGMEM_ELEMREF_FIX  =
+        "  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);";
+    
+    File appFile = new File(appName);
+    BufferedWriter bwA = null;
+    BufferedReader br;
+    try {
+      br = new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(appFile), "UTF8"));
+      String line = "";
+      line = br.readLine();
+      if (!(line.startsWith("//<App") || line.startsWith("//<File"))) {
+        // not sure what we have here so bail
+        br.close();
+        return;
       }
+      line = br.readLine();
+      if (!line.startsWith("// FILE:")) {
+        br.close();
+        return;
+      }
+      line = br.readLine();
+      if (!line.startsWith("// Created")) {
+        br.close();
+        return;
+      }
+      /* now we can check version number
+       * 14 or greater and we have nothing further to do.
+       * we will treat it as 9.99 number and ignore the final .b999
+       */
+      String sVersion;
+      int n = line.indexOf("[");
+      sVersion = line.substring(n+1, n+5);
+      float version = Float.parseFloat(sVersion);
+      if (version >= 0.14) {
+        br.close();
+        return;
+      }
+      // first scan for errors if none found bail.
+      boolean bFoundError = false;
+      String sTestTag = "";
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.startsWith("#include")) {
+          if(sTestTag.endsWith("_GLSC.h\"")) {
+            bFoundError = true;
+            break;
+          }
+        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR1)) {
+          bFoundError = true;
+          break;
+        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR2)) {
+          bFoundError = true;
+          break;
+        }
+      }
+      br.close();
+      if (!bFoundError) {
+        return;
+      }
+      // found errors so we need to create a backup and fix them.
+      String backupName = new String(appName + ".bad");
+      File backupFile = new File(backupName);
+      appFile.renameTo(backupFile);
+      br = new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(backupFile), "UTF8"));
+      appFile = new File(appName);
+      bwA = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(appFile), "UTF-8"));
+      String line2 = "";
+      // now fix the errors
+      while ((line = br.readLine()) != null) {
+        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
+        if (sTestTag.startsWith("#include")) {
+          if(sTestTag.endsWith("_GLSC.h\"")) {
+            n = line.indexOf("_GLSC.h");
+            line2 = line.substring(0,n) + "_GSLC.h\"";
+            bwA.write(line2);
+            bwA.newLine();
+          } else {
+            bwA.write(line);
+            bwA.newLine();
+          }
+        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR1)) {
+          bwA.write(PROGMEM_ELEMREF_FIX);
+          bwA.newLine();
+        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR2)) {
+          bwA.write(PROGMEM_ELEMREF_FIX);
+          bwA.newLine();
+        } else {
+          bwA.write(line);
+          bwA.newLine();
+        }
+      }
+      br.close();
+      bwA.close();
+    } catch (IOException e) {
+      throw new CodeGenException("removeTags IOException: " + e.toString());
     }
   }
 

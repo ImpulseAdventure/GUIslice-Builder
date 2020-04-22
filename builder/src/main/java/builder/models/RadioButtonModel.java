@@ -52,18 +52,16 @@ public class RadioButtonModel extends WidgetModel {
   static private final int PROP_CALLBACK_EN    = 8;
   static private final int PROP_MARK_COLOR     = 9;
   static private final int PROP_USE_FLASH      = 10;
-  static private final int PROP_DEFAULT_COLORS = 11;
-  static private final int PROP_FRAME_COLOR    = 12;
-  static private final int PROP_FILL_COLOR     = 13;
-  static private final int PROP_SELECTED_COLOR = 14;
-  static public  final int PROP_GROUP          = 15;
+  static private final int PROP_FRAME_COLOR    = 11;
+  static private final int PROP_FILL_COLOR     = 12;
+  static private final int PROP_SELECTED_COLOR = 13;
+  static public  final int PROP_GROUP          = 14;
 
   /** The Property Defaults */
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
   static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
   static public  final Color   DEF_MARK_COLOR        = new Color(255,165,0); // // GSLC_COL_ORANGE
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
-  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
   static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
@@ -85,7 +83,7 @@ public class RadioButtonModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.RADIOBUTTON;
-    data = new Object[16][5];
+    data = new Object[15][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
@@ -98,10 +96,9 @@ public class RadioButtonModel extends WidgetModel {
 
     initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
     
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
     initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
@@ -136,25 +133,6 @@ public class RadioButtonModel extends WidgetModel {
         fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
       }
     }
-    if (row == PROP_DEFAULT_COLORS) {
-      // check for switching back and forth
-      if (useDefaultColors()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      }
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }
-    
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -201,15 +179,6 @@ public class RadioButtonModel extends WidgetModel {
     return ((Boolean) data[PROP_CALLBACK_EN][PROP_VAL_VALUE]).booleanValue();
   }
 
-  /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return ((Boolean) data[PROP_DEFAULT_COLORS][PROP_VAL_VALUE]).booleanValue();
-  }
-  
  /**
   * Gets the fill color.
   *
@@ -267,15 +236,6 @@ public class RadioButtonModel extends WidgetModel {
     super.readModel(in,  widgetType);
     if (((String)data[PROP_GROUP][PROP_VAL_VALUE]).isEmpty()) {
       data[PROP_GROUP][PROP_VAL_VALUE] = "GSLC_GROUP_ID_NONE";
-    }
-    if (useDefaultColors()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-    } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
     }
   }
 }

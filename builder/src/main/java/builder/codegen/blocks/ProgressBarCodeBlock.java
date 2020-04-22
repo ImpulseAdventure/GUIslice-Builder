@@ -81,7 +81,9 @@ public class ProgressBarCodeBlock implements CodeBlock {
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
 
-    if (!m.useDefaultColors()) {
+    if ((!m.getFrameColor().equals(ProgressBarModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(ProgressBarModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(ProgressBarModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

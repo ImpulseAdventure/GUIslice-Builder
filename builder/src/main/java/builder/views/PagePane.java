@@ -91,10 +91,10 @@ public class PagePane extends JPanel implements iSubscriber {
   private Rectangle mouseRect = new Rectangle();
   
   /** our cross hair cursor */
-  Cursor crossHairCursor;
+  public static Cursor crossHairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR); 
 
   /** The rectangular selection enabled switch */
-  private boolean bRectangularSelectionEn = false;
+  public static boolean bRectangularSelectionEn = false;
   
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
@@ -154,7 +154,6 @@ public class PagePane extends JPanel implements iSubscriber {
     model = new PageModel();
     mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
     dragPt = mousePt;
-    crossHairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     this.addMouseListener(new MouseHandler());
     this.addMouseMotionListener(new MouseMotionHandler());
     this.setLocation(0, 0);
@@ -178,6 +177,11 @@ public class PagePane extends JPanel implements iSubscriber {
     super.paintComponent(g);
     if (getPageType().equals(EnumFactory.PROJECT)) {
       return;
+    }
+    if (bRectangularSelectionEn) {
+      setCursor(crossHairCursor);
+    } else {
+      setCursor(Cursor.getDefaultCursor());
     }
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.transform(at);
@@ -268,9 +272,12 @@ public class PagePane extends JPanel implements iSubscriber {
   /**
    * rectangularSelection.
    */
-  public void rectangularSelection() {
-    bRectangularSelectionEn = true;
-    setCursor(crossHairCursor);
+  public void rectangularSelection(boolean bValue) {
+    bRectangularSelectionEn = bValue;
+    if (bValue)
+      setCursor(crossHairCursor);
+    else
+      setCursor(Cursor.getDefaultCursor());
   }
   
   /**
@@ -390,7 +397,7 @@ public class PagePane extends JPanel implements iSubscriber {
     if (w.isSelected()) return;
     w.select();
     doSelectedCount(w);
-    ribbon.setEditButtons(selectedCnt, selectedGroupCnt);
+    ribbon.setEditButtons(selectedGroupCnt);
   }
   
   /**
@@ -404,7 +411,7 @@ public class PagePane extends JPanel implements iSubscriber {
     if (!w.isSelected()) return;
     w.unSelect();
     doSelectedCount(w);
-    ribbon.setEditButtons(selectedCnt, selectedGroupCnt);
+    ribbon.setEditButtons(selectedGroupCnt);
   }
   
   /**
@@ -486,11 +493,11 @@ public class PagePane extends JPanel implements iSubscriber {
  *   duplicate m_pElemVal entries.  The problem is that the following 
  *   statement doesn't take into account properties that are specific
  *   to the type of model or specal functions like calcSizes()  
- *   'w.getModel().copyProperties(m);' The fix is to reverse
+ *   'w.getModel().pasteProps(m);' The fix is to reverse
  *   who gets called with copyProperties() so we can overload 
  *   the function in sub classes that require extra code.
  */
-    w.getModel().copyProperties(m, x, y);
+    w.getModel().pasteProps(m, x, y);
     w.select();
     widgets.add(w);
     PropManager.getInstance().addPropEditor(w.getModel());
@@ -674,7 +681,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * Refresh view.
    */
   public void refreshView() {
-    ribbon.setEditButtons(selectedCnt, selectedGroupCnt); // needed on page changes
+    ribbon.setEditButtons(selectedGroupCnt); // needed on page changes
     repaint();
   }
   
@@ -743,7 +750,7 @@ public class PagePane extends JPanel implements iSubscriber {
       // Single Left-click - deselect all widgets then select widget under cursor
       selectNone();
       if (w == null) {
-        ribbon.setEditButtons(selectedCnt, selectedGroupCnt);
+        ribbon.setEditButtons(selectedGroupCnt);
         msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
             getKey(), "");
       } else {

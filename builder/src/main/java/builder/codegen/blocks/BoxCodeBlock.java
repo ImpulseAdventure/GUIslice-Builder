@@ -105,7 +105,9 @@ public class BoxCodeBlock implements CodeBlock {
       tm.codeWriter(sBd, template);
     } 
 
-    if (!m.useDefaultColors()) {
+    if ((!m.getFrameColor().equals(BoxModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(BoxModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(BoxModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

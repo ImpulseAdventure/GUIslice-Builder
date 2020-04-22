@@ -521,6 +521,9 @@ public class WidgetModel extends AbstractTableModel {
    * @return true, if is cell readonly
    */
   public boolean isCellReadOnly(int row) {
+    if (data[row][PROP_VAL_READONLY] instanceof String) {
+      System.out.println("What???");
+    }
     return ((Boolean) data[row][PROP_VAL_READONLY]).booleanValue();
   }
   
@@ -909,7 +912,26 @@ public class WidgetModel extends AbstractTableModel {
   
 
   /**
-   * Copy properties.
+   * Copy selected properties from another model.
+   * Called by the CopyPropsCommand.
+   * @param checklistData
+   *          the widget model
+   */
+  public void copyProperties(Object checklistData[][]) {
+    String metaID = "";
+    int row;
+    for (int i=0; i<checklistData.length; i++) {
+      metaID = (String)checklistData[i][0];
+      row = mapMetaIDtoProperty(metaID);
+      if (row >= 0) {
+        data[row][PROP_VAL_VALUE] = checklistData[i][1];
+      }
+    }
+    fireTableDataChanged();
+  }
+
+  /**
+   * Paste properties from the PasteCommand.
    *
    * @param m
    *          the widget model
@@ -918,7 +940,7 @@ public class WidgetModel extends AbstractTableModel {
    * @param y
    *          the y
    */
-  public void copyProperties(WidgetModel m, int x, int y) {
+  public void pasteProps(WidgetModel m, int x, int y) {
     Object oldData[][] = m.getData();
     // skip over key, enum, x and y position
     for (int i=2; i<getPropertyCount(); i++) {

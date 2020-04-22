@@ -54,10 +54,9 @@ public class ProgressBarModel extends WidgetModel {
   static private final int PROP_CURVALUE          =10;
   static private final int PROP_GAUGE_COLOR       =11;
   static private final int PROP_USE_FLASH         =12;
-  static private final int PROP_DEFAULT_COLORS    =13;
-  static private final int PROP_FRAME_COLOR       =14;
-  static private final int PROP_FILL_COLOR        =15;
-  static private final int PROP_SELECTED_COLOR    =16;
+  static private final int PROP_FRAME_COLOR       =13;
+  static private final int PROP_FILL_COLOR        =14;
+  static private final int PROP_SELECTED_COLOR    =15;
     
   /** The Property Defaults */
   static public  final Boolean DEF_VERTICAL          = Boolean.FALSE;
@@ -66,7 +65,6 @@ public class ProgressBarModel extends WidgetModel {
   static public  final Integer DEF_CURVALUE          = Integer.valueOf(0);
   static public  final Color   DEF_GAUGE_COLOR       = Color.GREEN;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
-  static public  final Boolean DEF_DEFAULT_COLORS    = Boolean.TRUE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
   static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
@@ -87,7 +85,7 @@ public class ProgressBarModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.PROGRESSBAR;
-    data = new Object[17][5];
+    data = new Object[16][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -101,10 +99,9 @@ public class ProgressBarModel extends WidgetModel {
 
     initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
     
-    initProp(PROP_DEFAULT_COLORS, Boolean.class, "COL-300", Boolean.FALSE,"Use Default Colors?",DEF_DEFAULT_COLORS);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.TRUE,"Selected Color",DEF_SELECTED_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
   }
   
@@ -164,15 +161,6 @@ public class ProgressBarModel extends WidgetModel {
   }
 
   /**
-   * Use default colors.
-   *
-   * @return <code>true</code>, if successful
-   */
-  public boolean useDefaultColors() {
-    return ((Boolean) data[PROP_DEFAULT_COLORS][PROP_VAL_VALUE]).booleanValue();
-  }
-  
-  /**
    * Gets the fill color.
    *
    * @return the fill color
@@ -226,25 +214,6 @@ public class ProgressBarModel extends WidgetModel {
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
-    if (row == PROP_DEFAULT_COLORS) {
-      // check for switching back and forth
-      if (useDefaultColors()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_VALUE]=DEF_FRAME_COLOR; 
-        data[PROP_FILL_COLOR][PROP_VAL_VALUE]=DEF_FILL_COLOR;
-        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]=DEF_SELECTED_COLOR; 
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-        data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-        data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      }
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_FILL_COLOR, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_SELECTED_COLOR, COLUMN_VALUE);
-    }
-    
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -312,15 +281,6 @@ public class ProgressBarModel extends WidgetModel {
 //   data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
         
       }
-    }
-    if (useDefaultColors()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
-    } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
-      data[PROP_FILL_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_SELECTED_COLOR][PROP_VAL_READONLY]=Boolean.FALSE; 
     }
   }
 

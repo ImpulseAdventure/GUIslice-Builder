@@ -1,4 +1,5 @@
 
+
 # Frequently Asked Questions
 
 Please refer to the wiki page for installation and usage details:
@@ -10,7 +11,63 @@ GUIslice API
 - Extensive [Documentation](https://github.com/ImpulseAdventure/GUIslice/wiki) guides available
 - [GUIslice API documentation (online)](https://impulseadventure.github.io/GUIslice/modules.html) & [(PDF)](https://github.com/ImpulseAdventure/GUIslice/raw/master/docs/GUIslice_ref.pdf)
 
+**Publication date and software versions**
+
+Published April 22, 2020. Based on GUIslice Builder 0.14.b000 and API Library 0.14.0
+
 ## Using the GUIsliceBuilder
+
+### I switched a project over to using flash for UI Elements and it's not working, Why?
+
+If you have an older project one thing to check for inside your callbacks is a statement to access your Element, say for pElem->Id, and you see:
+```
+  gslc_tsElem*    pElem     = pElemRef->pElem;
+```
+You will need to change this for Flash based elements and instead use:
+```
+  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);
+```
+The newer Builder will no longer generate the `pElement->pElem` code and all examples have also been update with the new code.
+
+---------
+<div style="page-break-after: always;"></div>
+
+### Can't get a floating point number in a Text Field
+
+Attempting to use 'sprintf(acTxt,4,"%f",fValue);' won't work with Arduino's runtime.
+Floating Point number are not supported by sprintf or snprintf. However you can use dtostrf().
+Example:
+```
+static float f_val = 123.6794;
+static char outstr[15];
+
+void setup() {
+  dtostrf(f_val,7, 3, outstr);
+
+  Serial.begin(9600);
+  Serial.println(outstr);
+}
+
+void loop(){
+}
+```
+Output: 124.679
+
+
+### Compiler Error when I try and use TFT_espi Display Driver
+If the error is Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
+
+Then its means you are using one of GUIslice's "esp-tftespi-*.h" config files but you haven't told the Builder that this is your target platform.
+
+The Builder supports the following target platforms:
+-  arduino
+-  arduino TFT_espi 
+-  linux
+
+Just follow the error message's guidance to reset your target platform. This allows the Builder to correctly handle fonts between the different packages.
+
+---------
+<div style="page-break-after: always;"></div>
 
 ### Can you change a Text String at runtime?
 
@@ -48,44 +105,8 @@ char       acTxt[8];
 Note the `%lu` if I had defined m_nCount as uint16_t I would have used `%u` instead.
 You can see a full example inside ex04 supplied with GUIslice API library.
 
-### Can't get a floating point number in a Text Field
-
-Attempting to use 'sprintf(acTxt,4,"%f",fValue);' won't work with Arduino's runtime.
-Floating Point number are not supported by sprintf or snprintf. However you can use dtostrf().
-Example:
-```
-static float f_val = 123.6794;
-static char outstr[15];
-
-void setup() {
-  dtostrf(f_val,7, 3, outstr);
-
-  Serial.begin(9600);
-  Serial.println(outstr);
-}
-
-void loop(){
-}
-```
-Output: 124.679
-
-
-### Compiler Error when I try and use TFT_espi Display Driver
-If the error is Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
-
-Then its means you are using one of GUIslice's "esp-tftespi-*.h" config files but you haven't told the Builder that this is your target platform.
-
-The Builder supports the following target platforms:
--  arduino
--  arduino TFT_espi 
--  linux
-
-Just follow the error message's guidance to reset your target platform. This allows the Builder to correctly handle fonts between the different packages.
-
-
 ---------
 <div style="page-break-after: always;"></div>
-
 
 ## GUIslice API
 
@@ -112,13 +133,11 @@ You will have noticed that if you add say a Input field Text or Number the Keypa
 
 Turns out you can easily get your Popup to re-display with the new input data.
 
-The key to whole thing is inside the CbKeypad callback.  You simply need to add a line to re-display your popup screen after hiding the keypad popup as so:
+The key to whole thing is inside the CbKeypad callback.  You simply need to add a line to re-display your popup screen after the keypad input get as so:
 
 ```
       case E_INPUT_QUESTION: 
-        gslc_ElemSetTxtStr(pGui, m_pElemQuestion, gslc_ElemXKeyPadDataValGet(pGui, pvData));
-        gslc_PopupHide(&m_gui);
-
+        gslc_ElemXKeyPadInputGet(pGui, m_pElemQuestion, pvData);
         gslc_PopupShow(&m_gui, E_PG_POPUP_INFO, true);
         break;
 ```
@@ -131,7 +150,10 @@ If your UI Element is click-able you can turn this feature on/off with this call
   gslc_tsElemRef*  m_pElemName       = NULL;
   gslc_ElemSetClickEn(&m_gui,m_pElemName,true|false);
 ```
-        
+
+---------
+<div style="page-break-after: always;"></div>
+
 ### How can I display to the user that an element is disabled?
 
 I would suggest changing the colors of the frame and background.
@@ -167,16 +189,16 @@ Simply tell the XSpinner Element what characters to use instead, say '+' and '-'
   gslc_ElemXSpinnerSetChars(&m_gui,m_pElemSpinner1,'+', '-');
 ```
 
-### Can I change the Text Label of a TXTBUtton at runtime?
+### Can I change the Text Label of a TXTButton at runtime?
 
 Yes.
- 
+
 ```
   gslc_tsElemRef*  m_pMyBTN       = NULL;
   gslc_ElemSetTxtStr(&m_gui, m_pMyBTN, "????");
 ```
 
-Do note however, The button can't dynamically change size at runtime so don't place more characters then will fit in the button's frame.
+Note however, The button can't dynamically change size at runtime so don't place more characters then will fit in the button's frame.
 
 ### How can I reset the buffer of the XTextBox element?
 
