@@ -36,6 +36,7 @@ import javax.swing.table.TableCellEditor;
 
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
+import builder.common.FontFactory;
 import builder.events.MsgBoard;
 
 /**
@@ -77,6 +78,9 @@ public class GraphModel extends WidgetModel {
   static private final int DEF_WIDTH = 180;
   static private final int DEF_HEIGHT= 120;
   
+  /** The ff. */
+  private FontFactory ff = null;
+  
   /** The cb style. */
   JComboBox<String> cbStyle;
   
@@ -88,6 +92,7 @@ public class GraphModel extends WidgetModel {
    */
   public GraphModel() {
     cf = ColorFactory.getInstance();
+    ff = FontFactory.getInstance();
     initProperties();
   }
   
@@ -153,6 +158,16 @@ public class GraphModel extends WidgetModel {
     return (String) ((String)data[PROP_FONT][PROP_VAL_VALUE]);
   }
   
+  /**
+   * Gets the font enum.
+   *
+   * @return the font enum
+   */
+  @Override
+  public String getFontEnum() {
+    return ff.getFontEnum(getFontDisplayName());
+  }
+ 
   /**
    * Gets the graph color.
    *
