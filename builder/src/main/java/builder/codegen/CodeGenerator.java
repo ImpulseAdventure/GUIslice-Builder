@@ -1024,6 +1024,7 @@ public class CodeGenerator {
         "  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);";
     
     File appFile = new File(appName);
+    if (!appFile.exists()) return;
     BufferedWriter bwA = null;
     BufferedReader br;
     try {
@@ -1119,7 +1120,7 @@ public class CodeGenerator {
       br.close();
       bwA.close();
     } catch (IOException e) {
-      throw new CodeGenException("removeTags IOException: " + e.toString());
+      throw new CodeGenException("removePastSins IOException: " + e.toString());
     }
   }
 

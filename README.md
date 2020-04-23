@@ -22,6 +22,24 @@ You can find Example project files inside GUIslice/examples/builder
 
 ### Release History
 
+### Enhancements since 0.13.0
+
+- Enhancement to split [project name].ino file into  [project name].ino and [project name]_GSLC.h header.
+- Addition of a Project Options tab that allows you to set project options and save them inside the project.
+- Enhancement to File Chooser to maintain a list of recently accessed project files.
+- Support for FlatLaf Themes and Intellij Themes.  Users may now also add their own custom themes.
+- Added new feature "Copy Properties" in the layout tab.
+- Support selecting Jpeg images if you are using TFT_espi drivers and SPIFFS storage.
+- Added support for Google's Dosis and Noto(tm) fonts with their permissive licensing.
+- Builder will now save and restore window frame and panel resizing.
+- Support for dragging multiple UI Elements.
+- Major Enhancements to the code generation of Button callbacks. 
+- Reduction of boiler plate code for Keypad input fields
+- Support for Flash-based Numeric/Alpha input Fields
+
+#### HotFix 0.14.b001
+ - Bug No. 159 Code gen for fresh sketch causes crash
+
 #### Changes for 0.14.b000
 
 Update to User Guide for version 0.14.b000
