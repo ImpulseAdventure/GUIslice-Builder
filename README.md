@@ -20,6 +20,9 @@ The generated output code (*.c, *.ino, *_GSLC.h) includes all of the necessary d
 
 You can find Example project files inside GUIslice/examples/builder
 
+## Disclaimer ##
+The Software is not designed for use in devices or situations where there may be physical injury if the Software has errors.
+
 ### Release History
 
 ### Enhancements since 0.13.0
