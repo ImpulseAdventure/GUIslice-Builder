@@ -37,6 +37,9 @@ You can find Example project files inside GUIslice/examples/builder
 - Reduction of boiler plate code for Keypad input fields
 - Support for Flash-based Numeric/Alpha input Fields
 
+#### HotFix 0.14.b003
+ - Bug No. 164 Reordering pages in Tree View causes NullPointerException - issue 85
+
 #### HotFix 0.14.b002
  - Bug No. 161 Code gen for XGraph doesn't add font unless used by another element
 

@@ -704,17 +704,20 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    
 //      System.out.println("**Enter canImport");
       JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
+//    System.out.println("dropLocation: " + dropLocation.getPath().toString());
       int parentRow = tree.getRowForPath(dropLocation.getPath());
       if (parentRow == -1) {
-        return true;  // weird to return true but this allows us to append to end of branch
+        return false;  
       }
       TreePath parentPath = dropLocation.getPath();
 
       parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
- 
+      TreeItem tiParent = (TreeItem)(parentNode.getUserObject());
+//    System.out.println("parentNode: " + tiParent.toDebugString());
+
       // do not allow parent to be root
-//      if (tiParent.getKey().equals("Root"))
-//        return false;
+      if (tiParent.getKey().equals("Root") || tiParent.getType().equals("Project"))
+        return false;
       dropIndex = dropLocation.getChildIndex();
       numberChildren = parentNode.getChildCount();
       
@@ -722,8 +725,10 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       TreePath dropPath = new TreePath(selectedNode.getPath());
 
       // Do not allow MOVE-action drops if a non-leaf node is selected
+      TreeItem item = ((TreeItem)selectedNode.getUserObject());
+
       // non-leaf node?
-      if(!selectedNode.isLeaf()) {
+      if(!selectedNode.isLeaf() || item.getType().equals("Page")) {
         return false;
       }
       
@@ -773,59 +778,16 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       
       // create the new node using the transfer data
       DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(transferData);
+      fromIndex = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
+//      System.out.println("dropIndex: " + dropIndex + " fromIndex: " + fromIndex);
       
-      /* add the new node to the tree path
-       * 
-       * JTree has an implementation issue with moving a leaf node to the end of a 
-       * branch. There is a reported bug in jvm 1.8 and earlier jvm's about trying 
-       * to drag pass the end leaf of branch of a JTree.
-       * example:
-       *   PageMain
-       *     TXTBUtton_1 <-- select and drag below TXT_Button_2
-       *     TXTButton_2
-       * Supposed to be fixed in jvm 1.9 but I have tested to jvm 11 and still broken
-       * and seems to be treated as a feature now.
-       *
-       * So..., I check here for root and if thats the case I use my own routine 
-       * to find parent node and muck around a bit with creating a new path.
-       * Sadly, this has the weird behavior when users instead drags a leaf
-       * above the container (page) of moving it pass the end of the containing
-       * branch.  No way to fix that but its not harmful so... 
-       * 
-       * A destination index value of -1 means that the user dropped the node 
-       * over an empty part of the tree.  This means Root for us since we are
-       * a simple two level tree.
-       * If so, we will add the node to the end its branch.
-       * By the way, for more than two level tree this doesn't work at all.
-       * 
-       * An alternative implementation might be to add an empty leaf node
-       * at the end of each branch when creating a new container.
-       * example: 
-       *   PageMain
-       *     TXTBUtton_1 <-- select and drag below TXT_Button_2
-       *     TXTButton_2
-       *     "" empty node
-       * This also works but you can't avoid showing the empty node to users
-       * easily. It is simple to prevent selecting and dragging the empty node though.    
-       */
-      TreePath newPath;
-      if (dropIndex == -1) {
-        // getLastPathComponent() will find the parent node associated with the drop location
-        dropIndex = treeModel.getChildCount(destPath.getLastPathComponent()); 
-        parentNode = findParentNode(((TreeItem)newNode.getUserObject()).getKey(), root);
-        dropIndex = treeModel.getChildCount(parentNode); 
-        fromIndex = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
-        // add the new node to the tree path
-        treeModel.insertNodeInto(newNode, parentNode, dropIndex);
-        newPath = getPath(newNode);
-      } else {
-        fromIndex = getSelectedIndex(parentNode, ((TreeItem) newNode.getUserObject())); 
-        treeModel.insertNodeInto(newNode, parentNode, dropIndex);
-        newPath = destPath.pathByAddingChild(newNode);
-        
-      }
+      // add the new node to the tree path
+      int childIndex = dropLocation.getChildIndex();
+//      System.out.println("childIndex: " + childIndex);
+      treeModel.insertNodeInto(newNode, parentNode, childIndex);
  
       // ensure the new path element is visible.
+      TreePath newPath = destPath.pathByAddingChild(newNode);
       tree.makeVisible(newPath);
       tree.scrollRectToVisible(tree.getPathBounds(newPath));
 
