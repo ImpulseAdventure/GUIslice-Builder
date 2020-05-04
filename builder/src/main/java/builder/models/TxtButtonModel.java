@@ -36,8 +36,8 @@ import javax.swing.table.TableCellEditor;
 
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
+import builder.common.FontItem;
 import builder.events.MsgBoard;
-import builder.prefs.GeneralEditor;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -102,6 +102,7 @@ public class TxtButtonModel extends WidgetModel {
     ff = FontFactory.getInstance();
     initProperties();
     initEditors();
+    calcSizes(false);
   }
   
   /**
@@ -129,14 +130,7 @@ public class TxtButtonModel extends WidgetModel {
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-202", Boolean.FALSE,"Label",DEF_TEXT);
-    String target = ((GeneralModel) GeneralEditor.getInstance().getModel()).getTarget();
-    // arduino GFX doesn't support UTF8 only linix with SDL has support
-    // so for arduino set UTF8 property to read-only
-    if (target.equals("linux")) {
-      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
-    } else {
-      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.TRUE,"UTF-8?",DEF_UTF8);
-    }
+    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
 
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
     initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
@@ -240,6 +234,9 @@ public class TxtButtonModel extends WidgetModel {
         }
       }
     }
+    if (row == PROP_FONT) {
+      calcSizes(true);
+    } 
     
     if (bSendEvents) {
       if (row == PROP_ENUM) {
@@ -426,6 +423,30 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
+   * <p>
+   * calcSizes() - This routine is complicated because we use one font size on our display
+   * vs the font size we will be using on the target TFT screen.
+   * FontItem already has created a scaled font for our display but we want to show
+   * width and height to the user as the target TFT's width and height of our text.
+   * </p>
+   * 
+   * @param fireUpdates indicates that we should notify JTable of changes
+   */
+   public void calcSizes(boolean fireUpdates) {
+
+     // next does the current font exist? 
+     // if we changed target plaform we might need to change font to default
+     String name = getFontDisplayName();
+     FontItem item = ff.getFontItem(name);
+     if (!item.getDisplayName().equals(name)) {
+       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
+       if (fireUpdates) {
+         fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
+       }
+     }
+   }
+
+  /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.
    *
@@ -523,12 +544,12 @@ public class TxtButtonModel extends WidgetModel {
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
     }
-   if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("left"))
+    if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("left"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_LEFT;
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
+    else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_RIGHT;
-     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
+    else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_CENTER;
+    calcSizes(false);
   }     
-
 }

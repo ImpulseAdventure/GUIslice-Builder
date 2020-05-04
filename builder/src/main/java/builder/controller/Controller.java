@@ -1,5 +1,6 @@
 /**
  *
+
  * The MIT License
  *
  * Copyright 2018-2020 Paul Conti
@@ -163,7 +164,7 @@ public class Controller extends JInternalFrame
   private Clipboard clipboard;
   
   /** The project's model */
-  ProjectModel pm;
+  static ProjectModel pm;
   
   /** The pages. */
   List<PagePane> pages = new ArrayList<PagePane>();
@@ -266,10 +267,22 @@ public class Controller extends JInternalFrame
   
   /**
    * get project model
-   * @return
+   * @return model
    */
-  public ProjectModel getProjectModel() {
+  public static ProjectModel getProjectModel() {
     return pm;
+  }
+  
+  /**
+   * get project model's Target Platform 
+   * @return platform
+   */
+  public static String getTargetPlatform() {
+    // handle race condition at startup
+    if (pm == null) {
+      return GeneralEditor.getInstance().getTarget();
+    }
+    return pm.getTargetPlatform();
   }
   
   /**

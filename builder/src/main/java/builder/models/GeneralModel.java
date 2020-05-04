@@ -41,6 +41,7 @@ import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
 import builder.common.ThemeInfo;
+import builder.controller.Controller;
 import builder.tables.ImageCellEditor;
 
 /**
@@ -242,9 +243,9 @@ public class GeneralModel extends WidgetModel {
     }
     
     cbTarget = new JComboBox<String>();
-    cbTarget.addItem("arduino");
-    cbTarget.addItem("arduino TFT_eSPI");
-    cbTarget.addItem("linux");
+    cbTarget.addItem(ProjectModel.PLATFORM_ARDUINO);
+    cbTarget.addItem(ProjectModel.PLATFORM_TFT_ESPI);
+    cbTarget.addItem(ProjectModel.PLATFORM_LINUX);
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
     imageCellEditor = new ImageCellEditor();
@@ -334,14 +335,6 @@ public class GeneralModel extends WidgetModel {
    */
   public String getTarget() {
     return (String) data[PROP_TARGET][PROP_VAL_VALUE];
-  }
-
-  /**
-   * setTarget sets the target platform
-   * @param s
-   */
-  public void setTarget(String s) { 
-    shortcutValue(s, PROP_TARGET);
   }
 
   /**
@@ -851,7 +844,10 @@ public class GeneralModel extends WidgetModel {
       setBackgroundFormat("GSLC_IMGREF_FMT_BMP16");
     else
       setBackgroundFormat("GSLC_IMGREF_FMT_RAW1");
-    if (getTarget().equals("linux"))
+    if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
+      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+    else if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_TFT_ESPI) &&
+        file.getName().toLowerCase().endsWith(".jpg"))
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
     else      
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_SD;

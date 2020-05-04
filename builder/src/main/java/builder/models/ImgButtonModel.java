@@ -500,7 +500,7 @@ public class ImgButtonModel extends WidgetModel {
       if (image != null) {
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
         setExternName(convert.getExternName());
-        if (generalModel.getTarget().equals("linux"))
+        if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
         else      
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
@@ -523,9 +523,10 @@ public class ImgButtonModel extends WidgetModel {
         setImageFormat("GSLC_IMGREF_FMT_BMP16");
       else
         setImageFormat("GSLC_IMGREF_FMT_RAW1");
-      if (generalModel.getTarget().equals("linux"))
+      String target = Controller.getTargetPlatform();
+      if (target.equals(ProjectModel.PLATFORM_LINUX))
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
-      else if (generalModel.getTarget().equals("arduino TFT_eSPI") &&
+      else if (target.equals(ProjectModel.PLATFORM_TFT_ESPI) &&
           file.getName().toLowerCase().endsWith(".jpg"))
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
       else      
@@ -587,7 +588,7 @@ public class ImgButtonModel extends WidgetModel {
       imageSelected = convert.doConvert(file);
       if (imageSelected != null) {
         setSelExternName(convert.getExternName());
-        if (generalModel.getTarget().equals("linux"))
+        if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
           data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_RAM;
         else      
           data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
@@ -600,9 +601,10 @@ public class ImgButtonModel extends WidgetModel {
       } catch(IOException e) {
           System.out.println("read error: " + e.getMessage());
       }
-      if (generalModel.getTarget().equals("linux"))
+      String target = Controller.getTargetPlatform();
+      if (target.equals(ProjectModel.PLATFORM_LINUX))
         data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_FILE;
-      else if (generalModel.getTarget().equals("arduino TFT_eSPI") &&
+      else if (target.equals(ProjectModel.PLATFORM_TFT_ESPI) &&
           file.getName().toLowerCase().endsWith(".jpg"))
         data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_FILE;
       else      

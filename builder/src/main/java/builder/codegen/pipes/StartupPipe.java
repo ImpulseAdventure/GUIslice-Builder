@@ -83,7 +83,7 @@ public class StartupPipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     // grab our user preferences
-    ProjectModel pm = Controller.getInstance().getProjectModel();
+    ProjectModel pm = Controller.getProjectModel();
     // setup    
     tm = cg.getTemplateManager();
     List<String> templateLines = null;

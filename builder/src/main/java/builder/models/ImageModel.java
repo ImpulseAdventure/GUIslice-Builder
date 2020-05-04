@@ -40,6 +40,7 @@ import javax.swing.table.TableCellEditor;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.prefs.GeneralEditor;
 
@@ -330,7 +331,7 @@ public class ImageModel extends WidgetModel {
       if (image != null) {
         setImageFormat("GSLC_IMGREF_FMT_BMP24");
         setExternName(convert.getExternName());
-        if (generalModel.getTarget().equals("linux"))
+        if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
         else      
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
@@ -354,9 +355,10 @@ public class ImageModel extends WidgetModel {
         setImageFormat("GSLC_IMGREF_FMT_BMP16");
       else
         setImageFormat("GSLC_IMGREF_FMT_RAW1");
-      if (generalModel.getTarget().equals("linux"))
+      String target = Controller.getTargetPlatform();
+      if (target.equals(ProjectModel.PLATFORM_LINUX))
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
-      else if (generalModel.getTarget().equals("arduino TFT_eSPI") &&
+      else if (target.equals(ProjectModel.PLATFORM_TFT_ESPI) &&
                file.getName().toLowerCase().endsWith(".jpg"))
         data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
       else      
