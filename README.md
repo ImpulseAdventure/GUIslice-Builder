@@ -40,6 +40,9 @@ The Software is not designed for use in devices or situations where there may be
 - Reduction of boiler plate code for Keypad input fields
 - Support for Flash-based Numeric/Alpha input Fields
 
+#### HotFix 0.14.b004
+ - Bug No. 167 Changing target platform to LINUX in Project Tab can cause font errors and crashes
+
 #### HotFix 0.14.b003
  - Bug No. 164 Reordering pages in Tree View causes NullPointerException - issue 85
 

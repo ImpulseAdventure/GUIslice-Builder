@@ -219,7 +219,7 @@ public class InitGuiPipe extends WorkFlowPipe {
     tm.codeWriter(sBd, outputLines);
     
     // deal with background
-    ProjectModel pm = Controller.getInstance().getProjectModel();
+    ProjectModel pm = Controller.getProjectModel();
     if (pm.useBackgroundImage()) {
       map.clear();
       map.put(MEMORY_MACRO, pm.getBackgroundMemory());
@@ -319,14 +319,14 @@ public class InitGuiPipe extends WorkFlowPipe {
 //    System.out.println("outputAPI page: " + pageEnum + " widget: " + m.getType());
     switch(m.getType()) {
       case EnumFactory.BOX:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           Box_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           BoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       case EnumFactory.CHECKBOX:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           CheckBox_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           CheckBoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -348,21 +348,21 @@ public class InitGuiPipe extends WorkFlowPipe {
         ListBoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.NUMINPUT:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           NumberInput_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           NumberInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       case EnumFactory.PROGRESSBAR:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           ProgressBar_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           ProgressBarCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       case EnumFactory.RADIOBUTTON:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           RadioButton_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           RadioButtonCodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -384,7 +384,7 @@ public class InitGuiPipe extends WorkFlowPipe {
         SpinnerCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.TEXT:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           Text_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           TextCodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -394,14 +394,14 @@ public class InitGuiPipe extends WorkFlowPipe {
         TextBoxCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.TEXTBUTTON:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           TxtButton_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           TxtButtonCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       case EnumFactory.TEXTINPUT:
-        if (m.useFlash() && !cg.getTargetPlatform().equals("linux")) {
+        if (m.useFlash()) {
           TextInput_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           TextInputCodeBlock.process(cg, tm, sBd, pageEnum, m);

@@ -188,7 +188,7 @@ public class IncludesPipe extends WorkFlowPipe {
     }
     
     // output any warnings required
-    ProjectModel pm = Controller.getInstance().getProjectModel();
+    ProjectModel pm = Controller.getProjectModel();
     if (pm.useBackgroundImage() && 
         pm.getBackgroundMemory().equals(ProjectModel.SRC_SD)) {
       bSD = true;

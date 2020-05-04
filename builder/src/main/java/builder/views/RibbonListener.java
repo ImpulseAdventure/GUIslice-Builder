@@ -50,6 +50,7 @@ import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.models.GeneralModel;
+import builder.models.ProjectModel;
 import builder.prefs.GeneralEditor;
 import builder.widgets.ImageWidget;
 import builder.widgets.ImgButtonWidget;
@@ -276,14 +277,14 @@ public class RibbonListener implements ActionListener, iSubscriber {
    * @return the <code>file</code> object
    */
   public File showImageDialog(String title) {
-    String target = generalModel.getTarget();
+    String target = Controller.getTargetPlatform();
     File file = null;
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setDialogTitle(title);
     fileChooser.setAcceptAllFileFilterUsed(false);
     fileChooser.addChoosableFileFilter(new FileFilter() {
       public String getDescription() {
-        if (target.equals("linux"))
+        if (target.equals(ProjectModel.PLATFORM_LINUX))
           return "16 or 24 Bit Depth Bitmap (*.bmp), C File with extern image (*.c)";
         else if (target.equals("arduino TFT_eSPI"))
           return "16 or 24 Bit Depth Bitmap (*.bmp), Jpeg (*jpg), C File with extern image (*.c)";
@@ -318,7 +319,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
     // look for images in the last folder accessed
     String resDir = generalModel.getImageDir();
     if (resDir.isEmpty()) {
-      if (generalModel.getTarget().equals("linux")) {
+      if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) {
         resDir = CodeGenerator.LINUX_RES;
       } else {
         resDir = CodeGenerator.ARDUINO_RES;

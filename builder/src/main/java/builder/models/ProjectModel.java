@@ -53,6 +53,11 @@ public class ProjectModel extends PageModel {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID  = 1L;
   
+  /** Target Platforms */
+  public static final String PLATFORM_ARDUINO  = "arduino";
+  public static final String PLATFORM_TFT_ESPI = "arduino TFT_eSPI";
+  public static final String PLATFORM_LINUX    = "linux";
+  
   /** The Property Index Constants. */
   public static final int PROP_TARGET               = 2;
   public static final int DISPLAY_WIDTH             = 3;
@@ -172,9 +177,9 @@ public class ProjectModel extends PageModel {
         "Screen Rotation [0-3 or -1 default]",DEF_ROTATION);
 
     cbTarget = new JComboBox<String>();
-    cbTarget.addItem("arduino");
-    cbTarget.addItem("arduino TFT_eSPI");
-    cbTarget.addItem("linux");
+    cbTarget.addItem(PLATFORM_ARDUINO);
+    cbTarget.addItem(PLATFORM_TFT_ESPI);
+    cbTarget.addItem(PLATFORM_LINUX);
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
     imageCellEditor = new ImageCellEditor();
@@ -244,20 +249,12 @@ public class ProjectModel extends PageModel {
   }
 
   /**
-   * Gets the target.
+   * Gets the target platform
    *
-   * @return the target
+   * @return the target platform
    */
-  public String getTarget() {
+  public String getTargetPlatform() {
     return (String) data[PROP_TARGET][PROP_VAL_VALUE];
-  }
-
-  /**
-   * setTarget sets the target platform
-   * @param s
-   */
-  public void setTarget(String s) { 
-    shortcutValue(s, PROP_TARGET);
   }
 
  /**
@@ -538,7 +535,10 @@ public class ProjectModel extends PageModel {
       setBackgroundFormat("GSLC_IMGREF_FMT_BMP16");
     else
       setBackgroundFormat("GSLC_IMGREF_FMT_RAW1");
-    if (getTarget().equals("linux"))
+    if (getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
+      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+    else if (getTargetPlatform().equals(ProjectModel.PLATFORM_TFT_ESPI) &&
+        file.getName().toLowerCase().endsWith(".jpg"))
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
     else      
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_SD;

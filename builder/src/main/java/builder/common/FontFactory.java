@@ -41,7 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import builder.codegen.CodeGenerator;
-import builder.models.GeneralModel;
+import builder.controller.Controller;
+import builder.models.ProjectModel;
 import builder.models.TextModel;
 import builder.prefs.GeneralEditor;
 
@@ -69,9 +70,6 @@ public class FontFactory {
   /** The linux map. */
   private static HashMap<String, Integer> linuxMap = new HashMap<String, Integer>();
   
-  /** The general model. */
-  private static GeneralModel generalModel;
-  
   /** The arduino CVS. */
   private static String arduinoCVS;
   
@@ -92,7 +90,6 @@ public class FontFactory {
   public static synchronized FontFactory getInstance() {
     if (instance == null) {
       instance = new FontFactory();
-      generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
       String fullPath = CommonUtils.getInstance().getWorkingDir();
       arduinoCVS = fullPath + "templates" + System.getProperty("file.separator") 
           + CodeGenerator.ARDUINO_FONT_TEMPLATE;
@@ -184,16 +181,21 @@ public class FontFactory {
    */
   public Font getFont(String key) {
     Integer idx = Integer.valueOf(0);  // always return something...
-    String target = generalModel.getTarget();
-    if (target.equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       if (linuxMap.containsKey(key)) 
         idx = linuxMap.get(key);
       return linuxFonts.get(idx.intValue()).getFont();
-    } else {
+    } else if (target.equals(ProjectModel.PLATFORM_ARDUINO)) {
+      if (arduinoMap.containsKey(key)) 
+        idx = arduinoMap.get(key);
+      return arduinoFonts.get(idx.intValue()).getFont();
+    } else if (target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
       if (arduinoMap.containsKey(key)) 
         idx = arduinoMap.get(key);
       return arduinoFonts.get(idx.intValue()).getFont();
     }
+    return null;
   }
   
   /**
@@ -207,8 +209,8 @@ public class FontFactory {
    */
   public Font getStyledFont(String key, String style) {
     Integer idx = Integer.valueOf(0);  // always return something...
-    String target = generalModel.getTarget();
-    if (target.equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       if (linuxMap.containsKey(key)) 
         idx = linuxMap.get(key);
       return linuxFonts.get(idx.intValue()).getStyledFont(style);
@@ -226,7 +228,8 @@ public class FontFactory {
    */
   public String getDefFontName() {
     FontItem item = null;
-    if (generalModel.getTarget().equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       item = linuxFonts.get(0);
     } else {
       item = arduinoFonts.get(0);
@@ -246,7 +249,8 @@ public class FontFactory {
     FontItem item = null;
     if (size < 1 || size > 5) return "";
     size--;
-    if (generalModel.getTarget().equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       item = linuxFonts.get(size);
     } else {
       item = arduinoFonts.get(size);
@@ -260,7 +264,8 @@ public class FontFactory {
    * @return the font list
    */
   public List<FontItem> getFontList() {
-    if (generalModel.getTarget().equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       return linuxFonts;
     } else {
       return arduinoFonts;
@@ -277,7 +282,8 @@ public class FontFactory {
   public String getFontEnum(String key) {
     FontItem item = null;
     Integer idx = Integer.valueOf(0);  // always return something...
-    if (generalModel.getTarget().equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       if (linuxMap.containsKey(key)) {
         idx = linuxMap.get(key);
       }
@@ -326,7 +332,7 @@ public class FontFactory {
    * @see java.lang.String
    */
   public FontItem getFontItem(String fontName, String fontSize, String fontStyle) {
-    List<FontItem> list = arduinoFonts;
+    List<FontItem> list = getFontList();
     for (FontItem item : list) {
       if (item.getName().equals(fontName)         &&
           item.getLogicalSize().equals(fontSize)  &&
@@ -346,7 +352,8 @@ public class FontFactory {
    */
   public FontItem getFontItem(String key) {
     Integer idx = Integer.valueOf(0);  // always return something...
-    if (generalModel.getTarget().equals("linux")) {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
       if (linuxMap.containsKey(key)) {
         idx = linuxMap.get(key);
       }
@@ -552,7 +559,7 @@ public class FontFactory {
         if (!line.startsWith("#")) {
           // use comma as separator
           String[] f = line.split(cvsSplitBy);
-          item = new FontItem(generalModel.getDPI(),
+          item = new FontItem(GeneralEditor.getInstance().getDPI(),
               f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9], f[10]);
           list.add(item);
         }

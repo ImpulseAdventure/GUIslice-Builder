@@ -92,7 +92,7 @@ public class ResourcesPipe extends WorkFlowPipe {
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
     // deal with background image, if any
-    ProjectModel pm = Controller.getInstance().getProjectModel();
+    ProjectModel pm = Controller.getProjectModel();
     if (pm.useBackgroundImage()) { 
        map.put(DEFINE_MACRO, pm.getBackgroundDefine());
        map.put(IMAGE_NAME_MACRO, pm.getBackgroundImageTName()); // use target name

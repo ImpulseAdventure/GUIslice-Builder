@@ -160,9 +160,6 @@ public class CodeGenerator {
   /** The current workflow output file name. */
   String sOutputFileName = null;
   
-  /** The target. */
-  String target = null;
-  
   /** The template manager. */
   TemplateManager tm = null;
   
@@ -359,11 +356,10 @@ public class CodeGenerator {
     // create our template manager
     tm = new TemplateManager();
     // grab user's defaults from the General model so we can determine our target platform.
-    ProjectModel pm = Controller.getInstance().getProjectModel();
-    target =pm.getTarget();  
+    String target =Controller.getTargetPlatform();  
     try {
       // set our FSM state
-      if(target.equals("linux")) {
+      if(target.equals(ProjectModel.PLATFORM_LINUX)) {
         // do not use header version with linux C files
         m_nState = ST_LINUX;
         tm.storeTemplates("linux.t");
@@ -1178,12 +1174,4 @@ public class CodeGenerator {
     return tm;
   }
   
-  /**
- * Gets the target platform.
- *
- * @return the target platform
- */
-public String getTargetPlatform() {
-    return target;
-  }
 }

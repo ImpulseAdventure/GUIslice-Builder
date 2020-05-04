@@ -148,7 +148,7 @@ public class PagePane extends JPanel implements iSubscriber {
   public PagePane() {
     instance = this;
     ribbon = Ribbon.getInstance();
-    pm = Controller.getInstance().getProjectModel();
+    pm = Controller.getProjectModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
     msg = MsgBoard.getInstance();
     model = new PageModel();

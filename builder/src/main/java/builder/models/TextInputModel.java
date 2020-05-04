@@ -40,8 +40,6 @@ import javax.swing.table.TableCellEditor;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
-import builder.models.GeneralModel;
-import builder.prefs.GeneralEditor;
 import builder.events.MsgBoard;
 
 /**
@@ -128,14 +126,7 @@ public class TextInputModel extends WidgetModel {
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
-    String target = ((GeneralModel) GeneralEditor.getInstance().getModel()).getTarget();
-    // arduino GFX doesn't support UTF8 only linix with SDL has support
-    // so for arduino set UTF8 property to read-only
-    if (target.equals("linux")) {
-      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
-    } else {
-      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.TRUE,"UTF-8?",DEF_UTF8);
-    }
+    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
 
     initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"Field Size",DEF_TEXT_SZ);
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);

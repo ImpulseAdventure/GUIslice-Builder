@@ -270,7 +270,7 @@ public class ExtraElementPipe extends WorkFlowPipe {
       }
     }
     // output MAX String size
-    ProjectModel pm = Controller.getInstance().getProjectModel();
+    ProjectModel pm = Controller.getProjectModel();
     strElement = "MAX_STR";
     sBd.append(System.lineSeparator());
     sBd.append(String.format("#define %-24s%d", strElement, pm.getMaxStr()));
