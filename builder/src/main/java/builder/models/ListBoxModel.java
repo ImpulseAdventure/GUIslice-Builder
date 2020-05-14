@@ -183,7 +183,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     cbAlign.addItem(TextModel.ALIGN_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
 
-    itemsCell = new MultiStringsCell();
+    itemsCell = new MultiStringsCell("List of Items");
+    itemsCell.setData(DEF_ITEMS);
     itemsCell.addButtonListener(this);
   }
   
@@ -203,6 +204,11 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     data[PROP_SCROLLBAR_EREF][PROP_VAL_VALUE] = EnumFactory.LISTBOX_SCROLLBAR_EREF+count;
   }
   
+  /**
+   * buttonClicked
+   *
+   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
+   */
   @Override
   public void buttonClicked(String[] strings) {
     // commands are used to support undo and redo actions.

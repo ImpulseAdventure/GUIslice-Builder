@@ -33,12 +33,16 @@ The Software is not designed for use in devices or situations where there may be
 - Support for FlatLaf Themes and Intellij Themes.  Users may now also add their own custom themes.
 - Added new feature "Copy Properties" in the layout tab.
 - Support selecting Jpeg images if you are using TFT_espi drivers and SPIFFS storage.
+- Added support for Teensy fonts
 - Added support for Google's Dosis and Noto(tm) fonts with their permissive licensing.
 - Builder will now save and restore window frame and panel resizing.
 - Support for dragging multiple UI Elements.
 - Major Enhancements to the code generation of Button callbacks. 
 - Reduction of boiler plate code for Keypad input fields
 - Support for Flash-based Numeric/Alpha input Fields
+
+#### HotFix 0.14.b005
+ - Bug No. 166 Support for extended font modes (eg. Teensy) - Builder issue `#89`
 
 #### HotFix 0.14.b004
  - Bug No. 167 Changing target platform to LINUX in Project Tab can cause font errors and crashes

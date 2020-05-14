@@ -39,6 +39,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
 
 import builder.Builder;
+import builder.common.CommonUtils;
 
 public class StringListDialog extends JDialog implements ActionListener, ListSelectionListener {
   private static final long serialVersionUID = 1L;
@@ -53,7 +54,8 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
   private JButton btn_up;
   private JButton btn_down;
   
-  private static final String okString = "ok";
+  private static final String okString = "OK";
+  private static final String cancelString = "cancel";
   private static final String addString = "add";
   private static final String removeString = "remove";
   private static final String upString = "move up";
@@ -85,7 +87,12 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
     okButton.setActionCommand(okString);
     okButton.setToolTipText("Press 'OK' when list is completed.");
     okButton.addActionListener(this);
-    //
+
+    JButton cancelButton = new JButton("Cancel");
+    cancelButton.setActionCommand(cancelString);
+    cancelButton.setToolTipText("Press 'Cancel' to abort.");
+    cancelButton.addActionListener(this);
+
     btn_add = new JButton("Add");
     btn_add.setActionCommand(addString);
     btn_add.addActionListener(this);
@@ -103,8 +110,9 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
     btn_down.setActionCommand(downString);
     btn_down.addActionListener(this);
 
-    btn_remove = new JButton();
-    btn_remove.setIcon(new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png")));
+    btn_remove = new JButton(
+        CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/delete.png", new Dimension(24,24)));
+//        new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png")));
     btn_remove.setActionCommand(removeString);
     btn_remove.addActionListener(this);
     btn_remove.setToolTipText("Select an item then press to delete.");
@@ -220,6 +228,8 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
     buttonPane.add(btn_remove);
     buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
     buttonPane.add(okButton);
+    buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+    buttonPane.add(cancelButton);
 
     // Put everything together, using the content pane's BorderLayout.
     Container contentPane = getContentPane();
@@ -312,6 +322,11 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
         } catch (ParseException e1) {
           return;
         }
+        StringListDialog.dialog.setVisible(false);
+        StringListDialog.dialog.dispose();
+        break;
+      case cancelString:
+        listModel.clear();
         StringListDialog.dialog.setVisible(false);
         StringListDialog.dialog.dispose();
         break;

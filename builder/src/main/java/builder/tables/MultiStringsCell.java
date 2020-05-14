@@ -23,17 +23,19 @@ public class MultiStringsCell extends AbstractCellEditor
   private static final long serialVersionUID = 1L;
   private JPanel panel;
   private JLabel label;
+  private String title;
   private String[] lines = null;
   MultipeLineCellListener listener;
   JButton b;
 
-  public MultiStringsCell() {
+  public MultiStringsCell(String t) {
+    this.title = t;
     panel = new JPanel();
     panel.setLayout(new BorderLayout());
     // t.setPreferredSize(new Dimension(50,16));
     label = new JLabel();
     label.setOpaque(true);
-    label.setHorizontalAlignment(JLabel.CENTER);
+    label.setHorizontalAlignment(JLabel.LEFT);
     label.setVerticalAlignment(JLabel.CENTER);
     panel.add(label, BorderLayout.CENTER);
     b = new JButton("...");
@@ -43,8 +45,8 @@ public class MultiStringsCell extends AbstractCellEditor
         lines = StringListDialog.showDialog(
             new JFrame(),
             null,
-            "List of Items",
-            "Listbox",
+            title,
+            "List",
             lines);
         listener.buttonClicked(lines);
       }
@@ -89,9 +91,11 @@ public class MultiStringsCell extends AbstractCellEditor
     String result = "";
     label.setText(result);
     if (lines != null) {
-      if (!lines[0].isEmpty()) {
-        result = convertToHtml(value);
-        label.setText(result);
+      if (lines.length > 0) {
+        if (!lines[0].isEmpty()) {
+          result = convertToHtml(value);
+          label.setText(result);
+        }
       }
     }
     int size = label.getPreferredSize().height + 20;

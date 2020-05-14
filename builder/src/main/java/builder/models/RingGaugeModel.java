@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
+import builder.common.FontItem;
 import builder.events.MsgBoard;
 
 /**
@@ -98,6 +99,7 @@ public class RingGaugeModel extends WidgetModel {
   public RingGaugeModel() {
     ff = FontFactory.getInstance();
     initProperties();
+    calcSizes(false);
   }
   
   /**
@@ -110,7 +112,7 @@ public class RingGaugeModel extends WidgetModel {
 
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
-    initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName(2)); // next size up for font
+    initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName()); // next size up for font
     initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"Field Size",DEF_TEXT_SZ);
 
     initProp(PROP_STARTING_ANGLE, Integer.class, "RING-100", Boolean.FALSE,"Starting Angle\u00B0",DEF_STARTING_ANGLE);
@@ -184,6 +186,9 @@ public class RingGaugeModel extends WidgetModel {
       fireTableCellUpdated(PROP_ACTIVE_COLOR, COLUMN_VALUE);
     }
     
+    if (row == PROP_FONT) {
+      calcSizes(true);
+    }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -376,6 +381,25 @@ public class RingGaugeModel extends WidgetModel {
  }
 
  /**
+  * calcSizes() - This routine is really just checking that our font exists
+  * 
+  * @param fireUpdates indicates that we should notify JTable of changes
+  */
+  public void calcSizes(boolean fireUpdates) {
+
+    // next does the current font exist? 
+    // if we changed target plaform we might need to change font to default
+    String name = getFontDisplayName();
+    FontItem item = ff.getFontItem(name);
+    if (!item.getDisplayName().equals(name)) {
+      data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
+      if (fireUpdates) {
+        fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
+      }
+    }
+  }
+
+ /**
   * readModel() will deserialize our model's data from a string object for backup
   * and recovery.
   *
@@ -402,6 +426,7 @@ public class RingGaugeModel extends WidgetModel {
      data[PROP_GRADIENT_END_COLOR][PROP_VAL_READONLY]=Boolean.TRUE; 
      data[PROP_ACTIVE_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
    }   
+   calcSizes(false);
  }
 
 }

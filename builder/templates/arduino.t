@@ -280,6 +280,9 @@ gslc_tsElemRef* $<18>$<ELEMREF>= NULL;
 #include <Adafruit_GFX.h>
 // Note that these files are located within the Adafruit-GFX library folder:
 <STOP>
+<FONT_TEENSY>
+#include <SPI.h>
+<STOP>
 <FONT_TFT_ESPI>
 #if !defined(DRV_DISP_TFT_ESPI)
   #error Builder config "Edit->Options->General->Target Platform" should be "arduino"
@@ -294,6 +297,9 @@ gslc_tsElemRef* $<18>$<ELEMREF>= NULL;
 <STOP>
 <FONT_LOAD>
     if (!gslc_FontSet(&m_gui,$<FONT_ID>,$<FONT_REFTYPE>,$<FONT_REF>,$<FONT_SZ>)) { return; }
+<STOP>
+<FONT_MODE>
+    gslc_FontSetMode(&m_gui, $<FONT_ID>, $<FONT_MODE>);	
 <STOP>
 <FRAME_EN>
   gslc_ElemSetFrameEn(&m_gui,pElemRef,$<COM-010>);

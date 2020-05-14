@@ -423,12 +423,7 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
-   * <p>
-   * calcSizes() - This routine is complicated because we use one font size on our display
-   * vs the font size we will be using on the target TFT screen.
-   * FontItem already has created a scaled font for our display but we want to show
-   * width and height to the user as the target TFT's width and height of our text.
-   * </p>
+   * calcSizes() - This routine is really just checking that our font exists
    * 
    * @param fireUpdates indicates that we should notify JTable of changes
    */

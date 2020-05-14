@@ -173,92 +173,6 @@ public class FontFactory {
   }
   
   /**
-   * Gets the font.
-   *
-   * @param key
-   *          the key
-   * @return the font
-   */
-  public Font getFont(String key) {
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) 
-        idx = linuxMap.get(key);
-      return linuxFonts.get(idx.intValue()).getFont();
-    } else if (target.equals(ProjectModel.PLATFORM_ARDUINO)) {
-      if (arduinoMap.containsKey(key)) 
-        idx = arduinoMap.get(key);
-      return arduinoFonts.get(idx.intValue()).getFont();
-    } else if (target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
-      if (arduinoMap.containsKey(key)) 
-        idx = arduinoMap.get(key);
-      return arduinoFonts.get(idx.intValue()).getFont();
-    }
-    return null;
-  }
-  
-  /**
-   * Gets the font with a temporary style change
-   *
-   * @param key
-   *          the key
-   * @param style
-   *          the style
-   * @return the java <code>Font</code> object
-   */
-  public Font getStyledFont(String key, String style) {
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) 
-        idx = linuxMap.get(key);
-      return linuxFonts.get(idx.intValue()).getStyledFont(style);
-    } else {
-      if (arduinoMap.containsKey(key)) 
-        idx = arduinoMap.get(key);
-      return arduinoFonts.get(idx.intValue()).getStyledFont(style);
-    }
-  }
-  
-  /**
-   * Gets the name of the default font for the target platform.
-   *
-   * @return the font name
-   */
-  public String getDefFontName() {
-    FontItem item = null;
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      item = linuxFonts.get(0);
-    } else {
-      item = arduinoFonts.get(0);
-    }
-    return item.getDisplayName();
-  }
-  
-  /**
-   * Gets the name of the default font using a size code for the target platform.
-   *
-   * @param size varies from 1 to 5
-   *   ex: arduino size 2 = 'BuiltIn(2x)->10x16pt7b'
-   *       linux   size 2 = 'DroidSansMono9pt'
-   * @return the font enum
-   */
-  public String getDefFontName(int size) {
-    FontItem item = null;
-    if (size < 1 || size > 5) return "";
-    size--;
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      item = linuxFonts.get(size);
-    } else {
-      item = arduinoFonts.get(size);
-    }
-    return item.getDisplayName();
-  }
-  
-  /**
    * Gets the font list.
    *
    * @return the font list
@@ -273,6 +187,73 @@ public class FontFactory {
   }
   
   /**
+   * Gets the font Map.
+   *
+   * @return the font list
+   */
+  public HashMap<String, Integer> getFontMap() {
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
+      return linuxMap;
+    } else {
+      return arduinoMap;
+    }
+  }
+  
+  /**
+   * This method gets a Font's item that matches a key 
+   * of the font's DispayName or first in list.
+   *
+   * @param key
+   *          - is the GUIslice font  displayname not the real java font name.
+   * @return font item 
+   */
+  public FontItem getFontItem(String key) {
+    List<FontItem> list = getFontList();
+    HashMap<String, Integer> map = getFontMap();
+    Integer idx = Integer.valueOf(0);  // always return something...
+    if (map.containsKey(key)) 
+      idx = map.get(key);
+    return list.get(idx.intValue());
+  }
+  
+  /**
+   * Gets the font.
+   *
+   * @param key
+   *          the key
+   * @return the font
+   */
+  public Font getFont(String key) {
+    FontItem item = getFontItem(key);
+    return item.getFont();
+  }
+  
+  /**
+   * Gets the font with a temporary style change
+   *
+   * @param key
+   *          the key
+   * @param style
+   *          the style
+   * @return the java <code>Font</code> object
+   */
+  public Font getStyledFont(String key, String style) {
+    FontItem item = getFontItem(key);
+    return item.getStyledFont(style);
+  }
+  
+  /**
+   * Gets the name of the default font for the target platform.
+   *
+   * @return the font name
+   */
+  public String getDefFontName() {
+    List<FontItem> list = getFontList();
+    return list.get(0).getDisplayName();
+  }
+  
+  /**
    * Gets the font enum.
    *
    * @param key
@@ -280,36 +261,23 @@ public class FontFactory {
    * @return the font enum
    */
   public String getFontEnum(String key) {
-    FontItem item = null;
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) {
-        idx = linuxMap.get(key);
-      }
-      item = linuxFonts.get(idx.intValue());
-    } else {
-      if (arduinoMap.containsKey(key)) {
-        idx = arduinoMap.get(key);
-      }
-      item = arduinoFonts.get(idx.intValue());
-    }
+    FontItem item = getFontItem(key);
     return item.getFontId();
   }
   
   /**
    * Gets the font display name.
    *
-   * @param key
-   *          the key (font enum)
+   * @param fontEnum
+   *          the font enum
    * @return the font display name or null on failure
    */
-  public String getFontDisplayName(String key) {
+  public String getFontDisplayName(String fontEnum) {
     String name = null;
     List<FontItem> list = getFontList();
     // this isn't called often enough to warrant anything but brute force search
     for (FontItem item : list) {
-      if (item.getFontId().equals(key)) {
+      if (item.getFontId().equals(fontEnum)) {
         name = item.getDisplayName();
         break;
       }
@@ -318,8 +286,9 @@ public class FontFactory {
   }
   
   /**
-   * This method creates a Font's display name using the String values displayed to
-   * users of GUIsliceBuider by our various Widget Models.
+   * This method gets a Font's item with a Display name using 
+   * the String values displayed to users of GUIsliceBuider 
+   * by our Font Chooser.
    *
    * @param fontName
    *          - is the GUIslice font name (family name) not the real java font name.
@@ -341,29 +310,6 @@ public class FontFactory {
       }
     }
     return null;
-  }
-  
-  /**
-   * Gets the font item.
-   *
-   * @param key
-   *          the key is the font display name
-   * @return the font item
-   */
-  public FontItem getFontItem(String key) {
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) {
-        idx = linuxMap.get(key);
-      }
-      return linuxFonts.get(idx.intValue());
-    } else {
-      if (arduinoMap.containsKey(key)) {
-        idx = arduinoMap.get(key);
-      }
-      return arduinoFonts.get(idx.intValue());
-    }
   }
   
   /**
@@ -559,8 +505,13 @@ public class FontFactory {
         if (!line.startsWith("#")) {
           // use comma as separator
           String[] f = line.split(cvsSplitBy);
-          item = new FontItem(GeneralEditor.getInstance().getDPI(),
-              f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9], f[10]);
+          if (f.length == 12) {
+            item = new FontItem(GeneralEditor.getInstance().getDPI(),
+              f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9], f[10], f[11]);
+          } else {
+            item = new FontItem(GeneralEditor.getInstance().getDPI(),
+                f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9], f[10], "NULL");
+          }
           list.add(item);
         }
       }

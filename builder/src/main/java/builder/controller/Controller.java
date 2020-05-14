@@ -306,6 +306,7 @@ public class Controller extends JInternalFrame
         pmData[mapRow][WidgetModel.PROP_VAL_VALUE] = objectData;
       }
     }
+    pm.setReadOnlyProperties();
     pm.TurnOnEvents();
     PagePane p = new PagePane();
     p.setLayout(null);

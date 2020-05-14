@@ -244,6 +244,7 @@ public class GeneralModel extends WidgetModel {
     
     cbTarget = new JComboBox<String>();
     cbTarget.addItem(ProjectModel.PLATFORM_ARDUINO);
+    cbTarget.addItem(ProjectModel.PLATFORM_TEENSY);
     cbTarget.addItem(ProjectModel.PLATFORM_TFT_ESPI);
     cbTarget.addItem(ProjectModel.PLATFORM_LINUX);
     targetCellEditor = new DefaultCellEditor(cbTarget);

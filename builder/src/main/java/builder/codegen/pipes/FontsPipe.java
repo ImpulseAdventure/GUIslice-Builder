@@ -61,6 +61,7 @@ public class FontsPipe extends WorkFlowPipe {
   /** The Constants for templates. */
   private final static String FONT_ADAFRUIT_TEMPLATE          = "<FONT_ADAFRUIT>"; 
   private final static String FONT_ADAFRUIT_TFT_ESPI_TEMPLATE = "<FONT_ADAFRUIT_AND_TFT_ESPI>"; 
+  private final static String FONT_TEENSY_TEMPLATE            = "<FONT_TEENSY>"; 
   private final static String FONT_TFT_ESPI_TEMPLATE          = "<FONT_TFT_ESPI>"; 
   private final static String FONT_DEFINE_TEMPLATE            = "<FONT_DEFINE>"; 
   private final static String FONT_INCLUDE_TEMPLATE           = "<FONT_INCLUDE>"; 
@@ -137,10 +138,26 @@ public class FontsPipe extends WorkFlowPipe {
       fonts.add(ff.getFontItem(s));
     }
 
-    // do we need to output AdaFruit's include file?
+    // do we need to output a custom set of include files?
+    ProjectModel pm = Controller.getProjectModel();
+    String[] fontIncludes = pm.getFontIncludes();
     tm = cg.getTemplateManager();
+    if (fontIncludes.length > 0 && !fontIncludes[0].isEmpty()) {
+      // output custom set of font includes
+      for (String s : fontIncludes) {
+        sBd.append(s);
+        sBd.append(System.lineSeparator());
+      }
+      return;
+    }
+    /*
+     * no custom includes so go through normal tests
+     * 
+     * do we need to output AdaFruit's include file?
+     */
+    String target = Controller.getTargetPlatform();
     // do we need to output AdaFruit's include file?
-    if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_ARDUINO)) {
+    if (target.equals(ProjectModel.PLATFORM_ARDUINO)) {
       // need to output AdaFruit include
       for (FontItem f : fonts) {
         if (!f.getIncludeFile().equals("NULL")) {
@@ -151,18 +168,28 @@ public class FontsPipe extends WorkFlowPipe {
         }
       }
     }
-
+    // do we need to output Teensy's SPI include file?
+    if (target.equals(ProjectModel.PLATFORM_TEENSY)) {
+      // need to output teensy include
+      for (FontItem f : fonts) {
+        if (!f.getIncludeFile().equals("NULL")) {
+          // This code only affects teensy implementation.
+          List<String> teensyTemplate = tm.loadTemplate(FONT_TEENSY_TEMPLATE);
+          tm.codeWriter(sBd, teensyTemplate);
+          break;
+        }
+      }
+    }
     // do we need to output TFT_eSPI include file?
     boolean bTFT_ESPI_NEEDED = false;
     boolean bADAFRUIT_TFT_ESPI_NEEDED = false;
-    if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_TFT_ESPI)) {
-      /*   Rules for TFT_eSPI mode:
-       * - If no fonts used: No include required
-       * - If "built-in" / default font used: No include required
-       * - If custom freefonts used: include <TFT_eSPI.h> only
-       *   since they're already inside TFT_eSPI.h
-       * - If custom not freefonts used: include Adafruit Font/xxx.h only
-       *   since they're already inside TFT_eSPI.h
+    if (target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
+      /*
+       * Rules for TFT_eSPI mode: - If no fonts used: No include required - If
+       * "built-in" / default font used: No include required - If custom freefonts
+       * used: include <TFT_eSPI.h> only since they're already inside TFT_eSPI.h - If
+       * custom fonts (like dosis or Noto) used: include Adafruit Font/xxx.h only
+       * since they're not already inside TFT_eSPI.h
        */
       for (FontItem f : fonts) {
         // A built-in font is indicated with a literal string of "NULL"
@@ -183,42 +210,39 @@ public class FontsPipe extends WorkFlowPipe {
       List<String> tft_espiTemplate = tm.loadTemplate(FONT_ADAFRUIT_TFT_ESPI_TEMPLATE);
       tm.codeWriter(sBd, tft_espiTemplate);
     }
+
     // we are ready to output our font information
-    tm = cg.getTemplateManager();
     List<String> includeTemplate = null;
     List<String> defineTemplate = null;
     List<String> outputLines = null;
-    Map<String, String> map = new HashMap<String,String>();
-
+    Map<String, String> map = new HashMap<String, String>();
     for (FontItem f : fonts) {
-      if (!f.getIncludeFile().equals("NULL") &&
-          Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_TFT_ESPI)) {
+      if (!f.getIncludeFile().equals("NULL") && target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
         if (!f.getName().startsWith("FreeFont")) {
           // This code only affects arduino implementation.
-          includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
+          includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
+          ;
           map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
           outputLines = tm.expandMacros(includeTemplate, map);
           tm.codeWriter(sBd, outputLines);
         }
-      } else if (!f.getIncludeFile().equals("NULL") && 
-          Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_ARDUINO)) {
-          // This code only affects arduino implementation.
-          includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);;
-          map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
-          outputLines = tm.expandMacros(includeTemplate, map);
-          tm.codeWriter(sBd, outputLines);
-      } else if (!f.getDefineFile().equals("NULL") && 
-          Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) {
+      } else if (!f.getIncludeFile().equals("NULL")
+          && (target.equals(ProjectModel.PLATFORM_ARDUINO) || target.equals(ProjectModel.PLATFORM_TEENSY))) {
+        // This code only affects arduino implementation.
+        includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
+        ;
+        map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
+        outputLines = tm.expandMacros(includeTemplate, map);
+        tm.codeWriter(sBd, outputLines);
+      } else if (!f.getDefineFile().equals("NULL") && target.equals(ProjectModel.PLATFORM_LINUX)) {
         // This code only affects linux implementation.
-        defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);;
+        defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);
+        ;
         map.put(FONT_REF_MACRO, f.getFontRef());
         map.put(DEFINE_FILE_MACRO, f.getDefineFile());
         outputLines = tm.expandMacros(defineTemplate, map);
         tm.codeWriter(sBd, outputLines);
       }
     }
-    
   }
-
 }
-  

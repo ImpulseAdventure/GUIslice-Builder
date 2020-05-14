@@ -71,6 +71,9 @@ public class FontItem {
   /** The java font style. */
   private String logicalStyle;
   
+  /** The Font Ref Mode - optional font set mode API used for built-in fonts */
+  private String fontRefMode;
+  
   /** The scaled size. */
   private String scaledSize;
   
@@ -89,6 +92,7 @@ public class FontItem {
    * @param logicalName java font name
    * @param logicalSize java font size
    * @param logicalStyle java font style
+   * @param fontRefMode java font style
    */
   public FontItem(int dpi,
                   String name,
@@ -101,7 +105,8 @@ public class FontItem {
                   String nFontSz,
                   String logicalName,
                   String logicalSize,
-                  String logicalStyle) {
+                  String logicalStyle,
+                  String fontRefMode) {
     this.font = null;
     this.name = name;
     this.displayName = displayName;
@@ -114,6 +119,7 @@ public class FontItem {
     this.logicalName = logicalName;
     this.logicalSize = logicalSize;
     this.logicalStyle = logicalStyle;
+    this.fontRefMode = fontRefMode;
     // We also have to take into account the target display screen's DPI
     // Adafruits's 2.8 screen is about DPI of 141. Yours likely will be different.
     // Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
@@ -137,8 +143,6 @@ public class FontItem {
   /**
    * Gets the font with a temporary style change
    *
-   * @param key
-   *          the key
    * @param style
    *          the style
    * @return the java <code>Font</code> object
@@ -265,7 +269,16 @@ public class FontItem {
     return logicalStyle;
   }
   
- 
+  /**
+   * Gets the fontRefMode.
+   *
+   * @return the fontRefMode
+   */
+  public String getFontRefMode() {
+    return fontRefMode;
+  }
+  
+
   /**
    * toString
    *
