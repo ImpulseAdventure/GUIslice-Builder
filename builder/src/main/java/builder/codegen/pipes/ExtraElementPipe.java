@@ -94,6 +94,8 @@ public class ExtraElementPipe extends WorkFlowPipe {
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
     for (PagePane p : cg.getPages()) {
+      if (p.getPageType().equals(EnumFactory.PROJECT))
+        continue;
       map.clear();
       map.put(STRIP_KEY_MACRO, CodeUtils.convertKey(p.getKey()));
       map.put(STRIP_ENUM_MACRO, CodeUtils.convertEnum(p.getEnum()));
