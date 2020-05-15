@@ -41,7 +41,10 @@ The Software is not designed for use in devices or situations where there may be
 - Reduction of boiler plate code for Keypad input fields
 - Support for Flash-based Numeric/Alpha input Fields
 
-#### HotFix 0.14.b005
+#### Changes for 0.14.b000
+Added support for Teensy fonts
+
+#### Bug Fixes 0.14.b005
  - Bug No. 170 Define a smaller screen on Project Tab, screen sz not used when placing new widgets on screen
  - Bug No. 169 Moto_mono22 font duplicated should be Moto_mono24 in arduinofonts.csv file
  - Bug No. 168 Project Option Tab is output as a Page during code gen
