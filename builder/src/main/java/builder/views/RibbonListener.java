@@ -144,8 +144,8 @@ public class RibbonListener implements ActionListener, iSubscriber {
    * Creates the image widget.
    */
   public void createImageWidget() {
-    int  x = rand.nextInt(generalModel.getWidth()-50);
-    int  y = rand.nextInt(generalModel.getHeight()-50);
+    int  x = rand.nextInt(getRandomX(50));
+    int  y = rand.nextInt(getRandomY(50));
     ImageWidget w = (ImageWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGE, x, y);
     File file = showImageDialog("Choose your Image file");
     if (file != null) {
@@ -158,8 +158,8 @@ public class RibbonListener implements ActionListener, iSubscriber {
    * Creates the img button widget.
    */
   public void createImgButtonWidget() {
-    int  x = rand.nextInt(generalModel.getWidth()-50);
-    int  y = rand.nextInt(generalModel.getHeight()-50);
+    int  x = rand.nextInt(getRandomX(50));
+    int  y = rand.nextInt(getRandomY(50));
     ImgButtonWidget w = (ImgButtonWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGEBUTTON, x, y);
     File file = showImageDialog("Choose your Button's Image");
     if (file != null) {
@@ -179,20 +179,20 @@ public class RibbonListener implements ActionListener, iSubscriber {
    *          the name
    */
   public void createWidget(String name) {
-    int  x = rand.nextInt(generalModel.getWidth()-25);
-    int  y = rand.nextInt(generalModel.getHeight()-25);
+    int  x = rand.nextInt(getRandomX(25));
+    int  y = rand.nextInt(getRandomY(25));
     Widget w = WidgetFactory.getInstance().createWidget(name, x, y);
     if (w != null) {
       controller.addWidget(w);
     }
   }
   
-  public int getRandomX() {
-    return rand.nextInt(generalModel.getWidth()-25);
+  public int getRandomX(int n) {
+    return rand.nextInt(Controller.getProjectModel().getWidth()-n);
   }
 
-  public int getRandomY() {
-    return rand.nextInt(generalModel.getHeight()-25);
+  public int getRandomY(int n) {
+    return rand.nextInt(Controller.getProjectModel().getHeight()-n);
   }
 
   /**
