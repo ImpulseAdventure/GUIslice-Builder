@@ -31,8 +31,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import builder.controller.Controller;
 import builder.mementos.PositionMemento;
-import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
 import builder.widgets.Widget;
 
@@ -69,8 +69,8 @@ public class DragWidgetCommand extends Command {
    */
   public DragWidgetCommand(PagePane page) {
     this.page = page;
-    tft_width = GeneralEditor.getInstance().getWidth();
-    tft_height = GeneralEditor.getInstance().getHeight();
+    tft_width = Controller.getProjectModel().getWidth();
+    tft_height = Controller.getProjectModel().getHeight();
     bSuccess = false;
   }
   

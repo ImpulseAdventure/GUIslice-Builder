@@ -30,9 +30,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import builder.controller.Controller;
 import builder.mementos.AlignPropertyMemento;
 import builder.models.WidgetModel;
-import builder.prefs.GeneralEditor;
 import builder.views.PagePane;
 import builder.widgets.Widget;
 
@@ -89,7 +89,7 @@ public class AlignCenterCommand extends Command {
           JOptionPane.WARNING_MESSAGE);
       return false; // need at least one widget
     }
-    int displayWidth = GeneralEditor.getInstance().getWidth();
+    int displayWidth = Controller.getProjectModel().getWidth();
     WidgetModel model = list.get(0).getModel();
     groupList.add(model);
     memento = new AlignPropertyMemento(page, groupList, WidgetModel.PROP_X);
