@@ -43,6 +43,7 @@ The Software is not designed for use in devices or situations where there may be
 
 #### Changes for 0.14.b005
 Added support for Teensy fonts
+Added support for flash based Slider control
 
 #### Bug Fixes 0.14.b005
  - Bug No. 170 Project Tab, screen sz not used when placing or aligning widgets on screen

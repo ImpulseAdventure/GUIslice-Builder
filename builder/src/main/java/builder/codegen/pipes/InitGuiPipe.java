@@ -60,6 +60,7 @@ import builder.codegen.flash.CheckBox_P_CodeBlock;
 import builder.codegen.flash.NumberInput_P_CodeBlock;
 import builder.codegen.flash.ProgressBar_P_CodeBlock;
 import builder.codegen.flash.RadioButton_P_CodeBlock;
+import builder.codegen.flash.Slider_P_CodeBlock;
 import builder.codegen.flash.TextInput_P_CodeBlock;
 import builder.codegen.flash.Text_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
@@ -378,7 +379,11 @@ public class InitGuiPipe extends WorkFlowPipe {
         RingGaugeCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
       case EnumFactory.SLIDER:
-        SliderCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        if (m.useFlash()) {
+          Slider_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
+        } else {
+          SliderCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        }
         break;
       case EnumFactory.SPINNER:
         SpinnerCodeBlock.process(cg, tm, sBd, pageEnum, m);

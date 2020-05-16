@@ -640,6 +640,16 @@ extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
   gslc_ElemXSliderSetStyle(&m_gui,pElemRef,$<SLD-107>,$<COL_307>,$<SLD-105>,$<SLD-106>,$<COL-306>);
   gslc_ElemXSliderSetPosFunc(&m_gui,pElemRef,&CbSlidePos);
 <STOP>
+<SLIDER_P>
+
+  // Create slider $<COM-002> 
+  gslc_ElemXSliderCreate_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
+          $<SLD-100>,$<SLD-101>,$<SLD-102>,$<SLD-103>,$<SLD-104>,$<COL-302>,$<COL-303>);
+  pElemRef = gslc_PageFindElemById(&m_gui,$<COM-000>,$<COM-002>);
+  gslc_ElemXSliderSetStyle(&m_gui,pElemRef,$<SLD-107>,$<COL_307>,$<SLD-105>,$<SLD-106>,$<COL-306>);
+  gslc_ElemXSliderSetPosFunc(&m_gui,pElemRef,&CbSlidePos);
+  $<COM-019> = pElemRef;
+<STOP>
 <SLIDER_CB>
 
 // Callback function for when a slider's position has been updated
