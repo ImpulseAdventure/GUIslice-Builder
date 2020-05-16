@@ -43,6 +43,7 @@ import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import builder.Builder;
+import builder.controller.Controller;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 
@@ -99,8 +100,8 @@ public class CommonUtils {
   public Point fitToGrid(int x, int y, int widgetWidth, int widgetHeight) {
     GeneralEditor ed = GeneralEditor.getInstance();
     int margins = ed.getMargins();
-    int canvas_width = ed.getWidth() - margins;
-    int canvas_height = ed.getHeight() - margins;
+    int canvas_width = Controller.getProjectModel().getWidth() - margins;
+    int canvas_height = Controller.getProjectModel().getHeight() - margins;
     // force the new Coordinates fit on our canvas and inside the margins
     if ((x + widgetWidth) > canvas_width)
       x = canvas_width - widgetWidth;
