@@ -83,7 +83,7 @@ public class SliderWidget extends Widget {
     int nThumbSz = m.getThumbSize();
     int nMargin  = nThumbSz;
     int nCtrlRng;
-/*
+
     if (!m.isVertical()) {
       nCtrlRng = (nX1-nMargin)-(nX0+nMargin);
       nPosOffset = (b.width/2)-m.getMin();
@@ -91,12 +91,14 @@ public class SliderWidget extends Widget {
       nCtrlRng = (nY1-nMargin)-(nY0+nMargin);
       nPosOffset = (b.height/2)-m.getMin();
     }
-*/
+
+/*
     if (!m.isVertical()) {
       nCtrlRng = (nX1-nMargin)-(nX0+nMargin);
     } else {
       nCtrlRng = (nY1-nMargin)-(nY0+nMargin);
     }
+*/
     int nCtrlPos  = (nPosOffset*nCtrlRng/nPosRng)+nMargin;
 
 

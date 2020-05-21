@@ -56,6 +56,7 @@ public class SliderCbPipe extends WorkFlowPipe {
 
   /** The Constants for templates. */
   private final static String SLIDER_CB_TEMPLATE     = "<SLIDER_CB>";
+  private final static String SEEKBAR_CASE_TEMPLATE  = "<SEEKBAR_CB_CASE>";
   private final static String SLIDER_CASE_TEMPLATE   = "<SLIDER_CB_CASE>";
   
   /** The Constants for macros. */
@@ -126,6 +127,8 @@ public class SliderCbPipe extends WorkFlowPipe {
     for (WidgetModel m : cg.getModels()) {
       if (m.getType().equals(EnumFactory.SLIDER)) {
         callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.SEEKBAR)) {
+        callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.LISTBOX) && ((ListBoxModel) m).addScrollbar()) {
         callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.TEXTBOX) && ((TextBoxModel) m).addScrollbar()) {
@@ -153,6 +156,7 @@ public class SliderCbPipe extends WorkFlowPipe {
     // create our callback section - start by opening our templates
     tm = cg.getTemplateManager();
     List<String> templateStandard = tm.loadTemplate(SLIDER_CASE_TEMPLATE);
+    List<String> templateSeekbar = tm.loadTemplate(SEEKBAR_CASE_TEMPLATE);
     List<String> outputLines;
     Map<String, String> map = new HashMap<String, String>();
     for (WidgetModel m : callbackList) {
@@ -160,15 +164,24 @@ public class SliderCbPipe extends WorkFlowPipe {
       if (m.getType().equals(EnumFactory.SLIDER)) {
         map.put(ENUM_MACRO, m.getEnum());
         map.put(ELEMREF_MACRO, m.getElementRef());
+        outputLines = tm.expandMacros(templateStandard, map);
+        tm.codeWriter(sTemp, outputLines);
+      } else if (m.getType().equals(EnumFactory.SEEKBAR)) {
+        map.put(ENUM_MACRO, m.getEnum());
+        map.put(ELEMREF_MACRO, m.getElementRef());
+        outputLines = tm.expandMacros(templateSeekbar, map);
+        tm.codeWriter(sTemp, outputLines);
       } else if (m.getType().equals(EnumFactory.LISTBOX)) {
         map.put(ENUM_MACRO, m.getScrollbarEnum());
         map.put(ELEMREF_MACRO, m.getScrollbarERef());
+        outputLines = tm.expandMacros(templateStandard, map);
+        tm.codeWriter(sTemp, outputLines);
       } else if (m.getType().equals(EnumFactory.TEXTBOX)) {
         map.put(ENUM_MACRO, m.getScrollbarEnum());
         map.put(ELEMREF_MACRO, m.getScrollbarERef());
+        outputLines = tm.expandMacros(templateStandard, map);
+        tm.codeWriter(sTemp, outputLines);
       }
-      outputLines = tm.expandMacros(templateStandard, map);
-      tm.codeWriter(sTemp, outputLines);
     }
 
     // now we place all of our new case statements inside our callback template
@@ -205,6 +218,9 @@ public class SliderCbPipe extends WorkFlowPipe {
       if (m.getType().equals(EnumFactory.SLIDER)) {
         callbackList.add(m);
         enumList.add(m.getEnum());
+      } else if (m.getType().equals(EnumFactory.SEEKBAR)) {
+        callbackList.add(m);
+        enumList.add(m.getEnum());
       } else if (m.addScrollbar()) {
         callbackList.add(m);
         enumList.add(m.getScrollbarEnum());
@@ -219,6 +235,7 @@ public class SliderCbPipe extends WorkFlowPipe {
     
     // now deal with our new enums    
     List<String> templateStandard = tm.loadTemplate(SLIDER_CASE_TEMPLATE);
+    List<String> templateSeekbar = tm.loadTemplate(SEEKBAR_CASE_TEMPLATE);
     List<String> outputLines;
     Map<String, String> map = new HashMap<String,String>();
     for (WidgetModel m : callbackList) {
@@ -232,6 +249,13 @@ public class SliderCbPipe extends WorkFlowPipe {
           map.put(ENUM_MACRO, m.getEnum());
           map.put(ELEMREF_MACRO, m.getElementRef());
           outputLines = tm.expandMacros(templateStandard, map);
+          tm.codeWriter(sBd, outputLines);
+        }
+      } else if (m.getType().equals(EnumFactory.SEEKBAR)) {
+        if (enumMap.get(m.getEnum()).equals("0")) {
+          map.put(ENUM_MACRO, m.getEnum());
+          map.put(ELEMREF_MACRO, m.getElementRef());
+          outputLines = tm.expandMacros(templateSeekbar, map);
           tm.codeWriter(sBd, outputLines);
         }
       } else if (m.getType().equals(EnumFactory.LISTBOX)) {

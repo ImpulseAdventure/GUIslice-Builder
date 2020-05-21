@@ -26,85 +26,60 @@
 package builder.models;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+//import java.io.IOException;
+//import java.io.ObjectInputStream;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.table.TableCellEditor;
-
-import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.events.MsgBoard;
 
 /**
- * The Class CheckBoxModel implements the model for the Checkbox widget.
+ * The Class ToggleButtonModel implements the model for the Toggle Button widget.
  * 
  * @author Paul Conti
  * 
  */
-public class CheckBoxModel extends WidgetModel { 
+public class ToggleButtonModel extends WidgetModel { 
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
   
   /** The Constant for gslc_tsElemRef* m_pElementRef name */
-  public static final String ELEMENTREF_NAME = "m_pElemCB";
+  public static final String ELEMENTREF_NAME = "m_pElemToggle";
   
-  /** XCheckbox Style constants */
-  static public  final String  CHECKBOX_STYLE_BOX    = "GSLCX_CHECKBOX_STYLE_BOX";
-  static public  final String  CHECKBOX_STYLE_X      = "GSLCX_CHECKBOX_STYLE_X";
-  static public  final String  CHECKBOX_STYLE_ROUND  = "GSLCX_CHECKBOX_STYLE_ROUND";
-
   /** The Property Index Constants. */
   static private final int PROP_CHECKED        = 7;
-  static private final int PROP_STYLE          = 8;
-  static private final int PROP_MARK_COLOR     = 9;
-  static private final int PROP_CALLBACK_EN    = 10;
-  static private final int PROP_USE_FLASH      = 11;
-  static private final int PROP_FRAME_COLOR    = 12;
-  static private final int PROP_FILL_COLOR     = 13;
-  static private final int PROP_SELECTED_COLOR = 14;
-//  static public  final int PROP_GROUP          = 14;
+  static private final int PROP_THUMB_COLOR     =8;
+  static private final int PROP_ON_COLOR       = 9;
+  static private final int PROP_OFF_COLOR      = 10;
+  static private final int PROP_CIRCULAR       = 11;
+  static private final int PROP_USE_FLASH      = 12;
+  static private final int PROP_FRAME_EN       = 13;
+  static private final int PROP_FRAME_COLOR    = 14;
+//  static private final int PROP_FILL_COLOR     = 15;
+//  static private final int PROP_SELECTED_COLOR = 16;
+//  static public  final int PROP_GROUP          = 17;
 
   /** The Property Defaults */
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
-  static public  final String  DEF_STYLE             = CHECKBOX_STYLE_X;
-  static public  final Color   DEF_MARK_COLOR        = new Color(255,165,0); // // GSLC_COL_ORANGE
-  static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
+  static public  final Color   DEF_THUMB_COLOR       = Color.GRAY;
+  static public  final Color   DEF_ON_COLOR          = new Color(0,0,224);     // GSLC_COL_BLUE_DK1
+  static public  final Color   DEF_OFF_COLOR         = new Color(224,224,224); // GSLC_COL_GRAY_LT3
+  static public  final Boolean DEF_CIRCULAR          = Boolean.TRUE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
-  static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
-  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
-  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
+  static public  final Boolean DEF_FRAME_EN          = Boolean.TRUE;
+  static public  final Color   DEF_FRAME_COLOR       = Color.GRAY; 
+//  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
+//  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
 //  static public  final String  DEF_GROUP             = "GSLC_GROUP_ID_NONE";  
 
-  static private final int DEF_WIDTH = 20;
+  static private final int DEF_WIDTH = 35;
   static private final int DEF_HEIGHT= 20;
 
-  /** The cb style. */
-  JComboBox<String> cbStyle;
-  
-  /** The style cell editor. */
-  DefaultCellEditor styleCellEditor;
-
   /**
-   * Instantiates a new check box model.
+   * Instantiates a new radio button model.
    */
-  public CheckBoxModel() {
+  public ToggleButtonModel() {
     initProperties();
-    initEditors();
-  }
-  
-  /**
-   * Initializes the cell editors.
-   */
-  private void initEditors()
-  {
-    cbStyle = new JComboBox<String>();
-    cbStyle.addItem(CHECKBOX_STYLE_X);
-    cbStyle.addItem(CHECKBOX_STYLE_BOX);
-    cbStyle.addItem(CHECKBOX_STYLE_ROUND);
-    styleCellEditor = new DefaultCellEditor(cbStyle);
   }
   
   /**
@@ -112,49 +87,27 @@ public class CheckBoxModel extends WidgetModel {
    */
   protected void initProperties()
   {
-    widgetType = EnumFactory.CHECKBOX;
+    widgetType = EnumFactory.TOGGLEBUTTON;
     data = new Object[15][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
-    
-    // bug b90 check boxes and radio buttons should have either width or height.
-    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
-    
-    initProp(PROP_CHECKED, Boolean.class, "CBOX-100", Boolean.FALSE,"Checked?",DEF_CHECKED);
-    initProp(PROP_STYLE, String.class, "RBTN-102", Boolean.FALSE,"Check Mark Style",DEF_STYLE);
-    initProp(PROP_MARK_COLOR, Color.class, "COL-305", Boolean.FALSE,"Check Mark Color",DEF_MARK_COLOR);
 
-    initProp(PROP_CALLBACK_EN, Boolean.class, "COM-017", Boolean.FALSE,"Callback Enabled?",DEF_CALLBACK_EN);
+    initProp(PROP_CHECKED, Boolean.class, "CBOX-100", Boolean.FALSE,"Checked?",DEF_CHECKED);
+    initProp(PROP_THUMB_COLOR, Color.class, "COL-317", Boolean.FALSE,"Thumb Color",DEF_THUMB_COLOR);
+    initProp(PROP_ON_COLOR, Color.class, "COL-319", Boolean.FALSE,"On State Color",DEF_ON_COLOR);
+    initProp(PROP_OFF_COLOR, Color.class, "COL-320", Boolean.FALSE,"Off State Color",DEF_OFF_COLOR);
+    initProp(PROP_CIRCULAR, Boolean.class, "RBTN-102", Boolean.FALSE,"Circular?",DEF_CIRCULAR);
     initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
     
+    initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
     initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
-    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
+//    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
+//    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
 //    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
   }
   
-  /**
-   * Gets the style.
-   style
-   */
-  public String getStyle() {
-    return (String) data[PROP_STYLE][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * getEditorAt
-   *
-   * @see builder.models.WidgetModel#getEditorAt(int)
-   */
-  @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_STYLE)
-      return styleCellEditor;
-    return null;
-  }
-
   /**
    * changeValueAt
    *
@@ -170,20 +123,6 @@ public class CheckBoxModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_WIDTH) {
-      data[PROP_HEIGHT][PROP_VAL_VALUE] = getWidth();
-      fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
-    }
-    if (row == PROP_HEIGHT) {
-      data[PROP_WIDTH][PROP_VAL_VALUE] = getHeight();
-      fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
-    }
-    if (row == PROP_CALLBACK_EN) {
-      if (isCallbackEn() && getElementRef().isEmpty()) {
-        setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
-        fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
-      }
-    }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -204,14 +143,31 @@ public class CheckBoxModel extends WidgetModel {
   }
   
   /**
-   * Gets the mark color.
+   * Gets the Thumb color.
    *
-   * @return the mark color
+   * @return the Thumb color
    */
-  public Color getMarkColor() {
-    return (((Color) data[PROP_MARK_COLOR][PROP_VAL_VALUE]));
+  public Color getThumbColor() {
+    return (((Color) data[PROP_THUMB_COLOR][PROP_VAL_VALUE]));
   }
 
+  /**
+   * Gets the On color.
+   *
+   * @return the on color
+   */
+  public Color getOnColor() {
+    return (((Color) data[PROP_ON_COLOR][PROP_VAL_VALUE]));
+  }
+
+  /**
+   * Gets the Off color.
+   *
+   * @return the off color
+   */
+  public Color getOffColor() {
+    return (((Color) data[PROP_OFF_COLOR][PROP_VAL_VALUE]));
+  }
   /**
    * Checks if is checked.
    *
@@ -222,22 +178,22 @@ public class CheckBoxModel extends WidgetModel {
   }
 
   /**
-   * Checks if callback enabled?
+   * Checks if circular style?
    *
    * @return true, if callback is enabled
    */
-  public boolean isCallbackEn() {
-    return ((Boolean) data[PROP_CALLBACK_EN][PROP_VAL_VALUE]).booleanValue();
+  public boolean isCircular() {
+    return ((Boolean) data[PROP_CIRCULAR][PROP_VAL_VALUE]).booleanValue();
   }
 
  /**
-  * Gets the fill color.
+  * Checks if is frame enabled.
   *
-  * @return the fill color
+  * @return true, if is frame enabled
   */
- public Color getFillColor() {
-    return (((Color) data[PROP_FILL_COLOR][PROP_VAL_VALUE]));
-  }
+ public boolean isFrameEnabled() {
+   return ((Boolean) data[PROP_FRAME_EN][PROP_VAL_VALUE]).booleanValue();
+ }
 
   /**
    * Gets the frame color.
@@ -249,14 +205,25 @@ public class CheckBoxModel extends WidgetModel {
   }
 
   /**
+   * Gets the fill color.
+   *
+   * @return the fill color
+   */
+/*
+  public Color getFillColor() {
+     return (((Color) data[PROP_FILL_COLOR][PROP_VAL_VALUE]));
+   }
+*/
+  /**
    * Gets the selected color.
    *
    * @return the selected color
    */
+/*
   public Color getSelectedColor() {
     return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
   }
-
+*/
   /**
    * Gets the group id.
    *
@@ -280,18 +247,16 @@ public class CheckBoxModel extends WidgetModel {
    *           Signals that an I/O exception has occurred.
    * @throws ClassNotFoundException
    *           the class not found exception
-   * @see builder.mementos.PositionMemento
-   * @see builder.mementos.WidgetMemento
-   * @see builder.views.PagePane
-   * @see builder.widgets.Widget
+   * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream, java.lang.String)
    */
+/*
   @Override
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
-//    if (((String)data[PROP_GROUP][PROP_VAL_VALUE]).isEmpty()) {
-//      data[PROP_GROUP][PROP_VAL_VALUE] = "GSLC_GROUP_ID_NONE";
-//    }
+    if (((String)data[PROP_GROUP][PROP_VAL_VALUE]).isEmpty()) {
+      data[PROP_GROUP][PROP_VAL_VALUE] = "GSLC_GROUP_ID_NONE";
+    }
   }
-
+*/
 }

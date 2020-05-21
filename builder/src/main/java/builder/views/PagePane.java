@@ -421,15 +421,27 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void doSelectedCount(Widget w) {
     if (w.isSelected()) {
+/* reserve for future use
       if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
-          w.getType().equals(EnumFactory.CHECKBOX)) {
+          w.getType().equals(EnumFactory.CHECKBOX) ||
+          w.getType().equals(EnumFactory.TOGGLEBUTTON)) {
             selectedGroupCnt++;
+      }
+*/
+      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
+        selectedGroupCnt++;
       }
       selectedCnt++;
     } else {
+/*
       if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
-          w.getType().equals(EnumFactory.CHECKBOX)) {
+        w.getType().equals(EnumFactory.CHECKBOX) ||
+          w.getType().equals(EnumFactory.TOGGLEBUTTON)) {
             if (selectedGroupCnt > 0) selectedGroupCnt--;
+      }
+*/
+      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
+        if (selectedGroupCnt > 0) selectedGroupCnt--;
       }
       if (selectedCnt > 0) selectedCnt--;
     }

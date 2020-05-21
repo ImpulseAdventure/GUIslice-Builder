@@ -90,6 +90,8 @@ public class SwatchPanel extends JPanel {
   /** The num colors. */
   private int numColors;
 
+  private Color defaultColor = new Color(230,230,230);
+
   /**
    * Instantiates a new swatch panel.
    */
@@ -139,7 +141,6 @@ public class SwatchPanel extends JPanel {
   @SuppressWarnings("unchecked")
   protected void initColors() {
 //    Color defaultColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor", getLocale());
-    Color defaultColor = new Color(230,230,230);
     String recentColors = generalEditor.getRecentColors();
     lruList = new ArrayList<Color>();
     // do we have any user preferences for colors?
@@ -155,12 +156,15 @@ public class SwatchPanel extends JPanel {
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }
-    } else {
+    }
+/*
+    else {
       // initialize lru with default colors
       for (int i = 0; i < numColors; i++) {
         lruList.add(defaultColor);
       }
     }
+*/
   }
 
   /**
@@ -175,6 +179,8 @@ public class SwatchPanel extends JPanel {
       int y = row * (swatchSize.height + gap.height);
       for (int column = 0; column < numSwatches.width; column++) {
         Color c = getColorForCell(column, row);
+        if (c == null) 
+          return;
         g.setColor(c);
         int x;
         if (!this.getComponentOrientation().isLeftToRight()) {
@@ -273,6 +279,7 @@ public class SwatchPanel extends JPanel {
   private Color getColorForCell(int column, int row) {
     // convert a 2D array index into a 1D index
     int idx = row * NCOLUMNS + column;
+    if (idx>=lruList.size()) return null;
     return lruList.get(idx);
   }
 
@@ -285,10 +292,27 @@ public class SwatchPanel extends JPanel {
   public void setMostRecentColor(Color c) {
     // update our lru but first check and see if the color is already present
     // if so, remove it then add to front of list
+/*
     lruList.remove(c);
     lruList.add(0,c);
     if (lruList.size() > numColors) {
       lruList.remove(numColors);
+    }
+*/
+    if (lruList.size() == 0) {
+      lruList.add(c);
+    } else if (!c.equals(lruList.get(0))) {
+      ArrayList<Color> newList = new ArrayList<Color>();
+      newList.add(c);
+      for (Color oldColor : lruList) {
+        if (!c.equals(oldColor)) {
+          newList.add(oldColor);
+        }
+      }
+      lruList.clear();
+      for (Color oldColor : newList) {
+        lruList.add(oldColor);
+      }
     }
     repaint();
     // now push the recent colors panel to user preferences

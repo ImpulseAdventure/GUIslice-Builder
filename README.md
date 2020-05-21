@@ -40,10 +40,16 @@ The Software is not designed for use in devices or situations where there may be
 - Major Enhancements to the code generation of Button callbacks. 
 - Reduction of boiler plate code for Keypad input fields
 - Support for Flash-based Numeric/Alpha input Fields
+- Support for Flash based Slider control.
+- Support for Toggle Button.
+- Support for Seekbar, a modern slider control.
+- Added Style options to Checkbox and Radio Buttons.
 
 #### Changes for 0.14.b005
-Added support for Teensy fonts
-Added support for flash based Slider control
+Support for Teensy fonts.
+Support for flash based Slider control.
+Support for new controls, Toggle Button and Seekbar, both have RAM and Flash based version of GUIslice API.
+Added Style options to Checkbox and Radio Buttons.
 
 #### Bug Fixes 0.14.b005
  - Bug No. 170 Project Tab, screen sz not used when placing or aligning widgets on screen

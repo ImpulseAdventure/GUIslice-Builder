@@ -25,12 +25,13 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.GUIslice;
+//import builder.common.CommonUtils;
 import builder.models.CheckBoxModel;
-//import builder.prefs.CheckBoxEditor;
 
 /**
  * <p>
@@ -42,7 +43,9 @@ import builder.models.CheckBoxModel;
  * 
  */
 public class CheckBoxWidget extends Widget {
-
+  
+  CheckBoxModel m;
+  
   /**
    * Instantiates a new check box widget.
    *
@@ -52,8 +55,9 @@ public class CheckBoxWidget extends Widget {
    *          the y coordinate position
    */
   public CheckBoxWidget(int x, int y) {
-    u = CommonUtils.getInstance();
-    model = new CheckBoxModel();
+//    u = CommonUtils.getInstance();
+    m = new CheckBoxModel();
+    model = m;
     super.setXY(model, x, y);
 //    setUserPrefs(CheckBoxEditor.getInstance().getModel());
   }
@@ -63,24 +67,61 @@ public class CheckBoxWidget extends Widget {
    *
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
-  public void draw(Graphics2D g2d) {
-    Rectangle b = getWinBounded();
-    if (bSelected) {
-      g2d.setColor(((CheckBoxModel) model).getSelectedColor());
-      g2d.fillRect(b.x, b.y, b.width, b.height);
-    } else {
-      g2d.setColor(((CheckBoxModel) model).getFillColor());
-      g2d.fillRect(b.x, b.y, b.width, b.height);
-    }
-    g2d.setColor(((CheckBoxModel) model).getFrameColor());
-    g2d.drawRect(b.x, b.y, b.width, b.height);
-    if (((CheckBoxModel) model).isChecked()) {
+  public void draw(Graphics2D pGui) {
+    Rectangle rElem = getWinBounded();
+    Rectangle rInner;
+
+    boolean bChecked   = m.isChecked();
+    String nStyle      = m.getStyle();
+    Color colCheck     = m.getMarkColor();
+    Color colElemFrame = m.getFrameColor();
+    Color colElemFill  = m.getFillColor();
+    
+    // Draw the background
+    GUIslice.drawFillRect(pGui,rElem,colElemFill);
+
+    // Generic coordinate calcs
+    int nX0,nY0,nX1,nY1,nMidX,nMidY;
+    nX0 = rElem.x;
+    nY0 = rElem.y;
+    nX1 = rElem.x + rElem.width - 1;
+    nY1 = rElem.y + rElem.height - 1;
+    nMidX = (nX0+nX1)/2;
+    nMidY = (nY0+nY1)/2;
+    if (nStyle.equals(CheckBoxModel.CHECKBOX_STYLE_BOX)) {
+      // Draw the center indicator if checked
+      rInner = GUIslice.expandRect(rElem,-5,-5);
+      if (bChecked) {
+        // If checked, fill in the inner region
+        GUIslice.drawFillRect(pGui,rInner,colCheck);
+      } else {
+        // Assume the background fill has already been done so
+        // we don't need to do anything more in the unchecked case
+      }
+      // Draw a frame around the checkbox
+      GUIslice.drawFrameRect(pGui,rElem,colElemFrame);
+
+    } else if (nStyle.equals(CheckBoxModel.CHECKBOX_STYLE_X)) {
       // Draw an X through center if checked
-      g2d.setColor(((CheckBoxModel) model).getMarkColor());
-      g2d.drawLine(b.x,b.y,(b.x+b.width-1),(b.y+b.height-1));
-      g2d.drawLine(b.x,(b.y+b.height-1),(b.x+b.width-1),b.y);
+      if (bChecked) {
+        GUIslice.drawLine(pGui,nX0,nY0,nX1,nY1,colCheck);
+        GUIslice.drawLine(pGui,nX0,nY1,nX1,nY0,colCheck);
+      }
+      // Draw a frame around the checkbox
+      GUIslice.drawFrameRect(pGui,rElem,colElemFrame);
+
+    } else if (nStyle.equals(CheckBoxModel.CHECKBOX_STYLE_ROUND)) {
+      // Draw inner circle if checked
+      if (bChecked) {
+        GUIslice.drawFillCircle(pGui,nMidX,nMidY,5,colCheck);
+      }
+      // Draw a frame around the checkbox
+      GUIslice.drawFrameCircle(pGui,nMidX,nMidY,(rElem.width/2),
+          m.getFrameColor());
+
     }
-    super.drawSelRect(g2d, b);
+
+    super.drawSelRect(pGui, rElem);
   }
 
 }

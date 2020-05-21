@@ -68,9 +68,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static String BUTTON_CB_TEMPLATE     = "<BUTTON_CB>";
   private final static String BUTTON_CASE_TEMPLATE   = "<BUTTON_CB_CASE>";
   private final static String BUTTON_CHGPG_TEMPLATE  = "<BUTTON_CB_CHGPAGE>";
+  private final static String BUTTON_HIDE_TEMPLATE   = "<BUTTON_CB_HIDEPOPUP>";
   private final static String BUTTON_INPUT_TEMPLATE  = "<BUTTON_CB_INPUT>";
   private final static String BUTTON_SHOW_TEMPLATE   = "<BUTTON_CB_SHOWPOPUP>";
-  private final static String BUTTON_HIDE_TEMPLATE   = "<BUTTON_CB_HIDEPOPUP>";
+  private final static String BUTTON_TOGGLE_TEMPLATE = "<BUTTON_CB_TOGGLE>";
   
   /** The Constants for macros. */
   private final static String CALLBACK_MACRO         = "CALLBACK";
@@ -98,6 +99,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static int CT_HIDEPOPUP  = 6;
   private final static int CT_UPDINPUTNUM = 7;
   private final static int CT_UPDINPUTTXT = 8;
+  private final static int CT_TOGGLEBTN   = 9;
 
   /** The case statement map. */
   HashMap<String, Integer> caseMap;
@@ -167,6 +169,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
         callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
         callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
+        callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.IMAGE) && ((ImageModel)m).isTouchEn()) {
         callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
@@ -199,9 +203,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
     // create our callback section - start by opening our templates
     List<String> templateStandard  = tm.loadTemplate(BUTTON_CASE_TEMPLATE);
     List<String> templateChgPage   = tm.loadTemplate(BUTTON_CHGPG_TEMPLATE);
+    List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
     List<String> templateInput     = tm.loadTemplate(BUTTON_INPUT_TEMPLATE);
     List<String> templateShowPopup = tm.loadTemplate(BUTTON_SHOW_TEMPLATE);
-    List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
+    List<String> templateToggleBtn = tm.loadTemplate(BUTTON_TOGGLE_TEMPLATE);
     List<String> outputLines;
     Map<String, String> map = new HashMap<String, String>();
     for (WidgetModel m : callbackList) {
@@ -236,6 +241,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
         } else {
           outputLines = tm.expandMacros(templateStandard, map);
         }
+        tm.codeWriter(sTemp, outputLines);
+      } else if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
+        map.put(ELEMREF_MACRO, m.getElementRef());
+        outputLines = tm.expandMacros(templateToggleBtn, map);
         tm.codeWriter(sTemp, outputLines);
       } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
         map.put(ELEMREF_MACRO, m.getElementRef());
@@ -291,9 +300,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
     // setup our templates for outputs   
     List<String> templateStandard = tm.loadTemplate(BUTTON_CASE_TEMPLATE);
     List<String> templateChgPage = tm.loadTemplate(BUTTON_CHGPG_TEMPLATE);
+    List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
     List<String> templateInput     = tm.loadTemplate(BUTTON_INPUT_TEMPLATE);
     List<String> templateShowPopup = tm.loadTemplate(BUTTON_SHOW_TEMPLATE);
-    List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
+    List<String> templateToggleBtn = tm.loadTemplate(BUTTON_TOGGLE_TEMPLATE);
     List<String> outputLines;
     Map<String, String> map = new HashMap<String,String>();
 
@@ -303,6 +313,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
       if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
         callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
+        callbackList.add(m);
+      } else if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
         callbackList.add(m);
       } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
         callbackList.add(m);
@@ -485,6 +497,15 @@ public class ButtonCbPipe extends WorkFlowPipe {
             bNeedOutput = false;
           }
           break;
+        case CT_TOGGLEBTN:
+          if (oldInfo.getCaseType() == CT_TOGGLEBTN) {
+            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+              outputLines = listOfCases[idx];
+              tm.codeWriter(sBd, outputLines);
+              bNeedOutput = false;
+            }
+          }
+          break;
         }
       }
       if (bNeedOutput) {
@@ -524,6 +545,11 @@ public class ButtonCbPipe extends WorkFlowPipe {
           break;
         case CT_HIDEPOPUP:
           outputLines = tm.expandMacros(templateHidePopup, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_TOGGLEBTN:
+          map.put(ELEMREF_MACRO, modelInfo.getElementRef());
+          outputLines = tm.expandMacros(templateToggleBtn, map);
           tm.codeWriter(sBd, outputLines);
           break;
         }
@@ -606,8 +632,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
       } else if (((TxtButtonModel) m).isHidePopup()) {
         ci.setCaseType(CT_HIDEPOPUP);
       }
-    }
-    if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
+    } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
       if (((ImgButtonModel) m).getJumpPage() != null && 
           !((ImgButtonModel) m).getJumpPage().isEmpty()) {
         ci.setCaseType(CT_CHGPAGE);
@@ -619,6 +644,9 @@ public class ButtonCbPipe extends WorkFlowPipe {
       } else if (((ImgButtonModel) m).isHidePopup()) {
         ci.setCaseType(CT_HIDEPOPUP);
       }
+    } else if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
+      ci.setCaseType(CT_TOGGLEBTN);
+      ci.setElementRef(m.getElementRef());
     } else if (m.getType().equals(EnumFactory.NUMINPUT)) {
       ci.setCaseType(CT_INPUTNUM);
       ci.setElementRef(m.getElementRef());
@@ -649,12 +677,14 @@ public class ButtonCbPipe extends WorkFlowPipe {
         } else {
           ci.setCaseType(CT_UNDEFINED);
         }
+        continue;
       }
       if (split[0].equals("gslc_ElemXKeyPadTargetIdSet")) {
         if (split.length > 3) {
           ci.setKeyElementRef(split[2]);
           ci.setLineNo(n);
         }
+        continue;
       }
       if (split[0].equals("gslc_PopupShow")) {
         if (split.length > 2) {
@@ -672,6 +702,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
         } else {
           ci.setCaseType(CT_UNDEFINED);
         }
+        continue;
       }
       if (split[0].equals("gslc_ElemXKeyPadInputAsk")) {
         if (split.length > 5) {
@@ -685,6 +716,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
           ci.setElementRef(split[5]);
           ci.setLineNo(n);
         }
+        continue;
       }
       if (split[0].equals("gslc_ElemXKeyPadValSet") && 
           (ci.getCaseType() == CT_UPDINPUTNUM || ci.getCaseType() == CT_UPDINPUTTXT)) {
@@ -692,11 +724,20 @@ public class ButtonCbPipe extends WorkFlowPipe {
         if (split.length > 5) {
           ci.setElementRef(split[5]);
         }
+        continue;
       }
       if (split[0].equals("gslc_PopupHide")) {
         ci.setCaseType(CT_HIDEPOPUP);
         ci.setLineNo(n);
+        continue;
       }      
+      if (split[0].equals("if")) {
+        if (split[1].equals("gslc_ElemXTogglebtnGetState")) {
+          ci.setCaseType(CT_TOGGLEBTN);
+          ci.setElementRef(split[2]);
+          ci.setLineNo(n);
+        }
+      }
     }
     return ci;  
   }

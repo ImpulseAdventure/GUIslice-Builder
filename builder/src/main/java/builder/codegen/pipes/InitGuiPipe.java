@@ -49,20 +49,24 @@ import builder.codegen.blocks.RadialGaugeCodeBlock;
 import builder.codegen.blocks.RadioButtonCodeBlock;
 import builder.codegen.blocks.RampGaugeCodeBlock;
 import builder.codegen.blocks.RingGaugeCodeBlock;
+import builder.codegen.blocks.SeekbarCodeBlock;
 import builder.codegen.blocks.SliderCodeBlock;
 import builder.codegen.blocks.SpinnerCodeBlock;
 import builder.codegen.blocks.TextBoxCodeBlock;
 import builder.codegen.blocks.TextCodeBlock;
 import builder.codegen.blocks.TextInputCodeBlock;
+import builder.codegen.blocks.ToggleButtonCodeBlock;
 import builder.codegen.blocks.TxtButtonCodeBlock;
 import builder.codegen.flash.Box_P_CodeBlock;
 import builder.codegen.flash.CheckBox_P_CodeBlock;
 import builder.codegen.flash.NumberInput_P_CodeBlock;
 import builder.codegen.flash.ProgressBar_P_CodeBlock;
 import builder.codegen.flash.RadioButton_P_CodeBlock;
+import builder.codegen.flash.Seekbar_P_CodeBlock;
 import builder.codegen.flash.Slider_P_CodeBlock;
 import builder.codegen.flash.TextInput_P_CodeBlock;
 import builder.codegen.flash.Text_P_CodeBlock;
+import builder.codegen.flash.ToggleButton_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
@@ -378,6 +382,13 @@ public class InitGuiPipe extends WorkFlowPipe {
       case EnumFactory.RINGGAUGE:
         RingGaugeCodeBlock.process(cg, tm, sBd, pageEnum, m);
         break;
+      case EnumFactory.SEEKBAR:
+        if (m.useFlash()) {
+          Seekbar_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
+        } else {
+          SeekbarCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        }
+        break;
       case EnumFactory.SLIDER:
         if (m.useFlash()) {
           Slider_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
@@ -410,6 +421,13 @@ public class InitGuiPipe extends WorkFlowPipe {
           TextInput_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
         } else {
           TextInputCodeBlock.process(cg, tm, sBd, pageEnum, m);
+        }
+        break;
+      case EnumFactory.TOGGLEBUTTON:
+        if (m.useFlash()) {
+          ToggleButton_P_CodeBlock.process(cg, tm, sBd, pageEnum, m);
+        } else {
+          ToggleButtonCodeBlock.process(cg, tm, sBd, pageEnum, m);
         }
         break;
       default:

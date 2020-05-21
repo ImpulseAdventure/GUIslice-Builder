@@ -57,7 +57,7 @@ public class EnumFactory {
   private static int[] countKeys;
   
   /** The Constant numberOfTypes. */
-  static final public int numberOfTypes  = 29;
+  static final public int numberOfTypes  = 31;
   
   /** The Constant GENERAL. */
   static final public String PROJECT     = "Project"; 
@@ -77,44 +77,20 @@ public class EnumFactory {
   /** The Constant BOX. */
   static final public String BOX         = "Box";
   
+  /** The Constant CHECKBOX. */
+  static final public String CHECKBOX    = "CheckBox";
+  
   /** The Constant CIRCLE. */
   static final public String CIRCLE      = "Circle";
   
   /** The Constant LINE. */
   static final public String LINE        = "Line";
   
-  /** The Constant TEXT. */
-  static final public String TEXT        = "Text";
-  
   /** The Constant LISTBOX. */
   static final public String LISTBOX     = "ListBox";
   
-  /** The Constant TEXTBOX. */
-  static final public String TEXTBOX     = "TextBox";
-  
-  /** The Constant TEXTBUTTON. */
-  static final public String TEXTBUTTON  = "TextButton";
-  
   /** The Constant NUMINPUT. */
   static final public String NUMINPUT    = "NumberInput";
-  
-  /** The Constant TEXTINPUT. */
-  static final public String TEXTINPUT   = "TextInput";
-  
-  /** The Constant CHECKBOX. */
-  static final public String CHECKBOX    = "CheckBox";
-  
-  /** The Constant RADIOBUTTON. */
-  static final public String RADIOBUTTON = "RadioButton";
-  
-  /** The Constant RINGGAUGE. */
-  static final public String RAMPGAUGE   = "RampGauge";
-  
-  /** The Constant RINGGAUGE. */
-  static final public String RADIALGAUGE = "RadialGauge";
-  
-  /** The Constant RINGGAUGE. */
-  static final public String RINGGAUGE =   "RingGauge";
   
   /** The Constant IMAGEBUTTON. */
   static final public String IMAGEBUTTON = "ImageButton";
@@ -128,11 +104,41 @@ public class EnumFactory {
   /** The Constant PROGRESSBAR. */
   static final public String PROGRESSBAR = "ProgressBar";
   
+  /** The Constant RADIOBUTTON. */
+  static final public String RADIOBUTTON = "RadioButton";
+  
+  /** The Constant RINGGAUGE. */
+  static final public String RAMPGAUGE   = "RampGauge";
+  
+  /** The Constant RINGGAUGE. */
+  static final public String RADIALGAUGE = "RadialGauge";
+  
+  /** The Constant RINGGAUGE. */
+  static final public String RINGGAUGE =   "RingGauge";
+  
+  /** The Constant SEEKBAR. */
+  static final public String SEEKBAR      = "Seekbar";
+  
   /** The Constant SLIDER. */
   static final public String SLIDER      = "Slider";
   
   /** The Constant SPINNER. */
   static final public String SPINNER     = "Spinner";
+  
+  /** The Constant TEXT. */
+  static final public String TEXT        = "Text";
+  
+  /** The Constant TEXTBOX. */
+  static final public String TEXTBOX     = "TextBox";
+  
+  /** The Constant TEXTBUTTON. */
+  static final public String TEXTBUTTON  = "TextButton";
+  
+  /** The Constant TEXTINPUT. */
+  static final public String TEXTINPUT   = "TextInput";
+  
+  /** The Constant TOGGLEBUTTON. */
+  static final public String TOGGLEBUTTON= "ToggleButton";
   
   /** The Constant GRAPH. */
   static final public String GRAPH       = "Graph";
@@ -195,7 +201,9 @@ public class EnumFactory {
       RAMPGAUGE,
       RADIALGAUGE,
       CIRCLE,
-      LINE
+      LINE,
+      TOGGLEBUTTON,
+      SEEKBAR
     };
   
   /** The enum strings. */
@@ -211,7 +219,7 @@ public class EnumFactory {
       "E_ELEM_BTN", 
       "E_ELEM_CHECK", 
       "E_ELEM_RADIO",  
-      "E_ELEM_IBTN", 
+      "E_ELEM_IMAGEBTN", 
       "E_ELEM_IMAGE",
       "E_ELEM_PROGRESS",
       "E_ELEM_SLIDER",
@@ -229,7 +237,9 @@ public class EnumFactory {
       "E_ELEM_RAMPGAUGE",
       "E_ELEM_RADIALGAUGE",
       "E_DRAW_CIRCLE",
-      "E_DRAW_LINE"
+      "E_DRAW_LINE",
+      "E_ELEM_TOGGLE",
+      "E_ELEM_SEEKBAR"
     };
   
   /** The Constant PAGE_MAIN. */

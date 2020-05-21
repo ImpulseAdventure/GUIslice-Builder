@@ -30,28 +30,29 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
-import builder.models.SliderModel;
+import builder.models.SeekbarModel;
 import builder.models.TextModel;
 import builder.models.WidgetModel;
 
 /**
- * The Class SliderCodeBlock outputs the code block for
- * GUIslice API gslc_ElemXSliderCreate() calls.
+ * The Class SeekbarCodeBlock outputs the code block for
+ * GUIslice API gslc_ElemXSeekbarCreate() calls.
  * 
  * @author Paul Conti
  * 
  */
-public class SliderCodeBlock implements CodeBlock {
+public class SeekbarCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
-  private final static String SLIDER_TEMPLATE        = "<SLIDER>";
+  private final static String SEEKBAR_TEMPLATE       = "<SEEKBAR>";
+  private final static String SEEKBAR_STYLE_TEMPLATE = "<SEEKBAR_STYLE>";
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   private final static String COLOR_TEMPLATE         = "<COLOR>";
   
   /**
    * Instantiates a new box code block.
    */
-  public SliderCodeBlock() {
+  public SeekbarCodeBlock() {
   }
 
   /**
@@ -72,16 +73,24 @@ public class SliderCodeBlock implements CodeBlock {
    * @return the <code>string builder</code> object
    */
   static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum, WidgetModel wm) {
-    SliderModel m = (SliderModel)wm;
+    SeekbarModel m = (SeekbarModel)wm;
     List<String> template = null;
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);
 
     // now output creation API
-    template = tm.loadTemplate(SLIDER_TEMPLATE);
+    template = tm.loadTemplate(SEEKBAR_TEMPLATE);
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
     
+    if ((m.isThumbTrim()  == true) ||
+        (m.isThumbFrame() == true) ||
+        (m.getDivisions() > 0) )      {
+      template = tm.loadTemplate(SEEKBAR_STYLE_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+
     if ((!m.getFrameColor().equals(TextModel.DEF_FRAME_COLOR)) ||
         (!m.getFillColor().equals(TextModel.DEF_FILL_COLOR))  || 
         (!m.getSelectedColor().equals(TextModel.DEF_SELECTED_COLOR))) {

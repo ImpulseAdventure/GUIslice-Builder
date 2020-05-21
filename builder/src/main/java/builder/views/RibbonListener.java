@@ -603,6 +603,10 @@ public class RibbonListener implements ActionListener, iSubscriber {
         }
         break;
         
+      case "seekbar":
+      createWidget(EnumFactory.SEEKBAR);
+      break;
+    
       case "selection":
         controller.rectangularSelection();
         break;
@@ -629,6 +633,10 @@ public class RibbonListener implements ActionListener, iSubscriber {
       
       case "textinput":
         createWidget(EnumFactory.TEXTINPUT);
+        break;
+      
+      case "toggle":
+        createWidget(EnumFactory.TOGGLEBUTTON);
         break;
       
       case "undo":

@@ -23,35 +23,35 @@
  * THE SOFTWARE.
  *
  */
-package builder.codegen.blocks;
+package builder.codegen.flash;
 
+import java.lang.StringBuilder;
 import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
-import builder.models.SliderModel;
-import builder.models.TextModel;
+import builder.codegen.blocks.CodeBlock;
+import builder.models.CheckBoxModel;
 import builder.models.WidgetModel;
 
 /**
- * The Class SliderCodeBlock outputs the code block for
- * GUIslice API gslc_ElemXSliderCreate() calls.
+ * The Class ToggleButton_P_CodeBlock outputs the code block
+ * for GUIslice API Flash version gslc_ElemXTogglebtnCreate_P() calls.
  * 
  * @author Paul Conti
  * 
  */
-public class SliderCodeBlock implements CodeBlock {
+public final class ToggleButton_P_CodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
-  private final static String SLIDER_TEMPLATE        = "<SLIDER>";
-  private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
-  private final static String COLOR_TEMPLATE         = "<COLOR>";
-  
+  private final static String TOGGLE_TEMPLATE      = "<TOGGLEBUTTON_P>";
+//  private final static String GROUP_TEMPLATE = "<GROUP_P>";
+
   /**
-   * Instantiates a new box code block.
+   * Instantiates a new check box code block.
    */
-  public SliderCodeBlock() {
+  public ToggleButton_P_CodeBlock() {
   }
 
   /**
@@ -72,27 +72,23 @@ public class SliderCodeBlock implements CodeBlock {
    * @return the <code>string builder</code> object
    */
   static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum, WidgetModel wm) {
-    SliderModel m = (SliderModel)wm;
+    CheckBoxModel m = (CheckBoxModel)wm;
     List<String> template = null;
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);
 
     // now output creation API
-    template = tm.loadTemplate(SLIDER_TEMPLATE);
+    template = tm.loadTemplate(TOGGLE_TEMPLATE);
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
-    
-    if ((!m.getFrameColor().equals(TextModel.DEF_FRAME_COLOR)) ||
-        (!m.getFillColor().equals(TextModel.DEF_FILL_COLOR))  || 
-        (!m.getSelectedColor().equals(TextModel.DEF_SELECTED_COLOR))) {
-      template = tm.loadTemplate(COLOR_TEMPLATE);
+
+/*
+    if (!groupId.equals("GSLC_GROUP_ID_NONE")) {
+      template = tm.loadTemplate(GROUP_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    
-    template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
-    outputLines = tm.expandMacros(template, map);
-    tm.codeWriter(sBd, outputLines);
+*/    
 
     template.clear();
     outputLines.clear();

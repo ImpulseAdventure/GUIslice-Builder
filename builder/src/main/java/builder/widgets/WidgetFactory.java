@@ -41,11 +41,13 @@ import builder.models.RadialGaugeModel;
 import builder.models.RadioButtonModel;
 import builder.models.RampGaugeModel;
 import builder.models.RingGaugeModel;
+import builder.models.SeekbarModel;
 import builder.models.SliderModel;
 import builder.models.SpinnerModel;
 import builder.models.TextBoxModel;
 import builder.models.TextInputModel;
 import builder.models.TextModel;
+import builder.models.ToggleButtonModel;
 import builder.models.TxtButtonModel;
 import builder.models.WidgetModel;
 import builder.widgets.Widget;
@@ -238,6 +240,17 @@ public class WidgetFactory  {
         }
         break;
         
+      case EnumFactory.SEEKBAR:
+        widget = new SeekbarWidget(x, y);
+        model = (SeekbarModel) widget.getModel();
+        if (widget != null) {
+          model.setKey(EnumFactory.getInstance().createKey(widgetType));
+          model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
+          ref = CommonUtils.createElemName(model.getKey(), SeekbarModel.ELEMENTREF_NAME);
+          ((SeekbarModel) model).setElementRef(ref);
+        }
+        break;
+  
       case EnumFactory.SLIDER:
         widget = new SliderWidget(x, y);
         model = (SliderModel) widget.getModel();
@@ -301,6 +314,17 @@ public class WidgetFactory  {
         }
         break;
       
+      case EnumFactory.TOGGLEBUTTON:
+        widget = new ToggleButtonWidget(x, y);
+        model = (ToggleButtonModel) widget.getModel();
+        if (widget != null) {
+          model.setKey(EnumFactory.getInstance().createKey(widgetType));
+          model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
+        }
+        ref = CommonUtils.createElemName(model.getKey(), ToggleButtonModel.ELEMENTREF_NAME);
+        ((ToggleButtonModel) model).setElementRef(ref);
+        break;
+        
       default:
         break;
     }

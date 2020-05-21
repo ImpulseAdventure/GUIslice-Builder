@@ -235,6 +235,13 @@ public class ExtraElementPipe extends WorkFlowPipe {
         sBd.append(String.format("%-32s%s;", strElement, ref));
         sBd.append(System.lineSeparator());
       } 
+      if (m.getType().equals(EnumFactory.SEEKBAR)) {
+        strElement = "gslc_tsXSeekbar";
+        strCount = CodeUtils.getKeyCount(m.getKey());
+        ref = "m_sXSeekbar" + strCount;
+        sBd.append(String.format("%-32s%s;", strElement, ref));
+        sBd.append(System.lineSeparator());
+      } 
       if (m.getType().equals(EnumFactory.SLIDER)) {
         strElement = "gslc_tsXSlider";
         strCount = CodeUtils.getKeyCount(m.getKey());
@@ -270,6 +277,13 @@ public class ExtraElementPipe extends WorkFlowPipe {
           sBd.append(System.lineSeparator());
         }
       }
+      if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
+        strElement = "gslc_tsXTogglebtn";
+        strCount = CodeUtils.getKeyCount(m.getKey());
+        ref = "m_asXToggle" + strCount;
+        sBd.append(String.format("%-32s%s;", strElement, ref));
+        sBd.append(System.lineSeparator());
+      } 
     }
     // output MAX String size
     ProjectModel pm = Controller.getProjectModel();
