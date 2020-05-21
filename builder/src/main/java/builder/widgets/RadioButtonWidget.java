@@ -31,7 +31,6 @@ import java.awt.Rectangle;
 
 //import builder.common.CommonUtils;
 import builder.common.GUIslice;
-import builder.models.CheckBoxModel;
 import builder.models.RadioButtonModel;
 //import builder.prefs.RadioButtonEditor;
 

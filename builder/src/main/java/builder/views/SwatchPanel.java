@@ -88,9 +88,9 @@ public class SwatchPanel extends JPanel {
   private int selCol;
   
   /** The num colors. */
-  private int numColors;
+//  private int numColors;
 
-  private Color defaultColor = new Color(230,230,230);
+//  private Color defaultColor = new Color(230,230,230);
 
   /**
    * Instantiates a new swatch panel.
@@ -130,7 +130,7 @@ public class SwatchPanel extends JPanel {
   protected void initValues() {
     swatchSize = new Dimension(NSQUARE, NSQUARE);
     numSwatches = new Dimension(NCOLUMNS, NROWS);
-    numColors = NCOLUMNS * NROWS;
+//    numColors = NCOLUMNS * NROWS;
     gap = new Dimension(1, 1);
     generalEditor = GeneralEditor.getInstance();
   }
