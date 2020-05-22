@@ -46,10 +46,7 @@ The Software is not designed for use in devices or situations where there may be
 - Added Style options to Checkbox and Radio Buttons.
 
 #### Changes for 0.14.b005
-Support for Teensy fonts.
-Support for flash based Slider control.
-Support for new controls, Toggle Button and Seekbar, both have RAM and Flash based version of GUIslice API.
-Added Style options to Checkbox and Radio Buttons.
+Support for Teensy fonts, Flash based Slider control and New controls, Toggle Button and Seekbar, both have RAM and Flash based version of GUIslice API. Also added Style options to Checkbox and Radio Buttons.
 
 #### Bug Fixes 0.14.b005
  - Bug No. 170 Project Tab, screen sz not used when placing or aligning widgets on screen
