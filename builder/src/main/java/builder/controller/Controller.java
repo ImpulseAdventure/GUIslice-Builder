@@ -428,6 +428,7 @@ public class Controller extends JInternalFrame
       basePage = page;
       tabPages.add(1,page.getKey());
       tabbedPane.insertTab(page.getEnum(), ic_base_tab, scrollPane, null, 1);
+      tabbedPane.setSelectedIndex(1);
     } else {
       pages.add(page);
       tabPages.add(page.getKey());
