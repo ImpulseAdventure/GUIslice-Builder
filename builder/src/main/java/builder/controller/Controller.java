@@ -641,15 +641,20 @@ public class Controller extends JInternalFrame
     TreeView.getInstance().addPage(page.getKey(), page.getEnum());
   }
   
-  // this function is called when user presses delete button
   /**
    * Removes the component.
+   * This function is called when user presses delete button
    */
-  // It determines if we are to delete a widget or a page
   public void removeComponent() {
+    // Determine if we are to delete a widget or a page
     List<Widget> list= currentPage.getSelectedList();
-    if (list.size() < 1) { // could be a widget or page selected in TreeView
-      // ask tree view if anyone selected?
+    /* if no widgets are selected on the current page
+     * ask the treeview who it has selected, if any
+     */
+    if (list.size() < 1) { 
+      /* could be a widget or page selected in TreeView
+       * ask tree view if anyone selected?
+       */
       String selected = TreeView.getInstance().getSelectedWidget();
       if (selected != null && !selected.isEmpty()) {
         PagePane p = findPage(selected);
@@ -665,15 +670,16 @@ public class Controller extends JInternalFrame
         delWidget();
         return;
     }
+    // It appears no widget is selected
     JOptionPane.showMessageDialog(topFrame, 
         "You must first select an object for deletion!", 
         "Warning",
         JOptionPane.WARNING_MESSAGE);
   }
   
-  // this function is called when user selects deletion of a page
   /**
    * Removes the page, no longer supports undo/redo.
+   * This function is called when user selects deletion of a page
    *
    * @param page
    *          the page
@@ -694,6 +700,9 @@ public class Controller extends JInternalFrame
           JOptionPane.ERROR_MESSAGE);
       return;
     } 
+/* No real point to this code. If the user wants to delete this page just
+ * delete it!  No reason to force them to remove each widget.
+ 
     if (page.getWidgetCount() > 0) {
       msg = String.format("Sorry, you must delete all of %s widgets first.", page.getKey());
       // error can't remove first page
@@ -702,7 +711,8 @@ public class Controller extends JInternalFrame
           JOptionPane.ERROR_MESSAGE);
         return;
     } else {
-      msg = String.format("Are you sure you want to delete %s?", page.getKey());
+*/
+      msg = String.format("Are you sure you want to delete PAGE %s?\nWARNING: This has No UNDO/REDO.", page.getKey());
       if (JOptionPane.showConfirmDialog(topFrame, 
           msg, 
           "Really Delete?", 
@@ -710,12 +720,17 @@ public class Controller extends JInternalFrame
           JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
         return;
       }
-    }
-/* No longer supports undo/redo
+//    }
+/* TODO - No longer supports undo/redo since with Base Page support we need 
+ * a major rewrite of Controller's backup and restore to get this to work 
+ * correctly. One solution would amount to a complete PROJECT save and restore 
+ * which seems rather heavy weight for undo/redo.  Needs much more thought.
     DelPageCommand c = new DelPageCommand(this);
     c.delete(page);
     execute(c);
 */
+    // since we don't currently support undo/redo for this operation clear history
+    History.getInstance().clearHistory();
     delPage(page);
   }
 
