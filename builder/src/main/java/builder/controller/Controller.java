@@ -62,7 +62,7 @@ import javax.swing.event.ChangeListener;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
-import builder.commands.AddPageCommand;
+//import builder.commands.AddPageCommand;
 import builder.commands.AddWidgetCommand;
 import builder.commands.AlignBottomCommand;
 import builder.commands.AlignCenterCommand;
@@ -78,7 +78,7 @@ import builder.commands.Command;
 import builder.commands.CopyCommand;
 import builder.commands.CopyPropsCommand;
 import builder.commands.CutCommand;
-import builder.commands.DelPageCommand;
+//import builder.commands.DelPageCommand;
 import builder.commands.DelWidgetCommand;
 import builder.commands.GroupCommand;
 import builder.commands.History;
@@ -108,6 +108,7 @@ import builder.views.PagePane;
 import builder.views.TreeView;
 import builder.widgets.Widget;
 
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
@@ -173,10 +174,16 @@ public class Controller extends JInternalFrame
   List<String> tabPages = new ArrayList<String>();
 
   /** The count of base pages. */
-  int nBasePages;
+  static int nBasePages;
   
+  /** The base page, if any. */
+  static private PagePane basePage;
+
   /** The litr. */
   ListIterator<PagePane> litr;
+  
+  /** saved icons */
+  ResizableIcon ic_project_tab,ic_page_tab, ic_base_tab, ic_popup_tab;
   
   /** The instance. */
   private static Controller instance = null;
@@ -213,6 +220,13 @@ public class Controller extends JInternalFrame
     // create our local clipboard
     clipboard = new Clipboard ("My clipboard");
     
+    // save icons
+    Dimension iconSz = new Dimension(16,16);
+    ic_page_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
+    ic_base_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
+    ic_popup_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
+    ic_project_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/project.png", iconSz);
+    
     tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     tabbedPane.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -220,6 +234,7 @@ public class Controller extends JInternalFrame
       }
     });
     nBasePages = 0;
+    basePage = null;
     tabbedPane.setPreferredSize(new Dimension(1200,1200));
     createFirstPage();
 //    tabbedPane.setSelectedIndex(0);
@@ -271,6 +286,17 @@ public class Controller extends JInternalFrame
    */
   public static ProjectModel getProjectModel() {
     return pm;
+  }
+  
+  /**
+   * get widget list for base page, if any
+   * @return list of widgets, or null
+   */
+  public static List<Widget> getBaseWidgets() {
+    if (nBasePages > 0) {
+      return basePage.getWidgets();
+    }
+    return null;
   }
   
   /**
@@ -393,13 +419,27 @@ public class Controller extends JInternalFrame
    *          the page
    */
   public void addPageToView(PagePane page) {
-    pages.add(page);
-    tabPages.add(page.getKey());
     scrollPane = new JScrollPane(page,
         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-    tabbedPane.addTab(page.getEnum(), scrollPane);
-    tabbedPane.setSelectedIndex(tabPages.size()-1);
+    if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
+      pages.add(1,page);
+      nBasePages++;
+      basePage = page;
+      tabPages.add(1,page.getKey());
+      tabbedPane.insertTab(page.getEnum(), ic_base_tab, scrollPane, null, 1);
+    } else {
+      pages.add(page);
+      tabPages.add(page.getKey());
+      if (page.getPageType().equals(EnumFactory.PAGE)) {
+        tabbedPane.addTab(page.getEnum(), ic_page_tab, scrollPane);
+      } else if (page.getPageType().equals(EnumFactory.PROJECT)) {
+        tabbedPane.addTab(page.getEnum(), ic_project_tab, scrollPane);
+      } else {
+        tabbedPane.addTab(page.getEnum(), ic_popup_tab, scrollPane);
+      }
+      tabbedPane.setSelectedIndex(tabPages.size()-1);
+    }
     tabbedPane.repaint();
     currentPage = page;
     currentPage.refreshView();
@@ -548,7 +588,7 @@ public class Controller extends JInternalFrame
    * It builds an AddPageCommand for undo and redo.
    */
   public void createPage(String sWidgetType) {
-    AddPageCommand c = new AddPageCommand(this);
+//    AddPageCommand c = new AddPageCommand(this);
     PagePane p = new PagePane();
     p.setLayout(null);
     PageModel m = (PageModel) p.getModel();
@@ -567,7 +607,6 @@ public class Controller extends JInternalFrame
             JOptionPane.ERROR_MESSAGE);
         return;
       }
-      nBasePages++;
       pageKey = EnumFactory.getInstance().createKey(EnumFactory.BASEPAGE);
       m.setKey(pageKey);
       m.setEnum(EnumFactory.getInstance().createEnum(EnumFactory.BASEPAGE));
@@ -580,10 +619,15 @@ public class Controller extends JInternalFrame
       // NOTE: must set type on page pane not model or messages will be lost!
       p.setPageType(EnumFactory.POPUP);
     }
+/* 
+ * undo of adding pages is too complex to support cirrectly at the moment
     c.add(p);
     execute(c);
+ */
+    addPage(p);
   }
   
+
   /**
    * Adds the page.
    *
@@ -608,14 +652,10 @@ public class Controller extends JInternalFrame
       // ask tree view if anyone selected?
       String selected = TreeView.getInstance().getSelectedWidget();
       if (selected != null && !selected.isEmpty()) {
-        if (selected.startsWith("Page")      ||
-            selected.startsWith("BasePage")  ||
-            selected.startsWith("Popup")) {
-          PagePane p = findPage(selected);
-          if (p != null) {
+        PagePane p = findPage(selected);
+        if (p != null) {
             removePage(p);
             return;
-          }
         } else {  // widget it is...
           delWidget();
           return;
@@ -633,18 +673,24 @@ public class Controller extends JInternalFrame
   
   // this function is called when user selects deletion of a page
   /**
-   * Removes the page.
+   * Removes the page, no longer supports undo/redo.
    *
    * @param page
    *          the page
    */
-  // It builds an DelPageCommand for undo and redo.
   private void removePage(PagePane page) {
     String msg = null;
     if (page.getKey().equals("Page$1")) {
       // error can't remove first page
       JOptionPane.showMessageDialog(topFrame, 
           "Sorry, You can't remove the main page.", "Error",
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    } 
+    if (page.getPageType().equals(EnumFactory.PROJECT)) {
+      // error can't remove Project tab
+      JOptionPane.showMessageDialog(topFrame, 
+          "Sorry, You can't remove Project Tab.", "Error",
           JOptionPane.ERROR_MESSAGE);
       return;
     } 
@@ -665,9 +711,12 @@ public class Controller extends JInternalFrame
         return;
       }
     }
+/* No longer supports undo/redo
     DelPageCommand c = new DelPageCommand(this);
     c.delete(page);
     execute(c);
+*/
+    delPage(page);
   }
 
   /**
@@ -679,6 +728,10 @@ public class Controller extends JInternalFrame
   // function is called from DelPageCommand
   public void delPage(PagePane page) {
     MsgBoard.getInstance().remove(page.getKey());
+    if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
+      nBasePages=0;
+      basePage = null;
+    }
     PagePane p = null;
     litr = pages.listIterator();
     int idx = 0;
@@ -687,10 +740,8 @@ public class Controller extends JInternalFrame
       if (p.getKey().equals(page.getKey())) {
         litr.remove();
         idx = findPageIdx(page.getKey());
-        if (idx > 1) {
-          tabbedPane.remove(idx);
-          tabbedPane.repaint();
-        }
+        tabbedPane.remove(idx);
+        tabbedPane.repaint();
         TreeView.getInstance().delPage(page.getKey());
         if (p.getPageType().equals(EnumFactory.BASEPAGE))
           nBasePages=0;
@@ -890,6 +941,7 @@ public class Controller extends JInternalFrame
       return;
     }
     nBasePages = 0;
+    basePage = null;
     PropManager propMgr = PropManager.getInstance();
     propMgr.openProject();
     String pageKey = null;
@@ -1396,7 +1448,6 @@ public class Controller extends JInternalFrame
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ObjectOutputStream out = new ObjectOutputStream(baos);
       out.writeObject(currentPage.getKey());
-      out.writeObject(nBasePages);
       out.close();
       return Base64.getEncoder().encodeToString(baos.toByteArray());
     } catch (IOException e) {
@@ -1418,7 +1469,6 @@ public class Controller extends JInternalFrame
       byte[] data = Base64.getDecoder().decode(state);
       ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
       String pageKey = (String)in.readObject();
-      nBasePages = in.readInt();
       in.close();
       changePage(pageKey);
     } catch (ClassNotFoundException e) {

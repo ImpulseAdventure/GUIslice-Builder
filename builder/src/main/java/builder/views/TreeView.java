@@ -239,6 +239,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   public void addPage(String pageID, String pageEnum) {
     //create and add the top level page node
     TreeItem item = new TreeItem(pageID, pageEnum);
+    
     currentPage = addObject(null, item);
     TreePath path = new TreePath(currentPage.getPath());
     tree.setSelectionPath(path);
@@ -347,9 +348,12 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     if (parent == null) {
       parent = root;
     }
-
-    // It is key to invoke this on the TreeModel, and NOT DefaultMutableTreeNode
-    treeModel.insertNodeInto(childNode, parent, parent.getChildCount());
+    // It is key to add this to the TreeModel
+    if (parent == root && child.getType().equals(EnumFactory.BASEPAGE)) {
+      treeModel.insertNodeInto(childNode, parent, 1);
+    } else {
+      treeModel.insertNodeInto(childNode, parent, parent.getChildCount());
+    }
 
     // Make sure the user can see the lovely new node.
     tree.scrollPathToVisible(new TreePath(childNode.getPath()));

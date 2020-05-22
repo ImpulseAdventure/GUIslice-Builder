@@ -104,6 +104,9 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The dragging indicator. */
   private boolean bDragging = false;
+  
+  /** The paint base widgets indicator. */
+  private boolean bPaintBaseWidgets = false;
 
   /** The project model. */
   private ProjectModel pm = null;
@@ -203,8 +206,18 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
+    // output this page's widgets
     for (Widget w : widgets) {
       w.draw(g2d);
+    }
+    /* output any base page widgets unless this is a project
+     * base page or popup page.
+     */
+    if (bPaintBaseWidgets && Controller.getBaseWidgets() != null) {
+      for (Widget w : Controller.getBaseWidgets()) {
+        w.unSelect(); // just in case
+        w.draw(g2d);
+      }
     }
     if (bMultiSelectionBox) {
       // draw our selection rubber band 
@@ -1008,6 +1021,13 @@ public class PagePane extends JPanel implements iSubscriber {
   public void setPageType(String pageType) {
     model.setType(pageType);
     msg.subscribe(this, model.getKey());
+    if (pageType.equals(EnumFactory.PROJECT)  ||
+        pageType.equals(EnumFactory.BASEPAGE) ||
+        pageType.equals(EnumFactory.POPUP)) {
+      bPaintBaseWidgets=false;
+    } else {
+      bPaintBaseWidgets=true;
+    }
   }
 }
 

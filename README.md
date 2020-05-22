@@ -44,9 +44,12 @@ The Software is not designed for use in devices or situations where there may be
 - Support for Toggle Button.
 - Support for Seekbar, a modern slider control.
 - Added Style options to Checkbox and Radio Buttons.
+- Base Page UI Elements will now show through other pages.
 
 #### Changes for 0.14.b005
 Support for Teensy fonts, Flash based Slider control and New controls, Toggle Button and Seekbar, both have RAM and Flash based version of GUIslice API. Also added Style options to Checkbox and Radio Buttons.
+
+UI Elements placed on the Base Page will now be shown as write protected elements on all normal pages to make control layouts easier.  Base page UI Elements will not be shown on Project Tab or Popup pages.
 
 #### Bug Fixes 0.14.b005
  - Bug No. 170 Project Tab, screen sz not used when placing or aligning widgets on screen
