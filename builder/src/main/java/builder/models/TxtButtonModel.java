@@ -187,8 +187,8 @@ public class TxtButtonModel extends WidgetModel {
       } else {
         data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
-        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       }
       fireTableCellUpdated(PROP_POPUP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
@@ -203,7 +203,7 @@ public class TxtButtonModel extends WidgetModel {
         data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
         data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
       }
       fireTableCellUpdated(PROP_JUMP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
