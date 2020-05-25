@@ -915,10 +915,7 @@ public class PagePane extends JPanel implements iSubscriber {
 //    System.out.println("PagePane: " + e.toString());
     if (e.code == MsgEvent.WIDGET_REPAINT) {
 //   System.out.println("PagePane: " + e.toString());
-      Widget w = findWidget(e.message);
-      if (w != null) {
-        repaint();
-      }
+     repaint();
     } else if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
                e.xdata.equals(getKey())) {
 //  System.out.println("PagePane: " + e.toString());
@@ -926,8 +923,8 @@ public class PagePane extends JPanel implements iSubscriber {
       Widget w = findWidget(e.message);
       if (w != null) {
         selectWidget(w);
-        repaint();
       }
+      repaint();
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
 //  System.out.println("PagePane: " + e.toString());
       selectNone();
