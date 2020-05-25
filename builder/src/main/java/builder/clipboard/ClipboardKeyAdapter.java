@@ -10,6 +10,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
+import builder.models.WidgetModel;
+import builder.tables.MultiClassTable;
+
 /**
  * KeyAdapter to detect Windows standard cut, copy and paste keystrokes on a JTable and put them to the clipboard in Excel friendly plain text format. Assumes
  * that null represents an empty column for cut operations. Replaces line breaks and tabs in copied cells to spaces in the clipboard.
@@ -63,7 +66,7 @@ public class ClipboardKeyAdapter extends KeyAdapter {
 			for (int j = 0; j < numCols; j++) {
 				excelStr.append(escape(table.getValueAt(rowsSelected[i], colsSelected[j])));
 				if (isCut) {
-					table.setValueAt(null, rowsSelected[i], colsSelected[j]);
+				  performCut(rowsSelected[i],colsSelected[j]);
 				}
 				if (j < numCols - 1) {
 					excelStr.append(CELL_BREAK);
@@ -81,6 +84,15 @@ public class ClipboardKeyAdapter extends KeyAdapter {
     }
 	}
 
+  private void performCut(int row, int col) {
+    if (col != WidgetModel.COLUMN_VALUE) return;
+    MultiClassTable myTable = (MultiClassTable)table;
+    Object o = myTable.getValueAt(row, WidgetModel.COLUMN_VALUE);
+    if(o instanceof  String) {
+      table.setValueAt("", row, col);
+    } 
+  }
+    
 	private void pasteFromClipboard() {
 		int startRow = table.getSelectedRows()[0];
 		int startCol = table.getSelectedColumns()[0];
