@@ -95,13 +95,13 @@ public class ImageModel extends WidgetModel {
   /** memory Constants */
   public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
   public  final static String SRC_PROG = "gslc_GetImageFromProg((const unsigned char*)";
-  public  final static String SRC_RAM  = "gslc_GetImageFromRam((unsigned char*)";
+  public  final static String SRC_RAM  = "gslc_GetImageFromRam((const unsigned char*)";
   public  final static String SRC_FILE = "gslc_GetImageFromFile(";
 
   /** format Constants */
   public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
-  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
+  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW1";
   public  final static String FORMAT_JPG    = "GSLC_IMGREF_FMT_JPG";
   
   /**
@@ -136,7 +136,7 @@ public class ImageModel extends WidgetModel {
     initProp(PROP_TRANSPARENCY, Boolean.class, "IMG-107", Boolean.FALSE,"Transparent?",DEF_TRANSPARENCY);
     initProp(PROP_TOUCH_EN, Boolean.class, "COM-016", Boolean.FALSE,"Touch Enabled?",DEF_TOUCH_EN);
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
 
   }
 
@@ -188,14 +188,6 @@ public class ImageModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, 1);
-    if (row == PROP_FRAME_EN) {
-      if (isFrameEnabled()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      }
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-    }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
@@ -377,12 +369,6 @@ public class ImageModel extends WidgetModel {
       fileName = file.getName();
       setImageName(fileName);
     }
-    if (getDefine() != null && !getDefine().isEmpty()) {
-    data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
-    if (getExternName() != null && !getExternName().isEmpty()) {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
   }
  
   /**
@@ -445,23 +431,12 @@ public class ImageModel extends WidgetModel {
     super.readModel(in,  widgetType);
     String imageString = (String) in.readObject();
     image = CommonUtils.getInstance().decodeToImage(imageString);
-    if (getDefine() != null && !getDefine().isEmpty()) {
-    data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
-    if (getExternName() != null && !getExternName().isEmpty()) {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
     if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("PROGMEM"))
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
      else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("SRAM"))
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
      else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).isEmpty())
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
-    if (isFrameEnabled()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
   }
 
 }

@@ -114,13 +114,13 @@ public class ImgButtonModel extends WidgetModel {
   /** memory Constants */
   public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
   public  final static String SRC_PROG = "gslc_GetImageFromProg((const unsigned char*)";
-  public  final static String SRC_RAM  = "gslc_GetImageFromRam((unsigned char*)";
+  public  final static String SRC_RAM  = "gslc_GetImageFromRam((const unsigned char*)";
   public  final static String SRC_FILE = "gslc_GetImageFromFile(";
 
   /** format Constants */
   public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
-  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
+  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW1";
   public  final static String FORMAT_JPG    = "GSLC_IMGREF_FMT_JPG";
   
   /**
@@ -145,17 +145,17 @@ public class ImgButtonModel extends WidgetModel {
     imageSelected = null;
     
     // can't change height and width of image without scaling support
-    data[PROP_WIDTH][PROP_VAL_READONLY]=Boolean.TRUE;
-    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
+//    data[PROP_WIDTH][PROP_VAL_READONLY]=Boolean.TRUE;
+//    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
 
-    initProp(PROP_IMAGE, String.class, "IBTN-100", Boolean.TRUE,"Image",DEF_IMAGE);
+    initProp(PROP_IMAGE, String.class, "IBTN-100", Boolean.FALSE,"Image",DEF_IMAGE);
     initProp(PROP_DEFINE, String.class, "IBTN-102", Boolean.FALSE,"Image #defines",DEF_DEFINE);
-    initProp(PROP_EXTERN, String.class, "IBTN-108", Boolean.TRUE,"Image Extern",DEF_EXTERN);
+    initProp(PROP_EXTERN, String.class, "IBTN-108", Boolean.FALSE,"Image Extern",DEF_EXTERN);
     initProp(PROP_MEMORY, String.class, "IBTN-110", Boolean.FALSE,"Image Memory",DEF_MEMORY);
 
-    initProp(PROP_IMAGE_SEL, String.class, "IBTN-101", Boolean.TRUE,"Image When Selected",DEF_IMAGE_SEL);
+    initProp(PROP_IMAGE_SEL, String.class, "IBTN-101", Boolean.FALSE,"Image When Selected",DEF_IMAGE_SEL);
     initProp(PROP_DEFINE_SEL, String.class, "IBTN-103", Boolean.FALSE,"Image Select #defines",DEF_DEFINE_SEL);
-    initProp(PROP_EXTERN_SEL, String.class, "IBTN-109", Boolean.TRUE,"Image Select Extern",DEF_EXTERN_SEL);
+    initProp(PROP_EXTERN_SEL, String.class, "IBTN-109", Boolean.FALSE,"Image Select Extern",DEF_EXTERN_SEL);
     initProp(PROP_MEMORY_SEL, String.class, "IBTN-113", Boolean.FALSE,"Image Select Memory",DEF_MEMORY_SEL);
 
     initProp(PROP_FORMAT, String.class, "IBTN-104", Boolean.FALSE,"Image Format",DEF_FORMAT);
@@ -166,7 +166,7 @@ public class ImgButtonModel extends WidgetModel {
     initProp(PROP_POPUP_HIDE, Boolean.class, "TBTN-103", Boolean.FALSE,"Hide Popup Page?",DEF_POPUP_HIDE);
 
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
 
   }
 
@@ -221,7 +221,7 @@ public class ImgButtonModel extends WidgetModel {
   public void setExternName(String name) {
     shortcutValue(name, PROP_EXTERN);
 //    data[PROP_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
-    data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+//    data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
   }
 
   /**
@@ -242,7 +242,7 @@ public class ImgButtonModel extends WidgetModel {
   public void setSelExternName(String name) {
     shortcutValue(name, PROP_EXTERN_SEL);
 //    data[PROP_MEMORY_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
-    data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
+//    data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
   }
 
   /**
@@ -384,8 +384,8 @@ public class ImgButtonModel extends WidgetModel {
       } else {
         data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
-        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       }
       fireTableCellUpdated(PROP_POPUP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
@@ -400,7 +400,7 @@ public class ImgButtonModel extends WidgetModel {
         data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
         data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
       }
       fireTableCellUpdated(PROP_JUMP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
@@ -419,14 +419,6 @@ public class ImgButtonModel extends WidgetModel {
       }
       fireTableCellUpdated(PROP_JUMP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_PAGE, COLUMN_VALUE);
-    }
-    if (row == PROP_FRAME_EN) {
-      if (isFrameEnabled()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      }
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
     }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
@@ -545,16 +537,6 @@ public class ImgButtonModel extends WidgetModel {
       fileName = file.getName();
       setImageName(fileName);
     }
-    if (getDefine() != null && !getDefine().isEmpty()) {
-      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
-    if (getExternName() != null && !getExternName().isEmpty()) {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
   }
 
   /**
@@ -622,16 +604,6 @@ public class ImgButtonModel extends WidgetModel {
       setSelDefine(fileName);
       fileName = file.getName();
       setImageSelectedName(fileName);
-    }
-    if (getSelDefine() != null && !getSelDefine().isEmpty()) {
-      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
-    if (getSelExternName() != null && !getSelExternName().isEmpty()) {
-      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
     }
   }
 
@@ -833,26 +805,6 @@ public class ImgButtonModel extends WidgetModel {
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
     }
-    if (getDefine() != null && !getDefine().isEmpty()) {
-      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
-    if (getExternName() != null && !getExternName().isEmpty()) {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
-    if (getSelDefine() != null && !getSelDefine().isEmpty()) {
-      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_EXTERN_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
-    if (getSelExternName() != null && !getSelExternName().isEmpty()) {
-      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.TRUE;
-    } else {
-      data[PROP_DEFINE_SEL][PROP_VAL_READONLY]=Boolean.FALSE;
-    }
     if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("PROGMEM")) {
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
       data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
@@ -862,11 +814,6 @@ public class ImgButtonModel extends WidgetModel {
     } else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).isEmpty()) {
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
       data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_SD;
-    }
-    if (isFrameEnabled()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
     }
   }     
 
