@@ -21,7 +21,7 @@ BAR-118,Direction Clockwise?
 BOX-100,Draw Function
 BOX-101,Tick Function
 CBOX-100,Checked?
-CBOX-101,Group ID (old not used))
+CBOX-101,Group ID (not used - if enabled in future use RBTN-101)
 CIRCLE-100,Radius
 COL-300,Use Default Colors? (old not used)
 COL-301,Text Color
@@ -38,6 +38,12 @@ COL-311,Grid Major Color
 COL-312,Grid Minor Color
 COL-313,Grid Background Color
 COL-314,Transparency Color
+COL-315,Progress Color
+COL-316,Remaining Color
+COL-317,Thumb Color
+COL-318,Thumb Frame Color
+COL-319,On State
+COL-320,Off State
 COM-000,Page Enum
 COM-001,Key
 COM-002,ENUM
@@ -102,6 +108,7 @@ LIST-104,Storage Size
 LIST-105,Set Text Margins? - NOT Used
 LIST-106,Item Gap
 LIST-107,Item Gap Color
+LIST-108,Include List
 IBTN-100,Image
 IBTN-101,Image When Selected
 IBTN-102,Image #defines
@@ -126,7 +133,7 @@ PAD-100,Floating Point
 PAD-101,Minus Sign
 RBTN-100,Checked?
 RBTN-101,Group ID
-RBTN-305,Check Mark Color
+RBTN-102,Style
 RING-100,Starting Angle
 RING-101,Angular Range
 RING-102,Direction Clockwise?
@@ -147,7 +154,10 @@ SLD-103,Thumb Sz
 SLD-104,Vertical?
 SLD-105,Tick Divisions
 SLD-106,Tick Size
-SLD-107,Trim Style
+SLD-107,Add Trim?
+SLD-108,Progress Width
+SLD-109,Remaining Width
+SLD-110,Add Frame to Thumb?
 SPIN-100,Increment
 SPIN-101,Button Size
 TXT-200,Font
