@@ -402,6 +402,7 @@ $<CALLBACK>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
         gslc_ElemXKeyPadInputGet(pGui, $<COM-019>, pvData);
+	    gslc_PopupHide(&m_gui);
         break;
 <STOP>
 <KEYPAD_CONFIG>
@@ -608,6 +609,9 @@ extern "C" unsigned char $<EXTERN_NAME>[];
 <STOP>
 <RESOURCE_PROGMEM>
 extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
+<STOP>
+<RESOURCE_PROGMEM_RAW>
+extern "C" const unsigned char $<EXTERN_NAME>[] PROGMEM;
 <STOP>
 <RINGGAUGE>
 
