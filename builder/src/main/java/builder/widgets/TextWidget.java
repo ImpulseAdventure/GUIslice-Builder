@@ -79,7 +79,7 @@ public class TextWidget extends Widget {
     g2d.setColor(m.getTextColor());
     Font font = ff.getFont(m.getFontDisplayName());
     String text = m.getText();
-    if (text.isEmpty()) {
+    if (text == null || text.isEmpty()) {
       if (m.getTextStorage() > 0) {
         for (int i=0; i<m.getTextStorage(); i++) {
           text = text + "?";
