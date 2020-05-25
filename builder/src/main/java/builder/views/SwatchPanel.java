@@ -226,6 +226,7 @@ public class SwatchPanel extends JPanel {
    */
   public String getToolTipText(MouseEvent e) {
     Color color = getColorForLocation(e.getX(), e.getY());
+    if (color == null) return "No Color";
     return color.getRed() + ", " + color.getGreen() + ", " + color.getBlue();
   }
 
