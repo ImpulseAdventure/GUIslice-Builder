@@ -365,12 +365,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
         case CT_UNDEFINED: 
           break;
         case CT_STANDARD:
-          if (oldInfo.getCaseType() == CT_STANDARD) {
-            // output what we have stored
-            outputLines = listOfCases[idx];
-            tm.codeWriter(sBd, outputLines);
-            bNeedOutput = false;
-          }
+          // output what we have stored
+          outputLines = listOfCases[idx];
+          tm.codeWriter(sBd, outputLines);
+          bNeedOutput = false;
           break;
         case CT_CHGPAGE:
           if (oldInfo.getCaseType() == CT_CHGPAGE) {
