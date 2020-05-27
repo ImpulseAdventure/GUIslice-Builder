@@ -547,6 +547,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
       nChars += items[i].length() + 1;
     }
     data[PROP_STORAGESZ][PROP_VAL_VALUE] = Integer.valueOf(nChars);
+    data[PROP_SCROLLBAR_MAX][PROP_VAL_VALUE]=Math.min(100, items.length+5); 
   }
 
   /**
