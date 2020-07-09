@@ -134,7 +134,14 @@ public class AlignHSpacingCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Align Vertical Spacing: " + spaceX);
+    String myEnums = "";
+    WidgetModel m = null;
+    for(int i=0; i<groupList.size(); i++) {
+      m = groupList.get(i);
+      if (i > 0) myEnums = myEnums + ",";
+      myEnums = myEnums + m.getEnum();
+    }
+    return String.format("Align Horizontal Spacing: %s spaceX=%d",myEnums,spaceX);
   }
 
 }

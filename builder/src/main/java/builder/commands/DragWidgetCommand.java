@@ -179,7 +179,21 @@ public class DragWidgetCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Drag");
+    String myEnums = "";
+  
+    if (bSuccess) {
+      try {
+        for (int i=0; i<targets.size(); i++) {
+          if (i>0) myEnums = myEnums + ",";  
+          myEnums = myEnums + targets.get(i).getEnum();
+        }
+      } catch (NullPointerException e) {
+        return String.format("Drag page:%s widget:Null pointer",page.getEnum());
+      }
+      return String.format("Drag page:%s widget:%s",page.getEnum(),myEnums);
+    } else {
+      return String.format("Drag Failed");
+    }
   }
 
 }

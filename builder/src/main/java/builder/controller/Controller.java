@@ -150,7 +150,7 @@ public class Controller extends JInternalFrame
   private int targetDPI;
   
   /** The current page. */
-  private PagePane currentPage;
+  private static PagePane currentPage;
   
   /** The project page which hold all options */
   private PagePane projectPage;
@@ -245,6 +245,7 @@ public class Controller extends JInternalFrame
     this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
 //    this.pack();
     this.setVisible(true);
+    Builder.logger.debug("New Project");
   }
   
   /**
@@ -621,7 +622,7 @@ public class Controller extends JInternalFrame
       p.setPageType(EnumFactory.POPUP);
     }
 /* 
- * undo of adding pages is too complex to support cirrectly at the moment
+ * undo of adding pages is too complex to support correctly at the moment
     c.add(p);
     execute(c);
  */
@@ -855,6 +856,7 @@ public class Controller extends JInternalFrame
     PropManager.getInstance().openProject();
     createFirstPage();
     this.setVisible(true);
+    Builder.logger.debug("New Project");
   }
 
   /**
@@ -876,6 +878,7 @@ public class Controller extends JInternalFrame
     TreeView.getInstance().closeProject();
     PropManager.getInstance().closeProject();
     History.getInstance().clearHistory();
+    Builder.logger.debug("Closed Project");
   }
 
   /**
@@ -932,7 +935,7 @@ public class Controller extends JInternalFrame
     out.close();
     History.getInstance().clearHistory();
     Builder.postStatusMsg("Successfully Saved Project into " + projectFile.getName());
-
+    Builder.logger.debug("Saved Project into " + projectFile.getName());
   }
 
   /**
@@ -1029,6 +1032,7 @@ public class Controller extends JInternalFrame
     Builder.postStatusMsg("Successfully Opened Project File: " + projectFile.getName());
     changePage(openPage);
     this.setVisible(true);
+    Builder.logger.debug("Opened Project File: " + projectFile.getName());
   }
 
   /**
@@ -1234,6 +1238,7 @@ public class Controller extends JInternalFrame
    * onExit
    */
   public void onExit() {
+    Builder.logger.debug("Builder exit");
     topFrame.dispose();
     System.exit(0);
   }
@@ -1350,6 +1355,10 @@ public class Controller extends JInternalFrame
     refreshView();
   }
   
+  static public void sendRepaint() {
+    currentPage.refreshView();
+  }
+  
   /**
    * updateEvent
    *
@@ -1357,17 +1366,17 @@ public class Controller extends JInternalFrame
    */
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("Controller: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW) {
-// System.out.println("Controller: " + e.toString());
-        changeViewFromTree(e);
+      Builder.logger.debug("Controller recv: " + e.toString());
+      changeViewFromTree(e);
     } else if (e.code == MsgEvent.DELETE_KEY) {
+      Builder.logger.debug("Controller recv: " + e.toString());
       removeComponent();
     } else if (e.code == MsgEvent.WIDGET_CHANGE_ZORDER) {
-// System.out.println("Controller: " + e.toString());
+      Builder.logger.debug("Controller recv: " + e.toString());
       changeZOrder(e);
     } else if (e.code == MsgEvent.PAGE_ENUM_CHANGE) {
-// System.out.println("Controller: " + e.toString());
+      Builder.logger.debug("Controller recv: " + e.toString());
       changePageEnum(e);
     } 
 

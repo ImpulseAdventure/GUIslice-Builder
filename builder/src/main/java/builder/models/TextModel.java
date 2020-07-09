@@ -40,6 +40,7 @@ import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -201,7 +202,7 @@ public class TextModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

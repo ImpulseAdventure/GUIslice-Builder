@@ -62,6 +62,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import builder.Builder;
 import builder.clipboard.TreeItem;
 import builder.clipboard.TreeItemSelection;
 import builder.common.CommonUtils;
@@ -885,10 +886,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("TreeView: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE ||
         e.code == MsgEvent.PAGE_TAB_CHANGE) {
-//  System.out.println("TreeView: " + e.toString());
+      Builder.logger.debug("TreeView recv: " + e.toString());
       TreeItem pageItem = new TreeItem(e.message, null);
       DefaultMutableTreeNode w = findNode(pageItem);
       if (w != null) {
@@ -899,12 +899,12 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         repaint();
       }
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
-//  System.out.println("TreeView: " + e.toString());
+      Builder.logger.debug("TreeView recv: " + e.toString());
       tree.clearSelection();
       scrollPane.repaint();
     } else if (e.code == MsgEvent.WIDGET_ENUM_CHANGE ||
           e.code == MsgEvent.PAGE_ENUM_CHANGE) {
-//  System.out.println("TreeView: " + e.toString());
+      Builder.logger.debug("TreeView recv: " + e.toString());
         TreeItem pageItem = new TreeItem(e.message, null);
         DefaultMutableTreeNode w = findNode(pageItem);
         if (w != null) {

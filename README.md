@@ -51,9 +51,11 @@ Support for Teensy fonts, Flash based Slider control and New controls, Toggle Bu
 
 UI Elements placed on the Base Page will now be shown as write protected elements on all normal pages to make control layouts easier.  Base page UI Elements will not be shown on Project Tab or Popup pages.
 
+Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
+
 #### Bug Fixes 0.14.b005
  - Bug No. 171 using ctrl-X in Property View can cause crashes
- - Bug No. 170 Project Tab, screen sz not used when placing or aligning widgets on screen
+ - Bug No. 170 Project Tab, screen size not used when placing or aligning widgets on screen
  - Bug No. 169 Moto_mono22 font duplicated should be Moto_mono24 in arduinofonts.csv file
  - Bug No. 168 Project Option Tab is output as a Page during code gen
  - Bug No. 166 Support for extended font modes (eg. Teensy) - Builder issue `#89`

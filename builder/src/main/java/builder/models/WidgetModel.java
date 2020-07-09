@@ -46,6 +46,7 @@ import builder.commands.PropertyCommand;
 import builder.common.ColorFactory;
 import builder.common.CommonUtils;
 import builder.common.FontFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 
@@ -628,7 +629,7 @@ public class WidgetModel extends AbstractTableModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

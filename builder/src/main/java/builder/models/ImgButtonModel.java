@@ -38,6 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
 
+import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
@@ -424,7 +425,7 @@ public class ImgButtonModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
@@ -484,7 +485,7 @@ public class ImgButtonModel extends WidgetModel {
    * @param y
    *          the y
    */
-  public void setImage(File file, int x, int y) {
+  public boolean setImage(File file, int x, int y) {
     image = null;
     if (file.getName().toLowerCase().endsWith(".c")) {
       HexToImgConv convert = new HexToImgConv();
@@ -498,12 +499,16 @@ public class ImgButtonModel extends WidgetModel {
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
+      } else {
+        Builder.logger.error("image conversion from C error: " + file.getName());
+        return false;
       }
     } else {
       try {
           image = ImageIO.read(file);
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+        Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
+        return false;
       }
       setWidth(image.getWidth());
       setHeight(image.getHeight());
@@ -537,6 +542,7 @@ public class ImgButtonModel extends WidgetModel {
       fileName = file.getName();
       setImageName(fileName);
     }
+    return true;
   }
 
   /**
@@ -563,7 +569,7 @@ public class ImgButtonModel extends WidgetModel {
    * @param file
    *          the new image selected
    */
-  public void setImageSelected(File file) {
+  public boolean setImageSelected(File file) {
     imageSelected = null;
     if (file.getName().toLowerCase().endsWith(".c")) {
       HexToImgConv convert = new HexToImgConv();
@@ -576,12 +582,16 @@ public class ImgButtonModel extends WidgetModel {
           data[PROP_MEMORY_SEL][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
+      } else {
+        Builder.logger.error("image conversion from C error: " + file.getName());
+        return false;
       }
     } else {
       try {
         imageSelected = ImageIO.read(file);
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+        Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
+        return false;
       }
       String target = Controller.getTargetPlatform();
       if (target.equals(ProjectModel.PLATFORM_LINUX))
@@ -605,6 +615,7 @@ public class ImgButtonModel extends WidgetModel {
       fileName = file.getName();
       setImageSelectedName(fileName);
     }
+    return true;
   }
 
   /**

@@ -37,6 +37,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
+import builder.Builder;
 import builder.common.CommonUtils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
@@ -206,21 +207,19 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
    */
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("PropManager: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE || 
-        e.code == MsgEvent.WIDGET_REPAINT           ||
         e.code == MsgEvent.WIDGET_CHANGE_ZORDER     ||
         e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW) {
-//   System.out.println("PropManager: " + e.toString());
+      Builder.logger.debug("PropManager recv: " + e.toString());
       showPropEditor(e.message);
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
-//   System.out.println("PropManager: " + e.toString());
+      Builder.logger.debug("PropManager recv: " + e.toString());
       showPropEditor(e.xdata);
     } else if (e.code == MsgEvent.WIDGET_DELETE) {
-//   System.out.println("PropManager: " + e.toString());
+      Builder.logger.debug("PropManager recv: " + e.toString());
       showPropEditor(e.xdata);
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-//   System.out.println("PropManager: " + e.toString());
+      Builder.logger.debug("PropManager recv: " + e.toString());
       showPropEditor(e.xdata);
     }
   }

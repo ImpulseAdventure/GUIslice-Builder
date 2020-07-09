@@ -149,8 +149,11 @@ public class RibbonListener implements ActionListener, iSubscriber {
     ImageWidget w = (ImageWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGE, x, y);
     File file = showImageDialog("Choose your Image file");
     if (file != null) {
-      w.setImage(file, x, y);
-      controller.addWidget(w);
+      if (w.setImage(file, x, y)) {
+        controller.addWidget(w);
+      } else {
+        JOptionPane.showMessageDialog(null, "Adding Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
+      }
     }
   }
 
@@ -163,12 +166,18 @@ public class RibbonListener implements ActionListener, iSubscriber {
     ImgButtonWidget w = (ImgButtonWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGEBUTTON, x, y);
     File file = showImageDialog("Choose your Button's Image");
     if (file != null) {
-      w.setImage(file, x, y);
-      file = showImageDialog("Choose your Disabled Button's Image");
-      if (file != null) {
-        w.setImageSelected(file);
-        controller.addWidget(w);
+      if (w.setImage(file, x, y)) {
+        file = showImageDialog("Choose your Disabled Button's Image");
+        if (file != null) {
+          if (w.setImageSelected(file)) {
+            controller.addWidget(w);
+          } else {
+            JOptionPane.showMessageDialog(null, "Adding Disabled Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
+          }
+        }
       }
+    } else {
+      JOptionPane.showMessageDialog(null, "Adding Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -388,58 +397,72 @@ public class RibbonListener implements ActionListener, iSubscriber {
       return;
     switch(e.message) {
       case "aligntop":
+        Builder.logger.debug("Toolbar: aligntop");
         controller.alignTop();
         break;
         
       case "alignbottom":
+        Builder.logger.debug("Toolbar: alignbottom");
         controller.alignBottom();
         break;
         
       case "aligncenter":
+        Builder.logger.debug("Toolbar: aligncenter");
         controller.alignCenter();
         break;
         
       case "alignleft":
+        Builder.logger.debug("Toolbar: alignleft");
         controller.alignLeft();
         break;
         
       case "alignright":
+        Builder.logger.debug("Toolbar: alignright");
         controller.alignRight();
         break;
         
       case "alignhspacing":
+        Builder.logger.debug("Toolbar: alignhspacing");
         controller.alignHSpacing();
         break;
         
       case "alignvspacing":
+        Builder.logger.debug("Toolbar: alignvspacing");
         controller.alignVSpacing();
         break;
         
       case "alignwidth":
+        Builder.logger.debug("Toolbar: alignwidth");
         controller.alignWidth();
         break;
         
       case "alignheight":
+        Builder.logger.debug("Toolbar: alignheight");
         controller.alignHeight();
         break;
 
       case "basepage":
+        Builder.logger.debug("Toolbar: basepage");
         controller.createPage(EnumFactory.BASEPAGE);
         break;
       
       case "box":
+        Builder.logger.debug("Toolbar: box");
         createWidget(EnumFactory.BOX);
         break;
 /*      
       case "circle":
+        Builder.logger.debug("Toolbar: circle");
         createWidget(EnumFactory.CIRCLE);
         break;
 */      
       case "checkbox":
+        Builder.logger.debug("Toolbar: checkbox");
         createWidget(EnumFactory.CHECKBOX);
         break;
       
       case "close":
+        Builder.logger.debug("Toolbar: close");
         if (History.getInstance().size() > 0) {
           title = "Confirm Dialog";
           String message = "Would you like to save project before closing?";
@@ -458,72 +481,89 @@ public class RibbonListener implements ActionListener, iSubscriber {
               controller.saveProject(file);
               controller.newProject();
             } catch (IOException e3) {
+              Builder.logger.debug("Project Save Failed " + e3.toString());
               JOptionPane.showMessageDialog(null, "Project Save Failed", e3.toString(), JOptionPane.ERROR_MESSAGE);
-              e3.printStackTrace();
               return;
             }
+          } else {
+            Builder.logger.debug("Chose not to save project");
           }
         }
         controller.newProject();
         break;
         
       case "code":
+        Builder.logger.debug("Toolbar: generateCode");
         controller.generateCode();
         break;
       
       case "copy":
+        Builder.logger.debug("Toolbar: copy");
         controller.copyWidgets();
         break;
       
       case "copyprops":
+        Builder.logger.debug("Toolbar: copyprops");
         controller.copyProps();
         break;
       
       case "cut":
+        Builder.logger.debug("Toolbar: cut");
         controller.cutWidgets();
         break;
       
       case "Delete":
+        Builder.logger.debug("Toolbar: delete");
         controller.removeComponent();
         break;
         
       case "exit":
+        Builder.logger.debug("Toolbar: exit");
         onExit();
         break;
         
       case "grid":
+        Builder.logger.debug("Toolbar: grid");
         controller.toggleGrid();
         break;
         
       case "graph":
+        Builder.logger.debug("Toolbar: graph");
         createWidget(EnumFactory.GRAPH);
         break;
       
       case "group":
+        Builder.logger.debug("Toolbar: group");
         controller.groupButtons();
         break;
         
       case "image":
+        Builder.logger.debug("Toolbar: image");
         createImageWidget();
         break;
       
       case "imagebutton":
+        Builder.logger.debug("Toolbar: imagebutton");
         createImgButtonWidget();
         break;
       
       case "line":
+        Builder.logger.debug("Toolbar: line");
         createWidget(EnumFactory.LINE);
         break;
       
       case "listbox":
+        Builder.logger.debug("Toolbar: listbox");
         createWidget(EnumFactory.LISTBOX);
         break;
       
       case "numinput":
+        Builder.logger.debug("Toolbar: numinput");
         createWidget(EnumFactory.NUMINPUT);
         break;
       
       case "open":
+        Builder.logger.debug("Toolbar: open");
         String [] fileExtPrj = new String[1];
         fileExtPrj[0] = ".prj";
         file = showFileDialog("Open Project", fileExtPrj, null, false, "Open");
@@ -531,72 +571,84 @@ public class RibbonListener implements ActionListener, iSubscriber {
         try {
           controller.openProject(file);
         } catch (IOException e5) {
+          Builder.logger.debug("Project Open Failed " + e5.toString());
           JOptionPane.showMessageDialog(null, "Project Open Failed", e5.toString(), JOptionPane.ERROR_MESSAGE);
-          e5.printStackTrace();
         }      
         break;
         
       case "page":
+        Builder.logger.debug("Toolbar: page");
         controller.createPage(EnumFactory.PAGE);
         break;
       
       case "paste":
+        Builder.logger.debug("Toolbar: paste");
         controller.pasteWidgets();
         break;
       
       case "popup":
+        Builder.logger.debug("Toolbar: popup");
         controller.createPage(EnumFactory.POPUP);
         break;
       
       case "progressbar":
+        Builder.logger.debug("Toolbar: progressbar");
         createWidget(EnumFactory.PROGRESSBAR);
         break;
         
       case "radiobutton":
+        Builder.logger.debug("Toolbar: radiobutton");
         createWidget(EnumFactory.RADIOBUTTON);
         break;
       
       case "redo":
+        Builder.logger.debug("Toolbar: redo");
         History.getInstance().redo();
         break;
         
       case "ramp":
+        Builder.logger.debug("Toolbar: ramp");
         createWidget(EnumFactory.RAMPGAUGE);
         break;
         
       case "radial":
+        Builder.logger.debug("Toolbar: radial");
         createWidget(EnumFactory.RADIALGAUGE);
         break;
         
       case "ringgauge":
+        Builder.logger.debug("Toolbar: ringgauge");
         createWidget(EnumFactory.RINGGAUGE);
         break;
         
       case "save":
+        Builder.logger.debug("Toolbar: save");
         file = null;
         if (!controller.isNamedProject()) {
           file = createFolderDialog();
           if (file == null) { 
-            JOptionPane.showMessageDialog(null, "Project Folder Creation Failed", "Error", JOptionPane.ERROR_MESSAGE);
+            Builder.logger.debug("Project Cancelled");
+            JOptionPane.showMessageDialog(null, "Project Save Cancelled", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
           }
         }
         try {
           controller.saveProject(file);
         } catch (IOException e1) {
+          Builder.logger.debug("Project Save Failed " + e1.toString());
           JOptionPane.showMessageDialog(null, "Project Save Failed", e1.toString(), JOptionPane.ERROR_MESSAGE);
-          e1.printStackTrace();
         }
         break;
         
       case "saveas":
+        Builder.logger.debug("Toolbar: saveas");
         file = createFolderDialog();
         if (file != null) {
           try {
             controller.saveProject(file);
           } catch (IOException e2) {
+            Builder.logger.debug("Project SaveAs Failed " + e2.toString());
             JOptionPane.showMessageDialog(null, "Project SaveAs Failed", e2.toString(), JOptionPane.ERROR_MESSAGE);
-            e2.printStackTrace();
           }
         } else {
           JOptionPane.showMessageDialog(null, "Project SaveAs Cancelled", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -604,54 +656,67 @@ public class RibbonListener implements ActionListener, iSubscriber {
         break;
         
       case "seekbar":
-      createWidget(EnumFactory.SEEKBAR);
+        Builder.logger.debug("Toolbar: seekbar");
+        createWidget(EnumFactory.SEEKBAR);
       break;
     
       case "selection":
+        Builder.logger.debug("Toolbar: rectangle selection");
         controller.rectangularSelection();
         break;
         
       case "slider":
+        Builder.logger.debug("Toolbar: slider");
         createWidget(EnumFactory.SLIDER);
         break;
         
       case "spinner":
+        Builder.logger.debug("Toolbar: spinner");
         createWidget(EnumFactory.SPINNER);
         break;
         
       case "text":
+        Builder.logger.debug("Toolbar: text");
         createWidget(EnumFactory.TEXT);
         break;
       
       case "textbox":
+        Builder.logger.debug("Toolbar: textbox");
         createWidget(EnumFactory.TEXTBOX);
         break;
       
       case "textbutton":
+        Builder.logger.debug("Toolbar: textbutton");
         createWidget(EnumFactory.TEXTBUTTON);
         break;
       
       case "textinput":
+        Builder.logger.debug("Toolbar: textinput");
         createWidget(EnumFactory.TEXTINPUT);
         break;
       
       case "toggle":
+        Builder.logger.debug("Toolbar: toggle");
         createWidget(EnumFactory.TOGGLEBUTTON);
         break;
       
       case "undo":
+        Builder.logger.debug("Toolbar: undo");
         History.getInstance().undo();
         break;
         
       case "zoomin":
+        Builder.logger.debug("Toolbar: zoomin");
         controller.zoomIn();
         break;
         
       case "zoomout":
+        Builder.logger.debug("Toolbar: zoomout");
         controller.zoomOut();
         break;
         
         default:
+          Builder.logger.debug("Toolbar: Unknown Ribbon Action: " + e.toString());
           throw new IllegalArgumentException("Unknown Ribbon Action: " + e.toString());
       }
     
@@ -671,6 +736,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
 //    System.out.println("command: " + command);
     switch(command) {
     case "about":
+      Builder.logger.debug("Menu: about");
       String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight (c) Paul Conti 2018-2020</center>"
           + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2020</center></p>", Builder.VERSION);
       htmlBody = htmlBody + "<br>For the latest guides, updates and support view:<br>";
@@ -679,30 +745,37 @@ public class RibbonListener implements ActionListener, iSubscriber {
       break;
     
     case "code":
+      Builder.logger.debug("Menu: generate code");
       controller.generateCode();
       break;
     
     case "copy":
+      Builder.logger.debug("Menu: copy");
       controller.copyWidgets();
       break;
     
     case "cut":
+      Builder.logger.debug("Menu: cut");
       controller.cutWidgets();
       break;
     
     case "Delete":
+      Builder.logger.debug("Menu: delete");
       controller.removeComponent();
       break;
       
     case "grid":
+      Builder.logger.debug("Menu: grid");
       controller.toggleGrid();
       break;
       
     case "new":
+      Builder.logger.debug("Menu: new");
       controller.newProject();
       break;
       
     case "open":
+      Builder.logger.debug("Menu: open");
       String [] fileExtPrj = new String[1];
       fileExtPrj[0] = ".prj";
       file = showFileDialog("Open Project", fileExtPrj, null, false, "Open");
@@ -710,24 +783,28 @@ public class RibbonListener implements ActionListener, iSubscriber {
       try {
         controller.openProject(file);
       } catch (IOException e5) {
+        Builder.logger.debug("Project Open Failed " + e5.toString());
         JOptionPane.showMessageDialog(null, "Project Open Failed", e5.toString(), JOptionPane.ERROR_MESSAGE);
-        e5.printStackTrace();
       }      
       break;
       
     case "options":
+      Builder.logger.debug("Menu: options");
       controller.showPreferences();
       break;
 
     case "paste":
+      Builder.logger.debug("Menu: paste");
       controller.pasteWidgets();
       break;
     
     case "save":
+      Builder.logger.debug("Menu: save");
       file = null;
       if (!controller.isNamedProject()) {
         file = createFolderDialog();
         if (file == null) { 
+          Builder.logger.debug("Project Folder Creation Failed");
           JOptionPane.showMessageDialog(null, "Project Folder Creation Failed", "Error", JOptionPane.ERROR_MESSAGE);
           return;
         }
@@ -735,19 +812,20 @@ public class RibbonListener implements ActionListener, iSubscriber {
       try {
         controller.saveProject(file);
       } catch (IOException e1) {
+        Builder.logger.debug("Project Save Failed " + e1.toString());
         JOptionPane.showMessageDialog(null, "Project Save Failed", e1.toString(), JOptionPane.ERROR_MESSAGE);
-        e1.printStackTrace();
       }
       break;
       
     case "saveas":
+      Builder.logger.debug("Menu: saveas");
       file = createFolderDialog();
       if (file != null) {
         try {
           controller.saveProject(file);
         } catch (IOException e2) {
+          Builder.logger.debug("Project SaveAs Failed " + e2.toString());
           JOptionPane.showMessageDialog(null, "Project SaveAs Failed", e2.toString(), JOptionPane.ERROR_MESSAGE);
-          e2.printStackTrace();
         }
       } else {
         JOptionPane.showMessageDialog(null, "Project SaveAs Cancelled", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -755,6 +833,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
       break;
       
     case "close":
+      Builder.logger.debug("Menu: close");
       if (History.getInstance().size() > 0) {
         title = "Confirm Dialog";
         String message = "Would you like to save project before closing?";
@@ -765,6 +844,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
           if (!controller.isNamedProject()) {
             file = createFolderDialog();
             if (file == null) {
+              Builder.logger.debug("Project Save Cancelled");
               JOptionPane.showMessageDialog(null, "Project Save Cancelled", "Warning", JOptionPane.WARNING_MESSAGE);
               return;
             }
@@ -773,34 +853,41 @@ public class RibbonListener implements ActionListener, iSubscriber {
             controller.saveProject(file);
             controller.newProject();
           } catch (IOException e3) {
+            Builder.logger.debug("Project Save Failed " + e3.toString());
             JOptionPane.showMessageDialog(null, "Project Save Failed", e3.toString(), JOptionPane.ERROR_MESSAGE);
-            e3.printStackTrace();
             return;
           }
+        } else {
+          Builder.logger.debug("Chose not to save project");
         }
       }
       controller.newProject();
       break;
       
     case "exit":
+      Builder.logger.debug("Menu: exit");
       onExit();
       break;
       
     case "zoomin":
+      Builder.logger.debug("Menu: zoomin");
       controller.zoomIn();
       break;
       
     case "zoomout":
+      Builder.logger.debug("Menu: zoomout");
       controller.zoomOut();
       break;
       
 /*
-      case "help":
-        JOptionPane.showMessageDialog(null, "Run in Circles, Scream & Shout!", "Help", JOptionPane.INFORMATION_MESSAGE);
-        break;
+    case "help":
+      Builder.logger.debug("Menu: help");
+      JOptionPane.showMessageDialog(null, "Run in Circles, Scream & Shout!", "Help", JOptionPane.INFORMATION_MESSAGE);
+      break;
 */
       
     default:
+      Builder.logger.debug("Unknown MenuBar action: " + command);
       throw new IllegalArgumentException("Unknown MenuBar action: " + command);
     }
 

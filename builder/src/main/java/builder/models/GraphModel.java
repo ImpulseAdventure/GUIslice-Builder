@@ -37,6 +37,7 @@ import javax.swing.table.TableCellEditor;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -143,7 +144,7 @@ public class GraphModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

@@ -37,6 +37,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
+import builder.Builder;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
@@ -192,7 +193,7 @@ public class ImageModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
@@ -315,7 +316,7 @@ public class ImageModel extends WidgetModel {
    * @param y
    *          the y
    */
-  public void setImage(File file, int x, int y) {
+  public boolean setImage(File file, int x, int y) {
     image = null;
     if (file.getName().toLowerCase().endsWith(".c")) {
       HexToImgConv convert = new HexToImgConv();
@@ -329,12 +330,16 @@ public class ImageModel extends WidgetModel {
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
+      } else {
+        Builder.logger.error("image conversion from C error: " + file.getName());
+        return false;
       }
     } else {
       try {
           image = ImageIO.read(file);
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+          Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
+          return false;
       }
 
       setWidth(image.getWidth());
@@ -369,6 +374,7 @@ public class ImageModel extends WidgetModel {
       fileName = file.getName();
       setImageName(fileName);
     }
+    return true;
   }
  
   /**

@@ -118,7 +118,7 @@ public class AlignCenterCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Align Center: " + newX);
+    return String.format("Align Center: %s x=%d", groupList.get(0).getEnum(),newX);
   }
 
 }

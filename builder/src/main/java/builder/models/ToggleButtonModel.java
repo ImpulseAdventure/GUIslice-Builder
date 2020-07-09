@@ -30,6 +30,7 @@ import java.awt.Color;
 //import java.io.ObjectInputStream;
 
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -127,7 +128,7 @@ public class ToggleButtonModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

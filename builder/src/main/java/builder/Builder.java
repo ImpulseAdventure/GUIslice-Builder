@@ -79,6 +79,9 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * GUIsliceBuilder is the main class of the application.
  * <p>
@@ -157,6 +160,9 @@ public class Builder  extends JDesktopPane {
   
   public static JSplitPane splitPane;
   
+  /** our logger */
+  public static Logger logger = null;
+  
   /**
    * The main method.
    *
@@ -216,6 +222,7 @@ public class Builder  extends JDesktopPane {
               String message = "You're about to quit the application -- are you sure?";
               int answer = JOptionPane.showConfirmDialog(null,message,title, JOptionPane.YES_NO_OPTION); 
               if(answer == JOptionPane.YES_OPTION) {
+                Builder.logger.debug("Builder exit");
                 System.exit(0);
               } else
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -253,6 +260,7 @@ public class Builder  extends JDesktopPane {
           } catch (IOException e1) {
               e1.printStackTrace();
           }
+          Builder.logger.debug("Builder crash: " + fileName);
           System.exit(0);
      }
     });
@@ -263,6 +271,10 @@ public class Builder  extends JDesktopPane {
    * Creates the UI pieces.  
    */
   private void initUI() {
+    // start our logger
+    System.setProperty("log4j.configurationFile","resources/log4j2.xml");
+    logger = LogManager.getLogger(Builder.class);
+    
     // access our controllers
     PropManager propManager = PropManager.getInstance();
     controller = Controller.getInstance();
@@ -369,6 +381,7 @@ public class Builder  extends JDesktopPane {
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
     postStatusMsg("GUIsliceBuilder Started!");
+    logger.debug("Builder started");
   }
   
   public static void postStatusMsg(String message) {

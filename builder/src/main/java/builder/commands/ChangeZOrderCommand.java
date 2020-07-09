@@ -99,7 +99,7 @@ public class ChangeZOrderCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Change ZOrder: " + widgetEnum);
+    return String.format("Change ZOrder: %s from:%d to:%d",widgetEnum,fromIdx,toIdx);
   }
 
 }

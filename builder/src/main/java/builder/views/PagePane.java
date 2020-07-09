@@ -52,6 +52,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragWidgetCommand;
 import builder.commands.History;
@@ -912,13 +913,9 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("PagePane: " + e.toString());
-    if (e.code == MsgEvent.WIDGET_REPAINT) {
-//   System.out.println("PagePane: " + e.toString());
-     repaint();
-    } else if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
+    if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
                e.xdata.equals(getKey())) {
-//  System.out.println("PagePane: " + e.toString());
+      Builder.logger.debug("PagePane recv: " + e.toString());
       selectNone();
       Widget w = findWidget(e.message);
       if (w != null) {
@@ -926,10 +923,11 @@ public class PagePane extends JPanel implements iSubscriber {
       }
       repaint();
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-//  System.out.println("PagePane: " + e.toString());
+      Builder.logger.debug("PagePane recv: " + e.toString());
       selectNone();
       repaint();
     } else if (e.code == MsgEvent.CANVAS_MODEL_CHANGE) {
+      Builder.logger.debug("PagePane recv: " + e.toString());
       repaint();
     }
   }

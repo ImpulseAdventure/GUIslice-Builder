@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import builder.Builder;
 import builder.codegen.pipes.AppPipe;
 import builder.codegen.pipes.ButtonCbPipe;
 import builder.codegen.pipes.CheckboxCbPipe;
@@ -374,6 +375,7 @@ public class CodeGenerator {
       // do the work
       return doCodeGen(projectFile);
     } catch (CodeGenException e) {
+      Builder.logger.debug("Code Generation Failed: " + e.toString());
       JOptionPane.showMessageDialog(null, "Code Generation Failed: " + e.toString(), 
           "Error", JOptionPane.ERROR_MESSAGE);
       return null;
