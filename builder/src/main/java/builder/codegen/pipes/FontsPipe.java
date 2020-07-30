@@ -31,17 +31,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import builder.Builder;
+import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.FontItem;
+import builder.common.FontPlatform;
 import builder.controller.Controller;
+import builder.common.BuilderFonts;
+import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.common.FontCategory;
 import builder.common.FontFactory;
 import builder.models.KeyPadModel;
 import builder.models.KeyPadTextModel;
-import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
@@ -59,10 +64,6 @@ import builder.prefs.NumKeyPadEditor;
 public class FontsPipe extends WorkFlowPipe {
 
   /** The Constants for templates. */
-  private final static String FONT_ADAFRUIT_TEMPLATE          = "<FONT_ADAFRUIT>"; 
-  private final static String FONT_ADAFRUIT_TFT_ESPI_TEMPLATE = "<FONT_ADAFRUIT_AND_TFT_ESPI>"; 
-  private final static String FONT_TEENSY_TEMPLATE            = "<FONT_TEENSY>"; 
-  private final static String FONT_TFT_ESPI_TEMPLATE          = "<FONT_TFT_ESPI>"; 
   private final static String FONT_DEFINE_TEMPLATE            = "<FONT_DEFINE>"; 
   private final static String FONT_INCLUDE_TEMPLATE           = "<FONT_INCLUDE>"; 
    
@@ -94,6 +95,7 @@ public class FontsPipe extends WorkFlowPipe {
   public void doCodeGen(StringBuilder sBd) {
     // setup
     FontFactory ff = FontFactory.getInstance();
+    tm = cg.getTemplateManager();
     
     // scan thru all of the projects widgets and
     // build up a list of all font display names.
@@ -101,16 +103,30 @@ public class FontsPipe extends WorkFlowPipe {
     String name = null;
     boolean bAddNumKeyPad = false;
     boolean bAddAlphaKeyPad = false;
+    int nErrors = 0;
     for (WidgetModel m : cg.getModels()) {
       name = m.getFontDisplayName();
-      if (name != null)
+      if (name != null) {
+        if (ff.getFont(name) == null) {
+          Builder.logger.error("widget: " +  m.getEnum() + " refers to missing font=" + name);
+          nErrors++;
+        }
         fontNames.add(name);
+      }
       if (m.getType().equals(EnumFactory.NUMINPUT)) {
         bAddNumKeyPad = true;
       }
       if (m.getType().equals(EnumFactory.TEXTINPUT)) {
         bAddAlphaKeyPad = true;
       }
+    }
+    if (nErrors > 0) {
+      String fileName = CommonUtils.getInstance().getWorkingDir()
+          + "logs" 
+          + System.getProperty("file.separator")
+          + "builder.log";
+      throw new CodeGenException(String.format("Sketch has %d missing font(s).\nExamine %s for list of fonts.",
+          nErrors,fileName));
     }
     // End with keyboard fonts - bug 144 missing keyboard font #include
     // place any keypads at end
@@ -134,81 +150,41 @@ public class FontsPipe extends WorkFlowPipe {
     // now use our reduced fontNames list to build up a   
     // list of font items for fonts in use by this project.
     List<FontItem> fonts = new ArrayList<FontItem>();
+    FontItem item = null;
     for (String s : fontNames) {
-      fonts.add(ff.getFontItem(s));
+      item = ff.getFontItem(s);
+      if (item == null) continue;
+      fonts.add(item);
+    }
+    
+    String target = Controller.getTargetPlatform();
+    String category;
+    List<String> categories = new ArrayList<String>();
+    for (FontItem f : fonts) {
+      category = f.getCategory().getName();
+      categories.add(category);
+    }
+    if (categories.size() == 0)
+      return;
+    // sort the names and remove duplicates
+    CodeUtils.sortListandRemoveDups(categories);
+        
+    // Do we have any warnings to output?
+    BuilderFonts topOfFonts = ff.getBuilderFonts();
+    FontPlatform fontPlatform = topOfFonts.getPlatform(target);
+    for (String s : fontPlatform.getWarnings()) {
+      if (s.equals("NULL")) continue;
+      sBd.append(s);
+      sBd.append(System.lineSeparator());
     }
 
-    // do we need to output a custom set of include files?
-    ProjectModel pm = Controller.getProjectModel();
-    String[] fontIncludes = pm.getFontIncludes();
-    tm = cg.getTemplateManager();
-    if (fontIncludes.length > 0 && !fontIncludes[0].isEmpty()) {
-      // output custom set of font includes
-      for (String s : fontIncludes) {
+    // Now we need check for any extra include files that might be needed
+    for (FontCategory c : fontPlatform.getCategories()) {
+      for (String s : c.getIncludes()) {
+        if (s.equals("NULL")) continue;
         sBd.append(s);
         sBd.append(System.lineSeparator());
       }
-      return;
-    }
-    /*
-     * no custom includes so go through normal tests
-     * 
-     * do we need to output AdaFruit's include file?
-     */
-    String target = Controller.getTargetPlatform();
-    // do we need to output AdaFruit's include file?
-    if (target.equals(ProjectModel.PLATFORM_ARDUINO)) {
-      // need to output AdaFruit include
-      for (FontItem f : fonts) {
-        if (!f.getIncludeFile().equals("NULL")) {
-          // This code only affects arduino implementation.
-          List<String> adafruitTemplate = tm.loadTemplate(FONT_ADAFRUIT_TEMPLATE);
-          tm.codeWriter(sBd, adafruitTemplate);
-          break;
-        }
-      }
-    }
-    // do we need to output Teensy's SPI include file?
-    if (target.equals(ProjectModel.PLATFORM_TEENSY)) {
-      // need to output teensy include
-      for (FontItem f : fonts) {
-        if (!f.getIncludeFile().equals("NULL")) {
-          // This code only affects teensy implementation.
-          List<String> teensyTemplate = tm.loadTemplate(FONT_TEENSY_TEMPLATE);
-          tm.codeWriter(sBd, teensyTemplate);
-          break;
-        }
-      }
-    }
-    // do we need to output TFT_eSPI include file?
-    boolean bTFT_ESPI_NEEDED = false;
-    boolean bADAFRUIT_TFT_ESPI_NEEDED = false;
-    if (target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
-      /*
-       * Rules for TFT_eSPI mode: - If no fonts used: No include required - If
-       * "built-in" / default font used: No include required - If custom freefonts
-       * used: include <TFT_eSPI.h> only since they're already inside TFT_eSPI.h - If
-       * custom fonts (like dosis or Noto) used: include Adafruit Font/xxx.h only
-       * since they're not already inside TFT_eSPI.h
-       */
-      for (FontItem f : fonts) {
-        // A built-in font is indicated with a literal string of "NULL"
-        if (!f.getIncludeFile().equals("NULL")) {
-          if (f.getName().startsWith("FreeFont")) {
-            bTFT_ESPI_NEEDED = true;
-          } else {
-            bADAFRUIT_TFT_ESPI_NEEDED = true;
-          }
-        }
-      }
-    }
-    if (bTFT_ESPI_NEEDED || bADAFRUIT_TFT_ESPI_NEEDED) {
-      List<String> tft_espiTemplate = tm.loadTemplate(FONT_TFT_ESPI_TEMPLATE);
-      tm.codeWriter(sBd, tft_espiTemplate);
-    }
-    if (bADAFRUIT_TFT_ESPI_NEEDED) {
-      List<String> tft_espiTemplate = tm.loadTemplate(FONT_ADAFRUIT_TFT_ESPI_TEMPLATE);
-      tm.codeWriter(sBd, tft_espiTemplate);
     }
 
     // we are ready to output our font information
@@ -217,27 +193,14 @@ public class FontsPipe extends WorkFlowPipe {
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String, String>();
     for (FontItem f : fonts) {
-      if (!f.getIncludeFile().equals("NULL") && target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
-        if (!f.getName().startsWith("FreeFont")) {
-          // This code only affects arduino implementation.
+      if (!f.getIncludeFile().equals("NULL")) {
           includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
-          ;
           map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
           outputLines = tm.expandMacros(includeTemplate, map);
           tm.codeWriter(sBd, outputLines);
-        }
-      } else if (!f.getIncludeFile().equals("NULL")
-          && (target.equals(ProjectModel.PLATFORM_ARDUINO) || target.equals(ProjectModel.PLATFORM_TEENSY))) {
-        // This code only affects arduino implementation.
-        includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
-        ;
-        map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
-        outputLines = tm.expandMacros(includeTemplate, map);
-        tm.codeWriter(sBd, outputLines);
-      } else if (!f.getDefineFile().equals("NULL") && target.equals(ProjectModel.PLATFORM_LINUX)) {
+      } else if (!f.getDefineFile().equals("NULL")) {
         // This code only affects linux implementation.
         defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);
-        ;
         map.put(FONT_REF_MACRO, f.getFontRef());
         map.put(DEFINE_FILE_MACRO, f.getDefineFile());
         outputLines = tm.expandMacros(defineTemplate, map);

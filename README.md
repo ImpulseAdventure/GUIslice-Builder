@@ -45,18 +45,25 @@ The Software is not designed for use in devices or situations where there may be
 - Support for Seekbar, a modern slider control.
 - Added Style options to Checkbox and Radio Buttons.
 - Base Page UI Elements will now show through other pages.
+- Addition of templates/builder_fonts.json to ease adding custom fonts
 
-#### Changes for 0.14.b005
-Support for Teensy fonts, Flash based Slider control and New controls, Toggle Button and Seekbar, both have RAM and Flash based versions of GUIslice API. Also added Style options to Checkbox and Radio Buttons.
+#### Changes for 0.15.0
+On Windows 10 the menubar is moved into the title pane.
+
+Font support has been improved with the addition of Teensy and M5Stack platforms.
+The templates/arduinofonts.csv and linuxfonts.csv have been replaced with templates/builder_fonts.json which should make it easier to add new or custom fonts.  It's also now possible to add new platforms by modifying this file.
+
+Support for Flash based Slider control and New controls, Toggle Button and Seekbar, both have RAM and Flash based versions of GUIslice API. Also added Style options to Checkbox and Radio Buttons.
 
 UI Elements placed on the Base Page will now be shown as write protected elements on all normal pages to make control layouts easier.  Base page UI Elements will not be shown on Project Tab or Popup pages.
 
 Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
 
 #### Bug Fixes 0.14.b005
+ - Bug No. 173 The selected colors for frame, fill and glow are not adopted for Sliders issue `#96`
  - Bug No. 171 using ctrl-X in Property View can cause crashes
- - Bug No. 170 Project Tab, screen size not used when placing or aligning widgets on screen
- - Bug No. 169 Moto_mono22 font duplicated should be Moto_mono24 in arduinofonts.csv file
+ - Bug No. 170 Project Tab, screen size not used when placing or aligning widgets on screen issue `#93`
+ - Bug No. 169 Moto_mono22 font duplicated should be Moto_mono24 in arduinofonts.csv file issue `#92`
  - Bug No. 168 Project Option Tab is output as a Page during code gen
  - Bug No. 166 Support for extended font modes (eg. Teensy) - Builder issue `#89`
 

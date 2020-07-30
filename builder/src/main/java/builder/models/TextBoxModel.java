@@ -324,6 +324,7 @@ public class TextBoxModel extends WidgetModel {
     int nRowWidth, nBoxHeight;
     String name = getFontDisplayName();
     FontItem item = ff.getFontItem(name);
+    if (item == null) return;
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
     }

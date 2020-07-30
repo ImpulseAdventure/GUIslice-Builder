@@ -47,6 +47,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -60,6 +61,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import builder.common.CommonUtils;
+import builder.common.FontFactory;
 import builder.common.ThemeInfo;
 import builder.controller.Controller;
 import builder.controller.PropManager;
@@ -113,7 +115,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.14.b005";
+  public static final String VERSION = "0.15.0";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-13";
@@ -126,6 +128,8 @@ public class Builder  extends JDesktopPane {
   
   /** The Constant NEW_PROJECT. */
   public static final String NEW_PROJECT = " - unnamed project";
+  
+  public static FontFactory ff;
   
   /** The canvas width */
   public static int CANVAS_WIDTH;
@@ -170,6 +174,10 @@ public class Builder  extends JDesktopPane {
    *          the arguments
    */
   public static void main(String[] args) {
+    // On Windows 10 move menubar to Title pane
+    JFrame.setDefaultLookAndFeelDecorated( true );
+    JDialog.setDefaultLookAndFeelDecorated( true );
+    
     Builder builder = new Builder();
     double version = Double.parseDouble(System.getProperty("java.specification.version"));
     if (version < 1.8) {
@@ -253,7 +261,7 @@ public class Builder  extends JDesktopPane {
               for (int i = 0; i < e.getStackTrace().length; i++) {
                   writer.println(e.getStackTrace()[i].toString());
               }
-              String msg = String.format("A fatal error has occurred. A crash log created as %s", fileName);
+              String msg = String.format("A fatal error has occurred. A crash log created as:\n%s", fileName);
               JOptionPane.showMessageDialog(null, 
                   msg, "Failure", JOptionPane.ERROR_MESSAGE);
 
@@ -275,9 +283,18 @@ public class Builder  extends JDesktopPane {
     System.setProperty("log4j.configurationFile","resources/log4j2.xml");
     logger = LogManager.getLogger(Builder.class);
     
+    // setup our fonts from builder_fonts.json file
+    ff = FontFactory.getInstance();
+    ff.init();
+
     // access our controllers
     PropManager propManager = PropManager.getInstance();
     controller = Controller.getInstance();
+    
+    // setup our User Preference UI
+    List<ModelEditor> prefEditors = controller.initUserPrefs();
+    userPreferences = new UserPrefsManager(frame, prefEditors);
+    controller.setUserPrefs(userPreferences);
     
     // create our menu bar
     MenuBar mb = new MenuBar();
@@ -303,16 +320,11 @@ public class Builder  extends JDesktopPane {
 
     // pass on top level frame to controller so it can change project names
     controller.setFrame(frame); 
+    controller.initUI();  // now we can start the controller
 
     // trap the red X on our main frame
     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-    // setup our User Preference UI
-    List<ModelEditor> prefEditors = controller.initUserPrefs();
-    userPreferences = new UserPrefsManager(frame, prefEditors);
-    controller.setUserPrefs(userPreferences);
-    controller.initUI();  // now we can start the controller
-    
     // setup our canvas offsets
     // NOTE: we can't use controller.getPanel().getSize()
     // since it's scrollpane is much larger than actual screen size

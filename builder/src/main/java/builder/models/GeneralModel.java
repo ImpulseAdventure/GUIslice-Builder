@@ -40,6 +40,8 @@ import javax.swing.table.TableCellEditor;
 import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
+import builder.common.FontFactory;
+import builder.common.FontPlatform;
 import builder.common.ThemeInfo;
 import builder.controller.Controller;
 import builder.tables.ImageCellEditor;
@@ -243,10 +245,10 @@ public class GeneralModel extends WidgetModel {
     }
     
     cbTarget = new JComboBox<String>();
-    cbTarget.addItem(ProjectModel.PLATFORM_ARDUINO);
-    cbTarget.addItem(ProjectModel.PLATFORM_TEENSY);
-    cbTarget.addItem(ProjectModel.PLATFORM_TFT_ESPI);
-    cbTarget.addItem(ProjectModel.PLATFORM_LINUX);
+    FontFactory ff = FontFactory.getInstance();
+    for (FontPlatform p : ff.getBuilderFonts().getPlatforms()) {
+      cbTarget.addItem(p.getName());
+    }
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
     imageCellEditor = new ImageCellEditor();
@@ -294,6 +296,7 @@ public class GeneralModel extends WidgetModel {
         } catch (NumberFormatException e) {
           JOptionPane.showMessageDialog(null, "You entered non-numeric data in an number field.", 
               "Error", JOptionPane.ERROR_MESSAGE);
+          Builder.logger.error("GM Row: " + row + " non-numeric data in an number field");
           return;
         }
       }
@@ -303,6 +306,7 @@ public class GeneralModel extends WidgetModel {
               "Rotation must be 0 to 3 or -1 for no value", 
               "ERROR",
               JOptionPane.ERROR_MESSAGE);
+          Builder.logger.error("PM: " + test + " Rotation must be 0 to 3 or -1 for no value");
           return;
         }
       }
@@ -830,7 +834,7 @@ public class GeneralModel extends WidgetModel {
     try {
       image = ImageIO.read(file);
     } catch(IOException e) {
-        System.out.println("read error: " + e.getMessage());
+      Builder.logger.error("GM image read error: " + e.getMessage());
     }
     // save the full path so we can restore on program startup
     setBackgroundImageName(file.getAbsolutePath()); 
@@ -930,7 +934,7 @@ public class GeneralModel extends WidgetModel {
         image = ImageIO.read(file);
 //        setBackgroundImageName(file.getName());
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+        Builder.logger.error("image: " + e.getMessage());
       }
       data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -941,6 +945,9 @@ public class GeneralModel extends WidgetModel {
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+    }
+    if (getTarget().equals("arduino TFT_eSPI")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }
   }
 

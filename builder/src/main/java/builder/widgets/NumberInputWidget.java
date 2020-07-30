@@ -25,6 +25,7 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -71,22 +72,27 @@ public class NumberInputWidget extends Widget {
     Rectangle b = getWinBounded();
     g2d.setColor(((NumberInputModel) model).getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
-    g2d.setColor(((NumberInputModel) model).getFrameColor());
-    g2d.drawRect(b.x, b.y, b.width, b.height);
     Font font = ff.getFont(m.getFontDisplayName());
-    g2d.setColor(m.getTextColor());
-    String text = m.getText();
-    if (text.isEmpty()) {
-      for (int i=0; i<m.getTextStorage(); i++) {
-        text = text + "9";
-        Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
-        if (d.width > b.width) {
-           text = text.substring(0, text.length() - 1);
-           break;
+    if (font != null) {
+      g2d.setColor(((NumberInputModel) model).getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+      g2d.setColor(m.getTextColor());
+      String text = m.getText();
+      if (text.isEmpty()) {
+        for (int i=0; i<m.getTextStorage(); i++) {
+          text = text + "9";
+          Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
+          if (d.width > b.width) {
+             text = text.substring(0, text.length() - 1);
+             break;
+          }
         }
       }
+      ff.alignString(g2d, m.getAlignment(), b, text, font);
+    } else {
+      g2d.setColor(Color.RED);
+      g2d.drawRect(b.x, b.y, b.width, b.height);
     }
-    ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);
   }
 

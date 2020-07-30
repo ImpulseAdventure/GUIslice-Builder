@@ -36,14 +36,14 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
+import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
+import builder.common.FontFactory;
+import builder.common.FontPlatform;
 import builder.prefs.GeneralEditor;
 import builder.tables.ImageCellEditor;
-import builder.tables.MultiStringsCell;
-import builder.tables.MultipeLineCellListener;
 
 /**
  * The Class ProjectModel implements the model for the builder.
@@ -51,38 +51,35 @@ import builder.tables.MultipeLineCellListener;
  * @author Paul Conti
  *  
  */
-public class ProjectModel extends PageModel implements MultipeLineCellListener {
+public class ProjectModel extends PageModel {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID  = 1L;
   
   /** Target Platforms */
   public static final String PLATFORM_ARDUINO  = "arduino";
-  public static final String PLATFORM_TFT_ESPI = "arduino TFT_eSPI";
-  public static final String PLATFORM_TEENSY   = "teensy";
+  public static final String PLATFORM_TFT_ESPI = "tft_espi";
   public static final String PLATFORM_LINUX    = "linux";
   
   /** The Property Index Constants. */
   public static final int PROP_TARGET               = 2;
-  public static final int PROP_FONT_INCLUDES        = 3;
-  public static final int DISPLAY_WIDTH             = 4;
-  public static final int DISPLAY_HEIGHT            = 5;
-  public static final int PROP_BACKGROUND           = 6;
-  public static final int PROP_USE_BACKGROUND_IMAGE = 7;
-  public static final int PROP_BACKGROUND_IMAGE     = 8; 
-  public static final int PROP_BACKGROUND_IMAGE_FNAME=9; // full pathname to a background image file
-  public static final int PROP_BACKGROUND_DEFINE    = 10;
-  public static final int PROP_BACKGROUND_MEMORY    = 11;
-  public static final int PROP_BACKGROUND_FORMAT    = 12;
-  public static final int PROP_MARGINS              = 13;
-  public static final int PROP_HSPACING             = 14;
-  public static final int PROP_VSPACING             = 15;
-  public static final int PROP_MAX_STRING           = 16;
-  public static final int PROP_ROTATION             = 17;
+  public static final int DISPLAY_WIDTH             = 3;
+  public static final int DISPLAY_HEIGHT            = 4;
+  public static final int PROP_BACKGROUND           = 5;
+  public static final int PROP_USE_BACKGROUND_IMAGE = 6;
+  public static final int PROP_BACKGROUND_IMAGE     = 7; 
+  public static final int PROP_BACKGROUND_IMAGE_FNAME=8; // full pathname to a background image file
+  public static final int PROP_BACKGROUND_DEFINE    = 9;
+  public static final int PROP_BACKGROUND_MEMORY    = 10;
+  public static final int PROP_BACKGROUND_FORMAT    = 11;
+  public static final int PROP_MARGINS              = 12;
+  public static final int PROP_HSPACING             = 13;
+  public static final int PROP_VSPACING             = 14;
+  public static final int PROP_MAX_STRING           = 15;
+  public static final int PROP_ROTATION             = 16;
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
-  static public  final String[] DEF_INCLUDES           = { "" };
   static public  final Integer DEF_WIDTH               = Integer.valueOf(320);
   static public  final Integer DEF_HEIGHT              = Integer.valueOf(240);
   static public  final Color   DEF_BACKGROUND          = Color.BLACK;
@@ -143,9 +140,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
   public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
   
-  /** The list of font includes */
-  MultiStringsCell fontIncludesCell;
-
   /**
    * Instantiates a new general model.
    */
@@ -159,13 +153,11 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   protected void initProperties()
   {
     widgetType = EnumFactory.PROJECT + "$1";
-    data = new Object[18][5];
+    data = new Object[17][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM","E_PROJECT_OPTIONS");
     initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Target Platform",DEF_TARGET);
-    initProp(PROP_FONT_INCLUDES, String[].class, "LIST-108", Boolean.FALSE,
-        "Override Font Includes",DEF_INCLUDES);
 
     initProp(DISPLAY_WIDTH, Integer.class, "GEN-102", Boolean.FALSE,"TFT Screen Width",DEF_WIDTH);
     initProp(DISPLAY_HEIGHT, Integer.class, "GEN-103", Boolean.FALSE,"TFT Screen Height",DEF_HEIGHT);
@@ -189,10 +181,10 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
         "Screen Rotation [0-3 or -1 default]",DEF_ROTATION);
 
     cbTarget = new JComboBox<String>();
-    cbTarget.addItem(PLATFORM_ARDUINO);
-    cbTarget.addItem(PLATFORM_TEENSY);
-    cbTarget.addItem(PLATFORM_TFT_ESPI);
-    cbTarget.addItem(PLATFORM_LINUX);
+    FontFactory ff = FontFactory.getInstance();
+    for (FontPlatform p : ff.getBuilderFonts().getPlatforms()) {
+      cbTarget.addItem(p.getName());
+    }
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
     imageCellEditor = new ImageCellEditor();
@@ -209,10 +201,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     cbFormat.addItem(FORMAT_BMP16);
     cbFormat.addItem(FORMAT_RAW);
     formatCellEditor = new DefaultCellEditor(cbFormat);
-
-    fontIncludesCell = new MultiStringsCell("Override Font Includes");
-    fontIncludesCell.setData(DEF_INCLUDES);
-    fontIncludesCell.addButtonListener(this);
 
   }
   
@@ -233,18 +221,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   }
 
   /**
-   * buttonClicked
-   *
-   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
-   */
-   @Override
-   public void buttonClicked(String[] strings) {
-     // commands are used to support undo and redo actions.
-     PropertyCommand c = new PropertyCommand(this, strings, PROP_FONT_INCLUDES);
-     execute(c);
-   }
-
-  /**
    * setValueAt
    *
    * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
@@ -260,6 +236,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
         } catch (NumberFormatException e) {
           JOptionPane.showMessageDialog(null, "You entered non-numeric data in an number field.", 
               "Error", JOptionPane.ERROR_MESSAGE);
+          Builder.logger.error("PM Row: " + row + " non-numeric data in an number field");
           return;
         }
       }
@@ -269,6 +246,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
               "Rotation must be 0 to 3 or -1 for no value", 
               "ERROR",
               JOptionPane.ERROR_MESSAGE);
+          Builder.logger.error("PM: " + test + " Rotation must be 0 to 3 or -1 for no value");
           return;
         }
       }
@@ -518,8 +496,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    */
   @Override
   public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_FONT_INCLUDES)
-      return fontIncludesCell;
     if (rowIndex == PROP_TARGET)
       return targetCellEditor;
     else if (rowIndex == PROP_BACKGROUND_MEMORY)
@@ -529,27 +505,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     else if (rowIndex == PROP_BACKGROUND_FORMAT)
       return formatCellEditor;
     return null;
-  }
-
-  /**
-   * getRendererAt
-   *
-   * @see builder.models.WidgetModel#getRendererAt(int)
-   */
-  @Override
-  public TableCellRenderer getRendererAt(int row) {
-    if (row == PROP_FONT_INCLUDES)
-      return fontIncludesCell;
-    return null;
-  }
-
-  /**
-   * Gets the font includes, if any.
-   *
-   * @return the list of font includes, may be empty
-   */
-  public String[] getFontIncludes() {
-    return ((String[]) (data[PROP_FONT_INCLUDES][PROP_VAL_VALUE]));
   }
 
   /**
@@ -573,7 +528,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     try {
       image = ImageIO.read(file);
     } catch(IOException e) {
-        System.out.println("read error: " + e.getMessage());
+      Builder.logger.error("PM image read error: " + e.getMessage());
     }
     // save the full path so we can restore on program startup
     setBackgroundImageName(file.getAbsolutePath()); 
@@ -655,9 +610,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       }
       fireTableCellUpdated(PROP_BACKGROUND_IMAGE, COLUMN_VALUE);
     }
-    if (row == PROP_FONT_INCLUDES) {
-      fireTableStructureChanged();
-    }
   }
 
   /**
@@ -673,7 +625,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
         image = ImageIO.read(file);
 //        setBackgroundImageName(file.getName());
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+        Builder.logger.error("PM image read error: " + e.getMessage());
       }
       data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -684,6 +636,9 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+    }
+    if (getTargetPlatform().equals("arduino TFT_eSPI")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }
   }
 
@@ -710,7 +665,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
         image = ImageIO.read(file);
 //        setBackgroundImageName(file.getName());
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+          Builder.logger.error("image: " + e.getMessage());
       }
       data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -722,7 +677,9 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
     }
-    fontIncludesCell.setData((String[])data[PROP_FONT_INCLUDES][PROP_VAL_VALUE]);
+    if (getTargetPlatform().equals("arduino TFT_eSPI")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
+    }
   }
 
 

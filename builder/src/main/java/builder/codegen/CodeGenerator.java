@@ -109,12 +109,6 @@ public class CodeGenerator {
   /** The Constant PREFIX. */
   public final static String PREFIX                 = "//<";
   
-  /** The Constant ARDUINO_FONT_TEMPLATE. */
-  public  final static String ARDUINO_FONT_TEMPLATE   = "arduinofonts.csv";
-  
-  /** The Constant LINUX_FONT_TEMPLATE. */
-  public  final static String LINUX_FONT_TEMPLATE     = "linuxfonts.csv";
-  
   /** The Constant ARDUINO_RES. */
   public  final static String ARDUINO_RES             = "arduino_res";
   

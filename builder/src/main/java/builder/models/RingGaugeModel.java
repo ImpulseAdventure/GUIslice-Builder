@@ -392,6 +392,7 @@ public class RingGaugeModel extends WidgetModel {
     // if we changed target plaform we might need to change font to default
     String name = getFontDisplayName();
     FontItem item = ff.getFontItem(name);
+    if (item == null) return;
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
       if (fireUpdates) {

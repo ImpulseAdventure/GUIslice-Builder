@@ -70,9 +70,6 @@ public class FontChooser extends JDialog {
   /** The boolean that tracks if the program is making changes to comboboxes. */
   boolean bProgramChange;
   
-  /** The boolean tracking if we have initialized UI. */
-  boolean bInitUI = false;
-
   /** The preview label. */
   protected FontLabel previewLabel;
 
@@ -100,12 +97,7 @@ public class FontChooser extends JDialog {
     fontNames = new ArrayList<String>();
     bSaveFont = false;
     currentName = fontName;
-    if (bInitUI) {
-      scanFontLists();
-    } else {
-      initUI();
-      bInitUI = true;
-    }
+    initUI();
     updatePreview();
   }
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -126,7 +118,7 @@ public class FontChooser extends JDialog {
         }
       }
     };
-
+    
     // scan the fonts list and process it into something we can display on screen
     scanFontLists();
     FontChooserHelper h = helper.get(selectedHelper);    
@@ -256,6 +248,7 @@ public class FontChooser extends JDialog {
     i = cbFontStyle.getSelectedIndex();
     String sStyle = cbFontStyle.getItemAt(i);
     FontItem item = ff.getFontItem(h.getFontName(),sSize, sStyle);
+    if (item == null) return;
     previewLabel.setFont(item.getFont());
     selectedName = item.getDisplayName();
     repaint();

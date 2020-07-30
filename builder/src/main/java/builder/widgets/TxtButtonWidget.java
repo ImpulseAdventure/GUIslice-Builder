@@ -25,6 +25,7 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -73,24 +74,16 @@ public class TxtButtonWidget extends Widget {
     if (bSelected) {
       g2d.setColor(m.getSelectedColor());
       if (m.isRoundedEn())
-        g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
+        g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
       else
         g2d.fillRect(b.x, b.y, b.width, b.height);
     } else {
       g2d.setColor(m.getFillColor());
       if (m.isRoundedEn())
-        g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
+        g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
       else
         g2d.fillRect(b.x, b.y, b.width, b.height);
     }
-    if (m.isFrameEnabled()) {
-      g2d.setColor(m.getFrameColor());
-      if (m.isRoundedEn())
-        g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
-      else
-        g2d.drawRect(b.x, b.y, b.width, b.height);
-    }
-    g2d.setColor(m.getTextColor());
     String text = m.getText();
     if (text.isEmpty()) {
       text = "TODO";
@@ -98,8 +91,26 @@ public class TxtButtonWidget extends Widget {
     } else {
       font = ff.getFont(m.getFontDisplayName());
     }
-    ff.alignString(g2d, m.getAlignment(), b, text, font);
+    if (font != null) {
+      if (m.isFrameEnabled()) {
+        g2d.setColor(m.getFrameColor());
+        if (m.isRoundedEn()) {
+          g2d.drawRoundRect(b.x, b.y, b.width, b.height, 15, 15);
+        } else {
+          g2d.drawRect(b.x, b.y, b.width, b.height);
+        }
+      }
+      g2d.setColor(m.getTextColor());
+      ff.alignString(g2d, m.getAlignment(), b, text, font);
+    } else {
+      g2d.setColor(Color.RED);
+      if (m.isRoundedEn()) {
+        g2d.drawRoundRect(b.x, b.y, b.width, b.height, 15, 15);
+      } else {
+        g2d.drawRect(b.x, b.y, b.width, b.height);
+      }
+    }
     super.drawSelRect(g2d, b);
   }
-  
+ 
 }

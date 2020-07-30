@@ -25,6 +25,7 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -72,30 +73,33 @@ public class SpinnerWidget extends Widget {
     g2d.setColor(m.getFillColor());
 //    g2d.fillRect(b.x+1, b.y-1, b.width-2, b.height-2);
     g2d.fillRect(b.x, b.y, b.width, b.height);
-    g2d.setColor(m.getFrameColor());
-    g2d.drawRect(b.x, b.y, b.width, b.height);
-    
-    g2d.setColor(m.getTextColor());
-    Rectangle t = new Rectangle();
-    t.width = m.getTextWidth()+5;
-    t.height = b.height-2;
-    t.x = b.x + 1;
-    t.y = b.y;
-    ff.alignString(g2d, "GSLC_ALIGN_MID_RIGHT", t, "0", font);
-    int dxDown, dxUp;
-    dxDown = b.x + b.width - buttonsz - 1;  // down arrow
-    g2d.setColor(m.getButtonColor());
-    g2d.fillRect(dxDown, b.y+1, buttonsz, b.height-2);
-    dxUp = dxDown - buttonsz - 2;
-    g2d.fillRect(dxUp, b.y+1, buttonsz, b.height-2);
-
-    g2d.setColor(m.getButtonTextColor());
-    t.x = dxUp;
-    t.width = buttonsz; 
-    ff.alignString(g2d, "GSLC_ALIGN_MID_MID", t, "\u2191", font); // up arrow
-    t.x = dxDown;
-    ff.alignString(g2d, "GSLC_ALIGN_MID_MID", t, "\u2193", font); // down arrow
-
+    if (font != null) {
+      g2d.setColor(m.getFrameColor());
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+      g2d.setColor(m.getTextColor());
+      Rectangle t = new Rectangle();
+      t.width = m.getTextWidth()+5;
+      t.height = b.height-2;
+      t.x = b.x + 1;
+      t.y = b.y;
+      ff.alignString(g2d, "GSLC_ALIGN_MID_RIGHT", t, "0", font);
+      int dxDown, dxUp;
+      dxDown = b.x + b.width - buttonsz - 1;  // down arrow
+      g2d.setColor(m.getButtonColor());
+      g2d.fillRect(dxDown, b.y+1, buttonsz, b.height-2);
+      dxUp = dxDown - buttonsz - 2;
+      g2d.fillRect(dxUp, b.y+1, buttonsz, b.height-2);
+  
+      g2d.setColor(m.getButtonTextColor());
+      t.x = dxUp;
+      t.width = buttonsz; 
+      ff.alignString(g2d, "GSLC_ALIGN_MID_MID", t, "\u2191", font); // up arrow
+      t.x = dxDown;
+      ff.alignString(g2d, "GSLC_ALIGN_MID_MID", t, "\u2193", font); // down arrow
+    } else {
+      g2d.setColor(Color.RED);
+      g2d.drawRect(b.x, b.y, b.width, b.height);
+    }
     super.drawSelRect(g2d, b);
   }
 

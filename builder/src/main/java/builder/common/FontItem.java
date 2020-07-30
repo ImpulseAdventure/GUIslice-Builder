@@ -30,16 +30,34 @@ import java.awt.Font;
 /**
  * The Class FontItem is a representation of a single GUIslice Library font.
  * 
+ * Filled in by JSON deserialization inside FontFactory.
+ * 
+ * However, JSON will ignore fields marked as transient and
+ * these are filled in by walking the top level container
+ * BuilderFonts.  This is done inside FontFactory after doing
+ * the JSON deserialization. The transient fields are back pointers
+ * and act as an optimization to avoid having to repeatedly 
+ * walk our containers. 
+ * 
  * @author Paul Conti
  * 
  */
 public class FontItem {
   
   /** The java font. */
-  private Font   font;
+  private transient Font font;
+  
+  /** The parent platform */
+  private transient FontPlatform platform;
+  
+  /** The parent category */
+  private transient FontCategory category;
+  
+  /** The key as index into our font list */
+  private transient String key;
   
   /** The font family name. */
-  private String name;
+  private String familyName;
   
   /** The display name. */
   private String displayName;
@@ -51,7 +69,7 @@ public class FontItem {
   private String defineFile;
   
   /** The nFontId parameter used by GUIslice API. */
-  private String nFontId;
+  private transient String nFontId;
   
   /** The e eFontRefType parameter used by GUIslice API. */
   private String eFontRefType;
@@ -79,56 +97,10 @@ public class FontItem {
   
   /**
    * Instantiates a new font item.
-   *
-   * @param dpi target display pixels per inch
-   * @param name of font family, like Noto,FreeFont
-   * @param displayName name we show to user
-   * @param includeFile name of any include file
-   * @param defineFile  name of define file
-   * @param nFontId GUIslice font id
-   * @param eFontRefType GUIslice font type parameter
-   * @param pvFontRef GUIslice font ref parameter
-   * @param nFontSz GUIslice font size parameter
-   * @param logicalName java font name
-   * @param logicalSize java font size
-   * @param logicalStyle java font style
-   * @param fontRefMode java font style
+   * Handled by google's gson now
    */
-  public FontItem(int dpi,
-                  String name,
-                  String displayName,
-                  String includeFile,
-                  String defineFile,
-                  String nFontId,
-                  String eFontRefType,
-                  String pvFontRef,
-                  String nFontSz,
-                  String logicalName,
-                  String logicalSize,
-                  String logicalStyle,
-                  String fontRefMode) {
-    this.font = null;
-    this.name = name;
-    this.displayName = displayName;
-    this.includeFile = includeFile;
-    this.defineFile = defineFile;
-    this.nFontId = nFontId;
-    this.eFontRefType = eFontRefType;
-    this.pvFontRef = pvFontRef;
-    this.nFontSz = nFontSz;
-    this.logicalName = logicalName;
-    this.logicalSize = logicalSize;
-    this.logicalStyle = logicalStyle;
-    this.fontRefMode = fontRefMode;
-    // We also have to take into account the target display screen's DPI
-    // Adafruits's 2.8 screen is about DPI of 141. Yours likely will be different.
-    // Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
-    double scaleFactor = (double)dpi / 72.0d;
-    int size = (int) ((double)Integer.parseInt(logicalSize) * scaleFactor);
-    scaledSize = String.valueOf(size);
-//    if (displayName.startsWith("BuiltIn"))
-//      System.out.println(displayName + " size:" + logicalSize + " scale factor: " + scale factor + " resize: " + scaledSize);
-    this.font = FontFactory.createFont(logicalName, scaledSize, logicalStyle);
+  public FontItem() {
+
   }
   
   /**
@@ -138,6 +110,83 @@ public class FontItem {
    */
   public Font getFont() {
     return font;
+  }
+  
+  /**
+   * setDPI
+   * We have to take into account the target display screen's DPI.
+   * Adafruits's 2.8 screen is about DPI of 141 and GFX fonts are
+   * hardcoded to this number. 
+   * Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
+   * @param dpi
+   */
+  public void setDPI(int dpi) {
+    double scaleFactor = (double)dpi / 72.0d;
+    int size = (int) ((double)Integer.parseInt(logicalSize) * scaleFactor);
+    scaledSize = String.valueOf(size);
+    this.font = FontFactory.createFont(logicalName, scaledSize, logicalStyle);
+  }
+  
+  /**
+   * setPlatform
+   * @param platform
+   */
+  public void setPlatform(FontPlatform platform) {
+    this.platform = platform;
+  }
+  
+  /**
+   * getPlatform
+   * @return platform
+   */
+  public FontPlatform getPlatform() {
+    return platform;
+  }
+  
+  /**
+   * setCategory
+   * @param category
+   */
+  public void setCategory(FontCategory category) {
+    this.category = category;
+  }
+
+  /**
+   * getCategory
+   * @return category
+   */
+  public FontCategory getCategory() {
+    return category;
+  }
+  
+  /**
+   * generateEnum
+   */
+  public void generateEnum() {
+    int n = 0;
+    String name = displayName;
+    if (name.startsWith("BuiltIn")) {
+      n = name.indexOf(">");
+      name = name.substring(n+1);
+    }
+    name = name.replace('-', '_');
+    nFontId = String.format("E_%s_%s", platform.getName().toUpperCase(),
+        name.toUpperCase());
+  }
+  
+  /**
+   * generateKey
+   */
+  public void generateKey() {
+    key = platform.getName() + "_" + displayName;
+  }
+  
+  /**
+   * getKey
+   * @return
+   */
+  public String getKey() {
+    return key;
   }
   
   /**
@@ -167,7 +216,7 @@ public class FontItem {
    * @return the name
    */
   public String getName() {
-    return name;
+    return familyName;
   }
   
   /**
