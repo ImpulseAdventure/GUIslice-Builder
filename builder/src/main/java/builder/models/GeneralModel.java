@@ -62,38 +62,37 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_TARGET               = 2;
   public static final int DISPLAY_WIDTH             = 3;
   public static final int DISPLAY_HEIGHT            = 4;
-  public static final int DISPLAY_DPI               = 5;
-  public static final int PROP_PROJECT_DIR          = 6;
-  public static final int PROP_TARGET_IMAGE_DIR     = 7;
-  public static final int PROP_BACKGROUND           = 8;
-  public static final int PROP_USE_BACKGROUND_IMAGE = 9;
-  public static final int PROP_BACKGROUND_IMAGE     = 10; 
-  public static final int PROP_BACKGROUND_IMAGE_FNAME =11; // full pathname to a background image file
-  public static final int PROP_BACKGROUND_DEFINE    = 12;
-  public static final int PROP_BACKGROUND_MEMORY    = 13;
-  public static final int PROP_BACKGROUND_FORMAT    = 14;
-  public static final int PROP_TRANSPARENCY_COLOR   = 15;
-  public static final int PROP_MARGINS              = 16;
-  public static final int PROP_HSPACING             = 17;
-  public static final int PROP_VSPACING             = 18;
-  public static final int PROP_MAX_STRING           = 19;
-  public static final int PROP_ROTATION             = 20;
-  public static final int PROP_BACKWARD_COMPAT      = 21;
-  public static final int PROP_PRESERVE_BTN_CALLBACKS = 22;
-  public static final int PROP_IMAGE_DIR            = 23; // last folder used to load image
+  public static final int PROP_PROJECT_DIR          = 5;
+  public static final int PROP_TARGET_IMAGE_DIR     = 6;
+  public static final int PROP_BACKGROUND           = 7;
+  public static final int PROP_USE_BACKGROUND_IMAGE = 8;
+  public static final int PROP_BACKGROUND_IMAGE     = 9; 
+  public static final int PROP_BACKGROUND_IMAGE_FNAME =10; // full pathname to a background image file
+  public static final int PROP_BACKGROUND_DEFINE    = 11;
+  public static final int PROP_BACKGROUND_MEMORY    = 12;
+  public static final int PROP_BACKGROUND_FORMAT    = 13;
+  public static final int PROP_TRANSPARENCY_COLOR   = 14;
+  public static final int PROP_MARGINS              = 15;
+  public static final int PROP_HSPACING             = 16;
+  public static final int PROP_VSPACING             = 17;
+  public static final int PROP_MAX_STRING           = 18;
+  public static final int PROP_ROTATION             = 19;
+  public static final int PROP_BACKWARD_COMPAT      = 20;
+  public static final int PROP_PRESERVE_BTN_CALLBACKS = 21;
+  public static final int PROP_IMAGE_DIR            = 22; // last folder used to load image
   // The following properties are hidden from users
-  public static final int PROP_RECENT_COLORS        = 24; // LRU of recent colors choosen
-  public static final int PROP_RECENT_FILES         = 25; // LRU of recent files choosen
+  public static final int PROP_RECENT_COLORS        = 23; // LRU of recent colors choosen
+  public static final int PROP_RECENT_FILES         = 24; // LRU of recent files choosen
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_SIZE_APP_WIDTH       = 26; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 27; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 28; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 29; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 30; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 31; 
+  public static final int PROP_SIZE_APP_WIDTH       = 25; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 26; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 27; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 28; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 29; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 30; 
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
@@ -174,7 +173,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[32][5];
+    data = new Object[31][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Themes","");
@@ -185,7 +184,6 @@ public class GeneralModel extends WidgetModel {
 
     initProp(DISPLAY_WIDTH, Integer.class, "GEN-102", Boolean.FALSE,"TFT Screen Width",DEF_WIDTH);
     initProp(DISPLAY_HEIGHT, Integer.class, "GEN-103", Boolean.FALSE,"TFT Screen Height",DEF_HEIGHT);
-    initProp(DISPLAY_DPI, Integer.class, "GEN-104", Boolean.FALSE,"TFT Screen DPI",DEF_DPI);
 
     initProp(PROP_PROJECT_DIR, String.class, "GEN-105", Boolean.FALSE,"Project Directory",DEF_PROJECT_DIR);
     initProp(PROP_TARGET_IMAGE_DIR, String.class, "GEN-106", Boolean.FALSE,
@@ -574,15 +572,6 @@ public class GeneralModel extends WidgetModel {
    */
   public void setPropWinHeight(int h) {
     shortcutValue(Integer.valueOf(h), PROP_SIZE_PROPVIEW_HEIGHT);
-  }
-
-  /**
-   * Gets the dpi.
-   *
-   * @return the dpi
-   */
-  public int getDPI() {
-    return (((Integer) (data[DISPLAY_DPI][PROP_VAL_VALUE])).intValue());
   }
 
   /**

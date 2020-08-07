@@ -42,6 +42,9 @@ public class FontPlatform {
   /** The platform name. */
   private String platformName;
   
+  /** The DPI of this platform of fonts */
+  private int dpi;
+  
   /** The warnings. */
   private List<String> warnings = new ArrayList<String>();
   
@@ -67,6 +70,21 @@ public class FontPlatform {
     return platformName;
   }
 
+  /**
+   * get the dpi
+   */
+  public int getDPI() {
+    return dpi;
+  }
+  
+  /**
+   * set DPI
+   * @param dpi
+   */
+  public void setDPI(int dpi) {
+    this.dpi = dpi;
+  }
+  
   /**
    * Adds a warning string to be output during code generation.
    *

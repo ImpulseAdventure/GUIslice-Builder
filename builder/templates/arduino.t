@@ -277,26 +277,6 @@ gslc_tsElemRef* $<18>$<ELEMREF>= NULL;
 <FILL_EN_P>
   // gslc_ElemSetFillEn(); currently not supported by the FLASH _P calls.
 <STOP>
-<FONT_ADAFRUIT>
-#if defined(DRV_DISP_TFT_ESPI)
-  #error Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
-#endif 
-#include <Adafruit_GFX.h>
-// Note that these files are located within the Adafruit-GFX library folder:
-<STOP>
-<FONT_ADAFRUIT_AND_TFT_ESPI>
-#include <Adafruit_GFX.h>
-// Note that these files are located within the Adafruit-GFX library folder:
-<STOP>
-<FONT_TEENSY>
-#include <SPI.h>
-<STOP>
-<FONT_TFT_ESPI>
-#if !defined(DRV_DISP_TFT_ESPI)
-  #error Builder config "Edit->Options->General->Target Platform" should be "arduino"
-#endif 
-#include <TFT_eSPI.h>
-<STOP>
 <FONT_DEFINE>
 // #define $<FONT_REF> "$<DEFINE_FILE>" linux only
 <STOP>
@@ -877,6 +857,7 @@ bool CbTickScanner(void* pvGui,void* pvScope)
   gslc_ElemSetTickFunc(&m_gui,pElemRef,&CbTickScanner);
 <STOP>
 <TOUCH_EN>
+  gslc_ElemSetClickEn(&m_gui, pElemRef, true);
   gslc_ElemSetTouchFunc(&m_gui, pElemRef, &CbBtnCommon);
 <STOP>
 <TOUCH_EN_P>

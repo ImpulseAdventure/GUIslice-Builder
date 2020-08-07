@@ -706,6 +706,7 @@ bool CbTickScanner(void* pvGui,void* pvScope)
   gslc_ElemSetTickFunc(&m_gui,pElemRef,&CbTickScanner);
 <STOP>
 <TOUCH_EN>
+  gslc_ElemSetClickEn(&m_gui, pElemRef, true);
   gslc_ElemSetTouchFunc(&m_gui, pElemRef, &CbBtnCommon);
 <STOP>
 <TRANSPARENCY_COLOR>

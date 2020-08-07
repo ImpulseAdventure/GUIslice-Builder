@@ -62,7 +62,6 @@ import javax.swing.event.ChangeListener;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
-//import builder.commands.AddPageCommand;
 import builder.commands.AddWidgetCommand;
 import builder.commands.AlignBottomCommand;
 import builder.commands.AlignCenterCommand;
@@ -78,14 +77,12 @@ import builder.commands.Command;
 import builder.commands.CopyCommand;
 import builder.commands.CopyPropsCommand;
 import builder.commands.CutCommand;
-//import builder.commands.DelPageCommand;
 import builder.commands.DelWidgetCommand;
 import builder.commands.GroupCommand;
 import builder.commands.History;
 import builder.commands.PasteCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -93,11 +90,9 @@ import builder.models.GeneralModel;
 import builder.models.GridModel;
 import builder.models.PageModel;
 import builder.models.ProjectModel;
-import builder.models.TextModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.BoxEditor;
-//import builder.prefs.CheckBoxEditor;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 import builder.prefs.ModelEditor;
@@ -145,9 +140,6 @@ public class Controller extends JInternalFrame
   
   /** The str theme. */
   private String strTheme;
-  
-  /** The target DPI. */
-  private int targetDPI;
   
   /** The current page. */
   private static PagePane currentPage;
@@ -1192,7 +1184,6 @@ public class Controller extends JInternalFrame
     alphakeypadEditor.addObserver(this);
     numkeypadEditor.addObserver(this);
     strTheme = generalEditor.getThemeClassName();
-    targetDPI = generalEditor.getDPI();
     return prefEditors;
   }
   
@@ -1356,7 +1347,9 @@ public class Controller extends JInternalFrame
   }
   
   static public void sendRepaint() {
+    if (currentPage == null) return;
     currentPage.refreshView();
+    Builder.logger.debug("Controller: refresh " + currentPage.getEnum());
   }
   
   /**
@@ -1401,18 +1394,6 @@ public class Controller extends JInternalFrame
           exception.printStackTrace();
         }
       }
-      int dpi = generalEditor.getDPI();
-      if (dpi != targetDPI) {
-        targetDPI = dpi;
-        FontFactory.getInstance().reloadFonts();
-        for (PagePane p : pages) {
-          for (Widget w : p.getWidgets()) {
-            if (w.getType().equals(EnumFactory.TEXT)) {
-              ((TextModel)w.getModel()).calcSizes(true);
-            }
-          }
-        }
-      }
     }
   }
 /* replace update() with this routine for Java 9 and above
@@ -1433,21 +1414,6 @@ public class Controller extends JInternalFrame
           exception.printStackTrace();
         }
       }
-    }
-    if (key.equals("TFT Screen DPI")) {
-      int dpi = Integer.parseInt(val);
-      if (dpi != targetDPI) {
-        targetDPI = dpi;
-        FontFactory.getInstance().reloadFonts();
-      }
-      for (PagePane p : pages) {
-        for (Widget w : p.getWidgets()) {
-          if (w.getType().equals(EnumFactory.TEXT)) {
-            ((TextModel)w.getModel()).calcSizes(true);
-          }
-        }
-      }
-      refreshView();
     }
  }
 */

@@ -78,12 +78,6 @@ public class FontFactory {
   /** The current platform font list */
   private List<FontItem> currentList = null;
   
-  /** Free Mono Font Sizes */
-  private static Dimension[] MonoPlainSizes = new Dimension[4];
-  private static Dimension[] MonoBoldSizes = new Dimension[4];
-  private static Dimension[] MonoItalicSizes = new Dimension[4];
-  private static Dimension[] MonoBoldItalicSizes = new Dimension[4];
-  
   /**
    * Gets the single instance of FontFactory.
    *
@@ -108,24 +102,6 @@ public class FontFactory {
    */
   public void init() {
     
-    // setup mono font tables
-    MonoPlainSizes[0] = new Dimension(11,14);
-    MonoPlainSizes[1] = new Dimension(14,19);
-    MonoPlainSizes[2] = new Dimension(21,30);
-    MonoPlainSizes[3] = new Dimension(28,39);
-    MonoBoldSizes[0] = new Dimension(11,16);
-    MonoBoldSizes[1] = new Dimension(14,22);
-    MonoBoldSizes[2] = new Dimension(21,31);
-    MonoBoldSizes[3] = new Dimension(28,41);
-    MonoItalicSizes[0] = new Dimension(11,14);
-    MonoItalicSizes[1] = new Dimension(14,20);
-    MonoItalicSizes[2] = new Dimension(21,30);
-    MonoItalicSizes[3] = new Dimension(28,39);
-    MonoBoldItalicSizes[0] = new Dimension(11,16);
-    MonoBoldItalicSizes[1] = new Dimension(14,22);
-    MonoBoldItalicSizes[2] = new Dimension(21,31);
-    MonoBoldItalicSizes[3] = new Dimension(28,41);
-
     String fullPath = CommonUtils.getInstance().getWorkingDir();
     String csvFile = fullPath + "templates" + System.getProperty("file.separator") 
         + FONT_TEMPLATE;
@@ -139,47 +115,6 @@ public class FontFactory {
    */
   public BuilderFonts getBuilderFonts() {
     return builderFonts;
-  }
-  
-  /**
-   * This method creates a <code>Font</code> using the String values displayed to
-   * users of GUIsliceBuider by our various Widget Models.
-   *
-   * @param fontName
-   *          - is the GUIslice font name not the real java font name.
-   * @param fontSize
-   *          - is the point size of our font as a String value.
-   * @param fontStyle
-   *          - is the font style "PLAIN", "BOLD", "ITALIC", or "BOLD+ITALIC".
-   * @return font The java font we can use to display text
-   * @see java.awt.Font
-   * @see java.lang.String
-   */
-  static public Font createFont(String fontName, String fontSize, String fontStyle) {
-    Font font;
-    int style;
-    switch (fontStyle) {
-    case "BOLD":
-      style = Font.BOLD;
-      break;
-    case "ITALIC":
-      style = Font.ITALIC;
-      break;
-    case "BOLD+ITALIC":
-      style = Font.BOLD + Font.ITALIC;
-      break;
-    default:
-      style = Font.PLAIN;
-      break;
-    }
-    font = new Font(fontName, style, Integer.parseInt(fontSize));
-    return font;
-  }
-  
-  /**
-   * reloadFonts - called whenever user changes DPI.
-   */
-  public void reloadFonts() {
   }
   
   /**
@@ -342,44 +277,10 @@ public class FontFactory {
         nChSz.width = (6 * size);
         nChSz.height = 8 * size;
         return nChSz;
-      } else if (fontName.startsWith("FreeMono")) {
-        int idx = -1;
-        switch (item.getLogicalSize()) {
-          case "9":
-            idx = 0;
-            break;
-          case "12":
-            idx = 1;
-            break;
-          case "18":
-            idx = 2;
-            break;
-          case "24":
-            idx = 3;
-            break;
-          default:
-            break;
-        }
-        if (idx >= 0) {
-          switch (item.getLogicalStyle()) {
-          case "BOLD":
-            nChSz = MonoBoldSizes[idx];
-            return nChSz;
-          case "ITALIC":
-            nChSz = MonoItalicSizes[idx];
-            return nChSz;
-          case "BOLD+ITALIC":
-            nChSz = MonoBoldItalicSizes[idx];
-            return nChSz;
-          default:
-            nChSz = MonoPlainSizes[idx];
-            return nChSz;
-          }
-        }
       }
       String acHeight = "p$";
       String acWidth  = "%";
-      Font tmpFont = createFont(item.getLogicalName(), item.getLogicalSize(), item.getLogicalStyle());
+      Font tmpFont = item.createFont();
       Dimension txtHeight = measureText(fontName, tmpFont,acHeight);
       Dimension txtWidth = measureText(fontName, tmpFont,acWidth);
       nChSz.width = txtWidth.width;
@@ -538,11 +439,11 @@ public class FontFactory {
     for (FontPlatform p : builderFonts.getPlatforms()) {
       for (FontCategory c : p.getCategories()) {
         for (FontItem item : c.getFonts()) {
-          item.setDPI(141);
           item.setPlatform(p);
           item.setCategory(c);
           item.generateEnum();
           item.generateKey();
+          item.setFont(p.getDPI());
           String key = item.getKey();
           // check for duplicates
           if (!fontMap.containsKey(key)) {

@@ -60,6 +60,7 @@ UI Elements placed on the Base Page will now be shown as write protected element
 Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
 
 #### Bug Fixes 0.14.b005
+ - Bug No. 174 When property `Touch Enabled?=true` builder needs to add gslc_ElemSetClickEn call
  - Bug No. 173 The selected colors for frame, fill and glow are not adopted for Sliders issue `#96`
  - Bug No. 171 using ctrl-X in Property View can cause crashes
  - Bug No. 170 Project Tab, screen size not used when placing or aligning widgets on screen issue `#93`

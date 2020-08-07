@@ -323,6 +323,16 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
+   * Gets the property name for a row.
+   * 
+   * @param row the row of our data table
+   * @return the property name
+   */
+  public String getPropertyName(int row) {
+    return (String) data[row][PROP_VAL_NAME];
+  }
+
+  /**
    * Sets the enum.
    *
    * @param s
