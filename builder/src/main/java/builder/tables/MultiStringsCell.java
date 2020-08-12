@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import builder.views.FontListDialog;
 import builder.views.StringListDialog;
 
 public class MultiStringsCell extends AbstractCellEditor 
@@ -26,9 +27,11 @@ public class MultiStringsCell extends AbstractCellEditor
   private String title;
   private String[] lines = null;
   MultipeLineCellListener listener;
+  public static enum MCDialogType { STRING_DIALOG, FONT_DIALOG }
+  
   JButton b;
 
-  public MultiStringsCell(String t) {
+  public MultiStringsCell(String t, MCDialogType dt) {
     this.title = t;
     panel = new JPanel();
     panel.setLayout(new BorderLayout());
@@ -39,18 +42,34 @@ public class MultiStringsCell extends AbstractCellEditor
     label.setVerticalAlignment(JLabel.CENTER);
     panel.add(label, BorderLayout.CENTER);
     b = new JButton("...");
-    b.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        lines = StringListDialog.showDialog(
-            new JFrame(),
-            null,
-            title,
-            "List",
-            lines);
-        listener.buttonClicked(lines);
-      }
-    }); 
+    if (dt.equals(MCDialogType.STRING_DIALOG)) {
+      b.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          lines = StringListDialog.showDialog(
+              new JFrame(),
+              null,
+              title,
+              "List",
+              lines);
+          listener.buttonClicked(lines);
+        }
+      }); 
+    }
+    if (dt.equals(MCDialogType.FONT_DIALOG)) {
+      b.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          lines = FontListDialog.showDialog(
+              new JFrame(),
+              null,
+              title,
+              "List",
+              lines);
+          listener.buttonClicked(lines);
+        }
+      }); 
+    }
     b.setPreferredSize(new Dimension(16, 16));
     panel.add(b, BorderLayout.EAST);
   }

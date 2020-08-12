@@ -92,6 +92,9 @@ public class FontItem {
   /** The Font Ref Mode - optional font set mode API used for built-in fonts */
   private String fontRefMode;
   
+  /** The font scaling */
+  private double scaleFactor;
+  
   /**
    * Instantiates a new font item.
    * Handled by google's gson now
@@ -118,7 +121,7 @@ public class FontItem {
    * @param dpi
    */
   public void setFont(int dpi) {
-    double scaleFactor = (double)dpi / 72.0d;
+    scaleFactor = (double)dpi / 72.0d;
     double size =  ((double)Double.parseDouble(logicalSize));
     size = size * scaleFactor;
     font = createFont(familyName, logicalName, logicalSize, logicalStyle);
@@ -167,8 +170,20 @@ public class FontItem {
       n = name.indexOf(">");
       name = name.substring(n+1);
     }
+    String p = platform.getName().toUpperCase();
+    if (p.equals("ARDUINO")) {
+      p ="AO";
+    } else if (p.equals("M5STACK")) {
+      p = "MK";
+    } else if (p.equals("TEENSY")) {
+      p = "TY";
+    } else if (p.equals("TFT_ESPI")) {
+      p = "TI";
+    } else if (p.equals("LINUX")) {
+      p = "LX";
+    }
     name = name.replace('-', '_');
-    nFontId = String.format("E_%s_%s", platform.getName().toUpperCase(),
+    nFontId = String.format("E_%s_%s", p,
         name.toUpperCase());
   }
   
@@ -200,7 +215,7 @@ public class FontItem {
      * The Style is most often Italic.
      */
     double size =  ((double)Double.parseDouble(logicalSize));
-    size = size * 1.958333d;
+    size = size * scaleFactor;
     font = createFont(familyName, logicalName, logicalSize, style);
     font = font.deriveFont((float) size);
     return font;
@@ -378,6 +393,10 @@ public class FontItem {
   }
   
 
+  public double getScaleFactor() {
+    return scaleFactor;
+  }
+  
   /**
    * toString
    *

@@ -443,7 +443,11 @@ public class FontFactory {
           item.setCategory(c);
           item.generateEnum();
           item.generateKey();
-          item.setFont(p.getDPI());
+          if (p.getName().toLowerCase().equals("linux")) {
+            item.setFont(72);
+          } else {
+            item.setFont(141);
+          }
           String key = item.getKey();
           // check for duplicates
           if (!fontMap.containsKey(key)) {
@@ -464,6 +468,7 @@ public class FontFactory {
       throw new CodeGenException(String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.",
           nErrors,fileName));
     }
+    getFontList();
   }
  
 }

@@ -50,12 +50,15 @@ The Software is not designed for use in devices or situations where there may be
 #### Changes for 0.15.0
 On Windows 10 the menubar is moved into the title pane.
 
-Font support has been improved with the addition of Teensy and M5Stack platforms.
-The templates/arduinofonts.csv and linuxfonts.csv have been replaced with templates/builder_fonts.json which should make it easier to add new or custom fonts.  It's also now possible to add new platforms by modifying this file.
-
 Support for Flash based Slider control and New controls, Toggle Button and Seekbar, both have RAM and Flash based versions of GUIslice API. Also added Style options to Checkbox and Radio Buttons.
 
 UI Elements placed on the Base Page will now be shown as write protected elements on all normal pages to make control layouts easier.  Base page UI Elements will not be shown on Project Tab or Popup pages.
+
+Font support has been improved with the addition of Teensy and M5Stack platforms.
+
+The templates/arduinofonts.csv and linuxfonts.csv have been replaced with templates/builder_fonts.json which should make it easier to add new or custom fonts. 
+
+The Builder normally only does code generation for fonts that are referenced by UI Elements in the project file. The Project Tab now allows users to specify additional fonts to be loaded into the system so that they can be used with manual drawing of text.
 
 Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
 

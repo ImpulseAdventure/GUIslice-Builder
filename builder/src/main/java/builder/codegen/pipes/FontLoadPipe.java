@@ -36,10 +36,12 @@ import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.FontItem;
+import builder.controller.Controller;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.models.KeyPadModel;
 import builder.models.KeyPadTextModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
@@ -89,6 +91,7 @@ public class FontLoadPipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     // setup
+    ProjectModel pm = Controller.getProjectModel();
     FontFactory ff = FontFactory.getInstance();
     
     // create a list of font enums in use by this project.
@@ -121,6 +124,12 @@ public class FontLoadPipe extends WorkFlowPipe {
       name = m.getFontEnum();
       if (name != null)
         fontList.add(name);
+    }
+    // add any extra fonts requested
+    for (String s : pm.getFontsList()) {
+      String fEnum = ff.getFontEnum(s);
+      if (fEnum != null) 
+        fontList.add(fEnum);
     }
     // sort the names and remove duplicates
     CodeUtils.sortListandRemoveDups(fontList);

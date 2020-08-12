@@ -241,7 +241,6 @@ public class FontChooser extends JDialog {
   }
   
   protected void updatePreview() {
-
     FontChooserHelper h = helper.get(selectedHelper);
     int i = cbFontSize.getSelectedIndex();
     String sSize = cbFontSize.getItemAt(i);

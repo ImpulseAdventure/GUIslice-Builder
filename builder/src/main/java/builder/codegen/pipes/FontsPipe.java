@@ -47,6 +47,7 @@ import builder.common.FontCategory;
 import builder.common.FontFactory;
 import builder.models.KeyPadModel;
 import builder.models.KeyPadTextModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
@@ -94,6 +95,7 @@ public class FontsPipe extends WorkFlowPipe {
    */
   public void doCodeGen(StringBuilder sBd) {
     // setup
+    ProjectModel pm = Controller.getProjectModel();
     FontFactory ff = FontFactory.getInstance();
     tm = cg.getTemplateManager();
     
@@ -120,6 +122,49 @@ public class FontsPipe extends WorkFlowPipe {
         bAddAlphaKeyPad = true;
       }
     }
+    // End with keyboard fonts - bug 144 missing keyboard font #include
+    // place any keypads at end
+    if (bAddNumKeyPad) {
+      KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
+      name = m.getFontDisplayName();
+      if (name != null) {
+        if (ff.getFont(name) != null) {
+          fontNames.add(name);
+        } else {
+          Builder.logger.error("NumKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+          nErrors++;
+        }
+      } else {
+        Builder.logger.error("NumKeyPad: " +  m.getEnum() + " is missing font");
+        nErrors++;
+      }
+    }
+    if (bAddAlphaKeyPad) {
+      KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
+      name = m.getFontDisplayName();
+      if (name != null) {
+        if (ff.getFont(name) != null) {
+          fontNames.add(name);
+        } else {
+          Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+          nErrors++;
+        }
+      } else {
+        Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+        nErrors++;
+      }
+    }
+    // add any extra fonts requested
+    for (String s : pm.getFontsList()) {
+      if (s != null) {
+        if (ff.getFont(s) != null) {
+          fontNames.add(s);
+        } else {
+          Builder.logger.error("Project Extra Font: " + s + " is not supported on this platform");
+          nErrors++;
+        }
+      }
+    }
     if (nErrors > 0) {
       String fileName = CommonUtils.getInstance().getWorkingDir()
           + "logs" 
@@ -127,20 +172,6 @@ public class FontsPipe extends WorkFlowPipe {
           + "builder.log";
       throw new CodeGenException(String.format("Sketch has %d missing font(s).\nExamine %s for list of fonts.",
           nErrors,fileName));
-    }
-    // End with keyboard fonts - bug 144 missing keyboard font #include
-    // place any keypads at end
-    if (bAddNumKeyPad) {
-      KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
-      name = m.getFontDisplayName();
-      if (name != null)
-        fontNames.add(name);
-    }
-    if (bAddAlphaKeyPad) {
-      KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
-      name = m.getFontDisplayName();
-      if (name != null)
-        fontNames.add(name);
     }
     if (fontNames.size() == 0)
       return;

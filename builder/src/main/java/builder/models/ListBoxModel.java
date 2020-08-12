@@ -42,6 +42,7 @@ import builder.common.FontFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.tables.MultipeLineCellListener;
+import builder.tables.MultiStringsCell.MCDialogType;
 import builder.tables.MultiStringsCell;
 
 /**
@@ -184,7 +185,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     cbAlign.addItem(TextModel.ALIGN_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
 
-    itemsCell = new MultiStringsCell("List of Items");
+    itemsCell = new MultiStringsCell("List of Items", MCDialogType.STRING_DIALOG);
     itemsCell.setData(DEF_ITEMS);
     itemsCell.addButtonListener(this);
   }

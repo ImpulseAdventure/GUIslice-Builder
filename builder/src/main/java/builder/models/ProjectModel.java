@@ -30,12 +30,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
 import builder.commands.PropertyCommand;
@@ -44,6 +46,9 @@ import builder.common.FontFactory;
 import builder.common.FontPlatform;
 import builder.prefs.GeneralEditor;
 import builder.tables.ImageCellEditor;
+import builder.tables.MultiStringsCell;
+import builder.tables.MultipeLineCellListener;
+import builder.tables.MultiStringsCell.MCDialogType;
 
 /**
  * The Class ProjectModel implements the model for the builder.
@@ -51,7 +56,7 @@ import builder.tables.ImageCellEditor;
  * @author Paul Conti
  *  
  */
-public class ProjectModel extends PageModel {
+public class ProjectModel extends PageModel implements MultipeLineCellListener {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID  = 1L;
@@ -63,23 +68,25 @@ public class ProjectModel extends PageModel {
   
   /** The Property Index Constants. */
   public static final int PROP_TARGET               = 2;
-  public static final int DISPLAY_WIDTH             = 3;
-  public static final int DISPLAY_HEIGHT            = 4;
-  public static final int PROP_BACKGROUND           = 5;
-  public static final int PROP_USE_BACKGROUND_IMAGE = 6;
-  public static final int PROP_BACKGROUND_IMAGE     = 7; 
-  public static final int PROP_BACKGROUND_IMAGE_FNAME=8; // full pathname to a background image file
-  public static final int PROP_BACKGROUND_DEFINE    = 9;
-  public static final int PROP_BACKGROUND_MEMORY    = 10;
-  public static final int PROP_BACKGROUND_FORMAT    = 11;
-  public static final int PROP_MARGINS              = 12;
-  public static final int PROP_HSPACING             = 13;
-  public static final int PROP_VSPACING             = 14;
-  public static final int PROP_MAX_STRING           = 15;
-  public static final int PROP_ROTATION             = 16;
+  public static final int PROP_FONT_LIST        = 3;
+  public static final int DISPLAY_WIDTH             = 4;
+  public static final int DISPLAY_HEIGHT            = 5;
+  public static final int PROP_BACKGROUND           = 6;
+  public static final int PROP_USE_BACKGROUND_IMAGE = 7;
+  public static final int PROP_BACKGROUND_IMAGE     = 8; 
+  public static final int PROP_BACKGROUND_IMAGE_FNAME=9; // full pathname to a background image file
+  public static final int PROP_BACKGROUND_DEFINE    = 10;
+  public static final int PROP_BACKGROUND_MEMORY    = 11;
+  public static final int PROP_BACKGROUND_FORMAT    = 12;
+  public static final int PROP_MARGINS              = 13;
+  public static final int PROP_HSPACING             = 14;
+  public static final int PROP_VSPACING             = 15;
+  public static final int PROP_MAX_STRING           = 16;
+  public static final int PROP_ROTATION             = 17;
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
+  static public  final String[] DEF_INCLUDES           = { "" };
   static public  final Integer DEF_WIDTH               = Integer.valueOf(320);
   static public  final Integer DEF_HEIGHT              = Integer.valueOf(240);
   static public  final Color   DEF_BACKGROUND          = Color.BLACK;
@@ -128,6 +135,8 @@ public class ProjectModel extends PageModel {
 
   /** The image cell editor. */
   ImageCellEditor imageCellEditor;
+  
+  FontFactory ff;
 
 
   public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
@@ -140,10 +149,14 @@ public class ProjectModel extends PageModel {
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
   public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
   
+  /** The list of font includes */
+  MultiStringsCell fontsListCell;
+
   /**
    * Instantiates a new general model.
    */
   public ProjectModel() {
+    ff = FontFactory.getInstance();
     initProperties();
   }
   
@@ -153,11 +166,14 @@ public class ProjectModel extends PageModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.PROJECT + "$1";
-    data = new Object[17][5];
+    data = new Object[18][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM","E_PROJECT_OPTIONS");
     initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Target Platform",DEF_TARGET);
+
+    initProp(PROP_FONT_LIST, String[].class, "LIST-108", Boolean.FALSE,
+        "Project's Extra Fonts",DEF_INCLUDES);
 
     initProp(DISPLAY_WIDTH, Integer.class, "GEN-102", Boolean.FALSE,"TFT Screen Width",DEF_WIDTH);
     initProp(DISPLAY_HEIGHT, Integer.class, "GEN-103", Boolean.FALSE,"TFT Screen Height",DEF_HEIGHT);
@@ -202,6 +218,10 @@ public class ProjectModel extends PageModel {
     cbFormat.addItem(FORMAT_RAW);
     formatCellEditor = new DefaultCellEditor(cbFormat);
 
+    fontsListCell = new MultiStringsCell("Project's Extra Fonts",
+        MCDialogType.FONT_DIALOG);
+    fontsListCell.setData(DEF_INCLUDES);
+    fontsListCell.addButtonListener(this);
   }
   
   /**
@@ -219,6 +239,18 @@ public class ProjectModel extends PageModel {
     if (col == 0) return false;
     return !isCellReadOnly(row);
   }
+
+  /**
+   * buttonClicked
+   *
+   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
+   */
+   @Override
+   public void buttonClicked(String[] strings) {
+     // commands are used to support undo and redo actions.
+     PropertyCommand c = new PropertyCommand(this, strings, PROP_FONT_LIST);
+     execute(c);
+   }
 
   /**
    * setValueAt
@@ -496,6 +528,8 @@ public class ProjectModel extends PageModel {
    */
   @Override
   public TableCellEditor getEditorAt(int rowIndex) {
+    if (rowIndex == PROP_FONT_LIST)
+      return fontsListCell;
     if (rowIndex == PROP_TARGET)
       return targetCellEditor;
     else if (rowIndex == PROP_BACKGROUND_MEMORY)
@@ -505,6 +539,46 @@ public class ProjectModel extends PageModel {
     else if (rowIndex == PROP_BACKGROUND_FORMAT)
       return formatCellEditor;
     return null;
+  }
+
+  /**
+   * getRendererAt
+   *
+   * @see builder.models.WidgetModel#getRendererAt(int)
+   */
+  @Override
+  public TableCellRenderer getRendererAt(int row) {
+    if (row == PROP_FONT_LIST)
+      return fontsListCell;
+    return null;
+  }
+
+  /**
+   * Gets the list fonts used by this project, if any.
+   *
+   * @return the list of fonts, may be empty
+   */
+  public String[] getFontsList() {
+    return ((String[]) (data[PROP_FONT_LIST][PROP_VAL_VALUE]));
+  }
+
+  /**
+   * Adds a font to the list of fonts used by this project
+   * unless its already present.
+   *
+   */
+  public void addFontToList(String fontName) {
+     String[] list = ((String[]) (data[PROP_FONT_LIST][PROP_VAL_VALUE]));
+     for (int i=0; i<list.length; i++) {
+       if (fontName.equals(list[i])) return;
+     }
+     String[] newList = new String[list.length+1];
+     for (int i=0; i<list.length; i++) {
+       newList[i] = list[i];
+     }
+     newList[list.length] = fontName;
+     Arrays.sort(newList);
+     data[PROP_FONT_LIST][PROP_VAL_VALUE] = newList;
   }
 
   /**
@@ -587,6 +661,8 @@ public class ProjectModel extends PageModel {
     if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
         data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
     } else {
+      if (row == PROP_FONT_LIST) 
+        Arrays.sort((String[]) value);
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
@@ -609,6 +685,12 @@ public class ProjectModel extends PageModel {
         fireTableCellUpdated(PROP_BACKGROUND_IMAGE_FNAME, COLUMN_VALUE);
       }
       fireTableCellUpdated(PROP_BACKGROUND_IMAGE, COLUMN_VALUE);
+    }
+    if (row == PROP_TARGET) {
+      ff.getFontList();
+    }
+    if (row == PROP_FONT_LIST) {
+      fireTableStructureChanged();
     }
   }
 
@@ -680,6 +762,7 @@ public class ProjectModel extends PageModel {
     if (getTargetPlatform().equals("arduino TFT_eSPI")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }
+    fontsListCell.setData((String[])data[PROP_FONT_LIST][PROP_VAL_VALUE]);
   }
 
 
