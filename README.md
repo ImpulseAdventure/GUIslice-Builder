@@ -25,6 +25,35 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### Enhancements for 0.15.0
+- Added support for Teensy 
+- Added Support for M5Stack
+- Support for Flash-based Numeric/Alpha input Fields
+- Support for Flash based Slider control.
+- Support for Toggle Button.
+- Support for Seekbar, a modern slider control.
+- Added Style options to Checkbox and Radio Buttons.
+- Base Page UI Elements will now show through other pages.
+
+### Changes for 0.15.0
+On Windows 10 the menubar is moved into the title pane.
+
+The templates/arduinofonts.csv and linuxfonts.csv have been replaced with templates/builder_fonts.json which should make it easier to add new or custom fonts. 
+
+The Builder normally only does code generation for fonts that are referenced by UI Elements in the project file. The Project Tab now allows users to specify additional fonts to be loaded into the system so that they can be used with manual drawing of text.
+
+Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
+
+#### Bug Fixes 0.15.0
+ - Bug No. 175 Load Additional Fonts that can be used with gslc_DrvDrawTxtAlign and other functions `#98`
+ - Bug No. 174 When property `Touch Enabled?=true` builder needs to add gslc_ElemSetClickEn call
+ - Bug No. 173 The selected colors for frame, fill and glow are not adopted for Sliders issue `#96`
+ - Bug No. 171 using ctrl-X in Property View can cause crashes
+ - Bug No. 170 Project Tab, screen size not used when placing or aligning widgets on screen issue `#93`
+ - Bug No. 169 Moto_mono22 font duplicated should be Moto_mono24 in arduinofonts.csv file issue `#92`
+ - Bug No. 168 Project Option Tab is output as a Page during code gen
+ - Bug No. 166 Support for extended font modes (eg. Teensy) - Builder issue `#89`
+
 ### Enhancements since 0.13.0
 
 - Enhancement to split [project name].ino file into  [project name].ino and [project name]_GSLC.h header.
@@ -33,43 +62,11 @@ The Software is not designed for use in devices or situations where there may be
 - Support for FlatLaf Themes and Intellij Themes.  Users may now also add their own custom themes.
 - Added new feature "Copy Properties" in the layout tab.
 - Support selecting Jpeg images if you are using TFT_espi drivers and SPIFFS storage.
-- Added support for Teensy fonts
 - Added support for Google's Dosis and Noto(tm) fonts with their permissive licensing.
 - Builder will now save and restore window frame and panel resizing.
 - Support for dragging multiple UI Elements.
 - Major Enhancements to the code generation of Button callbacks. 
 - Reduction of boiler plate code for Keypad input fields
-- Support for Flash-based Numeric/Alpha input Fields
-- Support for Flash based Slider control.
-- Support for Toggle Button.
-- Support for Seekbar, a modern slider control.
-- Added Style options to Checkbox and Radio Buttons.
-- Base Page UI Elements will now show through other pages.
-- Addition of templates/builder_fonts.json to ease adding custom fonts
-
-#### Changes for 0.15.0
-On Windows 10 the menubar is moved into the title pane.
-
-Support for Flash based Slider control and New controls, Toggle Button and Seekbar, both have RAM and Flash based versions of GUIslice API. Also added Style options to Checkbox and Radio Buttons.
-
-UI Elements placed on the Base Page will now be shown as write protected elements on all normal pages to make control layouts easier.  Base page UI Elements will not be shown on Project Tab or Popup pages.
-
-Font support has been improved with the addition of Teensy and M5Stack platforms.
-
-The templates/arduinofonts.csv and linuxfonts.csv have been replaced with templates/builder_fonts.json which should make it easier to add new or custom fonts. 
-
-The Builder normally only does code generation for fonts that are referenced by UI Elements in the project file. The Project Tab now allows users to specify additional fonts to be loaded into the system so that they can be used with manual drawing of text.
-
-Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
-
-#### Bug Fixes 0.14.b005
- - Bug No. 174 When property `Touch Enabled?=true` builder needs to add gslc_ElemSetClickEn call
- - Bug No. 173 The selected colors for frame, fill and glow are not adopted for Sliders issue `#96`
- - Bug No. 171 using ctrl-X in Property View can cause crashes
- - Bug No. 170 Project Tab, screen size not used when placing or aligning widgets on screen issue `#93`
- - Bug No. 169 Moto_mono22 font duplicated should be Moto_mono24 in arduinofonts.csv file issue `#92`
- - Bug No. 168 Project Option Tab is output as a Page during code gen
- - Bug No. 166 Support for extended font modes (eg. Teensy) - Builder issue `#89`
 
 #### HotFix 0.14.b004
  - Bug No. 167 Changing target platform to LINUX in Project Tab can cause font errors and crashes

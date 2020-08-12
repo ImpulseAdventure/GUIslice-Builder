@@ -156,7 +156,7 @@ public class FontsPipe extends WorkFlowPipe {
     }
     // add any extra fonts requested
     for (String s : pm.getFontsList()) {
-      if (s != null) {
+      if (s != null && !s.isEmpty()) {
         if (ff.getFont(s) != null) {
           fontNames.add(s);
         } else {

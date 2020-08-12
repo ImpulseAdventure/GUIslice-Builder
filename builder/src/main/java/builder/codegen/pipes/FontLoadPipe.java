@@ -127,9 +127,11 @@ public class FontLoadPipe extends WorkFlowPipe {
     }
     // add any extra fonts requested
     for (String s : pm.getFontsList()) {
-      String fEnum = ff.getFontEnum(s);
-      if (fEnum != null) 
-        fontList.add(fEnum);
+      if (s != null && !s.isEmpty()) {
+        String fEnum = ff.getFontEnum(s);
+        if (fEnum != null) 
+          fontList.add(fEnum);
+      }
     }
     // sort the names and remove duplicates
     CodeUtils.sortListandRemoveDups(fontList);
