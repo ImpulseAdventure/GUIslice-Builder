@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -41,10 +42,10 @@ import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
 import builder.commands.PropertyCommand;
+import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontPlatform;
-import builder.prefs.GeneralEditor;
 import builder.tables.ImageCellEditor;
 import builder.tables.MultiStringsCell;
 import builder.tables.MultipeLineCellListener;
@@ -72,12 +73,12 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   public static final int DISPLAY_WIDTH             = 4;
   public static final int DISPLAY_HEIGHT            = 5;
   public static final int PROP_BACKGROUND           = 6;
-  public static final int PROP_USE_BACKGROUND_IMAGE = 7;
-  public static final int PROP_BACKGROUND_IMAGE     = 8; 
-  public static final int PROP_BACKGROUND_IMAGE_FNAME=9; // full pathname to a background image file
-  public static final int PROP_BACKGROUND_DEFINE    = 10;
-  public static final int PROP_BACKGROUND_MEMORY    = 11;
-  public static final int PROP_BACKGROUND_FORMAT    = 12;
+  public static final int PROP_USE_IMAGE_BACKGROUND = 7;
+  public static final int PROP_TARGET_IMAGE_DIR     = 8;
+  public static final int PROP_IMAGE_BACKGROUND_FILE = 9; 
+  public static final int PROP_IMAGE_BACKGROUND_DEFINE    = 10;
+  public static final int PROP_IMAGE_BACKGROUND_MEMORY    = 11;
+  public static final int PROP_IMAGE_BACKGROUND_FORMAT    = 12;
   public static final int PROP_MARGINS              = 13;
   public static final int PROP_HSPACING             = 14;
   public static final int PROP_VSPACING             = 15;
@@ -91,6 +92,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   static public  final Integer DEF_HEIGHT              = Integer.valueOf(240);
   static public  final Color   DEF_BACKGROUND          = Color.BLACK;
   static public  final Boolean DEF_USE_BACKGROUND_IMAGE = Boolean.FALSE;
+  static public  final String  DEF_TARGET_IMAGE_DIR    = "/";
   static public  final String  DEF_BACKGROUND_IMAGE    = "";
   static public  final String  DEF_BACKGROUND_DEFINE   = "";
   static public  final String  DEF_BACKGROUND_EXTERN   = "";
@@ -179,13 +181,15 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     initProp(DISPLAY_HEIGHT, Integer.class, "GEN-103", Boolean.FALSE,"TFT Screen Height",DEF_HEIGHT);
 
     initProp(PROP_BACKGROUND, Color.class, "COL-310", Boolean.FALSE,"Background Color",DEF_BACKGROUND);
-    initProp(PROP_USE_BACKGROUND_IMAGE, Boolean.class, "COM-020", Boolean.FALSE,
+
+    initProp(PROP_USE_IMAGE_BACKGROUND, Boolean.class, "PRJ-116", Boolean.FALSE,
         "Use Background Image?",DEF_USE_BACKGROUND_IMAGE);
-    initProp(PROP_BACKGROUND_IMAGE, String.class, "GEN-117", Boolean.TRUE,"Background Image Path","");
-    initProp(PROP_BACKGROUND_IMAGE_FNAME, String.class, "GEN-118", Boolean.TRUE,"Background Image Name","");
-    initProp(PROP_BACKGROUND_DEFINE, String.class, "IMG-101", Boolean.TRUE,"Background Image #defines",DEF_BACKGROUND_DEFINE);
-    initProp(PROP_BACKGROUND_MEMORY, String.class, "IMG-109", Boolean.TRUE,"Background Image Memory",DEF_BACKGROUND_MEMORY);
-    initProp(PROP_BACKGROUND_FORMAT, String.class, "IMG-102", Boolean.TRUE,"Background Image Format",DEF_BACKGROUND_FORMAT);
+    initProp(PROP_TARGET_IMAGE_DIR, String.class, "GEN-106", Boolean.FALSE,
+        "Target Platform Image Directory",DEF_TARGET_IMAGE_DIR);
+    initProp(PROP_IMAGE_BACKGROUND_FILE, String.class, "PRJ-117", Boolean.TRUE,"Background Image File","");
+    initProp(PROP_IMAGE_BACKGROUND_DEFINE, String.class, "IMG-101", Boolean.TRUE,"Background Image #defines",DEF_BACKGROUND_DEFINE);
+    initProp(PROP_IMAGE_BACKGROUND_MEMORY, String.class, "IMG-109", Boolean.TRUE,"Background Image Memory",DEF_BACKGROUND_MEMORY);
+    initProp(PROP_IMAGE_BACKGROUND_FORMAT, String.class, "IMG-102", Boolean.TRUE,"Background Image Format",DEF_BACKGROUND_FORMAT);
 
     initProp(PROP_MARGINS, Integer.class, "GEN-107", Boolean.FALSE,"Screen Margins",DEF_MARGINS);
     initProp(PROP_HSPACING, Integer.class, "GEN-108", Boolean.FALSE,
@@ -398,7 +402,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    * @return <code>true</code>, if background image is to be used
    */
   public boolean useBackgroundImage() {
-    return ((Boolean) data[PROP_USE_BACKGROUND_IMAGE][PROP_VAL_VALUE]).booleanValue();
+    return ((Boolean) data[PROP_USE_IMAGE_BACKGROUND][PROP_VAL_VALUE]).booleanValue();
   }
   
  /**
@@ -407,7 +411,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    * @return the define
    */
   public String getBackgroundDefine() {
-    return (String) data[PROP_BACKGROUND_DEFINE][PROP_VAL_VALUE];
+    return (String) data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_VALUE];
   }
   
   /**
@@ -417,7 +421,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    *          the new define
    */
   public void setBackgroundDefine(String s) {
-    data[PROP_BACKGROUND_DEFINE][PROP_VAL_VALUE] = (String)s;
+    data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_VALUE] = (String)s;
   }
   
   /**
@@ -440,12 +444,21 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
 //  }
 
   /**
+   * Gets the image dir.
+   *
+   * @return the image dir
+   */
+  public String getTargetImageDir() {
+    return (String) data[PROP_TARGET_IMAGE_DIR][PROP_VAL_VALUE];
+  }
+
+  /**
    * Gets the background image memory type.
    *
    * @return the memory type
    */
   public String getBackgroundMemory() {
-    return (String) data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE];
+    return (String) data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_VALUE];
   }
   
  /**
@@ -454,9 +467,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   * @return the image name
   */
  public String getBackgroundImageTName() {
-   GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
-   String dir = gm.getTargetImageDir();
-   String name = (String) data[PROP_BACKGROUND_IMAGE_FNAME][PROP_VAL_VALUE];
+   String dir = getTargetImageDir();
+   String name = (String) data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_VALUE];
    // do we need to add a relative path for code generation?
    if (dir.length() > 0)
      name = dir + name;
@@ -471,7 +483,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   *          the new image name
   */
  public void setBackgroundImageName(String name) {
-   data[PROP_BACKGROUND_IMAGE][PROP_VAL_VALUE] = (String)name;
+   data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_VALUE] = (String)name;
  }
 
  /**
@@ -480,35 +492,16 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   * @return the image name
   */
  public String getBackgroundImageName() {
-   return (String) data[PROP_BACKGROUND_IMAGE][PROP_VAL_VALUE];
+   return (String) data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_VALUE];
  }
  
- /**
-  * Gets the background image file simple name
-  *
-  * @return the image name
-  */
- public String getBackgroundImageFName() {
-   return (String) data[PROP_BACKGROUND_IMAGE_FNAME][PROP_VAL_VALUE];
- }
- 
- /**
-  * Sets the background image file full path.
-  *
-  * @param name
-  *          the new image name
-  */
- public void setBackgroundImageFName(String name) {
-   data[PROP_BACKGROUND_IMAGE_FNAME][PROP_VAL_VALUE] = (String)name;
- }
-
  /**
   * Gets the background image format.
   *
   * @return the image format
   */
  public String getBackgroundFormat() {
-   return (String) data[PROP_BACKGROUND_FORMAT][PROP_VAL_VALUE];
+   return (String) data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_VALUE];
  }
  
  /**
@@ -518,7 +511,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   *          the new image format
   */
  public void setBackgroundFormat(String name) {
-   data[PROP_BACKGROUND_FORMAT][PROP_VAL_VALUE]=(String)name;
+   data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_VALUE]=(String)name;
  }
 
   /**
@@ -532,11 +525,11 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       return fontsListCell;
     if (rowIndex == PROP_TARGET)
       return targetCellEditor;
-    else if (rowIndex == PROP_BACKGROUND_MEMORY)
+    else if (rowIndex == PROP_IMAGE_BACKGROUND_MEMORY)
       return memoryCellEditor;
-    else if (rowIndex == PROP_BACKGROUND_IMAGE)
+    else if (rowIndex == PROP_IMAGE_BACKGROUND_FILE)
       return imageCellEditor;
-    else if (rowIndex == PROP_BACKGROUND_FORMAT)
+    else if (rowIndex == PROP_IMAGE_BACKGROUND_FORMAT)
       return formatCellEditor;
     return null;
   }
@@ -604,10 +597,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     } catch(IOException e) {
       Builder.logger.error("PM image read error: " + e.getMessage());
     }
-    // save the full path so we can restore on program startup
-    setBackgroundImageName(file.getAbsolutePath()); 
     // save the name without the full path
-    setBackgroundImageFName(file.getName());
+    setBackgroundImageName(file.getName());
     // now construct a #define to use during code generation
     String name = "IMG_BKGND";
     setBackgroundDefine(name);
@@ -618,15 +609,15 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     else
       setBackgroundFormat("GSLC_IMGREF_FMT_RAW1");
     if (getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
     else if (getTargetPlatform().equals(ProjectModel.PLATFORM_TFT_ESPI) &&
         file.getName().toLowerCase().endsWith(".jpg"))
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
     else      
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_SD;
-    data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-    data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
-    data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_SD;
+    data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
+    data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
+    data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
   }
 
   /**
@@ -636,24 +627,23 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    */
   @Override
   public void changeValueAt(Object value, int row) {
-    if (row == PROP_BACKGROUND_IMAGE) {
+    if (row == PROP_IMAGE_BACKGROUND_FILE) {
       String fileName = (String)value;
       if (!fileName.isEmpty()) {
           setImage(fileName);
       } else {
-        data[PROP_USE_BACKGROUND_IMAGE][PROP_VAL_VALUE] = Boolean.FALSE;
-        data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_USE_IMAGE_BACKGROUND][PROP_VAL_VALUE] = Boolean.FALSE;
+        data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.TRUE;
         image = null;
       }
-      fireTableCellUpdated(PROP_USE_BACKGROUND_IMAGE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_DEFINE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_MEMORY, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_FORMAT, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_IMAGE_FNAME, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_IMAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_USE_IMAGE_BACKGROUND, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_IMAGE_BACKGROUND_DEFINE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_IMAGE_BACKGROUND_MEMORY, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FORMAT, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FILE, COLUMN_VALUE);
       return;
     }
     // The test for Integer. supports copy and paste from clipboard.
@@ -666,25 +656,23 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_USE_BACKGROUND_IMAGE) {
+    if (row == PROP_USE_IMAGE_BACKGROUND) {
       if (useBackgroundImage()) {
-        data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.FALSE;
       } else {
         setBackgroundImageName("");
-        setBackgroundImageFName("");
-        data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = "";
-        data[PROP_BACKGROUND_DEFINE][PROP_VAL_VALUE] = "";
-        data[PROP_BACKGROUND_FORMAT][PROP_VAL_VALUE] = "";
-        data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        fireTableCellUpdated(PROP_BACKGROUND_MEMORY, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_BACKGROUND_DEFINE, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_BACKGROUND_FORMAT, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_BACKGROUND_IMAGE_FNAME, COLUMN_VALUE);
+        data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_VALUE] = "";
+        data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_VALUE] = "";
+        data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_VALUE] = "";
+        data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.TRUE;
+        fireTableCellUpdated(PROP_IMAGE_BACKGROUND_MEMORY, COLUMN_VALUE);
+        fireTableCellUpdated(PROP_IMAGE_BACKGROUND_DEFINE, COLUMN_VALUE);
+        fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FORMAT, COLUMN_VALUE);
       }
-      fireTableCellUpdated(PROP_BACKGROUND_IMAGE, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FILE, COLUMN_VALUE);
     }
     if (row == PROP_TARGET) {
       ff.getFontList();
@@ -709,21 +697,39 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       } catch(IOException e) {
         Builder.logger.error("PM image read error: " + e.getMessage());
       }
-      data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
     } else {
       image = null;
-      data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.TRUE;
     }
     if (getTargetPlatform().equals("arduino TFT_eSPI")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }
   }
 
+  /**
+   * writeModel() will serialize our model's data to a string object for backup
+   * and recovery.
+   *
+   * @param out
+   *          is our ObjectOutputStream.
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @see builder.models.WidgetModel#writeModel(java.io.ObjectOutputStream)
+   */
+  @Override
+  public void writeModel(ObjectOutputStream out) throws IOException {
+    super.writeModel(out);
+    if (useBackgroundImage()) {
+      out.writeObject((String) CommonUtils.getInstance().encodeToString(image));
+    }
+  }
+  
   /**
    * readModel() will de-serialize our model's data from a string object for backup
    * and recovery.
@@ -741,23 +747,22 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   public void readModel(ObjectInputStream in) 
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
-    if (!getBackgroundImageName().isEmpty()) {
-      File file = new File(getBackgroundImageName());
-      try {
-        image = ImageIO.read(file);
-//        setBackgroundImageName(file.getName());
-      } catch(IOException e) {
-          Builder.logger.error("image: " + e.getMessage());
-      }
-      data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
+    if (useBackgroundImage()) {
+      String imageString = (String) in.readObject();
+      image = CommonUtils.getInstance().decodeToImage(imageString);
+      data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
+      data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
     } else {
       image = null;
-      data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_VALUE] = "";
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_VALUE] = "";
+      data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_VALUE] = "";
+      data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_VALUE] = "";
+      data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.TRUE;
     }
     if (getTargetPlatform().equals("arduino TFT_eSPI")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";

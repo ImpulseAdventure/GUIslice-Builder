@@ -40,6 +40,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import builder.Builder;
 import builder.commands.Command;
 import builder.commands.History;
 import builder.commands.PropertyCommand;
@@ -906,11 +907,11 @@ public class WidgetModel extends AbstractTableModel {
   public int mapMetaIDtoProperty(String metaID) {
     for (int i=0; i<data.length; i++) {
       if (metaID == null) {
-        System.out.println(getType() + " error metaID == null");
+        Builder.logger.error(getType() + " error metaID == null");
         return -1;
       }
       if (data[i][PROP_VAL_ID] == null) {
-        System.out.println(getType() + " error data[" + i + ", " +
+        Builder.logger.error(getType() + " error data[" + i + ", " +
           PROP_VAL_ID + "] == null");
         return -1;
       }

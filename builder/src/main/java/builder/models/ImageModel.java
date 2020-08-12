@@ -43,7 +43,6 @@ import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
-import builder.prefs.GeneralEditor;
 
 /**
  * The Class ImageModel implements the model for the Image widget.
@@ -75,9 +74,6 @@ public class ImageModel extends WidgetModel {
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = Color.GRAY;
 
-  /** The general model. */
-  private GeneralModel generalModel;
-  
   /** The image. */
   private BufferedImage image;
 
@@ -109,7 +105,6 @@ public class ImageModel extends WidgetModel {
    * Instantiates a new image model.
    */
   public ImageModel() {
-    generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
     initProperties();
     initComboBoxes();
   }
@@ -250,7 +245,7 @@ public class ImageModel extends WidgetModel {
   * @return the image name
   */
  public String getImageName() {
-   String dir = generalModel.getTargetImageDir();
+   String dir = Controller.getProjectModel().getTargetImageDir();
    String name = (String) data[PROP_IMAGE][PROP_VAL_VALUE];
    // do we need to add a relative path for code generation?
    if (dir.length() > 0)

@@ -76,9 +76,9 @@ GEN-110,MAX_STR
 GEN-111,Recent Colors
 GEN-112,Rotation
 GEN-113,Source Image Directory
-GEN-116,Use Background Image?
-GEN-117,Background Image
-GEN-118,Background Image File Name
+GEN-116,Use Background Image? // OLD NOT USED
+GEN-117,Background Image      // OLD NOT USED
+GEN-118,Background Image File Name // OLD NOT USED
 GEN-119,Insert Adafruit_GFX.h?
 GEN-120,Backward Compatibility
 GEN-121,Recent File List
@@ -131,6 +131,8 @@ KEY-102,Keypad ENUM
 KEY-019,Keypad EREF
 PAD-100,Floating Point
 PAD-101,Minus Sign
+PRJ-116,Use Background Image?
+PRJ-117,Background Image File Name
 RBTN-100,Checked?
 RBTN-101,Group ID
 RBTN-102,Style

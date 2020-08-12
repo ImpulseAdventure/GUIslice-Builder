@@ -26,11 +26,7 @@
 package builder.models;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -43,8 +39,6 @@ import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontPlatform;
 import builder.common.ThemeInfo;
-import builder.controller.Controller;
-import builder.tables.ImageCellEditor;
 
 /**
  * The Class GeneralModel implements the model for the builder.
@@ -65,34 +59,28 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_PROJECT_DIR          = 5;
   public static final int PROP_TARGET_IMAGE_DIR     = 6;
   public static final int PROP_BACKGROUND           = 7;
-  public static final int PROP_USE_BACKGROUND_IMAGE = 8;
-  public static final int PROP_BACKGROUND_IMAGE     = 9; 
-  public static final int PROP_BACKGROUND_IMAGE_FNAME =10; // full pathname to a background image file
-  public static final int PROP_BACKGROUND_DEFINE    = 11;
-  public static final int PROP_BACKGROUND_MEMORY    = 12;
-  public static final int PROP_BACKGROUND_FORMAT    = 13;
-  public static final int PROP_TRANSPARENCY_COLOR   = 14;
-  public static final int PROP_MARGINS              = 15;
-  public static final int PROP_HSPACING             = 16;
-  public static final int PROP_VSPACING             = 17;
-  public static final int PROP_MAX_STRING           = 18;
-  public static final int PROP_ROTATION             = 19;
-  public static final int PROP_BACKWARD_COMPAT      = 20;
-  public static final int PROP_PRESERVE_BTN_CALLBACKS = 21;
-  public static final int PROP_IMAGE_DIR            = 22; // last folder used to load image
+  public static final int PROP_TRANSPARENCY_COLOR   = 8;
+  public static final int PROP_MARGINS              = 9;
+  public static final int PROP_HSPACING             = 10;
+  public static final int PROP_VSPACING             = 11;
+  public static final int PROP_MAX_STRING           = 12;
+  public static final int PROP_ROTATION             = 13;
+  public static final int PROP_BACKWARD_COMPAT      = 14;
+  public static final int PROP_PRESERVE_BTN_CALLBACKS = 15;
   // The following properties are hidden from users
-  public static final int PROP_RECENT_COLORS        = 23; // LRU of recent colors choosen
-  public static final int PROP_RECENT_FILES         = 24; // LRU of recent files choosen
+  public static final int PROP_IMAGE_DIR            = 17; // last folder used to load image
+  public static final int PROP_RECENT_COLORS        = 18; // LRU of recent colors choosen
+  public static final int PROP_RECENT_FILES         = 19; // LRU of recent files choosen
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_SIZE_APP_WIDTH       = 25; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 26; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 27; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 28; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 29; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 30; 
+  public static final int PROP_SIZE_APP_WIDTH       = 20; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 21; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 22; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 23; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 24; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 25; 
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
@@ -102,12 +90,6 @@ public class GeneralModel extends WidgetModel {
   static public  final String  DEF_PROJECT_DIR         = "projects";
   static public  final String  DEF_TARGET_IMAGE_DIR    = "/";
   static public  final Color   DEF_BACKGROUND          = Color.BLACK;
-  static public  final Boolean DEF_USE_BACKGROUND_IMAGE = Boolean.FALSE;
-  static public  final String  DEF_BACKGROUND_IMAGE    = "";
-  static public  final String  DEF_BACKGROUND_DEFINE   = "";
-  static public  final String  DEF_BACKGROUND_EXTERN   = "";
-  static public  final String  DEF_BACKGROUND_MEMORY   = "";
-  static public  final String  DEF_BACKGROUND_FORMAT   = "";
   static public  final Color   DEF_TRANSPARENCY_COLOR  = new Color(255,0,255);  // GSLC_COL_MAGENTA
   static public  final Integer DEF_MARGINS             = Integer.valueOf(10);
   static public  final Integer DEF_HSPACING            = Integer.valueOf(20);
@@ -131,34 +113,6 @@ public class GeneralModel extends WidgetModel {
   /** The default theme name */
   public static String defThemeName;
 
-  /** The background image. */
-  private BufferedImage image = null;
-
-  /** The cb memory. */
-  JComboBox<String> cbMemory;
-  
-  /** The memory cell editor. */
-  DefaultCellEditor memoryCellEditor;
-
-  /** The cb format. */
-  JComboBox<String> cbFormat;
-  
-  /** The format cell editor. */
-  DefaultCellEditor formatCellEditor;
-
-  /** The image cell editor. */
-  ImageCellEditor imageCellEditor;
-
-  public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
-//  public  final static String SRC_PROG = "gslc_GetImageFromProg((const unsigned char*)";
-//  public  final static String SRC_RAM  = "gslc_GetImageFromRam((unsigned char*)";
-  public  final static String SRC_FILE = "gslc_GetImageFromFile(";
-
-  /** format Constants */
-  public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
-  public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
-  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
-  
   /**
    * Instantiates a new general model.
    */
@@ -173,7 +127,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[31][5];
+    data = new Object[26][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Themes","");
@@ -190,14 +144,6 @@ public class GeneralModel extends WidgetModel {
         "Target Platform Image Directory",DEF_TARGET_IMAGE_DIR);
 
     initProp(PROP_BACKGROUND, Color.class, "COL-310", Boolean.FALSE,"Background Color",DEF_BACKGROUND);
-    initProp(PROP_USE_BACKGROUND_IMAGE, Boolean.class, "COM-020", Boolean.FALSE,
-        "Use Background Image?",DEF_USE_BACKGROUND_IMAGE);
-    initProp(PROP_BACKGROUND_IMAGE, String.class, "GEN-117", Boolean.TRUE,"Background Image Path","");
-    initProp(PROP_BACKGROUND_IMAGE_FNAME, String.class, "GEN-118", Boolean.TRUE,"Background Image Name","");
-    initProp(PROP_BACKGROUND_DEFINE, String.class, "IMG-101", Boolean.TRUE,"Background Image #defines",DEF_BACKGROUND_DEFINE);
-//    initProp(PROP_BACKGROUND_EXTERN, String.class, "IMG-108", Boolean.TRUE,"Background Image Extern",DEF_BACKGROUND_EXTERN);
-    initProp(PROP_BACKGROUND_MEMORY, String.class, "IMG-109", Boolean.TRUE,"Background Image Memory",DEF_BACKGROUND_MEMORY);
-    initProp(PROP_BACKGROUND_FORMAT, String.class, "IMG-102", Boolean.TRUE,"Background Image Format",DEF_BACKGROUND_FORMAT);
 
     initProp(PROP_TRANSPARENCY_COLOR, Color.class, "COL-314", Boolean.FALSE,
         "Image Transparency Color",DEF_TRANSPARENCY_COLOR);
@@ -249,20 +195,6 @@ public class GeneralModel extends WidgetModel {
     }
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
-    imageCellEditor = new ImageCellEditor();
-
-    cbMemory = new JComboBox<String>();
-    cbMemory.addItem(SRC_SD);
-    cbMemory.addItem(SRC_FILE);
-//    cbMemory.addItem(SRC_PROG);
-//    cbMemory.addItem(SRC_RAM);
-    memoryCellEditor = new DefaultCellEditor(cbMemory);
-    
-    cbFormat = new JComboBox<String>();
-    cbFormat.addItem(FORMAT_BMP24);
-    cbFormat.addItem(FORMAT_BMP16);
-    cbFormat.addItem(FORMAT_RAW);
-    formatCellEditor = new DefaultCellEditor(cbFormat);
   }
   
   /**
@@ -275,7 +207,7 @@ public class GeneralModel extends WidgetModel {
    */
   @Override
   public int getRowCount() {
-    return data.length-8;  
+    return data.length-9;  
   }
 
   /**
@@ -655,134 +587,6 @@ public class GeneralModel extends WidgetModel {
   }
   
   /**
-   * Use Background image.
-   *
-   * @return <code>true</code>, if background image is to be used
-   */
-  public boolean useBackgroundImage() {
-    return ((Boolean) data[PROP_USE_BACKGROUND_IMAGE][PROP_VAL_VALUE]).booleanValue();
-  }
-  
- /**
-   * Gets the background image define.
-   *
-   * @return the define
-   */
-  public String getBackgroundDefine() {
-    return (String) data[PROP_BACKGROUND_DEFINE][PROP_VAL_VALUE];
-  }
-  
-  /**
-   * Sets the define.
-   *
-   * @param s
-   *          the new define
-   */
-  public void setBackgroundDefine(String s) {
-    data[PROP_BACKGROUND_DEFINE][PROP_VAL_VALUE] = (String)s;
-  }
-  
-  /**
-   * Gets the background extern name.
-   *
-   * @return the extern name
-   */
-//  public String getBackgroundExtern() {
-//    return (String) data[PROP_BACKGROUND_EXTERN][PROP_VAL_VALUE];
-//  }
-  
-  /**
-   * Sets the background extern name.
-   *
-   * @param name
-   *          the new extern name
-   */
-//  public void setBackgroundExtern(String name) {
-//    data[PROP_BACKGROUND_EXTERN][PROP_VAL_VALUE] = (String)name;
-//  }
-
-  /**
-   * Gets the background image memory type.
-   *
-   * @return the memory type
-   */
-  public String getBackgroundMemory() {
-    return (String) data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE];
-  }
-  
- /**
-  * Gets the background image name on target machine.
-  *
-  * @return the image name
-  */
- public String getBackgroundImageTName() {
-   String dir = getTargetImageDir();
-   String name = (String) data[PROP_BACKGROUND_IMAGE_FNAME][PROP_VAL_VALUE];
-   // do we need to add a relative path for code generation?
-   if (dir.length() > 0)
-     name = dir + name;
-
-   return name;
- }
- 
- /**
-  * Sets the background image file name full path
-  *
-  * @param name
-  *          the new image name
-  */
- public void setBackgroundImageName(String name) {
-   data[PROP_BACKGROUND_IMAGE][PROP_VAL_VALUE] = (String)name;
- }
-
- /**
-  * Gets the background image file full path name
-  *
-  * @return the image name
-  */
- public String getBackgroundImageName() {
-   return (String) data[PROP_BACKGROUND_IMAGE][PROP_VAL_VALUE];
- }
- 
- /**
-  * Gets the background image file simple name
-  *
-  * @return the image name
-  */
- public String getBackgroundImageFName() {
-   return (String) data[PROP_BACKGROUND_IMAGE_FNAME][PROP_VAL_VALUE];
- }
- 
- /**
-  * Sets the background image file full path.
-  *
-  * @param name
-  *          the new image name
-  */
- public void setBackgroundImageFName(String name) {
-   data[PROP_BACKGROUND_IMAGE_FNAME][PROP_VAL_VALUE] = (String)name;
- }
-
- /**
-  * Gets the background image format.
-  *
-  * @return the image format
-  */
- public String getBackgroundFormat() {
-   return (String) data[PROP_BACKGROUND_FORMAT][PROP_VAL_VALUE];
- }
- 
- /**
-  * Sets the image format.
-  *
-  * @param name
-  *          the new image format
-  */
- public void setBackgroundFormat(String name) {
-   data[PROP_BACKGROUND_FORMAT][PROP_VAL_VALUE]=(String)name;
- }
-
-  /**
    * getEditorAt
    *
    * @see builder.models.WidgetModel#getEditorAt(int)
@@ -793,61 +597,7 @@ public class GeneralModel extends WidgetModel {
       return themeCellEditor;
     else if (rowIndex == PROP_TARGET)
       return targetCellEditor;
-    else if (rowIndex == PROP_BACKGROUND_MEMORY)
-      return memoryCellEditor;
-    else if (rowIndex == PROP_BACKGROUND_IMAGE)
-      return imageCellEditor;
-    else if (rowIndex == PROP_BACKGROUND_FORMAT)
-      return formatCellEditor;
     return null;
-  }
-
-  /**
-   * Gets the image.
-   *
-   * @return the image
-   */
-  public BufferedImage getImage() {
-    return image;
-  }
-
-  /**
-   * Sets the image selected.
-   *
-   * @param file
-   *          the new image selected
-   */
-  public void setImage(String fileName) {
-    image = null;
-    File file = new File(fileName);
-    try {
-      image = ImageIO.read(file);
-    } catch(IOException e) {
-      Builder.logger.error("GM image read error: " + e.getMessage());
-    }
-    // save the full path so we can restore on program startup
-    setBackgroundImageName(file.getAbsolutePath()); 
-    // save the name without the full path
-    setBackgroundImageFName(file.getName());
-    // now construct a #define to use during code generation
-    String name = "IMG_BKGND";
-    setBackgroundDefine(name);
-    if (image.getType() == BufferedImage.TYPE_3BYTE_BGR)
-      setBackgroundFormat("GSLC_IMGREF_FMT_BMP24");
-    else if (image.getType() == BufferedImage.TYPE_USHORT_555_RGB) 
-      setBackgroundFormat("GSLC_IMGREF_FMT_BMP16");
-    else
-      setBackgroundFormat("GSLC_IMGREF_FMT_RAW1");
-    if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX))
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
-    else if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_TFT_ESPI) &&
-        file.getName().toLowerCase().endsWith(".jpg"))
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_FILE;
-    else      
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = SRC_SD;
-    data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-    data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
-    data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
   }
 
   /**
@@ -857,26 +607,6 @@ public class GeneralModel extends WidgetModel {
    */
   @Override
   public void changeValueAt(Object value, int row) {
-    if (row == PROP_BACKGROUND_IMAGE) {
-      String fileName = (String)value;
-      if (!fileName.isEmpty()) {
-          setImage(fileName);
-      } else {
-        data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_USE_BACKGROUND_IMAGE][PROP_VAL_VALUE] = Boolean.FALSE;
-        data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        image = null;
-      }
-      fireTableCellUpdated(PROP_USE_BACKGROUND_IMAGE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_DEFINE, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_MEMORY, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_FORMAT, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_IMAGE_FNAME, COLUMN_VALUE);
-      fireTableCellUpdated(PROP_BACKGROUND_IMAGE, COLUMN_VALUE);
-      return;
-    }
     // The test for Integer. supports copy and paste from clipboard.
     // Otherwise we get a can't cast class String to Integer fault
     if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
@@ -885,26 +615,6 @@ public class GeneralModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
-    if (row == PROP_USE_BACKGROUND_IMAGE) {
-      if (useBackgroundImage()) {
-        data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.FALSE;
-      } else {
-        setBackgroundImageName("");
-        setBackgroundImageFName("");
-        data[PROP_BACKGROUND_MEMORY][PROP_VAL_VALUE] = "";
-        data[PROP_BACKGROUND_DEFINE][PROP_VAL_VALUE] = "";
-        data[PROP_BACKGROUND_FORMAT][PROP_VAL_VALUE] = "";
-        data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-        fireTableCellUpdated(PROP_BACKGROUND_MEMORY, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_BACKGROUND_DEFINE, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_BACKGROUND_FORMAT, COLUMN_VALUE);
-        fireTableCellUpdated(PROP_BACKGROUND_IMAGE_FNAME, COLUMN_VALUE);
-      }
-      fireTableCellUpdated(PROP_BACKGROUND_IMAGE, COLUMN_VALUE);
-    }
   }
 
   /**
@@ -917,24 +627,6 @@ public class GeneralModel extends WidgetModel {
    * It's saved wherever java stores UserPrefences (registry for windows).
    */
   public void setReadOnlyProperties() {
-    if (!getBackgroundImageName().isEmpty()) {
-      File file = new File(getBackgroundImageName());
-      try {
-        image = ImageIO.read(file);
-//        setBackgroundImageName(file.getName());
-      } catch(IOException e) {
-        Builder.logger.error("image: " + e.getMessage());
-      }
-      data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
-      data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
-      image = null;
-      data[PROP_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
-      data[PROP_BACKGROUND_IMAGE][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
     if (getTarget().equals("arduino TFT_eSPI")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }

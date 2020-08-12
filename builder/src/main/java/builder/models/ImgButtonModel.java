@@ -45,8 +45,6 @@ import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
-//import builder.tables.ImageCellEditor;
-import builder.prefs.GeneralEditor;
 
 /**
  * The Class ImgButtonModel implements the model for the Image Button widget.
@@ -91,9 +89,6 @@ public class ImgButtonModel extends WidgetModel {
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = Color.WHITE;
   
-  /** The general model. */
-  private GeneralModel generalModel;
-  
   /** The image. */
   private BufferedImage image;
   
@@ -128,7 +123,6 @@ public class ImgButtonModel extends WidgetModel {
    * Instantiates a new img button model.
    */
   public ImgButtonModel() {
-    generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
     initProperties();
     initEditors();
   }
@@ -624,7 +618,7 @@ public class ImgButtonModel extends WidgetModel {
    * @return the image name
    */
   public String getImageName() {
-    String dir = generalModel.getTargetImageDir();
+    String dir = Controller.getProjectModel().getTargetImageDir();
     String name = (String) data[PROP_IMAGE][PROP_VAL_VALUE];
     // do we need to add a relative path for code generation?
     if (dir.length() > 0)
@@ -638,7 +632,7 @@ public class ImgButtonModel extends WidgetModel {
    * @return the select image name
    */
   public String getSelectImageName() {
-    String dir = generalModel.getTargetImageDir();
+    String dir = Controller.getProjectModel().getTargetImageDir();
     String name = (String) data[PROP_IMAGE_SEL][PROP_VAL_VALUE];
     // do we need to add a relative path for code generation?
     if (dir.length() > 0)
