@@ -107,7 +107,8 @@ public class ModelEditor extends Observable {
     table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
     // restrict selections to one cell of our table
-    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     table.setRowSelectionAllowed(true);
     table.setColumnSelectionAllowed(true);
     

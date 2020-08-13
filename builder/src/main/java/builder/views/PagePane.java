@@ -922,7 +922,7 @@ public class PagePane extends JPanel implements iSubscriber {
   @Override
   public void updateEvent(MsgEvent e) {
     if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-      Builder.logger.debug("PagePane " + getEnum() + " recv: " + e.toString());
+//      Builder.logger.debug("PagePane " + getEnum() + " recv: " + e.toString());
       selectNone();
       repaint();
     }

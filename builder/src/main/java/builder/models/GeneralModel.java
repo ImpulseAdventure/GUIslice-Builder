@@ -68,19 +68,19 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_BACKWARD_COMPAT      = 14;
   public static final int PROP_PRESERVE_BTN_CALLBACKS = 15;
   // The following properties are hidden from users
-  public static final int PROP_IMAGE_DIR            = 17; // last folder used to load image
-  public static final int PROP_RECENT_COLORS        = 18; // LRU of recent colors choosen
-  public static final int PROP_RECENT_FILES         = 19; // LRU of recent files choosen
+  public static final int PROP_IMAGE_DIR            = 16; // last folder used to load image
+  public static final int PROP_RECENT_COLORS        = 17; // LRU of recent colors choosen
+  public static final int PROP_RECENT_FILES         = 18; // LRU of recent files choosen
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_SIZE_APP_WIDTH       = 20; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 21; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 22; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 23; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 24; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 25; 
+  public static final int PROP_SIZE_APP_WIDTH       = 19; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 20; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 21; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 22; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 23; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 24; 
   
   /** The Property Defaults */
   static public  final String  DEF_TARGET              = "arduino";
@@ -127,7 +127,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[26][5];
+    data = new Object[25][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Themes","");

@@ -547,7 +547,6 @@ public class Controller extends JInternalFrame
    *          the MsgEvent e
    */
   public void changeViewFromTree(MsgEvent e) {
-    Builder.logger.debug(e.toString());
     if (e.xdata.equals("Root")) {
       if (!e.message.equals(currentPage.getKey())) {
         changePage(e.message);
