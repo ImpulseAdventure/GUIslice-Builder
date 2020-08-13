@@ -475,6 +475,7 @@ public class Controller extends JInternalFrame
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
+      PropManager.getInstance().showPropEditor(pageKey);
     }
   }
   
@@ -546,12 +547,16 @@ public class Controller extends JInternalFrame
    *          the MsgEvent e
    */
   public void changeViewFromTree(MsgEvent e) {
+    Builder.logger.debug(e.toString());
     if (e.xdata.equals("Root")) {
       if (!e.message.equals(currentPage.getKey())) {
         changePage(e.message);
       }
-    } else if (!e.xdata.equals(currentPage.getKey())) {
-      changePageNoMsg(e.xdata);
+    } else {
+      if (!e.xdata.equals(currentPage.getKey())) {
+        changePageNoMsg(e.xdata);
+      }
+      currentPage.objectSelectedTreeView(e.message);
     }
   }
   
@@ -1349,7 +1354,6 @@ public class Controller extends JInternalFrame
   static public void sendRepaint() {
     if (currentPage == null) return;
     currentPage.refreshView();
-    Builder.logger.debug("Controller: refresh " + currentPage.getEnum());
   }
   
   /**

@@ -674,9 +674,6 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       }
       fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FILE, COLUMN_VALUE);
     }
-    if (row == PROP_TARGET) {
-      ff.getFontList();
-    }
     if (row == PROP_FONT_LIST) {
       fireTableStructureChanged();
     }

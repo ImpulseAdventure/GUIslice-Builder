@@ -902,6 +902,14 @@ public class PagePane extends JPanel implements iSubscriber {
     c.execute();
   }
 
+  public void objectSelectedTreeView(String widgetKey) {
+    selectNone();
+    Widget w = findWidget(widgetKey);
+    if (w != null) {
+      selectWidget(w);
+    }
+    repaint();
+  }
   /**
    * updateEvent provides the implementation of Observer Pattern. It monitors
    * selection of widgets in the tree view, modification of widgets by commands,
@@ -913,21 +921,9 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   public void updateEvent(MsgEvent e) {
-    if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
-               e.xdata.equals(getKey())) {
-      Builder.logger.debug("PagePane recv: " + e.toString());
+    if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
+      Builder.logger.debug("PagePane " + getEnum() + " recv: " + e.toString());
       selectNone();
-      Widget w = findWidget(e.message);
-      if (w != null) {
-        selectWidget(w);
-      }
-      repaint();
-    } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-      Builder.logger.debug("PagePane recv: " + e.toString());
-      selectNone();
-      repaint();
-    } else if (e.code == MsgEvent.CANVAS_MODEL_CHANGE) {
-      Builder.logger.debug("PagePane recv: " + e.toString());
       repaint();
     }
   }

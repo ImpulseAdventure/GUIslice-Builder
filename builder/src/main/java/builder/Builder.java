@@ -66,8 +66,6 @@ import builder.common.ThemeInfo;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
-import builder.events.MsgBoard;
-import builder.events.MsgEvent;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
@@ -508,7 +506,7 @@ public class Builder  extends JDesktopPane {
      * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
      */
     public void componentResized(ComponentEvent arg0) {
-      MsgBoard.getInstance().sendEvent("Builder",MsgEvent.CANVAS_MODEL_CHANGE);
+      Controller.sendRepaint();
     }
     
     /**

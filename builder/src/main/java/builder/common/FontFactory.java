@@ -72,12 +72,15 @@ public class FontFactory {
   /** The font map used as index into font item list. */
   private HashMap<String, Integer> fontMap = new HashMap<String, Integer>(128);
   
-  /** The current platform for our font list */
-  private String currentName = "";
+  /** The number of platforms */
+  private int nPlatforms;
   
-  /** The current platform font list */
-  private List<FontItem> currentList = null;
+  /** Platform names */
+  private String[] platformNames;
   
+  /** The list of templates. */
+  List<FontItem>[] fontsByPlatform = null;
+
   /**
    * Gets the single instance of FontFactory.
    *
@@ -124,18 +127,12 @@ public class FontFactory {
    */
   public List<FontItem> getFontList() {
     String target = Controller.getTargetPlatform();
-    if (target.equals(currentName)) {
-      return currentList;
-    }
-    currentName = target;
-    currentList = new ArrayList<FontItem>();
-    FontPlatform fontPlatform = builderFonts.getPlatform(target);
-    for (FontCategory c : fontPlatform.getCategories()) {
-      for (FontItem item : c.getFonts()) {
-        currentList.add(item);
+    for (int i=0; i<nPlatforms; i++) {
+      if (platformNames[i].equals(target)) {
+        return fontsByPlatform[i];
       }
     }
-    return currentList;
+    return null;
   }
   
   /**
@@ -418,6 +415,7 @@ public class FontFactory {
    * @param map
    *          the map
    */
+  @SuppressWarnings("unchecked")
   public void readFonts(String jsonFile) {
     // de-serialize our font json file
     Gson gson = new GsonBuilder()
@@ -434,9 +432,15 @@ public class FontFactory {
      * and fill in each font item with parent information
      * and build up our font list and index map.
      */
-    int n = 0;
+    nPlatforms = 0;
+    int idx = 0;
     int nErrors = 0;
+    platformNames = new String[10];
+    fontsByPlatform = new ArrayList[10];
     for (FontPlatform p : builderFonts.getPlatforms()) {
+      platformNames[nPlatforms] = p.getName();
+      List<FontItem> list = new ArrayList<FontItem>();
+      fontsByPlatform[nPlatforms++] = list;
       for (FontCategory c : p.getCategories()) {
         for (FontItem item : c.getFonts()) {
           item.setPlatform(p);
@@ -452,7 +456,8 @@ public class FontFactory {
           // check for duplicates
           if (!fontMap.containsKey(key)) {
             platformFonts.add(item);
-            fontMap.put(key, Integer.valueOf(n++));
+            list.add(item);
+            fontMap.put(key, Integer.valueOf(idx++));
           } else {
             Builder.logger.error("duplicate font: " + key);
             nErrors++;
@@ -468,7 +473,6 @@ public class FontFactory {
       throw new CodeGenException(String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.",
           nErrors,fileName));
     }
-    getFontList();
   }
  
 }

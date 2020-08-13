@@ -91,28 +91,28 @@ public class MsgEvent {
   public String toString() {
     switch(code) {
       case OBJECT_SELECTED_PAGEPANE:
-        return String.format("OBJECT_SELECTED_PAGEPANE Key: " + message);
+        return String.format("OBJECT_SELECTED_PAGEPANE: " + message);
       case OBJECT_SELECTED_TREEVIEW:
-        return String.format("OBJECT_SELECTED_TREEVIEW Key: " + message);
+        return String.format("OBJECT_SELECTED_TREEVIEW: " + message + " Parent: " + xdata); 
       case OBJECT_UNSELECT_PAGEPANE:
-        return String.format("OBJECT_UNSELECT_PAGEPANE");
+        return String.format("OBJECT_UNSELECT_PAGEPANE: " + message + " Parent: " + xdata); 
       case OBJECT_UNSELECT_TREEVIEW:
-        return String.format("OBJECT_UNSELECT_TREEVIEW");
+        return String.format("OBJECT_UNSELECT_TREEVIEW: " + message + " Parent: " + xdata); 
       case DELETE_KEY:
-        return String.format("KEY_DELETE");
+        return String.format("KEY_DELETE: " + message + " Parent: " + xdata); 
       case WIDGET_DELETE:
-        return String.format("WIDGET_DELETE");
+        return String.format("WIDGET_DELETE: " + message + " Parent: " + xdata); 
       case WIDGET_CHANGE_ZORDER:
-        return String.format("WIDGET_CHANGE_ZORDER Key: " + message + "Parent: " + xdata 
+        return String.format("WIDGET_CHANGE_ZORDER: " + message + " Parent: " + xdata 
           + " from: " + fromIdx + " to: " + toIdx);
       case WIDGET_REPAINT:
-        return String.format("WIDGET_REPAINT Key: " + message);
+        return String.format("WIDGET_REPAINT: " + message + " Parent: " + xdata);
       case WIDGET_ENUM_CHANGE:
-        return String.format("WIDGET_ENUM_CHANGE Key: " + message + " to: " + xdata);
+        return String.format("WIDGET_ENUM_CHANGE: " + message + " Parent: " + xdata); 
       case CANVAS_MODEL_CHANGE:
         return new String("CANVAS_MODEL_CHANGE");
       case PAGE_ENUM_CHANGE:
-        return String.format("PAGE_ENUM_CHANGE Key: " + message + " to: " + xdata);
+        return String.format("PAGE_ENUM_CHANGE: " + message + " Parent: " + xdata); 
       case PAGE_TAB_CHANGE:
         return String.format("PAGE_TAB_CHANGE Key: " + message);
       case ACTION_COMMAND:
