@@ -26,6 +26,7 @@ The Software is not designed for use in devices or situations where there may be
 ### Release History
 
 ### Enhancements for 0.15.0
+- Update UserGuide for ver: 0.15.0
 - Added support for Teensy 
 - Added Support for M5Stack
 - Support for Flash-based Numeric/Alpha input Fields

@@ -6,22 +6,15 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.14.b000
+        Ver: 0.15.0
     </H3>
 </center>
 
-
 ![](images/title_demo_control.png)
-
-
-
-
-
-
 
 **Publication date and software version**
 
-Published April 22, 2020. Based on GUIslice API Library 0.14.0
+Published August, 2020. Based on GUIslice API Library 0.15.0
 
 **Copyright**
 
@@ -50,24 +43,25 @@ The GUIslice Builder creates a cross-platform desktop application that automates
 
 The net result is that the Builder allows users to layout their UI visually and enables boilerplate GUI code to be generated quickly with a drag-and-drop desktop application and save the user from some of the bookkeeping and potential errors that might otherwise come up.
 
-It generate a skeleton file for the target platform, either 'project.ino' for Arduino, or 'project.c' for linux.
-A 'project_GSLC.h' header file will also be created for Arduino projects but generally, you won't need to view or edit this file.
+It generate a skeleton file for the target platform, either 'project.ino' for Arduino IDE, or 'project.c' for linux.
+A 'project_GSLC.h' header file will also be created for Arduino IDE projects but generally, you won't need to view or edit this file.
 
-One additional target platform variation that is supported is the Arduino API with TFT_eSPI driver. This will simply replace Adafruit_GFX.h with TFT_eSPI.h.
-Thus your three Target Platforms available in the General Tab of User Preferences are:
+Target Platforms are defined inside builder_fonts.json file, refer to Appendex B Font File Format for more details.
+
+Currently we ship with these Target Platforms.
 - arduino
-- arduino TFT_eSPI
+- m5stack
+- teensy
+- tft_espi
 - linux
+
+You switch to these using the Project Tab's property view. You can set the default value for new projects inside User Preferences General Tab.  This is available by selecting Edit menu and then Options.
+
+It is also possible to add your own platform and fonts by editing builder_fonts.json file. See section 5.7 Fonts and Appendix B Font File Format for more details.
 
 Within the Arduino platform some UI Elements support Flash based versions that reduce RAM requirements. See section 4.0 for details.
 
 It should be noted that the Builder makes no attempt to support all GUIslice API calls or UI Elements. Simply a rich enough set to do useful work.  
-
-Remember, if you need to use any unsupported API calls or UI elements just keep them outside of the tags. This would be one reason why you would need to edit the 'project_GSLC.h' file so you can increase the storage for any unsupported UI elements.
-
-The Code Templates the Builder uses are exposed inside GUIsliceBuilder/templates.
-
-The two files are arduino.t and linux.t.  Some documentation is included in Appendix D in case you need to make edits.
 
 ---------------
 <div style="page-break-after: always;"></div>
@@ -81,15 +75,23 @@ You will notice in the generated C code various tags inserted by the builder suc
 //<Save_References !End!>
 ```
 
-As long as you refrain from adding or modifying code between these auto-generated tags you can continue to add additional elements to your project and not lose any other edits you make.   The only exception is the button callbacks where the builder will test for existing ENUMs and not delete any code.
+As long as you refrain from adding or modifying code between these auto-generated tags you can continue to add additional elements to your project and not lose any other edits you make.   
 
-The code you add between Enum tags will be kept safe unless you delete the button or rename the button's ENUM. 
-
+The only exception is the button callbacks:
+```
 //<Button Enums !Start!>
-
 //<Button Enums !End!> 
+```
+Here the builder will attempt to intelligently edit the callbacks to allow you to add or subtract options to your buttons like:
+- Jump Page ENUM
+- Popup Page Enum
+- Hide Popup Page?
+See Section 4.19 Text Button for details of your button options and Appendix E Case Statement Generation for detailed examples of callback edits. 
 
-See Appendix E Case Statement Generation for detailed examples. 
+Remember, if you need to use any unsupported API calls or UI elements just keep them outside of the tags. This would be one reason why you would need to edit the 'project_GSLC.h' file so you can increase the storage for any unsupported UI elements.
+
+The Code Templates the Builder uses are exposed inside GUIsliceBuilder/templates. The two files are arduino.t and linux.t.  Some documentation is included in Appendix D in case you need to make edits.
+
 
 ---------------
 <div style="page-break-after: always;"></div>
@@ -120,33 +122,41 @@ Install: <https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder>
 
 -----------
 <div style="page-break-after: always;"></div>
-
 ## 2.2 Setting Screen parameters
 
-You must setup the builder for your target screen's width and height; if its different than the default.  
+### 2.2.1 User Preferences
 
-To change the high and width of your display, and maybe the Target Platform.
-Select edit->options
+You must setup the builder for your target platform, screen's width and height; if its different than the default. You have two places where you can make changes.  
+
+Your User Preferences for All Projects are accessed by the menubar `Select edit->options`:
 
 ![](images/edit_menu.png)
 
-Then set your target platform, your display's width and height, and point the project directory to where you will be storing output files.   The directory must already exist. For Arduino users I suggest pointing to your sketchbook folder.
+You can set your target platform, your display's width and height, and point the project directory to where you will be storing output files.   The directory must already exist. For Arduino users I suggest pointing to your sketchbook folder.
 
 ![](images/hw_prefs.png)
 
-The builder is initially setup for Adafruit's TFT 2.8 Display.  It's display is 320px wide and 240px height with a DPI of about 144.   (I know the docs say 141 but I go with what works). I have tested the DPI of 144 on various screens up to 3.5 inches and my default of 144 seems to work just fine. 
-See Appendex A for details on changing this value (It's setting is just below height and width on the General Tab). It's purpose is to allow the builder to show users the fonts correctly scaled in the TFT Simulation and to correctly size the text bounding rectangle.
+Any changes to your User Preferences will be used as defaults for any new projects you create.
 
-Why may this be needed, because fonts are defined in points with 72 points per inch. DPI for TFT screens however are not a standard size. The Builder needs to simulate your TFT Display and try and show fonts as close as possible to the way they will look on your Display. So when I ask Java to create font I'll take your profile's DPI and use it to calculate a scale factor like so:
-```
-    /* AdaFruits's 2.8 screen is about DPI of 141. 
-     * Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
-     */
-    double scaleFactor = (double)dpi / 72.0d;
-    int size = (int) ((double)Integer.parseInt(logicalSize) * scaleFactor);
-    scaledSize = String.valueOf(size);
-    this.font = FontFactory.createFont(logicalName, scaledSize, logicalStyle);
-```
+The builder is initially setup for Adafruit's TFT 2.8 Display.  It's display is 320px wide and 240px height.  
+
+See Section 5.2 General Preferences for details of the various settings.
+
+
+-----------
+<div style="page-break-after: always;"></div>
+
+### 2.2.2 Project Tab
+
+You may also override your User Preferences on a per project basis by selecting the Project Tab or selecting E_PROJECT_OPTIONS in the TreeView.
+
+![](images/project_tab.png)
+
+![](images/project_view.png)
+
+Any changes made here apply only to your currently open project and will be stored with your project UI Elements.
+
+See 5.1 Project Options for details of the various settings.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -415,7 +425,7 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.10 Rectangular Selection ![](images/layout/copy_props.png)
+## 3.4.10 Rectangular Selection ![](images/layout/selection.png)
 
 Clicking the Rectangular Selection button changes your cursor to a cross and allows you to create a rubber band that you can drag over UI elements to select them.  You start by pressing and holding the left mouse button then dragging the rubber band over yourUI Elements.  Once you release the left mouse button the transaction ends.
 
@@ -582,8 +592,11 @@ See example ex04_bld_ctrls.
 | Height              | 20                                                |
 | ElementRef          |                                                   |
 | Checked?            | false, Set true initial state as ‘checked’        |
-| Callback Enabled?   | false                                             |
+| Check Mark Style    | GSLCX_CHECKBOX_STYLE_X (default)                  |
+|                     | GSLCX_CHECKBOX_STYLE_BOX                          |
+|                     | GSLCX_CHECKBOX_STYLE_ROUND                        |
 | Check Mark Color    | Color.ORANGE Determines the color of check mark   |
+| Callback Enabled?   | false                                             |
 | Use Flash API?      | false                                             |
 
 -----------------------------------------------
@@ -649,6 +662,7 @@ See example ex06_bld_callback.  Also ex32_bld_spinner for usage of a background 
 |                     | gslc_GetImageFromRam((unsigned char*)             |
 | Image Format        | GSLC_IMGREF_FMT_BMP24                             |
 |                     | GSLC_IMGREF_FMT_BMP16                             |
+|                     | GSLC_IMGREF_FMT_JPG                               |
 |                     | GSLC_IMGREF_FMT_RAW                               |
 | Transparent?        | false, if true, support transparency provided     |
 | Touch Enabled?      | false, If true a button callback will be created  |
@@ -660,7 +674,7 @@ See example ex06_bld_callback.  Also ex32_bld_spinner for usage of a background 
 
 ## 4.7 Image Button ![](images/controls/imgbutton_32x.png)
 
-See examples ex03_bld_btn_img and ex28_bld_btn_img_flash. For full details on your options see section 4.18 Text Button and Appendix E.
+See examples ex03_bld_btn_img and ex28_bld_btn_img_flash. For full details on your options see section 4.19 Text Button and Appendix E.
 The button callback will look like:
 ```
 // Common Button callback
@@ -815,28 +829,27 @@ bool CbCheckbox(void* pvGui, void* pvElemRef, int16_t nSelId, bool bState)
   ...
     switch (pElem->nId) {
      //<Checkbox Enums !Start!>
-     case E_ELEM_CHECK1:
+     case E_ELEM_RADIO1:
       //TODO- Replace with your handling code
       break;
   ...
-  return 1;
-}
 ```
-If you select multiple radio buttons (not checkboxes) you can use the 'Group' Control Tool ![](images/controls/group_32x.png) to assign a unique GROUPID. The GUIslice API will then only allow one of the buttons to be checked.
-See example ex04_bld_ctrls. 
-
+If you select multiple radio buttons you can use the 'Group' Control Tool ![](images/controls/group_32x.png) to assign a unique GROUPID. The GUIslice API will then only allow one of the buttons to be checked. See example ex04_bld_ctrls. 
 | NAME                | VALUE                                             |
 |---------------------|---------------------------------------------------|
-| Key                 | CheckBox$1                                        |
-| ENUM                | E_ELEM_CHECK1                                     |
+| Key                 | RadioButton$1                                     |
+| ENUM                | E_ELEM_RADIO1
 | X                   |                                                   |
 | Y                   |                                                   |
 | Width               | 20                                                |
 | Height              | 20                                                |
 | ElementRef          |                                                   |
 | Checked?            | false, Set true initial state as ‘checked’        |
-| Callback Enabled?   | false                                             |
+| Check Mark Style    | GSLCX_CHECKBOX_STYLE_ROUND (default)              |
+|                     | GSLCX_CHECKBOX_STYLE_BOX                          |
+|                     | GSLCX_CHECKBOX_STYLE_X                            |
 | Check Mark Color    | Color.ORANGE Determines the color of check mark   |
+| Callback Enabled?   | false                                             |
 | Use Flash API?      | false                                             |
 | Group ID            | GSLC_GROUP_ID_NONE                                |
 
@@ -922,7 +935,49 @@ See example ex42_bld_ring.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.14 Slider ![](images/controls/slider_32x.png)
+## 4.14 Seekbar ![](images/controls/seekbar.png)
+
+The Seekbar is a modern Slider Control modelled after the Android version. It works the same as the Slider in Section 4.15 but with a different visual appearence.  They're interchangable.
+
+See example ex47_ard_seekbar for the visual options and look over the examples for the Slider.
+| NAME                | VALUE                                                 |
+|---------------------|-------------------------------------------------------|
+| Key                 | Seekbar$1                                             |
+| ENUM                | E_ELEM_SEEKBAR1                                       |
+| X                   |                                                       |
+| Y                   |                                                       |
+| Width               | 80                                                    |
+| Height              | 30                                                    |
+| ElementRef          | m_pElemSeekbar1                                       |
+| Minimum Value       | 0                                                     |
+| Maximum Value       | 100                                                   |
+| Starting Value      | 0                                                     |
+| Thumb Size          | 8                                                     |
+| Thumb Color         | GSLC_COL_BLUE_DK2                                     |
+| Add Trim?           | true                                                  |
+| Trim Color          | GSLC_COL_BLUE_LT4                                     |
+| Add Frame to Thumb? | false                                                 |
+| Thumb Frame Color   | GSLC_COL_GRAY                                         |
+| Progress Bar Width  | 4                                                     |
+| Progress Bar Color  | GSLC_COL_BLUE                                         |
+| Remaining Bar Width | 2                                                     |
+| Remaining Bar Color | GSLC_COL_GRAY                                         |
+| Vertical?           | false                                                 |
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+
+| NAME                |  VALUE                                                |
+|---------------------|-------------------------------------------------------|
+| Tick Divisions      | 0                                                     |
+| Tick Size           | 10                                                    |
+| Tick Color          | GSLC_COL_GRAY                                         |
+| Use Flash API?      | false                                                 |
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+## 4.15 Slider ![](images/controls/slider_32x.png)
 
 The Slider allows the user to select a value by sliding the knob within the bounded value. The slider can show tick marks. When the Slider's callback is tied to a Listbox or Textbox it provides a scrollable view of the contents of these elements.
 See examples ex04_bld_ctrls, ex07_bld_slider, ex09_bld_radial, ex10_bld_textbox, ex31_bld_listbox, and ex42_bld_ring.
@@ -944,8 +999,6 @@ bool CbSlidePos(void* pvGui,void* pvElemRef,int16_t nPos)
 }
 ```
 
-Again substitute your custom handling code for the TODO. 
-
 | NAME           | VALUE                                                 |
 |----------------|-------------------------------------------------------|
 | Key            | Slider$1                                              |
@@ -966,19 +1019,19 @@ Again substitute your custom handling code for the TODO.
 
 | NAME                |  VALUE                                            |
 |---------------------|---------------------------------------------------|
-| Tick Divisions | 10                                                    |
-| Tick Size      | 5                                                     |
-| Tick Color     | Color.BLUE                                            |
-| Trim Style?    | false                                                 |
-| Trim Color     | Color.BLUE                                            |
-| Frame Color    | Color.GRAY                                            |
-| Fill Color     | Color.BLACK                                           |
-| Selected Color | Color.BLACK                                           |
+| Tick Divisions      | 10                                                |
+| Tick Size           | 5                                                 |
+| Tick Color          | Color.BLUE                                        |
+| Trim Style?         | false                                             |
+| Trim Color          | Color.BLUE                                        |
+| Frame Color         | Color.GRAY                                        |
+| Fill Color          | Color.BLACK                                       |
+| Selected Color      | Color.BLACK                                       |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.15 Spinner ![](images/controls/spinner_32x.png)
+## 4.16 Spinner ![](images/controls/spinner_32x.png)
 A Spinner consists of
  - a numeric counter text field
  - increment and decrement button.
@@ -1032,7 +1085,7 @@ You must have the following set inside your GUIslice/config/ard_xxxx.h file to u
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.16 Text ![](images/controls/label_32x.png)
+## 4.17 Text ![](images/controls/label_32x.png)
 
 Most of the builder examples use text fields as labels while some use them to display runtime counts.  See ex04_bld_ctrls for display of a runtime counter example.
 
@@ -1056,7 +1109,7 @@ Most of the builder examples use text fields as labels while some use them to di
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.17 Text Box ![](images/controls/textbox_32x.png)
+## 4.18 Text Box ![](images/controls/textbox_32x.png)
 
 A Textbox is a multi-line area that displays scrolling text. It can be tied to a Slider Element to allow a user to control scrolling.
 Optionally, it can handle embedded color codes for text. 
@@ -1094,7 +1147,7 @@ You must have the following set inside your GUIslice_config_<ard,linux>.h file t
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.18 Text Button ![](images/controls/button_32x.png)
+## 4.19 Text Button ![](images/controls/button_32x.png)
 
 Most of the Builder examples use Text Buttons even if only for the Quit button. 
 The Builder will generate most of the code for some of the more simple cases.
@@ -1189,7 +1242,33 @@ A fuller explanation of when the Builder will create, delete or modify a case st
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.19 Numeric Input ![](images/controls/numinput_32x.png)
+## 4.20 Toggle Button ![](images/controls/toggle.png)
+
+A simple On/Off button modelled after the Android Toggle button. The callback is the same as the Text and Image buttons.
+
+See example ex46_ard_togglebtn.
+
+| NAME                  | VALUE                                          |
+|-----------------------|------------------------------------------------|
+| Key                   | ToggleButton$1                                 |
+| X                     |                                                |
+| Y                     |                                                |
+| Width                 | 35                                             |
+| Height                | 20                                             |
+| ElementRef            | m_pElemToggle1                                 |
+| Checked?              | false                                          |
+| Thumb Color           | GSLC_COL_GRAY                                  |
+| On State Color        | GSLC_COL_BLUE_DK1                              |
+| Off State Color       | GSLC_COL_GRAY_LT3                              |
+| Circular?             | true                                           |
+| Use Flash API?        | false                                          |
+| Frame Enabled?        | true                                           |
+| Frame Color           | GSLC_COL_GRAY                                  |
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+## 4.21 Numeric Input ![](images/controls/numinput_32x.png)
 
 When a user presses on this UI Element a Popup Numeric Keypad will appear to take input.
 A callback is generated by the Builder for this field and will look like:
@@ -1245,7 +1324,7 @@ See ex26_bld_calc for an example of usage.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.20 Text Input ![](images/controls/textinput_32x.png)
+## 4.22 Text Input ![](images/controls/textinput_32x.png)
 
 When a user presses on this UI Element a Popup Text-Only Keypad will appear to take input.
 A callback is generated by the Builder for this field and will look like:
@@ -1302,48 +1381,61 @@ See ex26_bld_alpha for an example.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 4.21 Page ![](images/controls/page_32x.png)
+## 4.23 Page ![](images/controls/page_32x.png)
 
-Add a new Page layer. This is the container for elements.  You create one page per display screen. 
+A Page is simply a full screen menu.  You may have as many as you want given enough memory.
 
-## 4.22 Base Page ![](images/controls/basepage_32x.png)
+## 4.24 Base Page ![](images/controls/basepage_32x.png)
 
-Add a page for the base layer in the page stack. This is an optional container for global elements. You create one base page per application. 
+You can have optionally one base page.  This is where you place any elements you want to show on all menus. Say a status line on the bottom of the display.
 
-## 4.23 Popup Page ![](images/controls/popup_32x.png)
+## 4.25 Popup Page ![](images/controls/popup_32x.png)
 
-Add a new Popup Page for the overlay layer in the page stack. This is the container for elements you want on a popup dialog. Use as many popup pages as needed. 
+A popup page is one that will overlay the current page still showing whatever is not covered up by the popup. The keypad is an example. Use as many popup pages as needed. 
+
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
 # 5.0 Customizing
 
-There are a few ways of customizing your experience with the builder.   
+There are a few ways of customizing your experience with the builder. You can modify your UI preferences by the editing your Project Options Property View.  
 
-You can modify your UI preferences by the editing your Project Options Property View.  
-This is the available as "Project" tab in your TFT Simulation Display or the Top Level object in your TreeView 
-with the ENUM `E_PROJECT_OPTIONS`. 
-
-Some of the UI Elements also have a tab in the Options dialog allowing you to set size, color, font, and some other options depending upon the element in question.
+Some of the UI Elements also have a tab in the menubar `Edit->Options` dialog allowing you to set size, color, font, and some other options depending upon the element in question.
 
 ## 5.1 Project Options ![](images/controls/project.png)
 When you first create a new project these values are filled in with values from the General Preferences tab (Section 5.2) available by edit->options menu item.
 
 | NAME                               | VALUE                                                     |
 |------------------------------------|-----------------------------------------------------------|
-| Target Platform                    | arduino,arduino minimum, linux                            |
+| Key                                | Project$1                                                 |
+| ENUM                               | E_PROJECT_OPTIONS                                         |
+| Target Platform                    | arduino,m5stack,teensy,tft_espi,linux                     |
+| Project's Extra Fonts              | List of optional Fonts that can be used by custom code    |
 | TFT Screen Width                   | 320                                                       |
 | TFT Screen Height                  | 240                                                       |
-| Project Directory                  | Your top-level Arduino Sketch Folder                      |
-| Target's Image Directory           | Directory on target platform where you have stored images |
 | Background Color                   | Black is default                                          |
-| Image Transparency Color           | For transparent images GSLC_COL_MAGENTA (r=255,g=0,b=255) |
+| Use Background Image?              | default is false                                          |                                                    |
+| Target Platform Image Directory    | / (Value prepended to image file name to create path)     |
+| Background Image File              | Ex: back1_24.bmp Name of Bitmap file or blank             |
+| Background Image defines           | Ex: IMG_BKGND Auto-generated name for image `#define`     |
+| Background Image Memory            | gslc_GetImageFromSD((const char*)                         |
+|                                    | gslc_GetImageFromFile(                                    |
+|                                    | gslc_GetImageFromProg((const unsigned char*)              |
+|                                    | gslc_GetImageFromRam((unsigned char*)                     |
+| Background Image Format            | GSLC_IMGREF_FMT_BMP24                                     |
+|                                    | GSLC_IMGREF_FMT_BMP16                                     |
+|                                    | GSLC_IMGREF_FMT_RAW                                       |
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+| NAME                               | VALUE                                                     |
+|------------------------------------|-----------------------------------------------------------|
 | Screen Margins                     | 10 pixels top, bottom, right and left                     |
-| Horizontal Spacing between elements| Used by alignment commands as the default value           |
-| Vertical Spacing between elements  | Used by alignment commands as the default value           |
-| MAX_STR                            | Used inside C program for maximum storage of strings      |
-| Screen Rotation [0-3]              | -1 is default. If needed, forces gslc_GuiRotate() call.   |
+| Horizontal Spacing between elements| 20 Used by alignment commands as the default value        |
+| Vertical Spacing between elements  | 20 Used by alignment commands as the default value        |
+| MAX_STR                            | 100                                                       |
+| Screen Rotation [0-3 or -1 default]| -1 Otherwise, forces gslc_GuiRotate() call with this value|                               |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1355,18 +1447,18 @@ When you first create a new project these values are filled in with values from 
 | Target Platform                    | arduino,arduino minimum, linux                            |
 | TFT Screen Width                   | 320                                                       |
 | TFT Screen Height                  | 240                                                       |
-| TFT Screen DPI                     | 144                                                       |
-| Project Directory                  | Your top-level Arduino Sketch Folder                      |
-| Target's Image Directory           | Directory on target platform where you have stored images |
+| Project Directory                  | c:\users\[username]\documents\arduino                     |
+| Target Platform Image Directory    | /                                                         |
 | Background Color                   | Black is default                                          |
 | Image Transparency Color           | For transparent images GSLC_COL_MAGENTA (r=255,g=0,b=255) |
 | Screen Margins                     | 10 pixels top, bottom, right and left                     |
-| Horizontal Spacing between elements| Used by alignment commands as the default value           |
-| Vertical Spacing between elements  | Used by alignment commands as the default value           |
-| MAX_STR                            | Used inside C program for maximum storage of strings      |
-| Screen Rotation [0-3]              | -1 is default. If needed, forces gslc_GuiRotate() call.   |
+| Horizontal Spacing between elements| 20 Used by alignment commands as the default value        |
+| Vertical Spacing between elements  | 20 Used by alignment commands as the default value        |
+| MAX_STR                            | 100                             |
+| Screen Rotation [0-3 or -1 default]| -1 Otherwise, forces gslc_GuiRotate() call with this value|                               |
 | Backward Compatibility Mode?       | false is default. If true Builder will not create _GSLC.h |
 | Preserve Button Callbacks?         | If true callback code is only changed if model changed    |
+|                                    | Otherwise button callbacks deleted each code generation.  |
 
 The FlatLaf project provides the support for non built-in themes: 
 <https://github.com/JFormDesigner/FlatLaf>
@@ -1378,7 +1470,6 @@ The full Copyright is included in Appendix C.
 ## 5.3 Grid Preferences
 | NAME                  | VALUE                                          |
 |-----------------------|------------------------------------------------|
-| Grid                  | false=OFF, set=true for ON                     |
 | Grid SnapTo           | true                                           |
 | Grid Minor Width      | 10                                             |
 | Grid Minor Height     | 10                                             |
@@ -1408,11 +1499,9 @@ Files are created here:
 - **arduino.t** Arduino code blocks
 - **linux.t** linux code blocks
 - **default_colors.csv**
-- **arduinofonts.csv**
-- **linuxfonts.csv**
-- `*.ods` are the source speadsheets for the each csv file in case you need to perform edits. I strongly suggest you use a spreadsheet program for edits and export the resulting csv files.
+- **builder_fonts.json**
 
-See Appendix B for format of the font files.
+See Appendix B for format of the json font file.
 
 The files **ino2.t**, **hdr.t** and **c.t** are the skeleton programs for the supported platforms.  You can edit them to include your name, copyright, and whtaever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
 
@@ -1454,19 +1543,25 @@ The code generator will append whatever string you include so be sure to add fol
 
 ## 5.7 Fonts
 
-The font implementation is somewhat challenging.  The builder can't actually run the target platform fonts at the actual size since the DPI's won't match.  So the builder has to scale them for use.  The scaling can't be perfect since the scaling might require decimal sizes like, 6.24dp which must be converted to an integer, either 6 or 7.  Stll the builder will give a pretty good approximation as long as users give a little space between text and elements.  If the text appears way off Appendix G gives a sample project that will allow discovery of a better DPI using trail and error.
+The font implementation is somewhat challenging. 
+ 
+The builder can't actually run the target platform fonts at the actual size since the DPI's won't match. Adafruit has hard-coded its GFX fonts to 141 instead of the standard 72 dpi. So the builder has to scale them for use.  The scaling can't be perfect since the scaling might require decimal sizes like, 6.24dp which must be converted to an integer, either 6 or 7.  Stll the builder will give a pretty good approximation as long as users give a little space between text and elements. You can always adjust the Width and Height of the containing rectangle inside the property view, if required.
 
-Appearance is yet another issue.  The builder will use Java's built-in fonts to simulate the target fonts.
+Appearance is yet another issue.  The builder will first look for the named font on your PC or Mac and use it, if found.  This gives the best visual representation of your Text.  However, if the font can't be found the Builder will use Java's built-in fonts to simulate the target fonts.
 
-The builder uses two files inside GUIsliceBuilder/templates to manage fonts:
+You can install new true type fonts9 (.ttf) on your Builder's system. On Windows 10 right click on the font file and choose install.  On Linux you can create a folder in your home directory called `.fonts` and place you ttf in this folder.
 
-arduinofonts.csv for Arduino target platform
-linuxfonts.csv for Linux target platform
+The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built for Adafruit's GFX format.  You can use them by copying the headers files from GUIsliceBuilder/gfx_fonts to either 
+libraries Adafruit_GFX/Fonts or TFT_eSPI/Fonts/GFXFF depending upon your target platform.
+
+The builder uses one file inside GUIsliceBuilder/templates to manage fonts: 
+
+- **builder_fonts.json**
 
 You are allowed to create your own fonts and add them to the builder.  In which case you will need to modify
- arduinofonts or linuxfonts csv files.  The format is documented in Appendix B.
+ builder_fonts.json file.  The format is documented in Appendix B.
 
-If you edit these files you must restart the Builder it will then use the new font files.
+If you edit this file you must restart the Builder it will then use the new font file.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1485,10 +1580,23 @@ The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project writt
 
 The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
 
-- **flatlaf-0.29.jar**
+- **flatlaf-0.38.jar**
 
 The FlatLaf project is on GitHub: 
 <https://github.com/JFormDesigner/FlatLaf>
+
+## Google JSON Support
+
+reading of our json files is provided by Google's GSON project.
+
+- **gson-2.8.6.jar**
+
+## Apache Logging
+
+Tracing of our runtime is provided by the apache library.
+
+- **log4j-api-2.8.jar**
+- **log4j-core-2.8.jar** 
 
 ## Icon Attribution
 
@@ -1507,14 +1615,64 @@ https://github.com/icons8/flat-color-icons
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix B - Font csv File Format
+# Appendix B - Font File Format
 
-You can add or remove fonts from arduinofonts.csv or linuxfonts.csv files to support any font that exists on your target platform.
-I would suggest that if you have more than a few fonts to add you should import the csv file into a spreadsheet, do your modifications, and export a new csv file.  That is how I created these files in the first place.  I used LibreOffice Calc for my spreadsheets.
+You can add or remove fonts from builder_font.json to support any font that exists on your target platform.  Even add your own platform.
 
-The files are in CSV Format with a column header line - See RFC 4180.  Using a '\#' character to comment out lines is an unsupported extension to this RFC.
+The files are in CSV Format with a column header line - See RFC 8259. We use Google's gson to read this file and it is a superset of the json standard.  The most useful of which is that it will take C style comments and ignore them.
 
-Column Titles:
+The json objects that are in this file starts with allFonts which is an array of platformName objects that itself contains an array of categories.  Each cataegory contains a set of font definitions.
+```
+allFonts
+  |- platformName
+    |- categories
+      |-fonts
+        -font definition
+        -font definition
+```
+Please note that object and fields names must match the case shown inside our json file or they will be ignored!
+
+Within the platformName object you may have optionally a set of warning messages to output during code generation. This can be useful if you accidently choose an incorrect GUIslice configuration file inside GUIslice_config.h.
+For example is say you chose platform arduino but you used a TFT_eSPI driver these warning messages would give you a compile time error.
+```
+#if defined(DRV_DISP_TFT_ESPI)
+  #error Project tab->Target Platform should be tft_espi
+#endif 
+```
+You simply add them to the warnings array of platformName object like so:
+```
+{
+  "allFonts": [
+    {
+      "platformName": "arduino",
+      "warnings": [
+         "#if defined(DRV_DISP_TFT_ESPI)",
+         "  #error Project tab->Target Platform should be tft_espi",
+         "#endif" 
+      ],
+```
+If you don't want any warning messages you must set warnings to NULL.
+```
+      "warnings": [
+         "NULL",
+      ],
+```
+This is true for any of the supported arrays, like extraIncludes and fields, like IncludeFile.
+
+Categories object supports adding extra include files for its fonts.  
+Example, say you choose one of the freefonts for the arduino platform using Adafruit_GFX library.
+```
+        {
+          "categoryName": "gfx",
+          "extraIncludes": [
+            "#include <Adafruit_GFX.h>"
+          ],
+```
+This will cause the code generator to output the `#include <Adafruit_GFX.h>` if a freefont is selected.
+
+Just like coding in C or C++ keep your braces `{}` and brackets `[]` balanced and keep note of your commas placements. JSON doesn't give you any error checking feedback.
+
+The Fonts object holds an array of font definitions.  The fields are:
 
 1.  FontName - refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
 2.  DisplayName - refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
@@ -1527,16 +1685,18 @@ Column Titles:
 9.  LogicalFont - the name java needs to use when accessing this font.
 10. LogicalFontSize - the pre-scaling size to display in the builder.
 11. LogicalFontStyle - the font style, plain, bold, italic, bold+italic
+12. fontRefMode - usually set to "NULL". This is for drivers that need special handling within GUIslice API. 
+
 
 Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced.  I have chosen to use Monospaced to represent Adafruit's built-in fonts which are 5x8 and plain only.
-Adafruit GFX only scales them up from 1 to N. As an example scale of 2 gives you a character 10x16.
+All fonts you use will be simulated by these built in java fonts; if the actual font cannot be found. The builder is meant to help you with your UI layout, not be a WYSIWYG editor.
+
+Adafruit GFX Builtin fonts scales up from 1 to N. As an example scale of 2 gives you a character 10x16.
 I have supported scales of 1 to 5.  You can edit this as you desire.
 
-One thing you should keep in mind is that non built-in fonts take up a fair amount of memory so you should limit your selection to one or two non built-in fonts if your target platform is an Arduino.  
+One thing you should keep in mind is that non-built in fonts take up a fair amount of memory so you should limit your selection to one or two non built-in fonts if your target platform is an Arduino.  
 
-Some additional documentation is available in "GUIsliceBuilder/templates/fonts_readme.txt".
-
-WARNING! No error checking exists in the code so be very careful with any edits.
+WARNING! The only Builder supplied json error checking that exists in the code is to detect duplicate fonts within a single platform so be very careful with any edits.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1578,9 +1738,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## FlatLaf project CopyRight
-
-The CopyRight Notice for the FlatLaf project is reproduced in full here:
+## FlatLaf project, Google's gson and Apache Logging CopyRights are based upon Apache License version 2.0.
 
                                  Apache License
                            Version 2.0, January 2004
@@ -1943,224 +2101,7 @@ and you can edit it so no mention of GFX is made like so:
 ```
 There are some cases where meta-id is not used and a few places where templates are also not used in code generation. This is due mostly to older beta code and my general lazyness and lack of motivation. 
 
+The most current and complete list of Ids is inside the source code 
 
-| META ID    | PROPERTY NAME                             |
-|------------|-------------------------------------------|
-| BAR-100    | Vertical?                                 |
-| BAR-101    | Ramp Style (not used)                     |
-| BAR-102    | Min value                                 |
-| BAR-103    | Max value                                 |
-| BAR-104    | Starting value                            |
-| BAR-105    | Style                                     |
-| BAR-106    | Tick Divisions                            |
-| BAR-107    | Tick Size                                 |
-| BAR-108    | Tick Color                                |
-| BAR-109    | Indicator Length                          |
-| BAR-110    | Indicator Tip Size                        |
-| BAR-111    | Indicator Fill?                           |
-| BAR-112    | Add Scrollbar?                            |
-| BAR-113    | Embedded Scrollbar ENUM                   |
-| BAR-114    | Embedded Scrollbar ElemRef                |
-| BAR-115    | Embedded Max value                        |
-| BAR-116    | Embedded Frame Color                      |
-| BAR-117    | Embedded Fill Color                       |
-| BAR-118    | Direction Clockwise?                      |
-| BOX-100    | Draw Function                             |
-| BOX-101    | Tick Function                             |
-| CBOX-100   | Checked?                                  |
-| COL-301    | Text Color                                |
-| COL-302    | Frame Color                               |
-| COL-303    | Fill Color                                |
-| COL-304    | Selected Color                            |
-| COL-305    | Check Mark Color                          |
-| COL-306    | Tick Color                                |
-| COL_307    | Trim Color                                |
-| COL_308    | Gauge Color                               |
-| COL-309    | Graph Color                               |
-| COL-310    | Background Color                          |
-| COL-311    | Grid Major Color                          |
-| COL-312    | Grid Minor Color                          |
-| COL-313    | Grid Background Color                     |
-| COL-314    | Transparency Color                        |
-| COM-000    | Page Enum                                 |
-| COM-001    | Key                                       |
-| COM-002    | ENUM                                      |
-| COM-003    | X                                         |
-| COM-004    | Y                                         |
-| COM-005    | Width                                     |
-| COM-006    | HEIGHT                                    |
-| COM-010    | Frame Enable                              |
-| COM-011    | Fill Enabled                              |
-| COM-012    | Button Rounded                            |
-| COM-013    | Button Size                               |
-| COM-014    | Button GapX                               |
-| COM-015    | Button GapY                               |
-| COM-016    | Touch En                                  |
-| COM-017    | Callback En                               |
-| COM-018    | Key Count (Number in the Key after the $) |
-| COM-019    | ELEMENT REF                               |
-| COM-020    | Use Flash API                             |
-| GEN-100    | Theme                                     |
-| GEN-101    | Target Platform                           |
-| GEN-102    | TFT Screen Width                          |
-| GEN-103    | TFT Screen Height                         |
-| GEN-104    | TFT Screen DPI                            |
-| GEN-105    | Project Directory                         |
-| GEN-106    | Target’s Image Directory                  |
-| GEN-107    | Screen Margins                            |
-| GEN-108    | Horizontal Spacing                        |
-| GEN-109    | Vertical Spacing                          |
-| GEN-110    | MAX_STR                                   |
-| GEN-111    | Recent Colors                             |
-| GEN-112    | Rotation                                  |
-| GEN-113    | Source Image Directory                    |
-| GEN-116    | Use Background Image?                     |
-| GEN-117    | Background Image                          |
-| GEN-118    | Background Image File Name                |
-| GEN-119    | Insert Adafruit_GFX.h?                    |
-| GEN-120    | Backward Compatibility                    |
-| GEN-121    | Recent File List                          |
-| GEN-130    | Width  of App Window                      |
-| GEN-131    | Height of App Window                      |
-| GEN-132    | Width  of TFT Simulation Window           |
-| GEN-133    | Height of TFT Simulation Window           |
-| GEN-134    | Width  of Property View Window            |
-| GEN-135    | Height of Property View Window            |
-| GRID-100   | Grid                                      |
-| GRID-101   | Grid Snap To                              |
-| GRID-102   | Grid Minor Width                          |
-| GRID-103   | Grid Minor Height                         |
-| GRID-104   | Grid Major Width                          |
-| GRID_105   | Grid Major Height                         |
-| GRID-106   | Grid State                                |
-| GRPH-100   | Maximum Points                            |
-| GRPH-102   | Graph Style                               |
-| LINE-100   | Line Length                               |
-| LINE-101   | is Vertical?                              |
-| LIST-100   | Text Margin Width                         |
-| LIST-101   | Text Margin Height                        |
-| LIST-102   | Default Selected Item                     |
-| LIST-103   | Item List                                 |
-| LIST-104   | Storage Size                              |
-| LIST-106   | Item Gap                                  |
-| LIST-107   | Item Gap Color                            |
-| IBTN-100   | Image                                     |
-| IBTN-101   | Image When Selected                       |
-| IBTN-102   | Image defines                             |
-| IBTN-103   | Select Image defines                      |
-| IBTN-104   | Image Format                              |
-| IBTN-107   | Transparency                              |
-| IBTN-108   | Image Extern                              |
-| IBTN-109   | Select Image Extern                       |
-| IBTN-110   | Image Memory Type                         |
-| IBTN-111   | Select Image Memory Type                  |
-| IMG-100    | Image                                     |
-| IMG-101    | Image defines                             |
-| IMG-102    | Image Format                              |
-| IMG-107    | Image Transparency                        |
-| IMG-108    | Image Extern                              |
-| IMG-109    | Image Memory Type                         |
-| KEY-102    | Keypad ENUM                               |
-| KEY-019    | Keypad EREF                               |
-| PAD-100    | Floating Point                            |
-| PAD-101    | Minus Sign                                |
-| RBTN-100   | Checked?                                  |
-| RBTN-101   | Group ID                                  |
-| RBTN-305   | Check Mark Color                          |
-| RING-100   | Starting Angle                            |
-| RING-101   | Angular Range                             |
-| RING-102   | Direction Clockwise?                      |
-| RING-103   | Min                                       |
-| RING-104   | Max                                       |
-| RING-105   | Starting Value                            |
-| RING-106   | Number of Segments                        |
-| RING-107   | Line Thickness                            |
-| RING-108   | Use Gradient Color                        |
-| RING-109   | Active Flat Color                         |
-| RING-110   | Active Gradient Color Start               |
-| RING-111   | Active Gradient Color End                 |
-| RING-112   | Inactive Color                            |
-| SLD-100    | Min                                       |
-| SLD-101    | Max                                       |
-| SLD-102    | Value                                     |
-| SLD-103    | Thumb Sz                                  |
-| SLD-104    | Vertical?                                 |
-| SLD-105    | Tick Divisions                            |
-| SLD-106    | Tick Size                                 |
-| SLD-107    | Trim Style                                |
-| SPIN-100   | Increment                                 |
-| SPIN-101   | Button Size                               |
-| TXT-200    | Font                                      |
-| TXT-201    | Text                                      |
-| TXT-202    | Label                                     |
-| TXT-203    | UTF8                                      |
-| TXT-204    | Fill Enabled                              |
-| TXT-205    | External Storage Size                     |
-| TXT-207    | Text Alignment (old do not use)           |
-| TXT-208    | Wrap Text                                 |
-| TXT-209    | Text Rows                                 |
-| TXT-210    | Text Columns                              |
-| TXT-211    | Font Enum                                 |
-| TXT-212    | Text Margin                               |
-| TXT-213    | Text Alignment                            |
-| TBNT-101   | Jump/Popup To Page ENUM                   |
-| TBNT-103   | Hide Popup Page Function                  |
-| TBNT-104   | Show Popup Page ENUM                      |
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-# Appendix G - Adjusting Builder's DPI
-
-This is a trail and error process. Here I present how to write a project 'AlignText.prj' to guide you in this process.
-
-Start by creating a new project, and add three or four text boxes of various font sizes, choosing your favorite fonts, colors and backgrounds. Place them at the X margin 10, and using the Align Vertical Spacing button space them out by 20 pixels. 
-
-Now create a BOX the size of your display, change the colors to White for Frame, and Fill and check the 'Draw Funct' box in the Properties view. Select the Box in the Treeview and drag it just under the Page$1.
-Save the project as AlignText.prj and generate code.
-
-Now edit the AlignText.ino file and this line inside CbDrawScanner function under the 'add your drawing' comment.
-```
-//TODO - Add your drawing graphic primitives
-drawGrid(rInside.w, rInside.h);
-```
-Now before the CbDrawScanner function add this new function:
-```
-void drawGrid(int w, int h) {
-  int x, y;
-  int minor = 5;
-  int major = 50;
-  gslc_tsColor minorCol = GSLC_COL_GRAY;
-  gslc_tsColor majorCol = GSLC_COL_BLACK;
-  gslc_tsColor lineCol;
-  // draw X axis
-  for (x=0; x<w; x+=minor) {
-    if (x%major == 0) {
-      lineCol = majorCol;
-    } else {
-      lineCol = minorCol;
-    }
-    gslc_DrawLine(&m_gui, x, 0, x, h, lineCol);
-  }
-  // draw Y axis
-  for (y=0; y<h; y+=minor) {
-    if (y%major==0) {
-      lineCol = majorCol;
-    } else {
-      lineCol = minorCol;
-    }
-    gslc_DrawLine(&m_gui, 0, y, w, y, lineCol);
-  }
-}
-```
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-
-Once you have the program running on your target platform you should see the text lined up in a grid.
-
-Go back to the Builder and reopen this new project.  Delete the Box element and turn on the Grid. Now compare the Builder's screen to your MCU screen. If Text shown doesn't closely match the Builder you need to adjust the DPI inside the Edit->Options->General tab. If the Builder's text is too large you need to reduce the DPI, while increasing DPI will decrease the size of displayed text. The DPI has no effect on the target platform so don't re-generate the code, just keep adjusting the Builder's DPI until its a close enough match.
-
-You will likely get the best match in size if you install on the Builder's machine the same fonts that you will be running on your MCU. See Appendex B for more details.
+`builder/src/main/java/resources/templates/meta_ids.csv`
 
