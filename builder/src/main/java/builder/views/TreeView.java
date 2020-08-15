@@ -119,6 +119,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   /** The root object */
   private TreeItem rootItem;
   
+  /** The MsgBoard instance */
+  private MsgBoard mb = null;
+
   /**
    * Gets the single instance of TreeView.
    *
@@ -135,8 +138,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * Instantiates a new tree view.
    */
   public TreeView() {
+    mb = MsgBoard.getInstance();
+    mb.subscribe(this, "TreeView");
     initUI();
-    MsgBoard.getInstance().subscribe(this, "TreeView");
   }
   
   /**
@@ -181,7 +185,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
             selectWidget = widget;
             TreePath parentPath = e.getPath().getParentPath();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-            MsgBoard.getInstance().sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
+            mb.sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
                 selectWidget.getKey(),
                 ((TreeItem) parentNode.getUserObject()).getKey());
           }
@@ -225,7 +229,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       if(row==-1) { //When user clicks on the "empty surface"
         tree.clearSelection();
         selectWidget= null;
-        MsgBoard.getInstance().sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
+        mb.sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
             "", ((TreeItem)currentPage.getUserObject()).getKey());
       }
     }
@@ -845,7 +849,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
         ev.fromIdx = fromIndex;
         ev.toIdx = toRow;
-        MsgBoard.getInstance().publish(ev, "TreeView");
+        mb.publish(ev, "TreeView");
       }
       bDraggingNode = false;
     } 

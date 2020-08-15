@@ -76,6 +76,9 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
   /** The instance. */
   private static PropManager instance = null;
   
+  /** The MsgBoard instance */
+  private MsgBoard mb = null;
+
   /**
    * Gets the single instance of PropManager.
    *
@@ -92,7 +95,8 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
    * Instantiates a new prop manager.
    */
   public PropManager() {
-    MsgBoard.getInstance().subscribe(this, "PropManager");
+    mb = MsgBoard.getInstance();
+    mb.subscribe(this, "PropManager");
     editors = new ArrayList<PropEditor>();
     layout = new CardLayout();
     cards = new JPanel(layout);

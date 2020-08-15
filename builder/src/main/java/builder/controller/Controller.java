@@ -179,6 +179,9 @@ public class Controller extends JInternalFrame
   
   /** The instance. */
   private static Controller instance = null;
+  
+  /** The MsgBoard instance */
+  private MsgBoard mb = null;
 
   /**
    * Gets the single instance of Controller.
@@ -198,7 +201,8 @@ public class Controller extends JInternalFrame
   public void initUI() {
     title = "Simulated TFT Panel";
     this.generalEditor = GeneralEditor.getInstance();
-    MsgBoard.getInstance().subscribe(this, "Controller");
+    mb = MsgBoard.getInstance();
+    mb.subscribe(this, "Controller");
 
     // trap frame resizing
     this.addComponentListener(new ComponentAdapter() {
@@ -500,7 +504,7 @@ public class Controller extends JInternalFrame
           currentPage.refreshView();
           PropManager.getInstance().showPropEditor(page.getKey());
           // notify treeview
-          MsgBoard.getInstance().sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);
+          mb.sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);
         }
       }
     }
@@ -740,7 +744,7 @@ public class Controller extends JInternalFrame
    */
   // function is called from DelPageCommand
   public void delPage(PagePane page) {
-    MsgBoard.getInstance().remove(page.getKey());
+    mb.remove(page.getKey());
     if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
       nBasePages=0;
       basePage = null;
@@ -862,7 +866,6 @@ public class Controller extends JInternalFrame
     this.setVisible(false);
     tabPages.clear();
     tabbedPane.removeAll();
-    MsgBoard mb = MsgBoard.getInstance();
     for (PagePane p : pages) {
       mb.remove(p.getKey());
     }
@@ -874,7 +877,6 @@ public class Controller extends JInternalFrame
     TreeView.getInstance().closeProject();
     PropManager.getInstance().closeProject();
     History.getInstance().clearHistory();
-    Builder.logger.debug("Closed Project");
   }
 
   /**
@@ -947,6 +949,7 @@ public class Controller extends JInternalFrame
     projectFile = file;
     String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
     topFrame.setTitle(frameTitle);
+    Builder.logger.debug("Open Project: " + projectFile.getName() + " Started");
     ObjectInputStream in = null;
     try {
       in = new ObjectInputStream(new FileInputStream(projectFile));
@@ -1016,8 +1019,8 @@ public class Controller extends JInternalFrame
         String enum_backup = (String)in.readObject();
       }
       EnumFactory.getInstance().resetCounts(pages);
-      MsgBoard.getInstance().sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
-      MsgBoard.getInstance().sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
+      mb.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
+      mb.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
     } catch (ClassNotFoundException e) {
       JOptionPane.showMessageDialog(null, "Project File Corrupted", e.toString(), JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();

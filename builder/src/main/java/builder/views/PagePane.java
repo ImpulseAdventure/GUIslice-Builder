@@ -52,7 +52,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragWidgetCommand;
 import builder.commands.History;
