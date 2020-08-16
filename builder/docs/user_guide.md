@@ -1547,10 +1547,6 @@ The font implementation is somewhat challenging.
  
 The builder can't actually run the target platform fonts at the actual size since the DPI's won't match. Adafruit has hard-coded its GFX fonts to 141 instead of the standard 72 dpi. So the builder has to scale them for use.  The scaling can't be perfect since the scaling might require decimal sizes like, 6.24dp which must be converted to an integer, either 6 or 7.  Stll the builder will give a pretty good approximation as long as users give a little space between text and elements. You can always adjust the Width and Height of the containing rectangle inside the property view, if required.
 
-Appearance is yet another issue.  The builder will first look for the named font on your PC or Mac and use it, if found.  This gives the best visual representation of your Text.  However, if the font can't be found the Builder will use Java's built-in fonts to simulate the target fonts.
-
-You can install new true type fonts9 (.ttf) on your Builder's system. On Windows 10 right click on the font file and choose install.  On Linux you can create a folder in your home directory called `.fonts` and place you ttf in this folder.
-
 The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built for Adafruit's GFX format.  You can use them by copying the headers files from GUIsliceBuilder/gfx_fonts to either 
 libraries Adafruit_GFX/Fonts or TFT_eSPI/Fonts/GFXFF depending upon your target platform.
 
@@ -1619,9 +1615,9 @@ https://github.com/icons8/flat-color-icons
 
 You can add or remove fonts from builder_font.json to support any font that exists on your target platform.  Even add your own platform.
 
-The files are in CSV Format with a column header line - See RFC 8259. We use Google's gson to read this file and it is a superset of the json standard.  The most useful of which is that it will take C style comments and ignore them.
+The file is in JSON Format - See RFC 8259. We use Google's GSON to read this file and it is a superset of the json standard.  The most useful of which is that it will take C style comments and ignore them.
 
-The json objects that are in this file starts with allFonts which is an array of platformName objects that itself contains an array of categories.  Each cataegory contains a set of font definitions.
+The JSON objects that are in this file starts with allFonts which is an array of platformName objects that itself contains an array of categories.  Each cataegory contains a set of font definitions.
 ```
 allFonts
   |- platformName
@@ -1689,7 +1685,7 @@ The Fonts object holds an array of font definitions.  The fields are:
 
 
 Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced.  I have chosen to use Monospaced to represent Adafruit's built-in fonts which are 5x8 and plain only.
-All fonts you use will be simulated by these built in java fonts; if the actual font cannot be found. The builder is meant to help you with your UI layout, not be a WYSIWYG editor.
+All fonts you use will be simulated by these built in java fonts. The builder is meant to help you with your UI layout, not be a WYSIWYG editor.
 
 Adafruit GFX Builtin fonts scales up from 1 to N. As an example scale of 2 gives you a character 10x16.
 I have supported scales of 1 to 5.  You can edit this as you desire.

@@ -87,10 +87,8 @@ public class TxtButtonWidget extends Widget {
     String text = m.getText();
     if (text.isEmpty()) {
       text = "TODO";
-      font = ff.getStyledFont(m.getFontDisplayName(), "BOLD+ITALIC");
-    } else {
-      font = ff.getFont(m.getFontDisplayName());
     }
+    font = ff.getFont(m.getFontDisplayName());
     if (font != null) {
       if (m.isFrameEnabled()) {
         g2d.setColor(m.getFrameColor());

@@ -171,24 +171,6 @@ public class FontFactory {
   }
   
   /**
-   * Gets the font with a temporary style change
-   *
-   * @param key
-   *          the key
-   * @param style
-   *          the style
-   * @return the java <code>Font</code> object
-   */
-  public Font getStyledFont(String key, String style) {
-    FontItem item = getFontItem(key);
-    if (item != null) {
-      return item.getStyledFont(style);
-    } else {
-      return null;
-    }
-  }
-  
-  /**
    * Gets the name of the default font for the target platform.
    *
    * @return the font name

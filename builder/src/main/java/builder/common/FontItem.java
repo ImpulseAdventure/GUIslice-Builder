@@ -124,7 +124,7 @@ public class FontItem {
     scaleFactor = (double)dpi / 72.0d;
     double size =  ((double)Double.parseDouble(logicalSize));
     size = size * scaleFactor;
-    font = createFont(familyName, logicalName, logicalSize, logicalStyle);
+    font = createFont();
     font = font.deriveFont((float) size);
   }
   
@@ -203,54 +203,17 @@ public class FontItem {
   }
   
   /**
-   * Gets the font with a temporary style change
-   *
-   * @param style
-   *          the style
-   * @return the java <code>Font</code> object
-   */
-  public Font getStyledFont(String style) {
-    /* Here I use a scaled font because this routine is used on our
-     * TFT Simulation to display text like: "TODO", "99999", etc.
-     * The Style is most often Italic.
-     */
-    double size =  ((double)Double.parseDouble(logicalSize));
-    size = size * scaleFactor;
-    font = createFont(familyName, logicalName, logicalSize, style);
-    font = font.deriveFont((float) size);
-    return font;
-  }
-  
-  /**
-   * This method creates a <code>Font</code> using the default values
-   */
-  public Font createFont() {
-    /* Note that here I don't use scaling, this is because this routine
-     * is used to size text on "real" TFT display.  Not our Simulation.
-     */
-    return createFont(familyName, logicalName, logicalSize, logicalStyle);
-  }
-
-  /**
    * This method creates a <code>Font</code> using the String values displayed to
    * users of GUIsliceBuider by our various Widget Models.
    *
-   * @param familyName
-   *          - is the windows or linux font name.
-   * @param logicalName
-   *          - is the java built-in font name.
-   * @param fontSize
-   *          - is the point size of our font as a String value.
-   * @param fontStyle
-   *          - is the font style "PLAIN", "BOLD", "ITALIC", or "BOLD+ITALIC".
    * @return font The java font we can use to display text
    * @see java.awt.Font
    * @see java.lang.String
    */
-  public Font createFont(String familyName, String logicalName, String fontSize, String fontStyle) {
+  public Font createFont() {
     Font font;
     int style;
-    switch (fontStyle) {
+    switch (logicalStyle) {
     case "BOLD":
       style = Font.BOLD;
       break;
@@ -264,14 +227,7 @@ public class FontItem {
       style = Font.PLAIN;
       break;
     }
-    try {
-      // First try to use the "real" request font, if its installed
-      font = new Font(familyName, style, Integer.parseInt(fontSize));
-    }catch(NullPointerException e) {
-      // Otherwise, use one of the Java built-in fonts
-      font = new Font(logicalName, style, Integer.parseInt(fontSize));
-    }
-    return font;
+    return new Font(logicalName, style, Integer.parseInt(logicalSize));
   }
   
   /**
