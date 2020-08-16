@@ -86,6 +86,8 @@ public class Widget {
     model.TurnOffEvents();
     int rows = model.getRowCount();
     for (int r=WidgetModel.PROP_Y+1; r<rows; r++) {
+      // skip font so we can set default according to platform
+      if (peModel.getMetaId(r).equals("TXT-200")) continue;
       Object o = peModel.getValueAt(r, 1);
       model.changeValueAt(o, r);
     }

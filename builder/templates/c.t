@@ -62,6 +62,7 @@ gslc_tsPage                     m_asPage[MAX_PAGE];
 // ------------------------------------------------
 // Program Globals
 // ------------------------------------------------
+bool m_bQuit = false;
 
 // Save some element references for direct access
 //<Save_References !Start!>

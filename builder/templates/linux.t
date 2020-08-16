@@ -313,7 +313,6 @@ $<CALLBACK>
   gslc_ElemXKeyPadCfgSetSignEn(&sCfg, $<SIGN_EN>);
   gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ>, $<BUTTONSZ>);
   gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
-  gslc_ElemXKeyPadCfgSetGap(&sCfg, $<GAPX>,$<GAPY>);
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Num(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfg);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
@@ -323,7 +322,6 @@ $<CALLBACK>
   gslc_tsXKeyPadCfg sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
   gslc_ElemXKeyPadCfgSetButtonSz(&sCfgTx, $<BUTTONSZ>, $<BUTTONSZ>);
   gslc_ElemXKeyPadCfgSetRoundEn(&sCfgTx, $<ROUND_EN>);
-  gslc_ElemXKeyPadCfgSetGap(&sCfgTx, $<GAPX>,$<GAPY>);
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Alpha(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);

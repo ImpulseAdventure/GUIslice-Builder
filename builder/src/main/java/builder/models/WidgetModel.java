@@ -281,6 +281,15 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
+   * Gets the MetaId.
+   *
+   * @return the metaid
+   */
+  public String getMetaId(int row) {
+    return (String)data[row][PROP_VAL_ID];
+  }
+  
+  /**
    * Sets the type.
    *
    * @param type
@@ -490,6 +499,15 @@ public class WidgetModel extends AbstractTableModel {
    */
   public String getGroupId() {
     return null;
+  }
+
+  /**
+   * setFontReadOnly
+   * Called by various Editors so users can't change 
+   * default fonts in some objects.
+   */
+  public void setFontReadOnly() {
+
   }
 
   /**
@@ -973,4 +991,5 @@ public class WidgetModel extends AbstractTableModel {
       }
     }
   }
+
 }

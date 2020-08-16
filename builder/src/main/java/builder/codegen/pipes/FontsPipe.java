@@ -131,8 +131,13 @@ public class FontsPipe extends WorkFlowPipe {
         if (ff.getFont(name) != null) {
           fontNames.add(name);
         } else {
-          Builder.logger.error("NumKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
-          nErrors++;
+          name = ff.getDefFontName();
+          if (name != null) {
+            fontNames.add(name);
+          } else {
+            Builder.logger.error("NumKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+            nErrors++;
+          }
         }
       } else {
         Builder.logger.error("NumKeyPad: " +  m.getEnum() + " is missing font");
@@ -146,8 +151,13 @@ public class FontsPipe extends WorkFlowPipe {
         if (ff.getFont(name) != null) {
           fontNames.add(name);
         } else {
-          Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
-          nErrors++;
+          name = ff.getDefFontName();
+          if (name != null) {
+            fontNames.add(name);
+          } else {
+            Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+            nErrors++;
+          }
         }
       } else {
         Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);

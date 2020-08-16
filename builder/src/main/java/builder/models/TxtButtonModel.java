@@ -153,6 +153,17 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
+   * setFontReadOnly
+   *
+   * @see builder.models.WidgetModel#setFontReadOnly()
+   */
+  @Override
+  public void setFontReadOnly() {
+    data[PROP_FONT][PROP_VAL_READONLY] = true;
+    data[PROP_FONT][PROP_VAL_VALUE] = "";
+  }
+
+  /**
    * getEditorAt
    *
    * @see builder.models.WidgetModel#getEditorAt(int)

@@ -177,7 +177,20 @@ public class FontFactory {
    */
   public String getDefFontName() {
     List<FontItem> list = getFontList();
+    if (list == null) return "";
     return list.get(0).getDisplayName();
+  }
+  
+  /**
+   * Gets the ENUM of the default font for the target platform.
+   *
+   * @return the font name
+   */
+  public String getDefFontEnum() {
+    List<FontItem> list = getFontList();
+    if (list == null) return null;
+    FontItem item = list.get(0);
+    return item.getFontId();
   }
   
   /**
@@ -189,6 +202,7 @@ public class FontFactory {
    */
   public String getFontEnum(String key) {
     FontItem item = getFontItem(key);
+    if (item == null) return null;
     return item.getFontId();
   }
   

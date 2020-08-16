@@ -211,7 +211,6 @@ public class FontItem {
    * @see java.lang.String
    */
   public Font createFont() {
-    Font font;
     int style;
     switch (logicalStyle) {
     case "BOLD":
