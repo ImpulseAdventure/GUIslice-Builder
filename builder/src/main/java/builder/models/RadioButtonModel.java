@@ -29,8 +29,13 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.table.TableCellEditor;
+
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -47,20 +52,27 @@ public class RadioButtonModel extends WidgetModel {
   /** The Constant for gslc_tsElemRef* m_pElementRef name */
   public static final String ELEMENTREF_NAME = "m_pElemRB";
   
+  /** XCheckbox Style constants */
+  static public  final String  CHECKBOX_STYLE_BOX    = "GSLCX_CHECKBOX_STYLE_BOX";
+  static public  final String  CHECKBOX_STYLE_X      = "GSLCX_CHECKBOX_STYLE_X";
+  static public  final String  CHECKBOX_STYLE_ROUND  = "GSLCX_CHECKBOX_STYLE_ROUND";
+
   /** The Property Index Constants. */
   static private final int PROP_CHECKED        = 7;
-  static private final int PROP_CALLBACK_EN    = 8;
+  static private final int PROP_STYLE          = 8;
   static private final int PROP_MARK_COLOR     = 9;
-  static private final int PROP_USE_FLASH      = 10;
-  static private final int PROP_FRAME_COLOR    = 11;
-  static private final int PROP_FILL_COLOR     = 12;
-  static private final int PROP_SELECTED_COLOR = 13;
-  static public  final int PROP_GROUP          = 14;
+  static private final int PROP_CALLBACK_EN    = 10;
+  static private final int PROP_USE_FLASH      = 11;
+  static private final int PROP_FRAME_COLOR    = 12;
+  static private final int PROP_FILL_COLOR     = 13;
+  static private final int PROP_SELECTED_COLOR = 14;
+  static public  final int PROP_GROUP          = 15;
 
   /** The Property Defaults */
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
-  static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
+  static public  final String  DEF_STYLE             = CHECKBOX_STYLE_ROUND;
   static public  final Color   DEF_MARK_COLOR        = new Color(255,165,0); // // GSLC_COL_ORANGE
+  static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
@@ -70,11 +82,30 @@ public class RadioButtonModel extends WidgetModel {
   static private final int DEF_WIDTH = 20;
   static private final int DEF_HEIGHT= 20;
 
+  /** The cb style. */
+  JComboBox<String> cbStyle;
+  
+  /** The style cell editor. */
+  DefaultCellEditor styleCellEditor;
+
   /**
    * Instantiates a new radio button model.
    */
   public RadioButtonModel() {
     initProperties();
+    initEditors();
+  }
+  
+  /**
+   * Initializes the cell editors.
+   */
+  private void initEditors()
+  {
+    cbStyle = new JComboBox<String>();
+    cbStyle.addItem(CHECKBOX_STYLE_ROUND);
+    cbStyle.addItem(CHECKBOX_STYLE_BOX);
+    cbStyle.addItem(CHECKBOX_STYLE_X);
+    styleCellEditor = new DefaultCellEditor(cbStyle);
   }
   
   /**
@@ -83,7 +114,7 @@ public class RadioButtonModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.RADIOBUTTON;
-    data = new Object[15][5];
+    data = new Object[16][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
@@ -91,9 +122,10 @@ public class RadioButtonModel extends WidgetModel {
     data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
     
     initProp(PROP_CHECKED, Boolean.class, "CBOX-100", Boolean.FALSE,"Checked?",DEF_CHECKED);
-    initProp(PROP_CALLBACK_EN, Boolean.class, "COM-017", Boolean.FALSE,"Callback Enabled?",DEF_CALLBACK_EN);
+    initProp(PROP_STYLE, String.class, "RBTN-102", Boolean.FALSE,"Check Mark Style",DEF_STYLE);
     initProp(PROP_MARK_COLOR, Color.class, "COL-305", Boolean.FALSE,"Check Mark Color",DEF_MARK_COLOR);
 
+    initProp(PROP_CALLBACK_EN, Boolean.class, "COM-017", Boolean.FALSE,"Callback Enabled?",DEF_CALLBACK_EN);
     initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
     
     initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
@@ -104,6 +136,26 @@ public class RadioButtonModel extends WidgetModel {
 
   }
   
+  /**
+   * Gets the style.
+   style
+   */
+  public String getStyle() {
+    return (String) data[PROP_STYLE][PROP_VAL_VALUE];
+  }
+  
+  /**
+   * getEditorAt
+   *
+   * @see builder.models.WidgetModel#getEditorAt(int)
+   */
+  @Override
+  public TableCellEditor getEditorAt(int rowIndex) {
+    if (rowIndex == PROP_STYLE)
+      return styleCellEditor;
+    return null;
+  }
+
   /**
    * changeValueAt
    *
@@ -137,7 +189,7 @@ public class RadioButtonModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

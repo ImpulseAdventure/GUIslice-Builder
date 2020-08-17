@@ -40,6 +40,7 @@ import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -201,11 +202,21 @@ public class TextModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
 
+/**
+ * setFontReadOnly
+ *
+ * @see builder.models.WidgetModel#setFontReadOnly()
+ */
+  @Override
+  public void setFontReadOnly() {
+    data[PROP_FONT][PROP_VAL_READONLY] = true;
+    data[PROP_FONT][PROP_VAL_VALUE] = "";
+  }
   /**
    * Use Flash API.
    *
@@ -433,7 +444,9 @@ public class TextModel extends WidgetModel {
     // next does the current font exist? 
     // if we changed target plaform we might need to change font to default
     String name = getFontDisplayName();
+    if (name == null || name.isEmpty()) return;
     FontItem item = ff.getFontItem(name);
+    if (item == null) return;
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
       if (fireUpdates) {

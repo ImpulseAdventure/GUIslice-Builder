@@ -83,7 +83,7 @@ public class AddWidgetCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Add widget: " + target.getEnum());
+    return String.format("Add to page:%s widget: %s",page.getEnum(),target.getEnum());
   }
 
 }

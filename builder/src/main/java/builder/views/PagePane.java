@@ -104,6 +104,9 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The dragging indicator. */
   private boolean bDragging = false;
+  
+  /** The paint base widgets indicator. */
+  private boolean bPaintBaseWidgets = false;
 
   /** The project model. */
   private ProjectModel pm = null;
@@ -203,8 +206,18 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
+    // output this page's widgets
     for (Widget w : widgets) {
       w.draw(g2d);
+    }
+    /* output any base page widgets unless this is a project
+     * base page or popup page.
+     */
+    if (bPaintBaseWidgets && Controller.getBaseWidgets() != null) {
+      for (Widget w : Controller.getBaseWidgets()) {
+        w.unSelect(); // just in case
+        w.draw(g2d);
+      }
     }
     if (bMultiSelectionBox) {
       // draw our selection rubber band 
@@ -421,15 +434,27 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void doSelectedCount(Widget w) {
     if (w.isSelected()) {
+/* reserve for future use
       if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
-          w.getType().equals(EnumFactory.CHECKBOX)) {
+          w.getType().equals(EnumFactory.CHECKBOX) ||
+          w.getType().equals(EnumFactory.TOGGLEBUTTON)) {
             selectedGroupCnt++;
+      }
+*/
+      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
+        selectedGroupCnt++;
       }
       selectedCnt++;
     } else {
+/*
       if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
-          w.getType().equals(EnumFactory.CHECKBOX)) {
+        w.getType().equals(EnumFactory.CHECKBOX) ||
+          w.getType().equals(EnumFactory.TOGGLEBUTTON)) {
             if (selectedGroupCnt > 0) selectedGroupCnt--;
+      }
+*/
+      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
+        if (selectedGroupCnt > 0) selectedGroupCnt--;
       }
       if (selectedCnt > 0) selectedCnt--;
     }
@@ -876,6 +901,14 @@ public class PagePane extends JPanel implements iSubscriber {
     c.execute();
   }
 
+  public void objectSelectedTreeView(String widgetKey) {
+    selectNone();
+    Widget w = findWidget(widgetKey);
+    if (w != null) {
+      selectWidget(w);
+    }
+    repaint();
+  }
   /**
    * updateEvent provides the implementation of Observer Pattern. It monitors
    * selection of widgets in the tree view, modification of widgets by commands,
@@ -887,27 +920,9 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("PagePane: " + e.toString());
-    if (e.code == MsgEvent.WIDGET_REPAINT) {
-//   System.out.println("PagePane: " + e.toString());
-      Widget w = findWidget(e.message);
-      if (w != null) {
-        repaint();
-      }
-    } else if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
-               e.xdata.equals(getKey())) {
-//  System.out.println("PagePane: " + e.toString());
+    if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
+//      Builder.logger.debug("PagePane " + getEnum() + " recv: " + e.toString());
       selectNone();
-      Widget w = findWidget(e.message);
-      if (w != null) {
-        selectWidget(w);
-        repaint();
-      }
-    } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-//  System.out.println("PagePane: " + e.toString());
-      selectNone();
-      repaint();
-    } else if (e.code == MsgEvent.CANVAS_MODEL_CHANGE) {
       repaint();
     }
   }
@@ -996,6 +1011,13 @@ public class PagePane extends JPanel implements iSubscriber {
   public void setPageType(String pageType) {
     model.setType(pageType);
     msg.subscribe(this, model.getKey());
+    if (pageType.equals(EnumFactory.PROJECT)  ||
+        pageType.equals(EnumFactory.BASEPAGE) ||
+        pageType.equals(EnumFactory.POPUP)) {
+      bPaintBaseWidgets=false;
+    } else {
+      bPaintBaseWidgets=true;
+    }
   }
 }
 

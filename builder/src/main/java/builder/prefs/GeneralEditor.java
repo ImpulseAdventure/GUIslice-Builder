@@ -324,15 +324,6 @@ public class GeneralEditor extends ModelEditor {
   }
 
   /**
-   * Gets the dpi.
-   *
-   * @return the dpi
-   */
-  public int getDPI() {
-    return ((GeneralModel) model).getDPI();
-  }
-  
-  /**
    * Gets the margins.
    *
    * @return the margins

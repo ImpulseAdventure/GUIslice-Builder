@@ -94,7 +94,11 @@ public class ElementPipe extends WorkFlowPipe {
     List<String> outputLines = new ArrayList<String>();
     Map<String, String> map = new HashMap<String,String>();
     // figure out the MAX_PAGE define
-    int nPages = cg.getPages().size();
+    int nPages = 0;
+    for (PagePane p : cg.getPages()) {
+      if (!p.getPageType().equals(EnumFactory.PROJECT))
+        nPages++;
+    }
     // we have hidden pages if users are referencing virtual keypads
     boolean bAddNumKeyPad = false;
     boolean bAddAlphaKeyPad = false;
@@ -122,6 +126,8 @@ public class ElementPipe extends WorkFlowPipe {
     int elem_cnt = 0;
     int flash_cnt = 0;
     for (PagePane p : cg.getPages()) {
+      if (p.getPageType().equals(EnumFactory.PROJECT))
+        continue;
       flash_cnt = 0;
       elem_cnt = p.getWidgets().size();
       for (Widget w : p.getWidgets()) {

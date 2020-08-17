@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="logs/builder.log"
+                 filePattern="logs/builder-%d{MM-dd-yyyy}-%i.log.zip"
+                 immediateFlush="false">
+      <PatternLayout>
+        <Pattern>%d %p %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5" />
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <!-- avoid duplicated logs with additivity=false -->
+    <Logger name="Builder" level="debug" additivity="false">
+      <AppenderRef ref="RollingFile"/>
+    </Logger>
+    <Root level="trace">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+

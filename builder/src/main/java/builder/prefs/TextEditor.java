@@ -77,6 +77,7 @@ public class TextEditor extends ModelEditor {
     model = new TextModel();
     model.TurnOffEvents();
     updateModel();
+    model.setFontReadOnly();
     System.setErr(System.err);  
   }
 

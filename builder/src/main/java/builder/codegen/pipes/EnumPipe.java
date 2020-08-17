@@ -78,7 +78,8 @@ public class EnumPipe extends WorkFlowPipe {
     // first find our Page enums and output them
     List<String> enumList = new ArrayList<String>();
     for (PagePane p : cg.getPages()) {
-      enumList.add(p.getEnum());
+      if (!p.getPageType().equals(EnumFactory.PROJECT))
+        enumList.add(p.getEnum());
     }
     // now handle any keypads
     boolean bAddNumKeyPad = false;

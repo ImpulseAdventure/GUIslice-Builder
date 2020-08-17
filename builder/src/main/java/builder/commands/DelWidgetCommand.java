@@ -96,7 +96,14 @@ public class DelWidgetCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Delete widget: ");
+    String myEnums = "";
+    Widget w = null;
+    for(int i=0; i<groupList.size(); i++) {
+      w = groupList.get(i);
+      if (i > 0) myEnums = myEnums + ",";
+      myEnums = myEnums + w.getEnum();
+    }
+    return String.format("Delete from page:%s widget:%s",page.getEnum(),myEnums);
   }
 
 }

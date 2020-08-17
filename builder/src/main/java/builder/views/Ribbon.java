@@ -111,7 +111,8 @@ public class Ribbon extends JRibbonFrame {
   
   /** The controls elements */
   public JCommandButton btn_txtbtn, btn_imgbtn, btn_slider,
-    btn_checkbox, btn_radiobtn, btn_spinner, btn_image, btn_graph, btn_group;
+    btn_checkbox, btn_radiobtn, btn_spinner, btn_image, btn_graph, 
+    btn_toggle, btn_seekbar, btn_group;
   
   /** The gauge elements */
   public JCommandButton btn_ringgauge, btn_progressbar, btn_radial, 
@@ -806,6 +807,23 @@ public class Ribbon extends JRibbonFrame {
         "Add clickable element that will accept numberic input from a virtual keypad."));
     band.addCommandButton(btn_numinput, MEDIUM);
       
+    btn_listbox = new JCommandButton("Listbox",
+        cu.getResizableIcon("resources/icons/controls/listbox_32x.png"));
+      btn_listbox.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "listbox");
+        }
+      });
+      RichTooltip tip_listbox = new RichTooltip();
+      tip_listbox.setTitle("Listbox");
+      tip_listbox.addDescriptionSection(
+          "Add element that presents"
+          + "the user with a group of items,"
+          + "displayed in one or more columns");
+      btn_listbox.setActionRichTooltip(tip_listbox);
+      band.addCommandButton(btn_listbox, MEDIUM);
+          
     btn_textbox = new JCommandButton("Textbox",
       cu.getResizableIcon("resources/icons/text/textbox_32x.png"));
     btn_textbox.addActionListener(new ActionListener() {
@@ -838,19 +856,19 @@ public class Ribbon extends JRibbonFrame {
           "Add clickable element that has a textual label with frame and fill."));
       band.addCommandButton(btn_txtbtn, TOP);
 
-    btn_imgbtn = new JCommandButton("Image Button",
-      cu.getResizableIcon("resources/icons/controls/imgbutton_32x.png"));
-    btn_imgbtn.addActionListener(new ActionListener() {
-			@Override
+    btn_toggle = new JCommandButton("Toggle Button",
+      cu.getResizableIcon("resources/icons/controls/togglebtn.png"));
+    btn_toggle.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "imagebutton");
-			}
-		});
-    btn_imgbtn.setActionRichTooltip(new RichTooltip(
-        "Image Button",
-        "Add clickable element that uses a BMP image with no frame or fill."));
-    band.addCommandButton(btn_imgbtn, MEDIUM);
-        
+        mb.sendActionCommand("Ribbon", "toggle");
+      }
+    });
+    btn_toggle.setActionRichTooltip(new RichTooltip(
+        "Toggle",
+        "Add Toggle Button."));
+    band.addCommandButton(btn_toggle, MEDIUM);
+      
     btn_checkbox = new JCommandButton("Checkbox",
       cu.getResizableIcon("resources/icons/controls/checkbox_32x.png"));
     btn_checkbox.addActionListener(new ActionListener() {
@@ -877,53 +895,32 @@ public class Ribbon extends JRibbonFrame {
         "Add Radio Button element."));
     band.addCommandButton(btn_radiobtn, MEDIUM);
 
-    btn_image = new JCommandButton("Image",
-        cu.getResizableIcon("resources/icons/controls/image_32x.png"));
-      btn_image.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "image");
-        }
-      });
-      btn_image.setActionRichTooltip(new RichTooltip(
-          "Image",
-          "Add image element."));
-      band.addCommandButton(btn_image, MEDIUM);
-    
-    btn_listbox = new JCommandButton("Listbox",
-      cu.getResizableIcon("resources/icons/controls/listbox_32x.png"));
-    btn_listbox.addActionListener(new ActionListener() {
-			@Override
-      public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "listbox");
-			}
-		});
-    RichTooltip tip_listbox = new RichTooltip();
-    tip_listbox.setTitle("Listbox");
-    tip_listbox.addDescriptionSection(
-        "Add element that presents"
-        + "the user with a group of items,"
-        + "displayed in one or more columns");
-    btn_listbox.setActionRichTooltip(tip_listbox);
-    band.addCommandButton(btn_listbox, MEDIUM);
-        
-    btn_slider = new JCommandButton("Slider",
-        cu.getResizableIcon("resources/icons/controls/slider_32x.png"));
-    btn_slider.addActionListener(new ActionListener() {
+    btn_imgbtn = new JCommandButton("Image Button",
+        cu.getResizableIcon("resources/icons/controls/imgbutton_32x.png"));
+    btn_imgbtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "slider");
+        mb.sendActionCommand("Ribbon", "imagebutton");
       }
     });
-    RichTooltip tip_slider = new RichTooltip();
-    tip_slider.setTitle("Slider");
-    tip_slider.addDescriptionSection(
-        "Add element that is a graphical control which presents"
-        + "values along a line, and that allows users to slide a "
-        + "position marker to select a specific value.");
-    btn_slider.setActionRichTooltip(tip_slider);
-    band.addCommandButton(btn_slider, MEDIUM);
-
+    btn_imgbtn.setActionRichTooltip(new RichTooltip(
+        "Image Button",
+        "Add clickable element that uses a BMP image with no frame or fill."));
+    band.addCommandButton(btn_imgbtn, MEDIUM);
+            
+    btn_seekbar = new JCommandButton("Seekbar",
+      cu.getResizableIcon("resources/icons/controls/seekbar.png"));
+    btn_seekbar.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mb.sendActionCommand("Ribbon", "seekbar");
+      }
+    });
+    btn_seekbar.setActionRichTooltip(new RichTooltip(
+        "Seekbar",
+        "Add Seekbar element."));
+   band.addCommandButton(btn_seekbar, MEDIUM);
+        
     btn_spinner = new JCommandButton("Spinner",
         cu.getResizableIcon("resources/icons/controls/spinner_32x.png"));
     btn_spinner.addActionListener(new ActionListener() {
@@ -941,6 +938,36 @@ public class Ribbon extends JRibbonFrame {
     btn_spinner.setActionRichTooltip(tip_spinner);
     band.addCommandButton(btn_spinner, MEDIUM);
 
+    btn_slider = new JCommandButton("Slider",
+        cu.getResizableIcon("resources/icons/controls/slider_32x.png"));
+    btn_slider.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mb.sendActionCommand("Ribbon", "slider");
+      }
+    });
+    RichTooltip tip_slider = new RichTooltip();
+    tip_slider.setTitle("Slider");
+    tip_slider.addDescriptionSection(
+        "Add element that is a graphical control which presents"
+        + "values along a line, and that allows users to slide a "
+        + "position marker to select a specific value.");
+    btn_slider.setActionRichTooltip(tip_slider);
+    band.addCommandButton(btn_slider, MEDIUM);
+
+    btn_image = new JCommandButton("Image",
+        cu.getResizableIcon("resources/icons/controls/image_32x.png"));
+      btn_image.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mb.sendActionCommand("Ribbon", "image");
+        }
+      });
+      btn_image.setActionRichTooltip(new RichTooltip(
+          "Image",
+          "Add image element."));
+      band.addCommandButton(btn_image, MEDIUM);
+    
   }
 
   /**
@@ -957,8 +984,8 @@ public class Ribbon extends JRibbonFrame {
       });
     btn_ringgauge.setActionRichTooltip(new RichTooltip(
         "Ring Gauge",
-        "Awaiting details to complete implemention."));
-    band.addCommandButton(btn_ringgauge, TOP);
+        "Add Ring Gauge element."));
+    band.addCommandButton(btn_ringgauge, MEDIUM);
       
     btn_progressbar = new JCommandButton("Progress Bar",
       cu.getResizableIcon("resources/icons/gauges/progressbar_32x.png"));
@@ -971,7 +998,7 @@ public class Ribbon extends JRibbonFrame {
     btn_progressbar.setActionRichTooltip(new RichTooltip(
         "ProgressBar",
         "Add element that can be used to indicate the progress of a lengthy operation as a bar."));
-    band.addCommandButton(btn_progressbar, TOP);
+    band.addCommandButton(btn_progressbar, MEDIUM);
     
     btn_radial = new JCommandButton("Radial Gauge",
       cu.getResizableIcon("resources/icons/gauges/radial_32x.png"));
@@ -984,7 +1011,7 @@ public class Ribbon extends JRibbonFrame {
     btn_radial.setActionRichTooltip(new RichTooltip(
         "Radial Gauge",
         "Add element that can be used to indicate the progress of a lengthy operation as a dial gauge."));
-    band.addCommandButton(btn_radial, TOP);
+    band.addCommandButton(btn_radial, MEDIUM);
     
     btn_ramp = new JCommandButton("Ramp Gauge",
       cu.getResizableIcon("resources/icons/gauges/ramp_32x.png"));
@@ -997,7 +1024,7 @@ public class Ribbon extends JRibbonFrame {
     btn_ramp.setActionRichTooltip(new RichTooltip(
         "Ramp Gauge",
         "Add element that can be used to indicate the progress of a lengthy operation as a ramp gauge."));
-    band.addCommandButton(btn_ramp, TOP);
+    band.addCommandButton(btn_ramp, MEDIUM);
     
   }
 

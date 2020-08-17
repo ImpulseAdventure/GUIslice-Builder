@@ -47,5 +47,9 @@ gradle clean
 follwed by:
 gradle packageAll
 
- 
+When the Build is completed we pack everything for distribution inside build/disp/*.zip, *.tar.gz 
 
+The windows install exe before packing in the zip file is created inside build/innosetup
+
+Likewise, the folders for each platform are first laid out inside build/tmp/windows, 
+build/tmp/linux, build/tmp/macOS and zipped or tarred from there. 

@@ -62,7 +62,6 @@ import javax.swing.event.ChangeListener;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
-import builder.commands.AddPageCommand;
 import builder.commands.AddWidgetCommand;
 import builder.commands.AlignBottomCommand;
 import builder.commands.AlignCenterCommand;
@@ -78,14 +77,12 @@ import builder.commands.Command;
 import builder.commands.CopyCommand;
 import builder.commands.CopyPropsCommand;
 import builder.commands.CutCommand;
-import builder.commands.DelPageCommand;
 import builder.commands.DelWidgetCommand;
 import builder.commands.GroupCommand;
 import builder.commands.History;
 import builder.commands.PasteCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -93,11 +90,9 @@ import builder.models.GeneralModel;
 import builder.models.GridModel;
 import builder.models.PageModel;
 import builder.models.ProjectModel;
-import builder.models.TextModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.BoxEditor;
-//import builder.prefs.CheckBoxEditor;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 import builder.prefs.ModelEditor;
@@ -108,6 +103,7 @@ import builder.views.PagePane;
 import builder.views.TreeView;
 import builder.widgets.Widget;
 
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
@@ -145,11 +141,8 @@ public class Controller extends JInternalFrame
   /** The str theme. */
   private String strTheme;
   
-  /** The target DPI. */
-  private int targetDPI;
-  
   /** The current page. */
-  private PagePane currentPage;
+  private static PagePane currentPage;
   
   /** The project page which hold all options */
   private PagePane projectPage;
@@ -173,13 +166,22 @@ public class Controller extends JInternalFrame
   List<String> tabPages = new ArrayList<String>();
 
   /** The count of base pages. */
-  int nBasePages;
+  static int nBasePages;
   
+  /** The base page, if any. */
+  static private PagePane basePage;
+
   /** The litr. */
   ListIterator<PagePane> litr;
   
+  /** saved icons */
+  ResizableIcon ic_project_tab,ic_page_tab, ic_base_tab, ic_popup_tab;
+  
   /** The instance. */
   private static Controller instance = null;
+  
+  /** The MsgBoard instance */
+  private MsgBoard mb = null;
 
   /**
    * Gets the single instance of Controller.
@@ -199,7 +201,8 @@ public class Controller extends JInternalFrame
   public void initUI() {
     title = "Simulated TFT Panel";
     this.generalEditor = GeneralEditor.getInstance();
-    MsgBoard.getInstance().subscribe(this, "Controller");
+    mb = MsgBoard.getInstance();
+    mb.subscribe(this, "Controller");
 
     // trap frame resizing
     this.addComponentListener(new ComponentAdapter() {
@@ -213,6 +216,13 @@ public class Controller extends JInternalFrame
     // create our local clipboard
     clipboard = new Clipboard ("My clipboard");
     
+    // save icons
+    Dimension iconSz = new Dimension(16,16);
+    ic_page_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
+    ic_base_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
+    ic_popup_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
+    ic_project_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/project.png", iconSz);
+    
     tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     tabbedPane.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -220,6 +230,7 @@ public class Controller extends JInternalFrame
       }
     });
     nBasePages = 0;
+    basePage = null;
     tabbedPane.setPreferredSize(new Dimension(1200,1200));
     createFirstPage();
 //    tabbedPane.setSelectedIndex(0);
@@ -230,6 +241,7 @@ public class Controller extends JInternalFrame
     this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
 //    this.pack();
     this.setVisible(true);
+    Builder.logger.debug("New Project");
   }
   
   /**
@@ -274,6 +286,17 @@ public class Controller extends JInternalFrame
   }
   
   /**
+   * get widget list for base page, if any
+   * @return list of widgets, or null
+   */
+  public static List<Widget> getBaseWidgets() {
+    if (nBasePages > 0) {
+      return basePage.getWidgets();
+    }
+    return null;
+  }
+  
+  /**
    * get project model's Target Platform 
    * @return platform
    */
@@ -306,6 +329,7 @@ public class Controller extends JInternalFrame
         pmData[mapRow][WidgetModel.PROP_VAL_VALUE] = objectData;
       }
     }
+    pm.setReadOnlyProperties();
     pm.TurnOnEvents();
     PagePane p = new PagePane();
     p.setLayout(null);
@@ -392,13 +416,28 @@ public class Controller extends JInternalFrame
    *          the page
    */
   public void addPageToView(PagePane page) {
-    pages.add(page);
-    tabPages.add(page.getKey());
     scrollPane = new JScrollPane(page,
         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-    tabbedPane.addTab(page.getEnum(), scrollPane);
-    tabbedPane.setSelectedIndex(tabPages.size()-1);
+    if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
+      pages.add(1,page);
+      nBasePages++;
+      basePage = page;
+      tabPages.add(1,page.getKey());
+      tabbedPane.insertTab(page.getEnum(), ic_base_tab, scrollPane, null, 1);
+      tabbedPane.setSelectedIndex(1);
+    } else {
+      pages.add(page);
+      tabPages.add(page.getKey());
+      if (page.getPageType().equals(EnumFactory.PAGE)) {
+        tabbedPane.addTab(page.getEnum(), ic_page_tab, scrollPane);
+      } else if (page.getPageType().equals(EnumFactory.PROJECT)) {
+        tabbedPane.addTab(page.getEnum(), ic_project_tab, scrollPane);
+      } else {
+        tabbedPane.addTab(page.getEnum(), ic_popup_tab, scrollPane);
+      }
+      tabbedPane.setSelectedIndex(tabPages.size()-1);
+    }
     tabbedPane.repaint();
     currentPage = page;
     currentPage.refreshView();
@@ -440,6 +479,7 @@ public class Controller extends JInternalFrame
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
+      PropManager.getInstance().showPropEditor(pageKey);
     }
   }
   
@@ -464,7 +504,7 @@ public class Controller extends JInternalFrame
           currentPage.refreshView();
           PropManager.getInstance().showPropEditor(page.getKey());
           // notify treeview
-          MsgBoard.getInstance().sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);
+          mb.sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);
         }
       }
     }
@@ -515,8 +555,11 @@ public class Controller extends JInternalFrame
       if (!e.message.equals(currentPage.getKey())) {
         changePage(e.message);
       }
-    } else if (!e.xdata.equals(currentPage.getKey())) {
-      changePageNoMsg(e.xdata);
+    } else {
+      if (!e.xdata.equals(currentPage.getKey())) {
+        changePageNoMsg(e.xdata);
+      }
+      currentPage.objectSelectedTreeView(e.message);
     }
   }
   
@@ -547,7 +590,7 @@ public class Controller extends JInternalFrame
    * It builds an AddPageCommand for undo and redo.
    */
   public void createPage(String sWidgetType) {
-    AddPageCommand c = new AddPageCommand(this);
+//    AddPageCommand c = new AddPageCommand(this);
     PagePane p = new PagePane();
     p.setLayout(null);
     PageModel m = (PageModel) p.getModel();
@@ -566,7 +609,6 @@ public class Controller extends JInternalFrame
             JOptionPane.ERROR_MESSAGE);
         return;
       }
-      nBasePages++;
       pageKey = EnumFactory.getInstance().createKey(EnumFactory.BASEPAGE);
       m.setKey(pageKey);
       m.setEnum(EnumFactory.getInstance().createEnum(EnumFactory.BASEPAGE));
@@ -579,10 +621,15 @@ public class Controller extends JInternalFrame
       // NOTE: must set type on page pane not model or messages will be lost!
       p.setPageType(EnumFactory.POPUP);
     }
+/* 
+ * undo of adding pages is too complex to support correctly at the moment
     c.add(p);
     execute(c);
+ */
+    addPage(p);
   }
   
+
   /**
    * Adds the page.
    *
@@ -596,25 +643,26 @@ public class Controller extends JInternalFrame
     TreeView.getInstance().addPage(page.getKey(), page.getEnum());
   }
   
-  // this function is called when user presses delete button
   /**
    * Removes the component.
+   * This function is called when user presses delete button
    */
-  // It determines if we are to delete a widget or a page
   public void removeComponent() {
+    // Determine if we are to delete a widget or a page
     List<Widget> list= currentPage.getSelectedList();
-    if (list.size() < 1) { // could be a widget or page selected in TreeView
-      // ask tree view if anyone selected?
+    /* if no widgets are selected on the current page
+     * ask the treeview who it has selected, if any
+     */
+    if (list.size() < 1) { 
+      /* could be a widget or page selected in TreeView
+       * ask tree view if anyone selected?
+       */
       String selected = TreeView.getInstance().getSelectedWidget();
       if (selected != null && !selected.isEmpty()) {
-        if (selected.startsWith("Page")      ||
-            selected.startsWith("BasePage")  ||
-            selected.startsWith("Popup")) {
-          PagePane p = findPage(selected);
-          if (p != null) {
+        PagePane p = findPage(selected);
+        if (p != null) {
             removePage(p);
             return;
-          }
         } else {  // widget it is...
           delWidget();
           return;
@@ -624,20 +672,20 @@ public class Controller extends JInternalFrame
         delWidget();
         return;
     }
+    // It appears no widget is selected
     JOptionPane.showMessageDialog(topFrame, 
         "You must first select an object for deletion!", 
         "Warning",
         JOptionPane.WARNING_MESSAGE);
   }
   
-  // this function is called when user selects deletion of a page
   /**
-   * Removes the page.
+   * Removes the page, no longer supports undo/redo.
+   * This function is called when user selects deletion of a page
    *
    * @param page
    *          the page
    */
-  // It builds an DelPageCommand for undo and redo.
   private void removePage(PagePane page) {
     String msg = null;
     if (page.getKey().equals("Page$1")) {
@@ -647,6 +695,16 @@ public class Controller extends JInternalFrame
           JOptionPane.ERROR_MESSAGE);
       return;
     } 
+    if (page.getPageType().equals(EnumFactory.PROJECT)) {
+      // error can't remove Project tab
+      JOptionPane.showMessageDialog(topFrame, 
+          "Sorry, You can't remove Project Tab.", "Error",
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    } 
+/* No real point to this code. If the user wants to delete this page just
+ * delete it!  No reason to force them to remove each widget.
+ 
     if (page.getWidgetCount() > 0) {
       msg = String.format("Sorry, you must delete all of %s widgets first.", page.getKey());
       // error can't remove first page
@@ -655,7 +713,8 @@ public class Controller extends JInternalFrame
           JOptionPane.ERROR_MESSAGE);
         return;
     } else {
-      msg = String.format("Are you sure you want to delete %s?", page.getKey());
+*/
+      msg = String.format("Are you sure you want to delete PAGE %s?\nWARNING: This has No UNDO/REDO.", page.getKey());
       if (JOptionPane.showConfirmDialog(topFrame, 
           msg, 
           "Really Delete?", 
@@ -663,10 +722,18 @@ public class Controller extends JInternalFrame
           JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
         return;
       }
-    }
+//    }
+/* TODO - No longer supports undo/redo since with Base Page support we need 
+ * a major rewrite of Controller's backup and restore to get this to work 
+ * correctly. One solution would amount to a complete PROJECT save and restore 
+ * which seems rather heavy weight for undo/redo.  Needs much more thought.
     DelPageCommand c = new DelPageCommand(this);
     c.delete(page);
     execute(c);
+*/
+    // since we don't currently support undo/redo for this operation clear history
+    History.getInstance().clearHistory();
+    delPage(page);
   }
 
   /**
@@ -677,7 +744,11 @@ public class Controller extends JInternalFrame
    */
   // function is called from DelPageCommand
   public void delPage(PagePane page) {
-    MsgBoard.getInstance().remove(page.getKey());
+    mb.remove(page.getKey());
+    if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
+      nBasePages=0;
+      basePage = null;
+    }
     PagePane p = null;
     litr = pages.listIterator();
     int idx = 0;
@@ -686,10 +757,8 @@ public class Controller extends JInternalFrame
       if (p.getKey().equals(page.getKey())) {
         litr.remove();
         idx = findPageIdx(page.getKey());
-        if (idx > 1) {
-          tabbedPane.remove(idx);
-          tabbedPane.repaint();
-        }
+        tabbedPane.remove(idx);
+        tabbedPane.repaint();
         TreeView.getInstance().delPage(page.getKey());
         if (p.getPageType().equals(EnumFactory.BASEPAGE))
           nBasePages=0;
@@ -787,6 +856,7 @@ public class Controller extends JInternalFrame
     PropManager.getInstance().openProject();
     createFirstPage();
     this.setVisible(true);
+    Builder.logger.debug("New Project");
   }
 
   /**
@@ -796,7 +866,6 @@ public class Controller extends JInternalFrame
     this.setVisible(false);
     tabPages.clear();
     tabbedPane.removeAll();
-    MsgBoard mb = MsgBoard.getInstance();
     for (PagePane p : pages) {
       mb.remove(p.getKey());
     }
@@ -864,7 +933,7 @@ public class Controller extends JInternalFrame
     out.close();
     History.getInstance().clearHistory();
     Builder.postStatusMsg("Successfully Saved Project into " + projectFile.getName());
-
+    Builder.logger.debug("Saved Project into " + projectFile.getName());
   }
 
   /**
@@ -880,6 +949,7 @@ public class Controller extends JInternalFrame
     projectFile = file;
     String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
     topFrame.setTitle(frameTitle);
+    Builder.logger.debug("Open Project: " + projectFile.getName() + " Started");
     ObjectInputStream in = null;
     try {
       in = new ObjectInputStream(new FileInputStream(projectFile));
@@ -889,6 +959,7 @@ public class Controller extends JInternalFrame
       return;
     }
     nBasePages = 0;
+    basePage = null;
     PropManager propMgr = PropManager.getInstance();
     propMgr.openProject();
     String pageKey = null;
@@ -948,8 +1019,8 @@ public class Controller extends JInternalFrame
         String enum_backup = (String)in.readObject();
       }
       EnumFactory.getInstance().resetCounts(pages);
-      MsgBoard.getInstance().sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
-      MsgBoard.getInstance().sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
+      mb.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
+      mb.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
     } catch (ClassNotFoundException e) {
       JOptionPane.showMessageDialog(null, "Project File Corrupted", e.toString(), JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
@@ -960,6 +1031,7 @@ public class Controller extends JInternalFrame
     Builder.postStatusMsg("Successfully Opened Project File: " + projectFile.getName());
     changePage(openPage);
     this.setVisible(true);
+    Builder.logger.debug("Opened Project File: " + projectFile.getName());
   }
 
   /**
@@ -1119,7 +1191,6 @@ public class Controller extends JInternalFrame
     alphakeypadEditor.addObserver(this);
     numkeypadEditor.addObserver(this);
     strTheme = generalEditor.getThemeClassName();
-    targetDPI = generalEditor.getDPI();
     return prefEditors;
   }
   
@@ -1165,6 +1236,7 @@ public class Controller extends JInternalFrame
    * onExit
    */
   public void onExit() {
+    Builder.logger.debug("Builder exit");
     topFrame.dispose();
     System.exit(0);
   }
@@ -1281,6 +1353,11 @@ public class Controller extends JInternalFrame
     refreshView();
   }
   
+  static public void sendRepaint() {
+    if (currentPage == null) return;
+    currentPage.refreshView();
+  }
+  
   /**
    * updateEvent
    *
@@ -1288,17 +1365,17 @@ public class Controller extends JInternalFrame
    */
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("Controller: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW) {
-// System.out.println("Controller: " + e.toString());
-        changeViewFromTree(e);
+      Builder.logger.debug("Controller recv: " + e.toString());
+      changeViewFromTree(e);
     } else if (e.code == MsgEvent.DELETE_KEY) {
+      Builder.logger.debug("Controller recv: " + e.toString());
       removeComponent();
     } else if (e.code == MsgEvent.WIDGET_CHANGE_ZORDER) {
-// System.out.println("Controller: " + e.toString());
+      Builder.logger.debug("Controller recv: " + e.toString());
       changeZOrder(e);
     } else if (e.code == MsgEvent.PAGE_ENUM_CHANGE) {
-// System.out.println("Controller: " + e.toString());
+      Builder.logger.debug("Controller recv: " + e.toString());
       changePageEnum(e);
     } 
 
@@ -1323,18 +1400,6 @@ public class Controller extends JInternalFrame
           exception.printStackTrace();
         }
       }
-      int dpi = generalEditor.getDPI();
-      if (dpi != targetDPI) {
-        targetDPI = dpi;
-        FontFactory.getInstance().reloadFonts();
-        for (PagePane p : pages) {
-          for (Widget w : p.getWidgets()) {
-            if (w.getType().equals(EnumFactory.TEXT)) {
-              ((TextModel)w.getModel()).calcSizes(true);
-            }
-          }
-        }
-      }
     }
   }
 /* replace update() with this routine for Java 9 and above
@@ -1355,21 +1420,6 @@ public class Controller extends JInternalFrame
           exception.printStackTrace();
         }
       }
-    }
-    if (key.equals("TFT Screen DPI")) {
-      int dpi = Integer.parseInt(val);
-      if (dpi != targetDPI) {
-        targetDPI = dpi;
-        FontFactory.getInstance().reloadFonts();
-      }
-      for (PagePane p : pages) {
-        for (Widget w : p.getWidgets()) {
-          if (w.getType().equals(EnumFactory.TEXT)) {
-            ((TextModel)w.getModel()).calcSizes(true);
-          }
-        }
-      }
-      refreshView();
     }
  }
 */
@@ -1395,7 +1445,6 @@ public class Controller extends JInternalFrame
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ObjectOutputStream out = new ObjectOutputStream(baos);
       out.writeObject(currentPage.getKey());
-      out.writeObject(nBasePages);
       out.close();
       return Base64.getEncoder().encodeToString(baos.toByteArray());
     } catch (IOException e) {
@@ -1417,7 +1466,6 @@ public class Controller extends JInternalFrame
       byte[] data = Base64.getDecoder().decode(state);
       ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
       String pageKey = (String)in.readObject();
-      nBasePages = in.readInt();
       in.close();
       changePage(pageKey);
     } catch (ClassNotFoundException e) {

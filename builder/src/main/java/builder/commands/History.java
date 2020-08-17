@@ -29,6 +29,8 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
+import builder.Builder;
+
 /**
  * The Class History implements undo and redo functionality.
  * <p>
@@ -108,6 +110,7 @@ public class History {
    *          <code>c</code> is the command object
    */
   public void push(Command c) {
+    Builder.logger.debug("Perform: " + c.toString());
     undoStack.push(c);
     redoStack.clear();
   }
@@ -130,6 +133,7 @@ public class History {
     if (c == null) {
       return false;
     }
+    Builder.logger.debug("Undo: " + c.toString());
     redoStack.push(c);
 //    System.out.println("Undoing: " + c.toString());
     c.restore();
@@ -154,6 +158,7 @@ public class History {
     if (c == null) {
       return false;
     }
+    Builder.logger.debug("Redo: " + c.toString());
 //    System.out.println("Redoing: " + c.toString());
     undoStack.push(c);
     c.restore();

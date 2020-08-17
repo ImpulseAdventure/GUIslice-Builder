@@ -36,6 +36,7 @@ import builder.codegen.CodeUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -185,7 +186,7 @@ public class TextBoxModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
@@ -323,6 +324,7 @@ public class TextBoxModel extends WidgetModel {
     int nRowWidth, nBoxHeight;
     String name = getFontDisplayName();
     FontItem item = ff.getFontItem(name);
+    if (item == null) return;
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
     }

@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import builder.controller.Controller;
 import builder.mementos.AlignPropertyMemento;
 import builder.models.WidgetModel;
 import builder.prefs.GeneralEditor;
@@ -75,7 +76,7 @@ public class AlignRightCommand extends Command {
    */
   public boolean align() {
     int margin = GeneralEditor.getInstance().getMargins();
-    int width = GeneralEditor.getInstance().getWidth();
+    int width = Controller.getProjectModel().getWidth();
     margin = width - margin;
     // pass one finds right-most widget (highest X value) + width
     List<Widget> list = page.getSelectedList();
@@ -149,7 +150,14 @@ public class AlignRightCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Align Right: " + rightX);
+    String myEnums = "";
+    WidgetModel m = null;
+    for(int i=0; i<groupList.size(); i++) {
+      m = groupList.get(i);
+      if (i > 0) myEnums = myEnums + ",";
+      myEnums = myEnums + m.getEnum();
+    }
+    return String.format("Align Right: %s x=%d",myEnums,rightX);
   }
 
 }

@@ -116,7 +116,14 @@ public class AlignWidthCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("Align by Width: " + newWidth);
+    String myEnums = "";
+    WidgetModel m = null;
+    for(int i=0; i<groupList.size(); i++) {
+      m = groupList.get(i);
+      if (i > 0) myEnums = myEnums + ",";
+      myEnums = myEnums + m.getEnum();
+    }
+    return String.format("Align by Width: %s W=%d",myEnums,newWidth);
   }
 
 }

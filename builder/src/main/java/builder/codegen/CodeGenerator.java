@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import builder.Builder;
 import builder.codegen.pipes.AppPipe;
 import builder.codegen.pipes.ButtonCbPipe;
 import builder.codegen.pipes.CheckboxCbPipe;
@@ -107,12 +108,6 @@ public class CodeGenerator {
 
   /** The Constant PREFIX. */
   public final static String PREFIX                 = "//<";
-  
-  /** The Constant ARDUINO_FONT_TEMPLATE. */
-  public  final static String ARDUINO_FONT_TEMPLATE   = "arduinofonts.csv";
-  
-  /** The Constant LINUX_FONT_TEMPLATE. */
-  public  final static String LINUX_FONT_TEMPLATE     = "linuxfonts.csv";
   
   /** The Constant ARDUINO_RES. */
   public  final static String ARDUINO_RES             = "arduino_res";
@@ -374,6 +369,7 @@ public class CodeGenerator {
       // do the work
       return doCodeGen(projectFile);
     } catch (CodeGenException e) {
+      Builder.logger.debug("Code Generation Failed: " + e.toString());
       JOptionPane.showMessageDialog(null, "Code Generation Failed: " + e.toString(), 
           "Error", JOptionPane.ERROR_MESSAGE);
       return null;

@@ -148,6 +148,9 @@ public class IncludesPipe extends WorkFlowPipe {
         case EnumFactory.RINGGAUGE:
           headerList.add("XRingGauge");
           break;
+        case EnumFactory.SEEKBAR:
+          headerList.add("XSeekbar");
+          break;
         case EnumFactory.SLIDER:
           headerList.add("XSlider");
           break;
@@ -163,6 +166,9 @@ public class IncludesPipe extends WorkFlowPipe {
           headerList.add("XKeyPad_Alpha");
           bCompound = true;
           bWarning = true;
+          break;
+        case EnumFactory.TOGGLEBUTTON:
+          headerList.add("XTogglebtn");
           break;
         default:
           break;

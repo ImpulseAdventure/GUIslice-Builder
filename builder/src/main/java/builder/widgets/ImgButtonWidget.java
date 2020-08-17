@@ -63,9 +63,9 @@ public class ImgButtonWidget extends Widget {
    * @param y
    *          the y coordinate position
    */
-  public void setImage(File file, int x, int y) {
-    m.setImage(file, x, y);
+  public boolean setImage(File file, int x, int y) {
     super.setXY(model, x, y);
+    return m.setImage(file, x, y);
   }
   
   /**
@@ -74,8 +74,8 @@ public class ImgButtonWidget extends Widget {
    * @param file
    *          the file containing image to use when button is selected.
    */
-  public void setImageSelected(File file) {
-    m.setImageSelected(file);
+  public boolean setImageSelected(File file) {
+    return m.setImageSelected(file);
   }
   
   /**

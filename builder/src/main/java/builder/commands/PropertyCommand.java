@@ -47,6 +47,9 @@ public class PropertyCommand extends Command {
   /** The new value of the property. */
   private Object newValue;
   
+  /** The current value of the property. */
+  private Object curValue;
+  
   /**
    * Instantiates a new property command
    * and creates the required Memento object for undo/redo.
@@ -62,7 +65,8 @@ public class PropertyCommand extends Command {
     this.model = model;
     this.row = row;
     this.newValue = newValue;
-    memento = new PropertyMemento(model);
+    this.curValue = model.getValueAt(row, WidgetModel.COLUMN_VALUE);
+    memento = new PropertyMemento(model, curValue, row);
   }
   
   /**
@@ -82,7 +86,9 @@ public class PropertyCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("model: " + model.getKey() + " Property Change: " 
+    return String.format("model: " + model.getKey() + " Property: '"  
+        +  model.getPropertyName(row) + "' Changed from->" 
+        + curValue.toString() + " to->"
         + newValue.toString() + " row=" + row);
   }
 

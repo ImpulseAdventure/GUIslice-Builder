@@ -37,6 +37,7 @@ import javax.swing.table.TableCellEditor;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.common.FontItem;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -152,6 +153,17 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
+   * setFontReadOnly
+   *
+   * @see builder.models.WidgetModel#setFontReadOnly()
+   */
+  @Override
+  public void setFontReadOnly() {
+    data[PROP_FONT][PROP_VAL_READONLY] = true;
+    data[PROP_FONT][PROP_VAL_VALUE] = "";
+  }
+
+  /**
    * getEditorAt
    *
    * @see builder.models.WidgetModel#getEditorAt(int)
@@ -187,8 +199,8 @@ public class TxtButtonModel extends WidgetModel {
       } else {
         data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_POPUP_PAGE][PROP_VAL_VALUE]="";
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
-        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
       }
       fireTableCellUpdated(PROP_POPUP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
@@ -203,7 +215,7 @@ public class TxtButtonModel extends WidgetModel {
         data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
         data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
         data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
-        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_VALUE]=Boolean.FALSE;
       }
       fireTableCellUpdated(PROP_JUMP_PAGE, COLUMN_VALUE);
       fireTableCellUpdated(PROP_POPUP_HIDE, COLUMN_VALUE);
@@ -242,7 +254,7 @@ public class TxtButtonModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
@@ -423,12 +435,7 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
-   * <p>
-   * calcSizes() - This routine is complicated because we use one font size on our display
-   * vs the font size we will be using on the target TFT screen.
-   * FontItem already has created a scaled font for our display but we want to show
-   * width and height to the user as the target TFT's width and height of our text.
-   * </p>
+   * calcSizes() - This routine is really just checking that our font exists
    * 
    * @param fireUpdates indicates that we should notify JTable of changes
    */
@@ -437,7 +444,9 @@ public class TxtButtonModel extends WidgetModel {
      // next does the current font exist? 
      // if we changed target plaform we might need to change font to default
      String name = getFontDisplayName();
+     if (name == null || name.isEmpty()) return;
      FontItem item = ff.getFontItem(name);
+     if (item == null) return;
      if (!item.getDisplayName().equals(name)) {
        data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
        if (fireUpdates) {

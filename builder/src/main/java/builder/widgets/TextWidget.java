@@ -25,6 +25,7 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -72,28 +73,33 @@ public class TextWidget extends Widget {
     Rectangle b = super.getWinBounded();
     g2d.setColor(m.getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
-    if (m.isFrameEnabled()) {
-      g2d.setColor(m.getFrameColor());
-      g2d.drawRect(b.x, b.y, b.width, b.height);
-    }
     g2d.setColor(m.getTextColor());
     Font font = ff.getFont(m.getFontDisplayName());
-    String text = m.getText();
-    if (text.isEmpty()) {
-      if (m.getTextStorage() > 0) {
-        for (int i=0; i<m.getTextStorage(); i++) {
-          text = text + "?";
-          Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
-          if (d.width > b.width) {
-             text = text.substring(0, text.length() - 1);
-             break;
-          }
-        }
-      } else {
-        text = "TODO";
+    if (font != null) {
+      if (m.isFrameEnabled()) {
+        g2d.setColor(m.getFrameColor());
+        g2d.drawRect(b.x, b.y, b.width, b.height);
       }
+      String text = m.getText();
+      if (text == null || text.isEmpty()) {
+        if (m.getTextStorage() > 0) {
+          for (int i=0; i<m.getTextStorage(); i++) {
+            text = text + "?";
+            Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
+            if (d.width > b.width) {
+               text = text.substring(0, text.length() - 1);
+               break;
+            }
+          }
+        } else {
+          text = "TODO";
+        }
+      }
+      ff.alignString(g2d, m.getAlignment(), b, text, font);
+    } else {
+      g2d.setColor(Color.RED);
+      g2d.drawRect(b.x, b.y, b.width, b.height);
     }
-    ff.alignString(g2d, m.getAlignment(), b, text, font);
     super.drawSelRect(g2d, b);
   }
 }

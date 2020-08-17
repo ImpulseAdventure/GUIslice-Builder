@@ -84,8 +84,6 @@ public class FontCellEditor extends AbstractCellEditor implements TableCellEdito
 //    button.setBorderPainted(false);
     button.setBorder(null);
 
-    //Set up the dialog that the button brings up.
-    chooser = new FontChooser(null);
   }
 
   /**
@@ -123,6 +121,8 @@ public class FontCellEditor extends AbstractCellEditor implements TableCellEdito
   @Override
   public void actionPerformed(ActionEvent e) {
     String newName = "";
+    //Set up the dialog that the button brings up.
+    chooser = new FontChooser(null);
     if (EDIT.equals(e.getActionCommand())) {
       //The user has clicked the cell, so
       //bring up the dialog.

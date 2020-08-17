@@ -25,10 +25,11 @@
  */
 package builder.widgets;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+//import builder.common.CommonUtils;
 import builder.common.GUIslice;
 import builder.models.RadioButtonModel;
 //import builder.prefs.RadioButtonEditor;
@@ -43,6 +44,8 @@ import builder.models.RadioButtonModel;
  * 
  */
 public class RadioButtonWidget extends Widget {
+  
+  RadioButtonModel m;
 
   /**
    * Instantiates a new radio button widget.
@@ -53,8 +56,9 @@ public class RadioButtonWidget extends Widget {
    *          the y coordinate position
    */
   public RadioButtonWidget(int x, int y) {
-    u = CommonUtils.getInstance();
-    model = new RadioButtonModel();
+//    u = CommonUtils.getInstance();
+    m = new RadioButtonModel();
+    model = m;
     super.setXY(model, x, y);
   }
 
@@ -63,27 +67,61 @@ public class RadioButtonWidget extends Widget {
    *
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
-  public void draw(Graphics2D g2d) {
-    Rectangle b = getWinBounded();
-    int cx = b.x + (b.width/2);
-    int cy = b.y + (b.height/2);
-    int radius = b.width/2;
-    if (bSelected) {
-      g2d.setColor(((RadioButtonModel) model).getSelectedColor());
-      GUIslice.fillCircle(g2d,cx, cy, radius);
-    } else {
-      g2d.setColor(((RadioButtonModel) model).getFillColor());
-      GUIslice.fillCircle(g2d,cx, cy, radius);
+  public void draw(Graphics2D pGui) {
+    Rectangle rElem = getWinBounded();
+    Rectangle rInner;
+
+    boolean bChecked   = m.isChecked();
+    String nStyle      = m.getStyle();
+    Color colCheck     = m.getMarkColor();
+    Color colElemFrame = m.getFrameColor();
+    Color colElemFill  = m.getFillColor();
+    
+    // Draw the background
+    GUIslice.drawFillRect(pGui,rElem,colElemFill);
+
+    // Generic coordinate calcs
+    int nX0,nY0,nX1,nY1,nMidX,nMidY;
+    nX0 = rElem.x;
+    nY0 = rElem.y;
+    nX1 = rElem.x + rElem.width - 1;
+    nY1 = rElem.y + rElem.height - 1;
+    nMidX = (nX0+nX1)/2;
+    nMidY = (nY0+nY1)/2;
+    if (nStyle.equals(RadioButtonModel.CHECKBOX_STYLE_BOX)) {
+      // Draw the center indicator if checked
+      rInner = GUIslice.expandRect(rElem,-5,-5);
+      if (bChecked) {
+        // If checked, fill in the inner region
+        GUIslice.drawFillRect(pGui,rInner,colCheck);
+      } else {
+        // Assume the background fill has already been done so
+        // we don't need to do anything more in the unchecked case
+      }
+      // Draw a frame around the checkbox
+      GUIslice.drawFrameRect(pGui,rElem,colElemFrame);
+
+    } else if (nStyle.equals(RadioButtonModel.CHECKBOX_STYLE_X)) {
+      // Draw an X through center if checked
+      if (bChecked) {
+        GUIslice.drawLine(pGui,nX0,nY0,nX1,nY1,colCheck);
+        GUIslice.drawLine(pGui,nX0,nY1,nX1,nY0,colCheck);
+      }
+      // Draw a frame around the checkbox
+      GUIslice.drawFrameRect(pGui,rElem,colElemFrame);
+
+    } else if (nStyle.equals(RadioButtonModel.CHECKBOX_STYLE_ROUND)) {
+      // Draw inner circle if checked
+      if (bChecked) {
+        GUIslice.drawFillCircle(pGui,nMidX,nMidY,5,colCheck);
+      }
+      // Draw a frame around the checkbox
+      GUIslice.drawFrameCircle(pGui,nMidX,nMidY,(rElem.width/2),
+          m.getFrameColor());
+
     }
-    g2d.setColor(((RadioButtonModel) model).getFrameColor());
-    GUIslice.drawCircle(g2d, cx, cy, radius);
-    if (((RadioButtonModel) model).isChecked()) {
-      // Draw an circle in center if checked
-      radius = b.width/3;
-      g2d.setColor(((RadioButtonModel) model).getMarkColor());
-      GUIslice.fillCircle(g2d,cx, cy, radius);
-    }
-    super.drawSelRect(g2d, b);
+
+    super.drawSelRect(pGui, rElem);
   }
 
 }

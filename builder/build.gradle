@@ -10,12 +10,14 @@ buildscript {
 
 apply plugin: 'application'
 apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 apply plugin: 'eclipse'
 
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-version = '0.14.b004' 
+version = '0.15.0' 
  
 repositories {
     mavenCentral()

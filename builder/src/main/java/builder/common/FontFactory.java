@@ -25,6 +25,9 @@
  */
 package builder.common;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -33,18 +36,17 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import builder.codegen.CodeGenerator;
+import builder.Builder;
+import builder.codegen.CodeGenException;
 import builder.controller.Controller;
-import builder.models.ProjectModel;
 import builder.models.TextModel;
-import builder.prefs.GeneralEditor;
 
 /**
  * A factory for creating and managing GUIslice Library Font objects
@@ -58,30 +60,27 @@ public class FontFactory {
   /** The instance. */
   private static FontFactory instance = null;
   
-  /** The arduino fonts. */
-  private static List<FontItem> arduinoFonts = new ArrayList<FontItem>();
+  /** The Constant FONT_TEMPLATE. */
+  public  final static String FONT_TEMPLATE   = "builder_fonts.json";
   
-  /** The arduino map. */
-  private static HashMap<String, Integer> arduinoMap = new HashMap<String, Integer>();
+  /** top level object for all fonts. */
+  public BuilderFonts builderFonts = new BuilderFonts();
+
+  /** The full font item list. */
+  private List<FontItem> platformFonts = new ArrayList<FontItem>();
   
-  /** The linux fonts. */
-  private static List<FontItem> linuxFonts = new ArrayList<FontItem>();
+  /** The font map used as index into font item list. */
+  private HashMap<String, Integer> fontMap = new HashMap<String, Integer>(128);
   
-  /** The linux map. */
-  private static HashMap<String, Integer> linuxMap = new HashMap<String, Integer>();
+  /** The number of platforms */
+  private int nPlatforms;
   
-  /** The arduino CVS. */
-  private static String arduinoCVS;
+  /** Platform names */
+  private String[] platformNames;
   
-  /** The linux CVS. */
-  private static String linuxCVS;
-  
-  /** Free Mono Font Sizes */
-  private static Dimension[] MonoPlainSizes = new Dimension[4];
-  private static Dimension[] MonoBoldSizes = new Dimension[4];
-  private static Dimension[] MonoItalicSizes = new Dimension[4];
-  private static Dimension[] MonoBoldItalicSizes = new Dimension[4];
-  
+  /** The list of templates. */
+  List<FontItem>[] fontsByPlatform = null;
+
   /**
    * Gets the single instance of FontFactory.
    *
@@ -90,33 +89,6 @@ public class FontFactory {
   public static synchronized FontFactory getInstance() {
     if (instance == null) {
       instance = new FontFactory();
-      String fullPath = CommonUtils.getInstance().getWorkingDir();
-      arduinoCVS = fullPath + "templates" + System.getProperty("file.separator") 
-          + CodeGenerator.ARDUINO_FONT_TEMPLATE;
-      arduinoMap = new HashMap<String, Integer>(128);
-      instance.readFonts(arduinoCVS,arduinoFonts,arduinoMap);
-      linuxCVS = fullPath + "templates"  + System.getProperty("file.separator") 
-          + CodeGenerator.LINUX_FONT_TEMPLATE;
-      linuxMap = new HashMap<String, Integer>(128);
-      instance.readFonts(linuxCVS,linuxFonts,linuxMap);
-      
-      // setup mono font tables
-      MonoPlainSizes[0] = new Dimension(11,14);
-      MonoPlainSizes[1] = new Dimension(14,19);
-      MonoPlainSizes[2] = new Dimension(21,30);
-      MonoPlainSizes[3] = new Dimension(28,39);
-      MonoBoldSizes[0] = new Dimension(11,16);
-      MonoBoldSizes[1] = new Dimension(14,22);
-      MonoBoldSizes[2] = new Dimension(21,31);
-      MonoBoldSizes[3] = new Dimension(28,41);
-      MonoItalicSizes[0] = new Dimension(11,14);
-      MonoItalicSizes[1] = new Dimension(14,20);
-      MonoItalicSizes[2] = new Dimension(21,30);
-      MonoItalicSizes[3] = new Dimension(28,39);
-      MonoBoldItalicSizes[0] = new Dimension(11,16);
-      MonoBoldItalicSizes[1] = new Dimension(14,22);
-      MonoBoldItalicSizes[2] = new Dimension(21,31);
-      MonoBoldItalicSizes[3] = new Dimension(28,41);
     }
     return instance;
   }
@@ -128,48 +100,59 @@ public class FontFactory {
   }
 
   /**
-   * This method creates a <code>Font</code> using the String values displayed to
-   * users of GUIsliceBuider by our various Widget Models.
-   *
-   * @param fontName
-   *          - is the GUIslice font name not the real java font name.
-   * @param fontSize
-   *          - is the point size of our font as a String value.
-   * @param fontStyle
-   *          - is the font style "PLAIN", "BOLD", "ITALIC", or "BOLD+ITALIC".
-   * @return font The java font we can use to display text
-   * @see java.awt.Font
-   * @see java.lang.String
+   * Initialize our fonts by reading in our json file
+   * and building up our list and map of fonts.
    */
-  static public Font createFont(String fontName, String fontSize, String fontStyle) {
-    Font font;
-    int style;
-    switch (fontStyle) {
-    case "BOLD":
-      style = Font.BOLD;
-      break;
-    case "ITALIC":
-      style = Font.ITALIC;
-      break;
-    case "BOLD+ITALIC":
-      style = Font.BOLD + Font.ITALIC;
-      break;
-    default:
-      style = Font.PLAIN;
-      break;
-    }
-    font = new Font(fontName, style, Integer.parseInt(fontSize));
-    return font;
+  public void init() {
+    
+    String fullPath = CommonUtils.getInstance().getWorkingDir();
+    String csvFile = fullPath + "templates" + System.getProperty("file.separator") 
+        + FONT_TEMPLATE;
+    readFonts(csvFile);
+    Builder.logger.debug("FontFactory Initialized");
   }
   
   /**
-   * reloadFonts - called whenever user changes DPI.
+   * getBuilderFonts - grab the top level font container 
+   * @return builderFonts 
    */
-  public void reloadFonts() {
-    arduinoMap.clear();
-    linuxMap.clear();
-    readFonts(arduinoCVS,arduinoFonts,arduinoMap);
-    readFonts(linuxCVS,linuxFonts,linuxMap);
+  public BuilderFonts getBuilderFonts() {
+    return builderFonts;
+  }
+  
+  /**
+   * Gets the font list.
+   *
+   * @return the font list
+   */
+  public List<FontItem> getFontList() {
+    String target = Controller.getTargetPlatform();
+    for (int i=0; i<nPlatforms; i++) {
+      if (platformNames[i].equals(target)) {
+        return fontsByPlatform[i];
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * This method gets a Font's item that matches a key 
+   * of the font's DispayName or first in list.
+   *
+   * @param key
+   *          - is the GUIslice font  displayname not the real java font name.
+   * @return font item 
+   */
+  public FontItem getFontItem(String key) {
+    Integer idx = Integer.valueOf(0);  // always return something...
+    String target = Controller.getTargetPlatform();
+    key = target + "_" + key;
+    if (fontMap.containsKey(key)) {
+      idx = fontMap.get(key);
+      return platformFonts.get(idx.intValue());
+    } else {
+      return null;
+    }
   }
   
   /**
@@ -180,45 +163,11 @@ public class FontFactory {
    * @return the font
    */
   public Font getFont(String key) {
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) 
-        idx = linuxMap.get(key);
-      return linuxFonts.get(idx.intValue()).getFont();
-    } else if (target.equals(ProjectModel.PLATFORM_ARDUINO)) {
-      if (arduinoMap.containsKey(key)) 
-        idx = arduinoMap.get(key);
-      return arduinoFonts.get(idx.intValue()).getFont();
-    } else if (target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
-      if (arduinoMap.containsKey(key)) 
-        idx = arduinoMap.get(key);
-      return arduinoFonts.get(idx.intValue()).getFont();
-    }
+    FontItem item = getFontItem(key);
+    if (item != null) {
+      return item.getFont();
+    } 
     return null;
-  }
-  
-  /**
-   * Gets the font with a temporary style change
-   *
-   * @param key
-   *          the key
-   * @param style
-   *          the style
-   * @return the java <code>Font</code> object
-   */
-  public Font getStyledFont(String key, String style) {
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) 
-        idx = linuxMap.get(key);
-      return linuxFonts.get(idx.intValue()).getStyledFont(style);
-    } else {
-      if (arduinoMap.containsKey(key)) 
-        idx = arduinoMap.get(key);
-      return arduinoFonts.get(idx.intValue()).getStyledFont(style);
-    }
   }
   
   /**
@@ -227,49 +176,21 @@ public class FontFactory {
    * @return the font name
    */
   public String getDefFontName() {
-    FontItem item = null;
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      item = linuxFonts.get(0);
-    } else {
-      item = arduinoFonts.get(0);
-    }
-    return item.getDisplayName();
+    List<FontItem> list = getFontList();
+    if (list == null) return "";
+    return list.get(0).getDisplayName();
   }
   
   /**
-   * Gets the name of the default font using a size code for the target platform.
+   * Gets the ENUM of the default font for the target platform.
    *
-   * @param size varies from 1 to 5
-   *   ex: arduino size 2 = 'BuiltIn(2x)->10x16pt7b'
-   *       linux   size 2 = 'DroidSansMono9pt'
-   * @return the font enum
+   * @return the font name
    */
-  public String getDefFontName(int size) {
-    FontItem item = null;
-    if (size < 1 || size > 5) return "";
-    size--;
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      item = linuxFonts.get(size);
-    } else {
-      item = arduinoFonts.get(size);
-    }
-    return item.getDisplayName();
-  }
-  
-  /**
-   * Gets the font list.
-   *
-   * @return the font list
-   */
-  public List<FontItem> getFontList() {
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      return linuxFonts;
-    } else {
-      return arduinoFonts;
-    }
+  public String getDefFontEnum() {
+    List<FontItem> list = getFontList();
+    if (list == null) return null;
+    FontItem item = list.get(0);
+    return item.getFontId();
   }
   
   /**
@@ -280,36 +201,24 @@ public class FontFactory {
    * @return the font enum
    */
   public String getFontEnum(String key) {
-    FontItem item = null;
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) {
-        idx = linuxMap.get(key);
-      }
-      item = linuxFonts.get(idx.intValue());
-    } else {
-      if (arduinoMap.containsKey(key)) {
-        idx = arduinoMap.get(key);
-      }
-      item = arduinoFonts.get(idx.intValue());
-    }
+    FontItem item = getFontItem(key);
+    if (item == null) return null;
     return item.getFontId();
   }
   
   /**
    * Gets the font display name.
    *
-   * @param key
-   *          the key (font enum)
+   * @param fontEnum
+   *          the font enum
    * @return the font display name or null on failure
    */
-  public String getFontDisplayName(String key) {
+  public String getFontDisplayName(String fontEnum) {
     String name = null;
     List<FontItem> list = getFontList();
     // this isn't called often enough to warrant anything but brute force search
     for (FontItem item : list) {
-      if (item.getFontId().equals(key)) {
+      if (item.getFontId().equals(fontEnum)) {
         name = item.getDisplayName();
         break;
       }
@@ -318,8 +227,9 @@ public class FontFactory {
   }
   
   /**
-   * This method creates a Font's display name using the String values displayed to
-   * users of GUIsliceBuider by our various Widget Models.
+   * This method gets a Font's item with a Display name using 
+   * the String values displayed to users of GUIsliceBuider 
+   * by our Font Chooser.
    *
    * @param fontName
    *          - is the GUIslice font name (family name) not the real java font name.
@@ -344,29 +254,6 @@ public class FontFactory {
   }
   
   /**
-   * Gets the font item.
-   *
-   * @param key
-   *          the key is the font display name
-   * @return the font item
-   */
-  public FontItem getFontItem(String key) {
-    Integer idx = Integer.valueOf(0);  // always return something...
-    String target = Controller.getTargetPlatform();
-    if (target.equals(ProjectModel.PLATFORM_LINUX)) {
-      if (linuxMap.containsKey(key)) {
-        idx = linuxMap.get(key);
-      }
-      return linuxFonts.get(idx.intValue());
-    } else {
-      if (arduinoMap.containsKey(key)) {
-        idx = arduinoMap.get(key);
-      }
-      return arduinoFonts.get(idx.intValue());
-    }
-  }
-  
-  /**
    * measureChar() - Give back the size of a character adjusted for target
    * platform.
    *
@@ -376,55 +263,24 @@ public class FontFactory {
    */
   public Dimension measureChar(String fontName) {
     FontItem item = getFontItem(fontName);
-    Dimension nChSz = new Dimension();
-    if (fontName.startsWith("BuiltIn")) {
-      int size = Integer.parseInt(item.getFontSz());
-      nChSz.width = (6 * size);
-      nChSz.height = 8 * size;
-    } else if (fontName.startsWith("FreeMono")) {
-      int idx = -1;
-      switch (item.getLogicalSize()) {
-        case "9":
-          idx = 0;
-          break;
-        case "12":
-          idx = 1;
-          break;
-        case "18":
-          idx = 2;
-          break;
-        case "24":
-          idx = 3;
-          break;
-        default:
-          break;
+    if (item != null) {
+      Dimension nChSz = new Dimension();
+      if (fontName.startsWith("BuiltIn")) {
+        int size = Integer.parseInt(item.getFontSz());
+        nChSz.width = (6 * size);
+        nChSz.height = 8 * size;
+        return nChSz;
       }
-      if (idx >= 0) {
-        switch (item.getLogicalStyle()) {
-        case "BOLD":
-          nChSz = MonoBoldSizes[idx];
-          break;
-        case "ITALIC":
-          nChSz = MonoItalicSizes[idx];
-          break;
-        case "BOLD+ITALIC":
-          nChSz = MonoBoldItalicSizes[idx];
-          break;
-        default:
-          nChSz = MonoPlainSizes[idx];
-          break;
-        }
-      }
-    } else {
       String acHeight = "p$";
       String acWidth  = "%";
-      Font tmpFont = createFont(item.getLogicalName(), item.getLogicalSize(), item.getLogicalStyle());
+      Font tmpFont = item.createFont();
       Dimension txtHeight = measureText(fontName, tmpFont,acHeight);
       Dimension txtWidth = measureText(fontName, tmpFont,acWidth);
       nChSz.width = txtWidth.width;
       nChSz.height = txtHeight.height;
+      return nChSz;
     }
-    return nChSz;
+    return new Dimension(0,0);
   }
   
   /**
@@ -438,11 +294,14 @@ public class FontFactory {
    */
   public Dimension measureAdafruitText(String fontName, String s) {
     FontItem item = getFontItem(fontName);
-    Dimension nChSz = new Dimension();
-    int size = Integer.parseInt(item.getFontSz());
-    nChSz.width = (6 * size) * s.length();
-    nChSz.height = (8 * size) + 2;
-    return nChSz;
+    if (item != null) {
+      Dimension nChSz = new Dimension();
+      int size = Integer.parseInt(item.getFontSz());
+      nChSz.width = (6 * size) * s.length();
+      nChSz.height = (8 * size) + 2;
+      return nChSz;
+    }
+    return new Dimension(0,0);
   }
   
   /**
@@ -487,27 +346,29 @@ public class FontFactory {
    *          the font
    */
   public void alignString(Graphics g, String align, Rectangle r, String s, Font font) {
-    FontRenderContext frc = new FontRenderContext(null, true, true);
-    Rectangle2D r2D = font.getStringBounds(s, frc);
-    int rHeight = (int) Math.round(r2D.getHeight());
-    int rY = (int) Math.round(r2D.getY());
-    int b = (r.height / 2) - (rHeight / 2) - rY;
-    Canvas c = new Canvas();
-    FontMetrics metrics = c.getFontMetrics(font);
-    int adv = metrics.stringWidth(s);
-    g.setFont(font);
-    switch (align)
-    {
-    case TextModel.ALIGN_LEFT:
-        g.drawString(s, r.x, r.y + b);
-        break;
-      case TextModel.ALIGN_CENTER:
-        centerString(g, r, s, font);
-        break;
-      case TextModel.ALIGN_RIGHT:
-        g.drawString(s, r.x + (r.width - adv), r.y + b);
-        break;
-    }  
+    if (font != null) {
+      FontRenderContext frc = new FontRenderContext(null, true, true);
+      Rectangle2D r2D = font.getStringBounds(s, frc);
+      int rHeight = (int) Math.round(r2D.getHeight());
+      int rY = (int) Math.round(r2D.getY());
+      int b = (r.height / 2) - (rHeight / 2) - rY;
+      Canvas c = new Canvas();
+      FontMetrics metrics = c.getFontMetrics(font);
+      int adv = metrics.stringWidth(s);
+      g.setFont(font);
+      switch (align)
+      {
+      case TextModel.ALIGN_LEFT:
+          g.drawString(s, r.x, r.y + b);
+          break;
+        case TextModel.ALIGN_CENTER:
+          centerString(g, r, s, font);
+          break;
+        case TextModel.ALIGN_RIGHT:
+          g.drawString(s, r.x + (r.width - adv), r.y + b);
+          break;
+      } 
+    }
   }
   
   /**
@@ -524,18 +385,20 @@ public class FontFactory {
    * @see java.lang.String
    */
   public void centerString(Graphics g, Rectangle r, String s, Font font) {
-    FontRenderContext frc = new FontRenderContext(null, true, true);
-    Rectangle2D r2D = font.getStringBounds(s, frc);
-    
-    int rWidth = (int) Math.round(r2D.getWidth());
-    int rHeight = (int) Math.round(r2D.getHeight());
-    int rY = (int)r2D.getY();
-    
-    int a = (r.width - rWidth) / 2;
-    int b = (r.height / 2) - (rHeight / 2) - rY;
-
-    g.setFont(font);
-    g.drawString(s, r.x + a, r.y + b);
+    if (font != null) {
+      FontRenderContext frc = new FontRenderContext(null, true, true);
+      Rectangle2D r2D = font.getStringBounds(s, frc);
+      
+      int rWidth = (int) Math.round(r2D.getWidth());
+      int rHeight = (int) Math.round(r2D.getHeight());
+      int rY = (int)r2D.getY();
+      
+      int a = (r.width - rWidth) / 2;
+      int b = (r.height / 2) - (rHeight / 2) - rY;
+  
+      g.setFont(font);
+      g.drawString(s, r.x + a, r.y + b);
+    }
   }
 
   /**
@@ -548,31 +411,63 @@ public class FontFactory {
    * @param map
    *          the map
    */
-  public void readFonts(String csvFile, List<FontItem> list, HashMap<String, Integer>map) {
-    String line = "";
-    String cvsSplitBy = ",";
-    FontItem item = null;
-    BufferedReader br = null;
-    try {
-      br = new BufferedReader(new FileReader(csvFile));
-      while ((line = br.readLine()) != null) {
-        if (!line.startsWith("#")) {
-          // use comma as separator
-          String[] f = line.split(cvsSplitBy);
-          item = new FontItem(GeneralEditor.getInstance().getDPI(),
-              f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9], f[10]);
-          list.add(item);
+  @SuppressWarnings("unchecked")
+  public void readFonts(String jsonFile) {
+    // de-serialize our font json file
+    Gson gson = new GsonBuilder()
+        .disableHtmlEscaping() // otherwise "&" will need to be coded as "\u0026"
+        .create();
+
+    try (Reader reader = new FileReader(jsonFile)) {
+      // Convert JSON File to Java Objects
+      builderFonts = gson.fromJson(reader, BuilderFonts.class);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    /* now we need to walk our top level font object
+     * and fill in each font item with parent information
+     * and build up our font list and index map.
+     */
+    nPlatforms = 0;
+    int idx = 0;
+    int nErrors = 0;
+    platformNames = new String[10];
+    fontsByPlatform = new ArrayList[10];
+    for (FontPlatform p : builderFonts.getPlatforms()) {
+      platformNames[nPlatforms] = p.getName();
+      List<FontItem> list = new ArrayList<FontItem>();
+      fontsByPlatform[nPlatforms++] = list;
+      for (FontCategory c : p.getCategories()) {
+        for (FontItem item : c.getFonts()) {
+          item.setPlatform(p);
+          item.setCategory(c);
+          item.generateEnum();
+          item.generateKey();
+          if (p.getName().toLowerCase().equals("linux")) {
+            item.setFont(72);
+          } else {
+            item.setFont(141);
+          }
+          String key = item.getKey();
+          // check for duplicates
+          if (!fontMap.containsKey(key)) {
+            platformFonts.add(item);
+            list.add(item);
+            fontMap.put(key, Integer.valueOf(idx++));
+          } else {
+            Builder.logger.error("duplicate font: " + key);
+            nErrors++;
+          }
         }
       }
-      br.close();
-    } catch (IOException e) {
-      e.printStackTrace();
     }
-    // now load our font map - given the small number of fonts this may be over-kill.
-    // However, users can add as many fonts as they want so...
-    for (int i=0; i<list.size(); i++) {
-      item = list.get(i);
-      map.put(item.getDisplayName(), Integer.valueOf(i));
+    if (nErrors > 0) {
+      String fileName = CommonUtils.getInstance().getWorkingDir()
+          + "logs" 
+          + System.getProperty("file.separator")
+          + "builder.log";
+      throw new CodeGenException(String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.",
+          nErrors,fileName));
     }
   }
  

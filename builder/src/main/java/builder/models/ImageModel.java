@@ -37,12 +37,12 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
+import builder.Builder;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
-import builder.prefs.GeneralEditor;
 
 /**
  * The Class ImageModel implements the model for the Image widget.
@@ -74,9 +74,6 @@ public class ImageModel extends WidgetModel {
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = Color.GRAY;
 
-  /** The general model. */
-  private GeneralModel generalModel;
-  
   /** The image. */
   private BufferedImage image;
 
@@ -95,20 +92,19 @@ public class ImageModel extends WidgetModel {
   /** memory Constants */
   public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
   public  final static String SRC_PROG = "gslc_GetImageFromProg((const unsigned char*)";
-  public  final static String SRC_RAM  = "gslc_GetImageFromRam((unsigned char*)";
+  public  final static String SRC_RAM  = "gslc_GetImageFromRam((const unsigned char*)";
   public  final static String SRC_FILE = "gslc_GetImageFromFile(";
 
   /** format Constants */
   public  final static String FORMAT_BMP24  = "GSLC_IMGREF_FMT_BMP24";
   public  final static String FORMAT_BMP16  = "GSLC_IMGREF_FMT_BMP16";
-  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW";
+  public  final static String FORMAT_RAW    = "GSLC_IMGREF_FMT_RAW1";
   public  final static String FORMAT_JPG    = "GSLC_IMGREF_FMT_JPG";
   
   /**
    * Instantiates a new image model.
    */
   public ImageModel() {
-    generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
     initProperties();
     initComboBoxes();
   }
@@ -136,7 +132,7 @@ public class ImageModel extends WidgetModel {
     initProp(PROP_TRANSPARENCY, Boolean.class, "IMG-107", Boolean.FALSE,"Transparent?",DEF_TRANSPARENCY);
     initProp(PROP_TOUCH_EN, Boolean.class, "COM-016", Boolean.FALSE,"Touch Enabled?",DEF_TOUCH_EN);
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
-    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.TRUE,"Frame Color",DEF_FRAME_COLOR);
+    initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
 
   }
 
@@ -188,19 +184,11 @@ public class ImageModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, 1);
-    if (row == PROP_FRAME_EN) {
-      if (isFrameEnabled()) {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-      } else {
-        data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-      }
-      fireTableCellUpdated(PROP_FRAME_COLOR, COLUMN_VALUE);
-    }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
@@ -257,7 +245,7 @@ public class ImageModel extends WidgetModel {
   * @return the image name
   */
  public String getImageName() {
-   String dir = generalModel.getTargetImageDir();
+   String dir = Controller.getProjectModel().getTargetImageDir();
    String name = (String) data[PROP_IMAGE][PROP_VAL_VALUE];
    // do we need to add a relative path for code generation?
    if (dir.length() > 0)
@@ -323,7 +311,7 @@ public class ImageModel extends WidgetModel {
    * @param y
    *          the y
    */
-  public void setImage(File file, int x, int y) {
+  public boolean setImage(File file, int x, int y) {
     image = null;
     if (file.getName().toLowerCase().endsWith(".c")) {
       HexToImgConv convert = new HexToImgConv();
@@ -337,12 +325,16 @@ public class ImageModel extends WidgetModel {
           data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
         setWidth(convert.getWidth());
         setHeight(convert.getHeight());
+      } else {
+        Builder.logger.error("image conversion from C error: " + file.getName());
+        return false;
       }
     } else {
       try {
           image = ImageIO.read(file);
       } catch(IOException e) {
-          System.out.println("read error: " + e.getMessage());
+          Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
+          return false;
       }
 
       setWidth(image.getWidth());
@@ -377,12 +369,7 @@ public class ImageModel extends WidgetModel {
       fileName = file.getName();
       setImageName(fileName);
     }
-    if (getDefine() != null && !getDefine().isEmpty()) {
-    data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
-    if (getExternName() != null && !getExternName().isEmpty()) {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
+    return true;
   }
  
   /**
@@ -445,23 +432,12 @@ public class ImageModel extends WidgetModel {
     super.readModel(in,  widgetType);
     String imageString = (String) in.readObject();
     image = CommonUtils.getInstance().decodeToImage(imageString);
-    if (getDefine() != null && !getDefine().isEmpty()) {
-    data[PROP_EXTERN][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
-    if (getExternName() != null && !getExternName().isEmpty()) {
-      data[PROP_DEFINE][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
     if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("PROGMEM"))
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
      else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("SRAM"))
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_RAM;
      else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).isEmpty())
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_SD;
-    if (isFrameEnabled()) {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.FALSE;
-    } else {
-      data[PROP_FRAME_COLOR][PROP_VAL_READONLY]=Boolean.TRUE;
-    }
   }
 
 }

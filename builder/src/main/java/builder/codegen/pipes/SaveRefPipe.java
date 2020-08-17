@@ -82,8 +82,10 @@ public class SaveRefPipe extends WorkFlowPipe {
     for (WidgetModel m : cg.getModels()) {
       if (m.getElementRef() != null && !m.getElementRef().isEmpty())
         refList.add(m.getElementRef());
-      if (m.getScrollbarERef() != null)
-        refList.add(m.getScrollbarERef());
+      if (m.addScrollbar()) {
+        if (m.getScrollbarERef() != null)
+          refList.add(m.getScrollbarERef());
+      }
     }
 
     // now output any we found

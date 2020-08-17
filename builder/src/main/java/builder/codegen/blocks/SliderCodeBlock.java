@@ -31,6 +31,7 @@ import java.util.Map;
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
 import builder.models.SliderModel;
+import builder.models.TextModel;
 import builder.models.WidgetModel;
 
 /**
@@ -45,6 +46,7 @@ public class SliderCodeBlock implements CodeBlock {
   /** The Constants for TEMPLATES. */
   private final static String SLIDER_TEMPLATE        = "<SLIDER>";
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
+  private final static String COLOR_TEMPLATE         = "<COLOR>";
   
   /**
    * Instantiates a new box code block.
@@ -79,6 +81,14 @@ public class SliderCodeBlock implements CodeBlock {
     template = tm.loadTemplate(SLIDER_TEMPLATE);
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
+    
+    if ((!m.getFrameColor().equals(TextModel.DEF_FRAME_COLOR)) ||
+        (!m.getFillColor().equals(TextModel.DEF_FILL_COLOR))  || 
+        (!m.getSelectedColor().equals(TextModel.DEF_SELECTED_COLOR))) {
+      template = tm.loadTemplate(COLOR_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
     
     template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
     outputLines = tm.expandMacros(template, map);

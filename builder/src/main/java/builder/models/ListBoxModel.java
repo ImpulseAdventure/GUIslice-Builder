@@ -39,8 +39,10 @@ import builder.codegen.CodeUtils;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.tables.MultipeLineCellListener;
+import builder.tables.MultiStringsCell.MCDialogType;
 import builder.tables.MultiStringsCell;
 
 /**
@@ -183,7 +185,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     cbAlign.addItem(TextModel.ALIGN_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
 
-    itemsCell = new MultiStringsCell();
+    itemsCell = new MultiStringsCell("List of Items", MCDialogType.STRING_DIALOG);
+    itemsCell.setData(DEF_ITEMS);
     itemsCell.addButtonListener(this);
   }
   
@@ -203,6 +206,11 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     data[PROP_SCROLLBAR_EREF][PROP_VAL_VALUE] = EnumFactory.LISTBOX_SCROLLBAR_EREF+count;
   }
   
+  /**
+   * buttonClicked
+   *
+   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
+   */
   @Override
   public void buttonClicked(String[] strings) {
     // commands are used to support undo and redo actions.
@@ -264,7 +272,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }
@@ -541,6 +549,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
       nChars += items[i].length() + 1;
     }
     data[PROP_STORAGESZ][PROP_VAL_VALUE] = Integer.valueOf(nChars);
+    data[PROP_SCROLLBAR_MAX][PROP_VAL_VALUE]=Math.min(100, items.length+5); 
   }
 
   /**

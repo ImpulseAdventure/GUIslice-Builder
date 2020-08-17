@@ -28,6 +28,7 @@ package builder.common;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 /**
  * The Class GUIslice holds various method that emulate 
@@ -39,6 +40,67 @@ public final class GUIslice {
   
   public GUIslice() {
     
+  }
+  
+  static public void drawLine(Graphics2D g2d,int nX0,int nY0,int nX1,int nY1,Color nCol) {
+    g2d.setColor(nCol);
+    g2d.drawLine(nX0, nY0, nX1, nY1);
+  }
+  
+  static public void drawFillRect(Graphics2D g2d, Rectangle rRect,Color nCol) {
+    g2d.setColor(nCol);
+    g2d.fillRect(rRect.x, rRect.y, rRect.width, rRect.height);
+  }
+  
+  static public void drawFillRoundRect(Graphics2D g2d, Rectangle rRect,int nRadius,Color nCol) {
+    g2d.setColor(nCol);
+    g2d.fillRoundRect(rRect.x, rRect.y, rRect.width, rRect.height, nRadius, nRadius);
+  }
+  
+  static public void drawFrameRect(Graphics2D g2d, Rectangle rRect, Color nCol) {
+    g2d.setColor(nCol);
+    g2d.drawRect(rRect.x, rRect.y, rRect.width, rRect.height);
+  }
+
+  static public void drawFillCircle(Graphics2D g2d,int nMidX,int nMidY,int nRadius,Color nCol) {
+    g2d.setColor(nCol);
+    g2d.fillOval(nMidX-nRadius, nMidY-nRadius, 2*nRadius, 2*nRadius);
+  }
+  
+  static public void drawFrameCircle(Graphics2D g2d,int nMidX,int nMidY,int nRadius,Color nCol) {
+    g2d.setColor(nCol);
+    g2d.drawOval(nMidX-nRadius, nMidY-nRadius, 2*nRadius, 2*nRadius);
+  }
+  
+  static public void drawFrameRoundRect(Graphics2D g2d,Rectangle rRect,int nRadius,Color nCol) {
+    g2d.setColor(nCol);
+    g2d.drawRoundRect(rRect.x, rRect.y, rRect.width, rRect.height, nRadius, nRadius);
+  }
+
+  static public Rectangle expandRect(Rectangle rRect, int nExpandW, int nExpandH) {
+    Rectangle rNew = new Rectangle();
+    if ( rRect.width < (-2*nExpandW) || rRect.height < (-2*nExpandH)) {
+      // Return an empty coordinate box (which won't be drawn)
+      //System.out.println("ERROR: ExpandRect(%d,%d) contracts too far",nExpandW,nExpandH);
+      return rNew;
+    }
+
+    /* Adjust the new width/height
+     * Note that the overall width/height changes by a factor of
+     * two since we are applying the adjustment on both sides 
+     * (ie. top/bottom or left/right) equally.
+     */
+    rNew.width = rRect.width + (2*nExpandW);
+    rNew.height = rRect.height + (2*nExpandH);
+
+    /* Adjust the rectangle coordinate to allow for new dimensions
+     * Note that this moves the coordinate in the opposite
+     * direction of the expansion/contraction.
+     */
+    rNew.x = rRect.x - nExpandW;
+    rNew.y = rRect.y - nExpandH;
+
+    return rNew;
   }
   
   /**

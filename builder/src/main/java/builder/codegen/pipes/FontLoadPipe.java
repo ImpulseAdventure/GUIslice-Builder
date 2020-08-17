@@ -36,10 +36,12 @@ import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.FontItem;
+import builder.controller.Controller;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
 import builder.models.KeyPadModel;
 import builder.models.KeyPadTextModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
@@ -57,11 +59,13 @@ public class FontLoadPipe extends WorkFlowPipe {
 
   /** The Constants for templates. */
   private final static String FONT_LOAD_TEMPLATE     = "<FONT_LOAD>";
+  private final static String FONT_MODE_TEMPLATE     = "<FONT_MODE>";
 
   /** The Constants for macros. */
   private final static String FONT_ID_MACRO          = "FONT_ID";
   private final static String FONT_REF_MACRO         = "FONT_REF";
   private final static String FONT_REFTYPE_MACRO     = "FONT_REFTYPE";
+  private final static String FONT_MODE_MACRO     = "FONT_MODE";
   private final static String FONT_SZ_MACRO          = "FONT_SZ";
 
   /** The template manager. */
@@ -87,6 +91,7 @@ public class FontLoadPipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     // setup
+    ProjectModel pm = Controller.getProjectModel();
     FontFactory ff = FontFactory.getInstance();
     
     // create a list of font enums in use by this project.
@@ -111,20 +116,45 @@ public class FontLoadPipe extends WorkFlowPipe {
     if (bAddNumKeyPad) {
       KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
       name = m.getFontEnum();
-      if (name != null)
-        fontList.add(name);
+      if (name != null) {
+        if (ff.getFont(name) != null) {
+          fontList.add(name);
+        } else {
+          name = ff.getDefFontEnum();
+          if (name != null) {
+            fontList.add(name);
+          }
+        }
+      }
     }
     if (bAddAlphaKeyPad) {
       KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
       name = m.getFontEnum();
-      if (name != null)
-        fontList.add(name);
+      if (name != null) {
+        if (ff.getFont(name) != null) {
+          fontList.add(name);
+        } else {
+          name = ff.getDefFontEnum();
+          if (name != null) {
+            fontList.add(name);
+          }
+        }
+      }
+    }
+    // add any extra fonts requested
+    for (String s : pm.getFontsList()) {
+      if (s != null && !s.isEmpty()) {
+        String fEnum = ff.getFontEnum(s);
+        if (fEnum != null) 
+          fontList.add(fEnum);
+      }
     }
     // sort the names and remove duplicates
     CodeUtils.sortListandRemoveDups(fontList);
     // now create the font load code
     tm = cg.getTemplateManager();
-    List<String> template = tm.loadTemplate(FONT_LOAD_TEMPLATE);;
+    List<String> load_template = tm.loadTemplate(FONT_LOAD_TEMPLATE);;
+    List<String> mode_template = tm.loadTemplate(FONT_MODE_TEMPLATE);;
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
     FontItem font = null;
@@ -132,15 +162,22 @@ public class FontLoadPipe extends WorkFlowPipe {
       // two step process to get our font information
       // first step retrieve the name of our font using the font enum as the key
       name = ff.getFontDisplayName(fontEnum);
+      if (name == null) continue;
       // step two, map the name to our font item record.
       font = ff.getFontItem(name);
+      if (font == null) continue;
       map.clear();
       map.put(FONT_ID_MACRO, font.getFontId());
       map.put(FONT_REFTYPE_MACRO, font.getFontRefType());
       map.put(FONT_REF_MACRO, font.getFontRef());
       map.put(FONT_SZ_MACRO, font.getFontSz());
-      outputLines = tm.expandMacros(template, map);
+      map.put(FONT_MODE_MACRO, font.getFontRefMode());
+      outputLines = tm.expandMacros(load_template, map);
       tm.codeWriter(sBd, outputLines);
+      if (!font.getFontRefMode().equals("NULL")) {
+        outputLines = tm.expandMacros(mode_template, map);
+        tm.codeWriter(sBd, outputLines);
+      }
     }
 
   }

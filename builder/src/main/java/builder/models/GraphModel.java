@@ -37,6 +37,7 @@ import javax.swing.table.TableCellEditor;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -106,7 +107,7 @@ public class GraphModel extends WidgetModel {
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
-    initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font","BuiltIn->5x8pt7b");
+    initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
 
     initProp(PROP_ROWS, Integer.class, "GRPH-100", Boolean.FALSE,"Maximum Points",DEF_ROWS);
     initProp(PROP_STYLE, String.class, "GRPH-102", Boolean.FALSE,"Graph Style",DEF_STYLE);
@@ -143,7 +144,7 @@ public class GraphModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

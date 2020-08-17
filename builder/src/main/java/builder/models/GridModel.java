@@ -45,18 +45,16 @@ public class GridModel extends WidgetModel {
   private static final long serialVersionUID = 1L;
   
   /** The Property Index Constants. */
-  public static final int GRID              = 1;
-  public static final int GRID_SNAP_TO      = 2;
-  public static final int GRID_WIDTH        = 3;
-  public static final int GRID_HEIGHT       = 4;
-  public static final int GRID_MAJOR_WIDTH  = 5;
-  public static final int GRID_MAJOR_HEIGHT = 6;
-  public static final int GRID_MAJOR_COLOR  = 7;
-  public static final int GRID_MINOR_COLOR  = 8;
-  public static final int GRID_BACKGROUND_COLOR  = 9;
+  public static final int GRID_SNAP_TO      = 1;
+  public static final int GRID_WIDTH        = 2;
+  public static final int GRID_HEIGHT       = 3;
+  public static final int GRID_MAJOR_WIDTH  = 4;
+  public static final int GRID_MAJOR_HEIGHT = 5;
+  public static final int GRID_MAJOR_COLOR  = 6;
+  public static final int GRID_MINOR_COLOR  = 7;
+  public static final int GRID_BACKGROUND_COLOR  = 8;
   
   /** The Property Defaults */
-  static public  final Boolean DEF_GRID               = Boolean.FALSE;
   static public  final Boolean DEF_SNAP_TO            = Boolean.TRUE;
   static public  final Integer DEF_WIDTH              = Integer.valueOf(10);
   static public  final Integer DEF_HEIGHT             = Integer.valueOf(10);
@@ -66,6 +64,8 @@ public class GridModel extends WidgetModel {
   static public  final Color   DEF_MINOR_COLOR        = new Color(128,128,128);
   static public  final Color   DEF_BACKGROUND         = Color.WHITE;
 
+  private boolean bGridState;
+  
   /**
    * Instantiates a new grid model.
    */
@@ -79,10 +79,9 @@ public class GridModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GRID;
-    data = new Object[10][5];
+    data = new Object[9][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(GRID, Boolean.class, "GRID-106", Boolean.FALSE,"Grid State",DEF_GRID);
     initProp(GRID_SNAP_TO, Boolean.class, "GRID-101", Boolean.FALSE,"Grid Snap To",DEF_SNAP_TO);
     initProp(GRID_WIDTH, Integer.class, "GRID-102", Boolean.FALSE,"Grid Minor Width",DEF_WIDTH);
     initProp(GRID_HEIGHT, Integer.class, "GRID-103", Boolean.FALSE,"Grid Minor Height",DEF_HEIGHT);
@@ -95,7 +94,7 @@ public class GridModel extends WidgetModel {
     initProp(GRID_MINOR_COLOR, Color.class, "COL-312", Boolean.FALSE,"Grid Minor Line Color",DEF_MINOR_COLOR);
     initProp(GRID_BACKGROUND_COLOR, Color.class, "COL-313", Boolean.FALSE,
         "Grid Background Color",DEF_BACKGROUND);
-    
+    bGridState = false;
   }
   
   /**
@@ -167,11 +166,9 @@ public class GridModel extends WidgetModel {
    */
   public void toggleGrid() {
     if (getGrid()) {
-      data[GRID][PROP_VAL_VALUE] = Boolean.FALSE;
-      data[GRID_SNAP_TO][PROP_VAL_VALUE] = Boolean.FALSE;
+      bGridState = false;
     } else {
-      data[GRID][PROP_VAL_VALUE] = Boolean.TRUE;
-      data[GRID_SNAP_TO][PROP_VAL_VALUE] = Boolean.TRUE;
+      bGridState = true;
     }
   }
   
@@ -181,7 +178,7 @@ public class GridModel extends WidgetModel {
    * @return the grid
    */
   public boolean getGrid() {
-    return (((Boolean) data[GRID][PROP_VAL_VALUE]).booleanValue());
+    return bGridState;
   }
   
   /**
@@ -190,7 +187,7 @@ public class GridModel extends WidgetModel {
    * @param the grid
    */
   public void setGrid(boolean b) {
-    data[GRID][PROP_VAL_VALUE] = Boolean.valueOf(b);
+    bGridState = b;
   }
   
   /**

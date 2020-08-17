@@ -151,7 +151,7 @@ public class PasteCommand extends Command implements ClipboardOwner {
    */
   @Override
   public String toString() {
-    return String.format("Paste Widgets: ");
+    return String.format("Paste Widgets on page:%s",page.getEnum());
   }
 
   @Override

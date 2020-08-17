@@ -29,6 +29,7 @@ import java.awt.Color;
 
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.events.MsgBoard;
 
 /**
@@ -56,9 +57,10 @@ public class SliderModel extends WidgetModel {
   static private final int PROP_TICK_COLOR     =14;
   static private final int PROP_TRIM           =15;
   static private final int PROP_TRIM_COLOR     =16;
-  static private final int PROP_FRAME_COLOR    =17;
-  static private final int PROP_FILL_COLOR     =18;
-  static private final int PROP_SELECTED_COLOR =19;
+  static private final int PROP_USE_FLASH      =17;
+  static private final int PROP_FRAME_COLOR    =18;
+  static private final int PROP_FILL_COLOR     =19;
+  static private final int PROP_SELECTED_COLOR =20;
     
   /** The Property Defaults */
   static public  final Integer DEF_MIN               = Integer.valueOf(0);
@@ -71,6 +73,7 @@ public class SliderModel extends WidgetModel {
   static public  final Color   DEF_TICK_COLOR        = Color.BLUE;
   static public  final Boolean DEF_TRIM              = Boolean.FALSE;
   static public  final Color   DEF_TRIM_COLOR        = Color.BLUE;
+  static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
   static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
@@ -92,7 +95,7 @@ public class SliderModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.SLIDER;
-    data = new Object[20][5];
+    data = new Object[21][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -107,10 +110,23 @@ public class SliderModel extends WidgetModel {
 
     initProp(PROP_TICK_COLOR, Color.class, "COL-306", Boolean.FALSE,"Tick Color",DEF_TICK_COLOR);
     initProp(PROP_TRIM_COLOR, Color.class, "COL_307", Boolean.FALSE,"Trim Color",DEF_TRIM_COLOR);
+
+    initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
+
     initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
     initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
     
+  }
+  
+  /**
+   * Use Flash API.
+   *
+   * @return <code>true</code>, if flash is to be used
+   */
+  @Override
+  public boolean useFlash() {
+    return ((Boolean) data[PROP_USE_FLASH][PROP_VAL_VALUE]).booleanValue();
   }
   
   /**
@@ -141,7 +157,7 @@ public class SliderModel extends WidgetModel {
       if (row == PROP_ENUM) {
         MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
       } else {
-        MsgBoard.getInstance().sendRepaint(getKey(),getKey());
+        Controller.sendRepaint();
       }
     } 
   }

@@ -62,6 +62,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import builder.Builder;
 import builder.clipboard.TreeItem;
 import builder.clipboard.TreeItemSelection;
 import builder.common.CommonUtils;
@@ -118,6 +119,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   /** The root object */
   private TreeItem rootItem;
   
+  /** The MsgBoard instance */
+  private MsgBoard mb = null;
+
   /**
    * Gets the single instance of TreeView.
    *
@@ -134,8 +138,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * Instantiates a new tree view.
    */
   public TreeView() {
+    mb = MsgBoard.getInstance();
+    mb.subscribe(this, "TreeView");
     initUI();
-    MsgBoard.getInstance().subscribe(this, "TreeView");
   }
   
   /**
@@ -180,7 +185,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
             selectWidget = widget;
             TreePath parentPath = e.getPath().getParentPath();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-            MsgBoard.getInstance().sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
+            mb.sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
                 selectWidget.getKey(),
                 ((TreeItem) parentNode.getUserObject()).getKey());
           }
@@ -224,7 +229,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       if(row==-1) { //When user clicks on the "empty surface"
         tree.clearSelection();
         selectWidget= null;
-        MsgBoard.getInstance().sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
+        mb.sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
             "", ((TreeItem)currentPage.getUserObject()).getKey());
       }
     }
@@ -239,6 +244,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   public void addPage(String pageID, String pageEnum) {
     //create and add the top level page node
     TreeItem item = new TreeItem(pageID, pageEnum);
+    Builder.logger.debug("TV-add page: " + item.toDebugString());
     currentPage = addObject(null, item);
     TreePath path = new TreePath(currentPage.getPath());
     tree.setSelectionPath(path);
@@ -253,6 +259,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    */
   public void delPage(String pageID) {
     TreeItem pageItem = new TreeItem(pageID, null);
+    Builder.logger.debug("TV-delete page: " + pageItem.toDebugString());
     DefaultMutableTreeNode node = findNode(pageItem);
     if (node != null) {
       node.removeAllChildren(); //this removes all nodes
@@ -276,6 +283,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   public void addWidget(String pageID, String pageEnum, String widgetID, String widgetEnum) {
     TreeItem pageItem = new TreeItem(pageID, pageEnum);
     TreeItem item = new TreeItem(widgetID, widgetEnum);
+    Builder.logger.debug("TV-add: " + item.toDebugString());
     selectWidget = item;  // avoids loop in pagePane
     if (!((TreeItem)currentPage.getUserObject()).equals(pageItem)) {
       currentPage = findNode(pageItem);
@@ -297,6 +305,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    */
   public void delWidget(String pageID, String widgetID) {
     TreeItem item = new TreeItem(pageID, null);
+    Builder.logger.debug("TV-delete: " + item.toDebugString());
     if (!((TreeItem)currentPage.getUserObject()).equals(item)) {
       currentPage = findNode(item);
     }
@@ -347,9 +356,12 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     if (parent == null) {
       parent = root;
     }
-
-    // It is key to invoke this on the TreeModel, and NOT DefaultMutableTreeNode
-    treeModel.insertNodeInto(childNode, parent, parent.getChildCount());
+    // It is key to add this to the TreeModel
+    if (parent == root && child.getType().equals(EnumFactory.BASEPAGE)) {
+      treeModel.insertNodeInto(childNode, parent, 1);
+    } else {
+      treeModel.insertNodeInto(childNode, parent, parent.getChildCount());
+    }
 
     // Make sure the user can see the lovely new node.
     tree.scrollPathToVisible(new TreePath(childNode.getPath()));
@@ -704,7 +716,6 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    
 //      System.out.println("**Enter canImport");
       JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
-//    System.out.println("dropLocation: " + dropLocation.getPath().toString());
       int parentRow = tree.getRowForPath(dropLocation.getPath());
       if (parentRow == -1) {
         return false;  
@@ -713,7 +724,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
 
       parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
       TreeItem tiParent = (TreeItem)(parentNode.getUserObject());
-//    System.out.println("parentNode: " + tiParent.toDebugString());
+//      Builder.logger.debug("parentNode: " + tiParent.toDebugString());
 
       // do not allow parent to be root
       if (tiParent.getKey().equals("Root") || tiParent.getType().equals("Project"))
@@ -729,11 +740,13 @@ public class TreeView extends JInternalFrame implements iSubscriber {
 
       // non-leaf node?
       if(!selectedNode.isLeaf() || item.getType().equals("Page")) {
+//        Builder.logger.debug("non-leaf node->abort");
         return false;
       }
       
       // Do not allow moves between parent nodes
       if (!parentPath.isDescendant(dropPath)) {
+//        Builder.logger.debug("move between parent nodes->abort");
         return false;
       }
 
@@ -741,6 +754,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       bDraggingNode = dropLocation.getPath() != null;
       if (bDraggingNode) {
         latestBackup = backup(); // save for undo command
+//        Builder.logger.debug("Drag Started-dropLocation: " + dropLocation.getPath().toString());
+//      } else {
+//        Builder.logger.debug("TV-Drag drop point invalid");
       }
       return bDraggingNode;
     }
@@ -834,13 +850,27 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         // determine our destination row where we have been moved.
         TreeItem item = ((TreeItem)selectedNode.getUserObject());
         int toRow = getSelectedIndex(parentNode, item); 
-        MsgEvent ev = new MsgEvent();
-        ev.code = MsgEvent.WIDGET_CHANGE_ZORDER;
-        ev.message = item.getKey();
-        ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
-        ev.fromIdx = fromIndex;
-        ev.toIdx = toRow;
-        MsgBoard.getInstance().publish(ev, "TreeView");
+        if (toRow != -1) {
+          MsgEvent ev = new MsgEvent();
+          ev.code = MsgEvent.WIDGET_CHANGE_ZORDER;
+          ev.message = item.getKey();
+          ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
+          ev.fromIdx = fromIndex;
+          ev.toIdx = toRow;
+          mb.publish(ev, "TreeView");
+          Builder.logger.debug("TV-Drag success: " +
+              ((TreeItem) parentNode.getUserObject()).getKey() +
+              " widget: " + item.toDebugString() +
+              " from: " + fromIndex +
+              " to: " + toRow
+          );
+        } else {
+          Builder.logger.debug("TV-Drag failed: " +
+              ((TreeItem) parentNode.getUserObject()).getKey() +
+              " widget: " + item.toDebugString() +
+              " from: " + fromIndex
+          );
+        }
       }
       bDraggingNode = false;
     } 
@@ -881,10 +911,9 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   
   @Override
   public void updateEvent(MsgEvent e) {
-//    System.out.println("TreeView: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE ||
         e.code == MsgEvent.PAGE_TAB_CHANGE) {
-//  System.out.println("TreeView: " + e.toString());
+      Builder.logger.debug("TreeView recv: " + e.toString());
       TreeItem pageItem = new TreeItem(e.message, null);
       DefaultMutableTreeNode w = findNode(pageItem);
       if (w != null) {
@@ -895,12 +924,12 @@ public class TreeView extends JInternalFrame implements iSubscriber {
         repaint();
       }
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
-//  System.out.println("TreeView: " + e.toString());
+      Builder.logger.debug("TreeView recv: " + e.toString());
       tree.clearSelection();
       scrollPane.repaint();
     } else if (e.code == MsgEvent.WIDGET_ENUM_CHANGE ||
           e.code == MsgEvent.PAGE_ENUM_CHANGE) {
-//  System.out.println("TreeView: " + e.toString());
+      Builder.logger.debug("TreeView recv: " + e.toString());
         TreeItem pageItem = new TreeItem(e.message, null);
         DefaultMutableTreeNode w = findNode(pageItem);
         if (w != null) {

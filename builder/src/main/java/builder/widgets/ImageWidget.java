@@ -63,9 +63,9 @@ public class ImageWidget extends Widget {
    * @param y
    *          the y coordinate position
    */
-  public void setImage(File file, int x, int y) {
-    m.setImage(file, x, y);
+  public boolean setImage(File file, int x, int y) {
     super.setXY(model, x, y);
+    return m.setImage(file, x, y);
   }
   
   /**

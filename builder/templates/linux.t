@@ -43,7 +43,13 @@ $<CALLBACK>
 <BUTTON_CB_CHGPAGE>
       case $<COM-002>:
         //TODO- Check the code to see what else you may need to add
-        gslc_SetPageCur(&m_gui,$<TBNT-101>);
+        gslc_SetPageCur(&m_gui, $<TBNT-101>);
+        break;
+<STOP>
+<BUTTON_CB_HIDEPOPUP>
+      case $<COM-002>:
+        //TODO- Check the code to see what else you may need to add
+        gslc_PopupHide(&m_gui);
         break;
 <STOP>
 <BUTTON_CB_INPUT>
@@ -57,23 +63,25 @@ $<CALLBACK>
         gslc_PopupShow(&m_gui, $<TBTN-104>, true);
         break;
 <STOP>
-<BUTTON_CB_HIDEPOPUP>
+<BUTTON_CB_TOGGLE>
       case $<COM-002>:
-        //TODO- Check the code to see what else you may need to add
-        gslc_PopupHide(&m_gui);
+        // TODO Add code for Toggle button ON/OFF state
+        if (gslc_ElemXTogglebtnGetState(&m_gui, $<COM-019>)) {
+          ;
+        }
         break;
 <STOP>
 <CHECKBOX>
    
   // create checkbox $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXCheck$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},false,GSLCX_CHECKBOX_STYLE_X,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},false,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <CHECKBOX_GROUP>
    
   // create checkbox $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXCheck$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},true,GSLCX_CHECKBOX_STYLE_X,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},true,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <CHECKBOXSETSTATE>
   gslc_ElemXCheckboxSetStateFunc(&m_gui, pElemRef, &CbCheckbox);
@@ -206,6 +214,9 @@ gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
   bOk = gslc_FontSet(&m_gui,$<FONT_ID>,$<FONT_REFTYPE>,$<FONT_REF>,$<FONT_SZ>);
   if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed: %s\n",$<FONT_REF>); exit(1); }
 <STOP>
+<FONT_MODE>
+    gslc_FontSetMode(&m_gui, $<FONT_ID>, $<FONT_MODE>);	
+<STOP>
 <FRAME_EN>
   gslc_ElemSetFrameEn(&m_gui,pElemRef,$<COM-010>);
 <STOP>
@@ -293,6 +304,7 @@ $<CALLBACK>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
         gslc_ElemXKeyPadInputGet(pGui, $<COM-019>, pvData);
+	    gslc_PopupHide(&m_gui);
         break;
 <STOP>
 <KEYPAD_CONFIG>
@@ -301,7 +313,6 @@ $<CALLBACK>
   gslc_ElemXKeyPadCfgSetSignEn(&sCfg, $<SIGN_EN>);
   gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ>, $<BUTTONSZ>);
   gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
-  gslc_ElemXKeyPadCfgSetGap(&sCfg, $<GAPX>,$<GAPY>);
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Num(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfg);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
@@ -311,7 +322,6 @@ $<CALLBACK>
   gslc_tsXKeyPadCfg sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
   gslc_ElemXKeyPadCfgSetButtonSz(&sCfgTx, $<BUTTONSZ>, $<BUTTONSZ>);
   gslc_ElemXKeyPadCfgSetRoundEn(&sCfgTx, $<ROUND_EN>);
-  gslc_ElemXKeyPadCfgSetGap(&sCfgTx, $<GAPX>,$<GAPY>);
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Alpha(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
@@ -480,7 +490,7 @@ $<CALLBACK>
   
   // Create radio button $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXRadio$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},true,GSLCX_CHECKBOX_STYLE_ROUND,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},true,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <RESOURCE_DEFINE>
 #define $<25>$<DEFINE> "$<IMAGE_NAME>"
@@ -489,8 +499,10 @@ $<CALLBACK>
 extern "C" unsigned char $<EXTERN_NAME>[];
 <STOP>
 <RESOURCE_PROGMEM>
-// This cannot be supported in linux
-// extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
+extern "C" const unsigned short $<EXTERN_NAME>[] PROGMEM;
+<STOP>
+<RESOURCE_PROGMEM_RAW>
+extern "C" const unsigned char $<EXTERN_NAME>[] PROGMEM;
 <STOP>
 <RINGGAUGE>
 
@@ -522,6 +534,18 @@ extern "C" unsigned char $<EXTERN_NAME>[];
 <STOP>
 <ROTATE>
   gslc_GuiRotate(&m_gui, $<ROTATION>);
+<STOP>
+<SEEKBAR>
+
+  // Create seekbar $<COM-002> 
+  pElemRef = gslc_ElemXSeekbarCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sXSeekbar$<COM-018>,
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},$<SLD-100>,$<SLD-101>,$<SLD-102>,
+    $<SLD-108>,$<SLD-109>,$<SLD-103>,$<COL-315>,$<COL-316>,$<COL-317>,$<SLD-104>);
+  gslc_ElemXSeekbarSetPosFunc(&m_gui,pElemRef,&CbSlidePos);
+<STOP>
+<SEEKBAR_STYLE>
+  gslc_ElemXSeekbarSetStyle(&m_gui,pElemRef,$<SLD-107>,$<COL_307>,$<SLD-110>,$<COL-318>,
+    $<SLD-105>,$<SLD-106>,$<COL-306>);
 <STOP>
 <SLIDER>
 
@@ -680,6 +704,7 @@ bool CbTickScanner(void* pvGui,void* pvScope)
   gslc_ElemSetTickFunc(&m_gui,pElemRef,&CbTickScanner);
 <STOP>
 <TOUCH_EN>
+  gslc_ElemSetClickEn(&m_gui, pElemRef, true);
   gslc_ElemSetTouchFunc(&m_gui, pElemRef, &CbBtnCommon);
 <STOP>
 <TRANSPARENCY_COLOR>
@@ -698,6 +723,14 @@ bool CbTickScanner(void* pvGui,void* pvScope)
   pElemRef = gslc_ElemCreateBtnTxt(&m_gui,$<COM-002>,$<COM-000>,
     (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
     (char*)m_strbtn$<COM-018>,$<TXT-205>,$<TXT-211>,&CbBtnCommon);
+<STOP>
+<TOGGLEBUTTON>
+  
+  // Create toggle button $<COM-002>
+  pElemRef = gslc_ElemXTogglebtnCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXToggle$<COM-018>,
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},$<COL-317>,$<COL-319>,$<COL-320>,
+    $<RBTN-102>,$<CBOX-100>,&CbBtnCommon);
+  $<COM-019> = pElemRef;
 <STOP>
 <WARNING_CONFIG>
 

@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import builder.controller.Controller;
 import builder.mementos.AlignPropertyMemento;
 import builder.models.WidgetModel;
 import builder.prefs.GeneralEditor;
@@ -75,7 +76,7 @@ public class AlignBottomCommand extends Command {
    */
   public boolean align() {
     int margin = GeneralEditor.getInstance().getMargins();
-    int height = GeneralEditor.getInstance().getHeight();
+    int height = Controller.getProjectModel().getHeight();
     margin = height - margin;
     // pass one finds Bottom-most widget (Highest Y value)
     List<Widget> list = page.getSelectedList();

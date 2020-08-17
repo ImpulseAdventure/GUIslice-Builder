@@ -17,6 +17,17 @@ Published April 22, 2020. Based on GUIslice Builder 0.14.b000 and API Library 0.
 
 ## Using the GUIsliceBuilder
 
+### GUIsliceBuilder fails to start in windows.
+
+Most likely JAVA_HOME is incorrect.  It must point to the top level folder containing Java runtime whereupon /bin/javaw.exe will be appended to actually run the builder. 
+
+You can confirm any such issues by opening a command terminal (cmd.exe) and cd to your GUILsliceBuilder installation folder and running the GUIslice.bat file directly.  Any errors will then be reported inside the console. Example:
+```
+C:\Users\Paul>cd C:\Program Files (x86)\GUIsliceBuilder
+C:\Program Files (x86)\GUIsliceBuilder>GUIslice.bat
+```
+
+
 ### I switched a project over to using flash for UI Elements and it's not working, Why?
 
 If you have an older project one thing to check for inside your callbacks is a statement to access your Element, say for pElem->Id, and you see:
@@ -28,9 +39,6 @@ You will need to change this for Flash based elements and instead use:
   gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);
 ```
 The newer Builder will no longer generate the `pElement->pElem` code and all examples have also been update with the new code.
-
----------
-<div style="page-break-after: always;"></div>
 
 ### Can't get a floating point number in a Text Field
 

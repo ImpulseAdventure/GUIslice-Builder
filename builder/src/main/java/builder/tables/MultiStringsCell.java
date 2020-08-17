@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import builder.views.FontListDialog;
 import builder.views.StringListDialog;
 
 public class MultiStringsCell extends AbstractCellEditor 
@@ -23,32 +24,52 @@ public class MultiStringsCell extends AbstractCellEditor
   private static final long serialVersionUID = 1L;
   private JPanel panel;
   private JLabel label;
+  private String title;
   private String[] lines = null;
   MultipeLineCellListener listener;
+  public static enum MCDialogType { STRING_DIALOG, FONT_DIALOG }
+  
   JButton b;
 
-  public MultiStringsCell() {
+  public MultiStringsCell(String t, MCDialogType dt) {
+    this.title = t;
     panel = new JPanel();
     panel.setLayout(new BorderLayout());
     // t.setPreferredSize(new Dimension(50,16));
     label = new JLabel();
     label.setOpaque(true);
-    label.setHorizontalAlignment(JLabel.CENTER);
+    label.setHorizontalAlignment(JLabel.LEFT);
     label.setVerticalAlignment(JLabel.CENTER);
     panel.add(label, BorderLayout.CENTER);
     b = new JButton("...");
-    b.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        lines = StringListDialog.showDialog(
-            new JFrame(),
-            null,
-            "List of Items",
-            "Listbox",
-            lines);
-        listener.buttonClicked(lines);
-      }
-    }); 
+    if (dt.equals(MCDialogType.STRING_DIALOG)) {
+      b.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          lines = StringListDialog.showDialog(
+              new JFrame(),
+              null,
+              title,
+              "List",
+              lines);
+          listener.buttonClicked(lines);
+        }
+      }); 
+    }
+    if (dt.equals(MCDialogType.FONT_DIALOG)) {
+      b.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          lines = FontListDialog.showDialog(
+              new JFrame(),
+              null,
+              title,
+              "List",
+              lines);
+          listener.buttonClicked(lines);
+        }
+      }); 
+    }
     b.setPreferredSize(new Dimension(16, 16));
     panel.add(b, BorderLayout.EAST);
   }
@@ -89,9 +110,11 @@ public class MultiStringsCell extends AbstractCellEditor
     String result = "";
     label.setText(result);
     if (lines != null) {
-      if (!lines[0].isEmpty()) {
-        result = convertToHtml(value);
-        label.setText(result);
+      if (lines.length > 0) {
+        if (!lines[0].isEmpty()) {
+          result = convertToHtml(value);
+          label.setText(result);
+        }
       }
     }
     int size = label.getPreferredSize().height + 20;

@@ -57,6 +57,7 @@ public class ResourcesPipe extends WorkFlowPipe {
   private final static String RESOURCE_DEFINE_TEMPLATE        = "<RESOURCE_DEFINE>"; 
   private final static String RESOURCE_EXTERN_TEMPLATE        = "<RESOURCE_EXTERN>"; 
   private final static String RESOURCE_PROGMEM_TEMPLATE       = "<RESOURCE_PROGMEM>"; 
+  private final static String RESOURCE_PROGMEM_RAW_TEMPLATE   = "<RESOURCE_PROGMEM_RAW>"; 
   
   /** The Constants for macros. */
   private final static String DEFINE_MACRO                    = "DEFINE";
@@ -136,6 +137,7 @@ public class ResourcesPipe extends WorkFlowPipe {
     }
     // now make pass to gather all extern names, if any
     List<String> progmemTemplate = tm.loadTemplate(RESOURCE_PROGMEM_TEMPLATE);
+    List<String> progmemRawTemplate = tm.loadTemplate(RESOURCE_PROGMEM_RAW_TEMPLATE);
     List<String> externTemplate = tm.loadTemplate(RESOURCE_EXTERN_TEMPLATE);
     map.clear();
     resources.clear();
@@ -143,8 +145,13 @@ public class ResourcesPipe extends WorkFlowPipe {
       if (m.getType().equals(EnumFactory.IMAGE)) {
         if (!((ImageModel)m).getExternName().isEmpty()) {
           map.put(EXTERN_NAME_MACRO, ((ImageModel) m).getExternName());
+          
           if (((ImageModel)m).getMemory().equals(ImageModel.SRC_PROG)) {
-            outputLines = tm.expandMacros(progmemTemplate, map);
+            if (((ImageModel)m).getImageFormat().equals(ImageModel.FORMAT_RAW)) {
+              outputLines = tm.expandMacros(progmemRawTemplate, map);
+            } else {
+              outputLines = tm.expandMacros(progmemTemplate, map);
+            }
           } else {
             outputLines = tm.expandMacros(externTemplate, map);
           }
@@ -154,7 +161,11 @@ public class ResourcesPipe extends WorkFlowPipe {
         if (!((ImgButtonModel)m).getExternName().isEmpty()) {
           map.put(EXTERN_NAME_MACRO, ((ImgButtonModel) m).getExternName());
           if (((ImgButtonModel)m).getMemory().equals(ImgButtonModel.SRC_PROG)) {
-             outputLines = tm.expandMacros(progmemTemplate, map);
+            if (((ImgButtonModel)m).getImageFormat().equals(ImageModel.FORMAT_RAW)) {
+              outputLines = tm.expandMacros(progmemRawTemplate, map);
+            } else {
+              outputLines = tm.expandMacros(progmemTemplate, map);
+            }
           } else {
             outputLines = tm.expandMacros(externTemplate, map);
           }
@@ -163,7 +174,11 @@ public class ResourcesPipe extends WorkFlowPipe {
         if (!((ImgButtonModel)m).getSelExternName().isEmpty()) {
           map.put(EXTERN_NAME_MACRO, ((ImgButtonModel) m).getSelExternName());
           if (((ImgButtonModel)m).getSelMemory().equals(ImgButtonModel.SRC_PROG)) {
-            outputLines = tm.expandMacros(progmemTemplate, map);
+            if (((ImgButtonModel)m).getImageFormat().equals(ImageModel.FORMAT_RAW)) {
+              outputLines = tm.expandMacros(progmemRawTemplate, map);
+            } else {
+              outputLines = tm.expandMacros(progmemTemplate, map);
+            }
           } else {
             outputLines = tm.expandMacros(externTemplate, map);
           }

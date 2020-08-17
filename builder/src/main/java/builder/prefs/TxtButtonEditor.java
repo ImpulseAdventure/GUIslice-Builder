@@ -77,6 +77,7 @@ public class TxtButtonEditor extends ModelEditor {
     model = new TxtButtonModel();
     model.TurnOffEvents();
     updateModel();
+    model.setFontReadOnly();
     System.setErr(System.err);  
   }
 
