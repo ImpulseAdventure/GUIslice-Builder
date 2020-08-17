@@ -148,13 +148,11 @@ See Section 5.2 General Preferences for details of the various settings.
 
 ### 2.2.2 Project Tab
 
-You may also override your User Preferences on a per project basis by selecting the Project Tab or selecting E_PROJECT_OPTIONS in the TreeView.
+You may also override your User Preferences on a per project basis by selecting the Project Tab or selecting E_PROJECT_OPTIONS in the TreeView. Any changes made here apply only to your currently open project and will be stored with your project UI Elements.
 
 ![](images/project_tab.png)
 
 ![](images/project_view.png)
-
-Any changes made here apply only to your currently open project and will be stored with your project UI Elements.
 
 See 5.1 Project Options for details of the various settings.
 
@@ -1683,7 +1681,6 @@ The Fonts object holds an array of font definitions.  The fields are:
 11. LogicalFontStyle - the font style, plain, bold, italic, bold+italic
 12. fontRefMode - usually set to "NULL". This is for drivers that need special handling within GUIslice API. 
 
-
 Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced.  I have chosen to use Monospaced to represent Adafruit's built-in fonts which are 5x8 and plain only.
 All fonts you use will be simulated by these built in java fonts. The builder is meant to help you with your UI layout, not be a WYSIWYG editor.
 
@@ -1692,7 +1689,25 @@ I have supported scales of 1 to 5.  You can edit this as you desire.
 
 One thing you should keep in mind is that non-built in fonts take up a fair amount of memory so you should limit your selection to one or two non built-in fonts if your target platform is an Arduino.  
 
-WARNING! The only Builder supplied json error checking that exists in the code is to detect duplicate fonts within a single platform so be very careful with any edits.
+**WARNING!** The only Builder supplied json error checking that exists in the code is to detect duplicate fonts within a single platform so be very careful with any edits.
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+### Further details concerning fontRefMode
+In many graphics libraries styled after the Adafruit-GFX APIs, all it takes to select a font within the graphics library is a call to setFont() with a pointer to the GFX font structure.
+
+However, certain graphics libraries have provided support for additional font types and modes of operation. In order to enable these additional features, GUIslice has created a mode selector called FontRefMode. The FontRefMode signals to GUIslice what special font APIs should be called within the graphics library.
+
+Configuring a font for use in GUIslice generally only requires a single call to gslc_FontSet(). If the graphics library supports additional font types or modes, gslc_FontSetMode() can be called, which takes as a parameter enabling one to select a different FontRefMode.
+
+By default, most graphics libraries use the FontRefMode GSLC_FONTREF_MODE_DEFAULT. Additional font modes are defined (eg. GSLC_FONTREF_MODE_1, GSLC_FONTREF_MODE_2 and GSLC_FONTREF_MODE_3), with the definition of each specific to the particular graphics library in use.
+
+For example:
+
+* The RA8876 display driver uses FONTREF_MODE_DEFAULT to select the internal ROM fonts, whereas other modes are used to select fonts from external ROM chips.
+* The RA8875_SUMO display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas FONTREF_MODE_1 is used to select an ILI9341_t3_font.
+* The ILI9341_t3 display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas FONTREF_MODE_1 is used to select an ILI9341_t3_font.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>

@@ -46,6 +46,8 @@ The Builder normally only does code generation for fonts that are referenced by 
 Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hunt down bugs.  The log file is rolled over daily and the rollover files are compressed using zip.  A maximum of 5 log files are kept.
 
 #### Bug Fixes 0.15.0
+ - Bug No. 177 Add page to view caused crash
+ - Bug No. 176 Drag to invalid drop point in treeview caused crash
  - Bug No. 175 Load Additional Fonts that can be used with gslc_DrvDrawTxtAlign and other functions `#98`
  - Bug No. 174 When property `Touch Enabled?=true` builder needs to add gslc_ElemSetClickEn call
  - Bug No. 173 The selected colors for frame, fill and glow are not adopted for Sliders issue `#96`
