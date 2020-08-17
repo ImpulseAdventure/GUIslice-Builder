@@ -36,7 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import builder.Builder;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.common.FontFactory;
@@ -445,11 +444,9 @@ public class TextModel extends WidgetModel {
     // next does the current font exist? 
     // if we changed target plaform we might need to change font to default
     String name = getFontDisplayName();
+    if (name == null || name.isEmpty()) return;
     FontItem item = ff.getFontItem(name);
-    if (item == null) {
-      Builder.logger.error("calcSizes failed, font missing: " + name);
-      return;
-    }
+    if (item == null) return;
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
       if (fireUpdates) {

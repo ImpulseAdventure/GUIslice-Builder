@@ -444,6 +444,7 @@ public class TxtButtonModel extends WidgetModel {
      // next does the current font exist? 
      // if we changed target plaform we might need to change font to default
      String name = getFontDisplayName();
+     if (name == null || name.isEmpty()) return;
      FontItem item = ff.getFontItem(name);
      if (item == null) return;
      if (!item.getDisplayName().equals(name)) {

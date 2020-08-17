@@ -10,6 +10,8 @@ buildscript {
 
 apply plugin: 'application'
 apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 apply plugin: 'eclipse'
 
 mainClassName = "builder.Builder"
