@@ -22,7 +22,13 @@ A clear and concise description of what you expected to happen.
 
 **Crash log / Project files**
 If you experienced a crash, please attach the following to help us diagnose the cause:
-- Attach a ZIP file containing the project folder including the `*.prj` and `*.ino` or `*.c` and `*.ino.bak`.
+Attach a ZIP file containing the project folder including the 
+- `*.prj` 
+- `*_GSLC.h`
+- `*_GSLC.h.bak`
+- `*.ino` or `*.c` 
+- `*.ino.bak`
+- GUIsliceBuilder/logs/*
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
