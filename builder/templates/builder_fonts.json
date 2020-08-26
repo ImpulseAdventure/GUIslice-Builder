@@ -2,7 +2,6 @@
   "allFonts": [
     {
       "platformName": "arduino",
-      "dpi": "141",
       "warnings": [
          "#if defined(DRV_DISP_TFT_ESPI)",
          "  #error Project tab->Target Platform should be tft_espi",
@@ -124,6 +123,19 @@
               "nFontSz": "1",
               "logicalName": "SansSerif",
               "logicalSize": "12",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "NULL"
+            },
+            {
+              "familyName": "Dosis",
+              "displayName": "dosis_book13pt7b",
+              "includeFile": "Fonts/dosis_book13pt7b.h",
+              "defineFile": "NULL",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&dosis_book13pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "13",
               "logicalStyle": "PLAIN",
               "fontRefMode": "NULL"
             },
@@ -1849,7 +1861,6 @@
     },
     {
       "platformName": "m5stack",
-      "dpi": "141",
       "warnings": [
          "NULL" 
       ],
@@ -2407,7 +2418,6 @@
     },
     {
       "platformName": "teensy",
-      "dpi": "141",
       "warnings": [
          "NULL" 
       ],
@@ -2601,7 +2611,6 @@
     },
     {
       "platformName": "tft_espi",
-      "dpi": "141",
       "warnings": [
          "#if !defined(DRV_DISP_TFT_ESPI)",
          "  #error Project tab->Target Platform should be arduino",
@@ -2723,6 +2732,19 @@
               "nFontSz": "1",
               "logicalName": "SansSerif",
               "logicalSize": "12",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "NULL"
+            },
+            {
+              "familyName": "Dosis",
+              "displayName": "dosis_book13pt7b",
+              "includeFile": "Fonts/GFXFF/dosis_book13pt7b.h",
+              "defineFile": "NULL",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&dosis_book13pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "13",
               "logicalStyle": "PLAIN",
               "fontRefMode": "NULL"
             },
@@ -4448,7 +4470,6 @@
     },
     {
       "platformName": "linux",
-      "dpi": "72",
       "warnings": [
          "NULL" 
       ],
