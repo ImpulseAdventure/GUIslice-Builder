@@ -113,7 +113,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.15.0";
+  public static final String VERSION = "0.15.b001";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-13";
@@ -162,6 +162,10 @@ public class Builder  extends JDesktopPane {
   
   public static JSplitPane splitPane;
   
+  public static double version;
+  
+  public static String osName;
+  
   /** our logger */
   public static Logger logger = null;
   
@@ -177,14 +181,18 @@ public class Builder  extends JDesktopPane {
     JDialog.setDefaultLookAndFeelDecorated( true );
     
     Builder builder = new Builder();
-    double version = Double.parseDouble(System.getProperty("java.specification.version"));
+    version = Double.parseDouble(System.getProperty("java.specification.version"));
     if (version < 1.8) {
       String msg = String.format("Java 8 is needed to run. Yours is %.2f", version);
       JOptionPane.showMessageDialog(null, 
         msg, "Failure", JOptionPane.ERROR_MESSAGE);
     }
-    String osName = System.getProperty("os.name").toLowerCase();
+    osName = System.getProperty("os.name").toLowerCase();
     isMAC = osName.startsWith("mac os x");
+    // start our logger
+    System.setProperty("log4j.configurationFile","resources/log4j2.xml");
+    logger = LogManager.getLogger(Builder.class);
+    logger.debug("Builder started-java version: " + version + " osys: " + osName);
     loadThemes();
 /*  Use this code for Java 9 and above
     if (version < 9) {
@@ -277,10 +285,6 @@ public class Builder  extends JDesktopPane {
    * Creates the UI pieces.  
    */
   private void initUI() {
-    // start our logger
-    System.setProperty("log4j.configurationFile","resources/log4j2.xml");
-    logger = LogManager.getLogger(Builder.class);
-    
     // setup our fonts from builder_fonts.json file
     ff = FontFactory.getInstance();
     ff.init();
@@ -391,7 +395,6 @@ public class Builder  extends JDesktopPane {
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
     postStatusMsg("GUIsliceBuilder Started!");
-    logger.debug("Builder started");
   }
   
   public static void postStatusMsg(String message) {

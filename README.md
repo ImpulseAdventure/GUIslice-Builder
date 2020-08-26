@@ -27,6 +27,10 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### HotFix 0.15.b001
+ - Bug No. 179 Code gen for Project Tab's Extra fonts doesn't include the extra font's enum issue `#100`
+ - Bug No. 178 Enhancement - Add dosis book 13 point font to the builder
+
 ### Enhancements for 0.15.0
 - Update UserGuide for ver: 0.15.0
 - Added support for Teensy 

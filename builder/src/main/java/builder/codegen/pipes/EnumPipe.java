@@ -35,8 +35,11 @@ import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
+import builder.common.FontFactory;
+import builder.controller.Controller;
 import builder.models.KeyPadModel;
 import builder.models.KeyPadTextModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
@@ -76,6 +79,8 @@ public class EnumPipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     // first find our Page enums and output them
+    ProjectModel pm = Controller.getProjectModel();
+    FontFactory ff = FontFactory.getInstance();
     List<String> enumList = new ArrayList<String>();
     for (PagePane p : cg.getPages()) {
       if (!p.getPageType().equals(EnumFactory.PROJECT))
@@ -163,6 +168,14 @@ public class EnumPipe extends WorkFlowPipe {
       name = m.getFontEnum();
       if (name != null)
         enumList.add(name);
+    }
+    // add any extra fonts requested
+    for (String s : pm.getFontsList()) {
+      if (s != null && !s.isEmpty()) {
+        String fEnum = ff.getFontEnum(s);
+        if (fEnum != null) 
+          enumList.add(fEnum);
+      }
     }
     // sort the names and remove duplicates
     CodeUtils.sortListandRemoveDups(enumList);
