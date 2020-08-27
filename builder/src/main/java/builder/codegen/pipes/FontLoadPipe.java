@@ -115,9 +115,10 @@ public class FontLoadPipe extends WorkFlowPipe {
     // place any keypads at end
     if (bAddNumKeyPad) {
       KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
-      name = m.getFontEnum();
+      name = m.getFontDisplayName();
       if (name != null) {
         if (ff.getFont(name) != null) {
+          name = ff.getFontEnum(name);
           fontList.add(name);
         } else {
           name = ff.getDefFontEnum();
@@ -129,9 +130,10 @@ public class FontLoadPipe extends WorkFlowPipe {
     }
     if (bAddAlphaKeyPad) {
       KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
-      name = m.getFontEnum();
+      name = m.getFontDisplayName();
       if (name != null) {
         if (ff.getFont(name) != null) {
+          name = ff.getFontEnum(name);
           fontList.add(name);
         } else {
           name = ff.getDefFontEnum();
