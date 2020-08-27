@@ -27,6 +27,10 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### HotFix 0.15.b002
+ - Bug No. 182 Code gen for Teensy E_TY_5X8PT7B is being loaded  even if not used and Keypad fonts ignored- issue `#103`
+ - Bug No. 181 Teensy platform code gen outputs `#include "font_Arial.h"` once for each font reference- issue `#103`
+
 ### HotFix 0.15.b001
  - Bug No. 179 Code gen for Project Tab's Extra fonts doesn't include the extra font's enum issue `#100`
  - Bug No. 178 Enhancement - Add dosis book 13 point font to the builder
