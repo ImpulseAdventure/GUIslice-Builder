@@ -2498,13 +2498,14 @@
         {
           "categoryName": "t3",
           "extraIncludes": [
-            "#include <SPI.h>"
+            "#include <SPI.h>",
+            "#include \"font_Arial.h\""
           ],
           "fonts": [
             {
               "familyName": "Arial",
               "displayName": "Arial8",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_8",
@@ -2517,7 +2518,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial10",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_10",
@@ -2530,7 +2531,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial12",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_12",
@@ -2543,7 +2544,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial14",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_14",
@@ -2556,7 +2557,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial16",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_16",
@@ -2569,7 +2570,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial18",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_18",
@@ -2582,7 +2583,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial20",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_20",
@@ -2595,7 +2596,7 @@
             {
               "familyName": "Arial",
               "displayName": "Arial24",
-              "includeFile": "font_Arial.h",
+              "includeFile": "NULL",
               "defineFile": "NULL",
               "eFontRefType": "GSLC_FONTREF_PTR",
               "pvFontRef": "&Arial_24",
