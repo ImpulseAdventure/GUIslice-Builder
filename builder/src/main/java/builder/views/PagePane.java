@@ -36,6 +36,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -50,9 +54,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import builder.commands.Command;
+import builder.commands.DragByArrowCommand;
 import builder.commands.DragWidgetCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
@@ -125,6 +132,9 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The drag command. */
   public  DragWidgetCommand dragCommand = null;
+  
+  /** The drag using arrows command */
+  public DragByArrowCommand dragArrowsCommand = null;
 
   /** the number of selected widgets. */
   private int selectedCnt = 0;
@@ -145,6 +155,28 @@ public class PagePane extends JPanel implements iSubscriber {
   
   MsgBoard msg = null;
   
+  private String[] commands = {
+                                  "UP",
+                                  "DOWN",
+                                  "LEFT",
+                                  "RIGHT"
+                              };                      
+  private int[] keys = {
+      KeyEvent.VK_UP,
+      KeyEvent.VK_DOWN,
+      KeyEvent.VK_LEFT,
+      KeyEvent.VK_RIGHT,
+      KeyEvent.VK_KP_UP,
+      KeyEvent.VK_KP_DOWN,
+      KeyEvent.VK_KP_LEFT,
+      KeyEvent.VK_KP_RIGHT,
+  };
+
+  private ActionListener panelAction;
+  
+  int nX = 0;
+  int nY = 0;
+
   /**
    * Instantiates a new page pane.
    */
@@ -159,6 +191,38 @@ public class PagePane extends JPanel implements iSubscriber {
     dragPt = mousePt;
     this.addMouseListener(new MouseHandler());
     this.addMouseMotionListener(new MouseMotionHandler());
+    panelAction = new ActionListener() {   
+      @Override
+      public void actionPerformed(ActionEvent ae)
+      {
+        if (dragArrowsCommand == null) {
+          dragArrowsCommand = new DragByArrowCommand(instance);
+          if (!dragArrowsCommand.start()) return;
+        }
+        String command = (String) ae.getActionCommand();
+        if (command.equals(commands[0]))
+          dragArrowsCommand.moveUP();             
+        else if (command.equals(commands[1]))
+          dragArrowsCommand.moveDOWN();             
+        else if (command.equals(commands[2]))
+          dragArrowsCommand.moveLEFT();             
+        else if (command.equals(commands[3]))
+          dragArrowsCommand.moveRIGHT();             
+        repaint();  
+      }
+    };
+    for (int i = 0; i < commands.length; i++) {   
+      registerKeyboardAction(panelAction,
+                      commands[i],
+                      KeyStroke.getKeyStroke(keys[i], InputEvent.ALT_MASK),
+                      JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+    for (int i = 0; i < commands.length; i++) {   
+      registerKeyboardAction(panelAction,
+                      commands[i],
+                      KeyStroke.getKeyStroke(keys[i+4], InputEvent.ALT_MASK),
+                      JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
     this.setLocation(0, 0);
     this.setOpaque(true);
     this.setFocusable( true ); 
@@ -472,6 +536,10 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     selectedCnt=0;
     selectedGroupCnt=0;
+    if (dragArrowsCommand != null) {
+      execute(dragArrowsCommand);
+      dragArrowsCommand = null;
+    }
   }
 
   /**
@@ -502,6 +570,7 @@ public class PagePane extends JPanel implements iSubscriber {
     selectWidget(w);
     PropManager.getInstance().addPropEditor(w.getModel());
     TreeView.getInstance().addWidget(getKey(), getEnum(), w.getKey(), w.getEnum());
+    requestFocus();
     repaint();
   }
 

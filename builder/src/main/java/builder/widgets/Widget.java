@@ -210,7 +210,7 @@ public class Widget {
   
   /**
    * updateLocation() will set our location
-   * margins.
+   * ignore margins.
    *
    * @param pt
    *          the new location point
@@ -219,6 +219,21 @@ public class Widget {
   public void updateLocation(Point pt) {
     model.setX(pt.x);
     model.setY(pt.y);
+  }
+  
+  /**
+   * updateLocation() will set our location
+   * ignore margins.
+   *
+   * @param x
+   *          the new location x point
+   * @param y
+   *          the new location y point
+   * @return the <code>point</code> object
+   */
+  public void updateLocation(int x, int y) {
+    model.setX(x);
+    model.setY(y);
   }
   
   /**
