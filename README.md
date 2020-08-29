@@ -27,6 +27,17 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### Enhancements for 0.15.b003
+
+You can now move selected widgets using alt-up arrow, alt-down arrow, alt-left arrow, and alt-right arrow keys.
+
+Updated User Guide **2.3 Creating your UI** to document the fine movement of widgets using the arrow keys.
+
+### HotFix 0.15.b003
+ - Bug No. 180 Enhancement - Request for using keyboard arrow keys to move objects pixel by pixel issue `#104`
+ - Bug No. 29  Enhancement - Keyboard cursor shortcuts can move groups of elements
+ - Bug No. 28  Enhancement - Keyboard cursor shortcut for fine element positioning
+
 ### HotFix 0.15.b002
  - Bug No. 182 Code gen for Teensy E_TY_5X8PT7B is being loaded  even if not used and Keypad fonts ignored- issue `#103`
  - Bug No. 181 Teensy platform code gen outputs `#include "font_Arial.h"` once for each font reference- issue `#103`

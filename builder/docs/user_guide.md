@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.15.0
+        Ver: 0.15.b003
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published August, 2020. Based on GUIslice API Library 0.15.0
+Published August 29, 2020. Based on GUIslice API Library 0.15.0
 
 **Copyright**
 
@@ -170,6 +170,10 @@ Before beginning lets go over over the mouse selecting rules for the TFT Simulat
 - A Shift Left-click on an object selects it without deselecting any other objects.
 - Using the Rectangle Selection Tool ![](images/layout/selection.png) on the Page Layout tab will allow you to create a rubber band by pressing down the left mouse button and keeping it down while you move the band over the a group of objects and will select them all. For Example:
 ![](images/multi_sel.png)
+
+UI elements can be moved by placing the cursor over a selected object and pressing and holding down left mouse button while dragging the object or group of objects to a new location.  If you don't like the new location you can press the UNDO button.
+
+For finer control over moving selected objects you can use the arrow keys pressing Alt-up arrow, Alt-down arrow, Alt-left arrow and Alt-right arrow to move one pixel at a time.
 
 Now start by picking your first UI piece on the Toolbox. I suggest you first turn on the GRID using Ctrl-L. I also suggest not starting with a box that takes up your whole screen or the grid lines will be useless.  Besides setting the background color has the same effect without interfering with UI design.  If you want a preview of the UI without grid lines simply use Cntl-L again or the Page Layout tab's Grid control to toggle the grid on/off.
 
