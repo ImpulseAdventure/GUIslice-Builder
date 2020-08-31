@@ -27,6 +27,9 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### HotFix 0.15.b004
+ - Bug No. 183 Changing frame color of text element changes color of text on display but code gen is correct issue `#106`
+
 ### Enhancements for 0.15.b003
 
 You can now move selected widgets using alt-up arrow, alt-down arrow, alt-left arrow, and alt-right arrow keys.
