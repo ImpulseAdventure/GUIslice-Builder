@@ -27,6 +27,11 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### Release 0.15.b005
+
+#### Bug Fixes 0.15.0
+ - Bug No. 184 Invalid font for keupad causes font id=null in gslc_ElemXKeyPadCreate_Num()
+
 ### HotFix 0.15.b004
  - Bug No. 183 Changing frame color of text element changes color of text on display but code gen is correct issue `#106`
 

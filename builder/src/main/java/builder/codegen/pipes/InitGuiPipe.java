@@ -70,6 +70,7 @@ import builder.codegen.flash.ToggleButton_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
+import builder.common.FontFactory;
 import builder.controller.Controller;
 import builder.models.KeyPadTextModel;
 import builder.models.ProjectModel;
@@ -147,6 +148,7 @@ public class InitGuiPipe extends WorkFlowPipe {
   @Override
   public void doCodeGen(StringBuilder sBd) {
     tm = cg.getTemplateManager();
+    FontFactory ff = FontFactory.getInstance();
     List<String> templateLines = tm.loadTemplate(PAGEADD_TEMPLATE);
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String,String>();
@@ -258,6 +260,7 @@ public class InitGuiPipe extends WorkFlowPipe {
     }
     
     // output keypad configurations
+    String name = null;
     if (bAddNumKeyPad) {
       KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
       map.clear();
@@ -279,7 +282,15 @@ public class InitGuiPipe extends WorkFlowPipe {
 //      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
       map.put(X_MACRO, String.valueOf(m.getX()));
       map.put(Y_MACRO, String.valueOf(m.getY()));
-      map.put(FONT_ID_MACRO, String.valueOf(m.getFontEnum()));
+      name = m.getFontDisplayName();
+      if (name != null) {
+        if (ff.getFont(name) != null) {
+          name = ff.getFontEnum(name);
+        } else {
+          name = ff.getDefFontEnum();
+        }
+      }
+      map.put(FONT_ID_MACRO, name);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
     }
@@ -303,7 +314,15 @@ public class InitGuiPipe extends WorkFlowPipe {
 //      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
       map.put(X_MACRO, String.valueOf(m.getX()));
       map.put(Y_MACRO, String.valueOf(m.getY()));
-      map.put(FONT_ID_MACRO, String.valueOf(m.getFontEnum()));
+      name = m.getFontDisplayName();
+      if (name != null) {
+        if (ff.getFont(name) != null) {
+          name = ff.getFontEnum(name);
+        } else {
+          name = ff.getDefFontEnum();
+        }
+      }
+      map.put(FONT_ID_MACRO, name);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
     }
