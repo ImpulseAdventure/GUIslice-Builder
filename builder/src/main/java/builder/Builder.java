@@ -409,6 +409,7 @@ public class Builder  extends JDesktopPane {
     timer.start(); // Go go go!
   }
   
+  @SuppressWarnings("resource")
   public static void setLookAndFeel(String selectedLaf) {
     try {
       // scan themes for a match

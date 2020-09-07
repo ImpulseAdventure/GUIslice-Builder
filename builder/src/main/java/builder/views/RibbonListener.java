@@ -296,7 +296,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
         if (target.equals(ProjectModel.PLATFORM_LINUX))
           return "16 or 24 Bit Depth Bitmap (*.bmp), C File with extern image (*.c)";
         else if (target.equals("tft_espi"))
-          return "16 or 24 Bit Depth Bitmap (*.bmp), Jpeg (*jpg), C File with extern image (*.c)";
+          return "24 Bit Depth Bitmap (*.bmp), Jpeg (*jpg), C File with extern image (*.c)";
         else
           return "24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
       }

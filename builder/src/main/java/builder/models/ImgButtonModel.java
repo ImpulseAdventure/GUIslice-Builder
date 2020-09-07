@@ -500,6 +500,9 @@ public class ImgButtonModel extends WidgetModel {
     } else {
       try {
           image = ImageIO.read(file);
+          if (image.getType() == 2) {
+            throw new IOException(file.getName() + " is 32-bit BMP GUIslice only supports 24 bit");
+          }
       } catch(IOException e) {
         Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
         return false;
@@ -583,6 +586,9 @@ public class ImgButtonModel extends WidgetModel {
     } else {
       try {
         imageSelected = ImageIO.read(file);
+        if (imageSelected.getType() == 2) {
+          throw new IOException(file.getName() + " is 32-bit BMP GUIslice only supports 24 bit");
+        }
       } catch(IOException e) {
         Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
         return false;
@@ -789,8 +795,14 @@ public class ImgButtonModel extends WidgetModel {
     }
     String imageString = (String)in.readObject();
     image = CommonUtils.getInstance().decodeToImage(imageString);
+    if (image == null) {
+      throw new IOException("image: " + getImageName() + " is unsupported and has been deleted");
+    }
     String imageSelectedString = (String)in.readObject();
     imageSelected = CommonUtils.getInstance().decodeToImage(imageSelectedString);
+    if (imageSelected == null) {
+      throw new IOException("glow image: " + getSelectImageName() + " is unsupported and has been deleted");
+    }
     if (!getJumpPage().isEmpty()) {
       data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;

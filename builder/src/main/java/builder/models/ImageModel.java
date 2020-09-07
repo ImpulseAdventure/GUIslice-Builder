@@ -332,6 +332,9 @@ public class ImageModel extends WidgetModel {
     } else {
       try {
           image = ImageIO.read(file);
+          if (image.getType() == 2) {
+            throw new IOException(file.getName() + " is 32-bit BMP GUIslice only supports 24 bit");
+          }
       } catch(IOException e) {
           Builder.logger.error("image error: " + file.getName() + "->" + e.getMessage());
           return false;
@@ -432,6 +435,9 @@ public class ImageModel extends WidgetModel {
     super.readModel(in,  widgetType);
     String imageString = (String) in.readObject();
     image = CommonUtils.getInstance().decodeToImage(imageString);
+    if (image == null) {
+      throw new IOException("image: " + getImageName() + " is unsupported and has been deleted");
+    }
     if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("PROGMEM"))
       data[PROP_MEMORY][PROP_VAL_VALUE] = SRC_PROG;
      else if (((String)data[PROP_MEMORY][PROP_VAL_VALUE]).equals("SRAM"))
