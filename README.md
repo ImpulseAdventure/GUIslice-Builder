@@ -27,9 +27,11 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
-### Release 0.15.b005
+### HotFix 0.15.b005
 
 #### Bug Fixes 0.15.0
+ - Bug No. 186 selecting UTF8 enable causes code gen to output $<COM-019> instead of pElemRef
+ - Bug No. 185 Adding BMP Image with 32-bit depth causes later crashes
  - Bug No. 184 Invalid font for keupad causes font id=null in gslc_ElemXKeyPadCreate_Num()
 
 ### HotFix 0.15.b004
