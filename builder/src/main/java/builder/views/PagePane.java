@@ -55,9 +55,11 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragByArrowCommand;
 import builder.commands.DragWidgetCommand;
@@ -1040,8 +1042,16 @@ public class PagePane extends JPanel implements iSubscriber {
       for (int i=0; i<cnt; i++) {
         widgetType = (String)in.readObject();
         w = WidgetFactory.getInstance().createWidget(widgetType,0,0);
-        w.readObject(in, widgetType);
-        widgets.add(w);
+        try {
+          w.readObject(in, widgetType);
+          widgets.add(w);
+        } catch(Exception e) {
+          Builder.logger.error(e);
+          JOptionPane.showMessageDialog(null, 
+              e, 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+        }
         // without this check we duplicate elemnts on tree and prop views
         if (!bUndo) {
           PropManager.getInstance().addPropEditor(w.getModel());

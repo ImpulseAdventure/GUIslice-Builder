@@ -684,7 +684,7 @@ $<CALLBACK>
     (char*)m_sDisplayText$<COM-018>,$<TXT-205>,$<TXT-211>);
 <STOP>
 <TEXT_UTF8>
-  gslc_ElemSetTxtEnc(&m_gui,$<COM-019>,GSLC_TXT_ENC_UTF8);
+  gslc_ElemSetTxtEnc(&m_gui,pElemRef,GSLC_TXT_ENC_UTF8);
 <STOP>
 <TICK_CB>
 

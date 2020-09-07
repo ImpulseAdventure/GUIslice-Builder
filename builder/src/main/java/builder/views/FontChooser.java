@@ -29,6 +29,7 @@ import builder.common.FontFactory;
 import builder.common.FontItem;
 import builder.views.FontChooserHelper;
 
+@SuppressWarnings("unused")
 public class FontChooser extends JDialog {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;

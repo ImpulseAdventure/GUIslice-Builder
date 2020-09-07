@@ -58,6 +58,7 @@ import builder.widgets.Widget;
  * @author Paul Conti
  * 
  */
+@SuppressWarnings("unused")
 public class WidgetFactory  {
   
   /** The instance. */

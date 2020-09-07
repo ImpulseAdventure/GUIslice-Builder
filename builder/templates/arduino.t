@@ -834,10 +834,10 @@ $<CALLBACK>
     $<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<COM-010>,$<COM-011>);
 <STOP>
 <TEXT_UTF8>
-  gslc_ElemSetTxtEnc(&m_gui,$<COM-019>,GSLC_TXT_ENC_UTF8);
+  gslc_ElemSetTxtEnc(&m_gui,pElemRef,GSLC_TXT_ENC_UTF8);
 <STOP>
 <TEXT_UTF8_P>
-  gslc_ElemSetTxtEnc(&m_gui,$<COM-019>,GSLC_TXT_ENC_UTF8);
+  gslc_ElemSetTxtEnc(&m_gui,pElemRef,GSLC_TXT_ENC_UTF8);
 <STOP>
 <TICK_CB>
 
