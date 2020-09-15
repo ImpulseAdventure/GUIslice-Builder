@@ -32,6 +32,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import builder.Builder;
+
 /**
  * A factory for creating and Managing GUIslice Library Color objects
  * and mapping them to and from something Java can understand.
@@ -271,7 +275,11 @@ public class ColorFactory {
       }
       br.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      Builder.logger.error("ColorFactory: "+e.toString());
+      JOptionPane.showMessageDialog(topFrame, 
+          "Sorry, It appears to be a problem with your installion-check builder.log", 
+          "ERROR",
+          JOptionPane.ERROR_MESSAGE);
     }
   }
 
