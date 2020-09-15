@@ -27,6 +27,10 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### HotFix 0.15.b006
+
+ - Bug No. 187 App window not controllable with some themes issue `#112`
+
 ### HotFix 0.15.b005
 
 #### Bug Fixes 0.15.0

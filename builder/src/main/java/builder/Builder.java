@@ -113,7 +113,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.15.b005";
+  public static final String VERSION = "0.15.b006";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-13";
@@ -192,7 +192,7 @@ public class Builder  extends JDesktopPane {
     // start our logger
     System.setProperty("log4j.configurationFile","resources/log4j2.xml");
     logger = LogManager.getLogger(Builder.class);
-    logger.debug("Builder started-java version: " + version + " osys: " + osName);
+    logger.debug("Builder ver: " + VERSION + " started java ver: " + version + " osys: " + osName);
     loadThemes();
 /*  Use this code for Java 9 and above
     if (version < 9) {
@@ -457,6 +457,8 @@ public class Builder  extends JDesktopPane {
     themes = new ArrayList<ThemeInfo>();
     // add system look an feels
     for (LookAndFeelInfo look_and_feel : UIManager.getInstalledLookAndFeels()) {
+      JFrame.setDefaultLookAndFeelDecorated( false );
+      JDialog.setDefaultLookAndFeelDecorated( false );
       themes.add(new ThemeInfo(look_and_feel.getName(),
         null, look_and_feel.getClassName()));
     }
