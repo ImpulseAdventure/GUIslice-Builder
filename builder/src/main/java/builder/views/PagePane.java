@@ -968,8 +968,8 @@ public class PagePane extends JPanel implements iSubscriber {
    * @see builder.commands.Command#execute()
    */
   public void execute(Command c) {
-    History.getInstance().push(c);
     c.execute();
+    History.getInstance().push(c);
   }
 
   public void objectSelectedTreeView(String widgetKey) {

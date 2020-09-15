@@ -1430,8 +1430,8 @@ public class Controller extends JInternalFrame
    *          the c
    */
   public void execute(Command c) {
-    History.getInstance().push(c);
     c.execute();
+    History.getInstance().push(c);
   }
 
   /**
