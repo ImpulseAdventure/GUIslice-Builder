@@ -27,13 +27,13 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
-### Enhancements for 0.15.b003
+### Enhancements for 0.15.b006
 
 The Builder now support ctrl-Z for Undo and ctrl-Y for Redo.
 
-### Release 0.15.b006
+### HotFix 0.15.b006
  - Bug No. 189 Add shortcut ctrl+z for UnDo
- - Bug No. 187 App window not controllable with some themes issue `#112`
+ - Bug No. 187 App window not controllable with java built-in themes issue `#112`
 
 ### HotFix 0.15.b005
 
