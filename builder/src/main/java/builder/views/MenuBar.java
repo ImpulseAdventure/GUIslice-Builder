@@ -64,7 +64,7 @@ public class MenuBar extends JMenuBar {
     miSaveAs, miCode, miClose, miExit;
   
   /** The edit menu item. */
-  private JMenuItem miCopy,miCut,miPaste, miOptions, miDelete;
+  private JMenuItem miUndo,miRedo,miCopy,miCut,miPaste, miOptions, miDelete;
   
   /** The about menu item. */
   private JMenuItem miAbout;
@@ -182,7 +182,23 @@ public class MenuBar extends JMenuBar {
    */
   public void initEditMenus() {
     mbEdit = new JMenu("Edit");
+    miUndo = new JMenuItem("Undo", 
+      CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/undo.png", iconSz));
+    miUndo.setActionCommand("undo");
+    miUndo.setAccelerator(KeyStroke.getKeyStroke(
+        'Z', ActionEvent.CTRL_MASK));
+    miUndo.setToolTipText("Undo edits to your project file.");
+    mbEdit.add(miUndo);
     
+    miRedo = new JMenuItem("Redo", 
+        CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/redo.png", iconSz));
+    miRedo.setActionCommand("redo");
+    miRedo.setAccelerator(KeyStroke.getKeyStroke(
+          'Y', ActionEvent.CTRL_MASK));
+    miRedo.setToolTipText("Re-apply edits to your project file.");
+    mbEdit.add(miRedo);
+      
+    mbEdit.add(new JSeparator()); 
     miCopy = new JMenuItem("Copy", 
       CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/copy.png", iconSz));
     miCopy.setActionCommand("copy");
@@ -288,6 +304,8 @@ public class MenuBar extends JMenuBar {
     miOpen.addActionListener(al); 
     miSave.addActionListener(al);
     miSaveAs.addActionListener(al);
+    miUndo.addActionListener(al); 
+    miRedo.addActionListener(al); 
     miCode.addActionListener(al);
     miCopy.addActionListener(al); 
     miCut.addActionListener(al); 

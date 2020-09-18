@@ -798,6 +798,11 @@ public class RibbonListener implements ActionListener, iSubscriber {
       controller.pasteWidgets();
       break;
     
+    case "redo":
+      Builder.logger.debug("Toolbar: redo");
+      History.getInstance().redo();
+      break;
+      
     case "save":
       Builder.logger.debug("Menu: save");
       file = null;
@@ -867,6 +872,11 @@ public class RibbonListener implements ActionListener, iSubscriber {
     case "exit":
       Builder.logger.debug("Menu: exit");
       onExit();
+      break;
+      
+    case "undo":
+      Builder.logger.debug("Toolbar: undo");
+      History.getInstance().undo();
       break;
       
     case "zoomin":
