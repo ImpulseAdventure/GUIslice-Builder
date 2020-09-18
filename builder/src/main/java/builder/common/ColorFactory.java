@@ -276,7 +276,7 @@ public class ColorFactory {
       br.close();
     } catch (IOException e) {
       Builder.logger.error("ColorFactory: "+e.toString());
-      JOptionPane.showMessageDialog(topFrame, 
+      JOptionPane.showMessageDialog(null, 
           "Sorry, It appears to be a problem with your installion-check builder.log", 
           "ERROR",
           JOptionPane.ERROR_MESSAGE);
