@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.15.b003
+        Ver: 0.15.b006
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published August 29, 2020. Based on GUIslice API Library 0.15.0
+Published October, 2020. Based on GUIslice API Library 0.15.0
 
 **Copyright**
 
@@ -36,7 +36,7 @@ GUIslice Wiki: <https://github.com/ImpulseAdventure/GUIslice/wiki>
 
 It's a nice package but the embedded design choice to eliminate dynamic memory allocation does mean additional care must be taken in the user code to manage the data structures.
 
-The GUIslice Builder creates a cross-platform desktop application that automates some of the boilerplate code generation and tracking of the UI pieces. For example, the Builder helps manage:
+The GUIslice Builder creates a cross-platform desktop application that automates the boilerplate code generation and tracking of the UI pieces. For example, the Builder helps manage:
 - Defines, enums, UI storage declarations
 - Coordinates and dimensions of UI elements can be visually created
 - Colors and fonts can also be modelled within the Builder
@@ -1102,7 +1102,7 @@ Most of the builder examples use text fields as labels while some use them to di
 | Text                  | The text to display                            |
 | UTF-8?                | Only 7 bit ascii characters unless checked.    |
 |                       | NOTE: AdaFruit's GFX does not support UTF-8    |
-| External Storage Size | 0 unless runtime access needed                 |
+| External Storage Size | Setting to 0 makes text read-only.             |
 | Text Alignment        | GSLC_ALIGN_MID_LEFT (can be RIGHT or CENTERED) |                          |
 | Fill Enabled?         | true                                           |
 | Frame Enabled?        | false                                          |
@@ -1225,7 +1225,7 @@ A fuller explanation of when the Builder will create, delete or modify a case st
 | Corners Rounded?      | false                                          |
 | Fill Enabled?         | false                                          |
 | Frame Enabled?        | false                                          |
-| External Storage Size | 0                                              |
+| External Storage Size | Setting to 0 makes text label read-only.       |
 | Text Alignment        | GSLC_ALIGN_MID_MID                             |
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
