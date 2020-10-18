@@ -47,16 +47,18 @@ public class KeyPadModel extends WidgetModel {
   /** The Property Index Constants. */
   static private final int PROP_ELEMENTREF        = 4;
   static private final int PROP_FONT              = 5;
-  static private final int PROP_BUTTONSZ          = 6;
-  static private final int PROP_ROUNDED           = 7;
-  static private final int PROP_FLOATPT           = 8;
-  static private final int PROP_SIGN              = 9;
+  static private final int PROP_BUTTONSZ_W        = 6;
+  static private final int PROP_BUTTONSZ_H        = 7;
+  static private final int PROP_ROUNDED           = 8;
+  static private final int PROP_FLOATPT           = 9;
+  static private final int PROP_SIGN              = 10;
   
   /** The Property Defaults */
   static public  final Boolean DEF_FLOATPT           = Boolean.TRUE;
   static public  final Boolean DEF_SIGN              = Boolean.TRUE;
   static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
-  static public  final Integer DEF_BUTTONSZ          = Integer.valueOf(20);
+  static public  final Integer DEF_BUTTONSZ_W        = Integer.valueOf(25);
+  static public  final Integer DEF_BUTTONSZ_H        = Integer.valueOf(25);
 
   /** The ff. */
   private FontFactory ff = null;
@@ -75,7 +77,7 @@ public class KeyPadModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.NUMKEYPAD;
-    data = new Object[10][5];
+    data = new Object[11][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",EnumFactory.KEYPAD_PAGE_ENUM);
@@ -88,7 +90,8 @@ public class KeyPadModel extends WidgetModel {
     initProp(PROP_FLOATPT, Boolean.class, "PAD-100", Boolean.FALSE,"Enable Floating Point?",DEF_FLOATPT);
     initProp(PROP_SIGN, Boolean.class, "PAD-101", Boolean.FALSE,"Enable Minus Sign?",DEF_SIGN);
 
-    initProp(PROP_BUTTONSZ, Integer.class, "COM-013", Boolean.FALSE,"Button Size",DEF_BUTTONSZ);
+    initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.FALSE,"Button Size",DEF_BUTTONSZ_W);
+    initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.FALSE,"Button Size",DEF_BUTTONSZ_H);
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
 //    initProp(PROP_BUTTONGAPX, Integer.class, "COM-014", Boolean.FALSE,"Button Gap X",DEF_BUTTONGAPX);
 //    initProp(PROP_BUTTONGAPY, Integer.class, "COM-015", Boolean.FALSE,"Button Gap Y",DEF_BUTTONGAPY);
@@ -145,12 +148,21 @@ public class KeyPadModel extends WidgetModel {
   }
   
   /**
-   * Gets the button size.
+   * Gets the button size width.
    *
    * @return the button size.
    */
-  public int getButtonSz() {
-    return (((Integer) (data[PROP_BUTTONSZ][PROP_VAL_VALUE])).intValue());
+  public int getButtonSz_Width() {
+    return (((Integer) (data[PROP_BUTTONSZ_W][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * Gets the button size height.
+   *
+   * @return the button size.
+   */
+  public int getButtonSz_Height() {
+    return (((Integer) (data[PROP_BUTTONSZ_H][PROP_VAL_VALUE])).intValue());
   }
 
   /**

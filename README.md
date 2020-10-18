@@ -27,10 +27,21 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
+### Enhancements for 0.16.0
+
+GUIslice API 0.16.0 has upgraded the Keypad support. This is a breaking change for the API so the Builder 
+now will require running with GUIslice API 0.16.0 and higher.
+
+The Builder now support ctrl-Z for Undo and ctrl-Y for Redo.
+
+### HotFix 0.16.0
+ - Bug No. 189 Add shortcut ctrl+z for UnDo
+ - Bug No. 187 App window not controllable with java built-in themes issue `#112`
+
 ### HotFix 0.15.b005
 
 #### Bug Fixes 0.15.0
- - Bug No. 186 selecting UTF8 enable causes code gen to output $<COM-019> instead of pElemRef
+ - Bug No. 186 selecting UTF8 enable causes code gen to output `$<COM-019>` instead of pElemRef
  - Bug No. 185 Adding BMP Image with 32-bit depth causes later crashes
  - Bug No. 184 Invalid font for keupad causes font id=null in gslc_ElemXKeyPadCreate_Num()
 

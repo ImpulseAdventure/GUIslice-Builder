@@ -125,15 +125,16 @@ public final class TextInputCodeBlock implements CodeBlock {
     template = tm.loadTemplate(TOUCH_EN_TEMPLATE);
     tm.codeWriter(sBd, template);
     
+    if (m.isUTF8()) {
+      template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+
     if (!m.getElementRef().isEmpty()) {
       template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
-      if (m.isUTF8()) {
-        template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
-        outputLines = tm.expandMacros(template, map);
-        tm.codeWriter(sBd, outputLines);
-      }
     }
 
     template.clear();

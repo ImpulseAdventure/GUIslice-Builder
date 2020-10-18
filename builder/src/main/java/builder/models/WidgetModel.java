@@ -629,8 +629,8 @@ public class WidgetModel extends AbstractTableModel {
    * @param c is the property change command to run.
    */
   public void execute(Command c) {
-    History.getInstance().push(c);
     c.execute();
+    History.getInstance().push(c);
   }
   
   /**

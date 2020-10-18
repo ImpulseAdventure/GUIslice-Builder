@@ -85,6 +85,7 @@ $<CALLBACK>
 <STOP>
 <BUTTON_CB_INPUT>
       case $<COM-002>:
+        // Clicked on edit field, so show popup box and associate with this text field
         gslc_ElemXKeyPadInputAsk(&m_gui, $<KEY-019>, $<KEY-002>, $<COM-019>);
         break;
 <STOP>
@@ -386,10 +387,10 @@ $<CALLBACK>
         break;
 <STOP>
 <KEYPAD_CONFIG>
-  gslc_tsXKeyPadCfg sCfg = gslc_ElemXKeyPadCfgInit_Num();
+  static gslc_tsXKeyPadCfg_Num sCfg = gslc_ElemXKeyPadCfgInit_Num();
   gslc_ElemXKeyPadCfgSetFloatEn(&sCfg, $<FLOAT_EN>);
   gslc_ElemXKeyPadCfgSetSignEn(&sCfg, $<SIGN_EN>);
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ>, $<BUTTONSZ>);
+  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
   gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Num(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfg);
@@ -397,8 +398,8 @@ $<CALLBACK>
   
 <STOP>
 <KEYPAD_TEXT>
-  gslc_tsXKeyPadCfg sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfgTx, $<BUTTONSZ>, $<BUTTONSZ>);
+  static gslc_tsXKeyPadCfg_Alpha sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
+  gslc_ElemXKeyPadCfgSetButtonSz(&sCfgTx, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
   gslc_ElemXKeyPadCfgSetRoundEn(&sCfgTx, $<ROUND_EN>);
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Alpha(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
@@ -406,10 +407,10 @@ $<CALLBACK>
   
 <STOP>
 <KEYPAD_ELEM_NUM>
-gslc_tsXKeyPad_Num              $<STORAGE>;
+gslc_tsXKeyPad                  $<STORAGE>;
 <STOP>
 <KEYPAD_ELEM_TEXT>
-gslc_tsXKeyPad_Alpha            $<STORAGE>;
+gslc_tsXKeyPad                  $<STORAGE>;
 <STOP>
 <KEYPAD_PAGE>
 gslc_tsElem                     $<STORAGE>[1];
