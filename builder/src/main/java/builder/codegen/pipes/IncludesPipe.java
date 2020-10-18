@@ -130,7 +130,6 @@ public class IncludesPipe extends WorkFlowPipe {
           break;
         case EnumFactory.NUMINPUT:
           headerList.add("XKeyPad_Num");
-          bCompound = true;
           bWarning = true;
           break;
         case EnumFactory.PROGRESSBAR:
@@ -164,7 +163,6 @@ public class IncludesPipe extends WorkFlowPipe {
           break;
         case EnumFactory.TEXTINPUT:
           headerList.add("XKeyPad_Alpha");
-          bCompound = true;
           bWarning = true;
           break;
         case EnumFactory.TOGGLEBUTTON:

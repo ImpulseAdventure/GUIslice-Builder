@@ -27,11 +27,14 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Release History
 
-### Enhancements for 0.15.b006
+### Enhancements for 0.16.0
+
+GUIslice API 0.16.0 has upgraded the Keypad support. This is a breaking change for the API so the Builder 
+now will require running with GUIslice API 0.16.0 and higher.
 
 The Builder now support ctrl-Z for Undo and ctrl-Y for Redo.
 
-### HotFix 0.15.b006
+### HotFix 0.16.0
  - Bug No. 189 Add shortcut ctrl+z for UnDo
  - Bug No. 187 App window not controllable with java built-in themes issue `#112`
 

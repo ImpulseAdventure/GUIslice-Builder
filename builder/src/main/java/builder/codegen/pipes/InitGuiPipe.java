@@ -106,7 +106,8 @@ public class InitGuiPipe extends WorkFlowPipe {
   
   /** The Constants for macros. */
   private final static String BACKGROUND_COLOR_MACRO = "BACKGROUND_COLOR";
-  private final static String BUTTONSZ_MACRO         = "BUTTONSZ";
+  private final static String BUTTONSZ_W_MACRO       = "BUTTONSZ_W";
+  private final static String BUTTONSZ_H_MACRO       = "BUTTONSZ_H";
   private final static String ELEMREF_MACRO          = "ELEMREF";
   private final static String ENUM_MACRO             = "WIDGET_ENUM";
   private final static String FLOAT_EN_MACRO         = "FLOAT_EN";
@@ -276,7 +277,8 @@ public class InitGuiPipe extends WorkFlowPipe {
       map.put(STORAGE_MACRO, EnumFactory.KEYPAD_ELEM_STORAGE);
       map.put(FLOAT_EN_MACRO, String.valueOf(m.isFloatingPointEn()));
       map.put(SIGN_EN_MACRO, String.valueOf(m.isSignEn()));
-      map.put(BUTTONSZ_MACRO, String.valueOf(m.getButtonSz()));
+      map.put(BUTTONSZ_W_MACRO, String.valueOf(m.getButtonSz_Width()));
+      map.put(BUTTONSZ_H_MACRO, String.valueOf(m.getButtonSz_Height()));
       map.put(ROUND_EN_MACRO, String.valueOf(m.isRoundedEn()));
 //      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
 //      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
@@ -308,7 +310,8 @@ public class InitGuiPipe extends WorkFlowPipe {
       map.put(PAGE_ENUM_MACRO, m.getEnum());
       map.put(ENUM_MACRO, EnumFactory.ALPHAKEYPAD_ELEM_ENUM);
       map.put(STORAGE_MACRO, EnumFactory.ALPHAKEYPAD_ELEM_STORAGE);
-      map.put(BUTTONSZ_MACRO, String.valueOf(m.getButtonSz()));
+      map.put(BUTTONSZ_W_MACRO, String.valueOf(m.getButtonSz_Width()));
+      map.put(BUTTONSZ_H_MACRO, String.valueOf(m.getButtonSz_Height()));
       map.put(ROUND_EN_MACRO, String.valueOf(m.isRoundedEn()));
 //      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
 //      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));

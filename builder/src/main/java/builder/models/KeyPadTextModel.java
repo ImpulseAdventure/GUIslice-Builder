@@ -47,12 +47,14 @@ public class KeyPadTextModel extends WidgetModel {
   /** The Property Index Constants. */
   static private final int PROP_ELEMENTREF        = 4;
   static private final int PROP_FONT              = 5;
-  static private final int PROP_BUTTONSZ          = 6;
-  static private final int PROP_ROUNDED           = 7;
+  static private final int PROP_BUTTONSZ_W        = 6;
+  static private final int PROP_BUTTONSZ_H        = 7;
+  static private final int PROP_ROUNDED           = 8;
   
   /** The Property Defaults */
   static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
-  static public  final Integer DEF_BUTTONSZ          = Integer.valueOf(20);
+  static public  final Integer DEF_BUTTONSZ_W        = Integer.valueOf(12);
+  static public  final Integer DEF_BUTTONSZ_H        = Integer.valueOf(25);
 
   /** The ff. */
   private FontFactory ff = null;
@@ -71,7 +73,7 @@ public class KeyPadTextModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.ALPHAKEYPAD;
-    data = new Object[8][5];
+    data = new Object[9][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",EnumFactory.ALPHAKEYPAD_PAGE_ENUM);
@@ -81,7 +83,8 @@ public class KeyPadTextModel extends WidgetModel {
 
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
 
-    initProp(PROP_BUTTONSZ, Integer.class, "COM-013", Boolean.FALSE,"Button Size",DEF_BUTTONSZ);
+    initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.FALSE,"Button Size",DEF_BUTTONSZ_W);
+    initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.FALSE,"Button Size",DEF_BUTTONSZ_H);
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
     
   }
@@ -117,12 +120,21 @@ public class KeyPadTextModel extends WidgetModel {
   }
   
   /**
-   * Gets the button size.
+   * Gets the button size width.
    *
    * @return the button size.
    */
-  public int getButtonSz() {
-    return (((Integer) (data[PROP_BUTTONSZ][PROP_VAL_VALUE])).intValue());
+  public int getButtonSz_Width() {
+    return (((Integer) (data[PROP_BUTTONSZ_W][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * Gets the button size height.
+   *
+   * @return the button size.
+   */
+  public int getButtonSz_Height() {
+    return (((Integer) (data[PROP_BUTTONSZ_H][PROP_VAL_VALUE])).intValue());
   }
 
   /**
