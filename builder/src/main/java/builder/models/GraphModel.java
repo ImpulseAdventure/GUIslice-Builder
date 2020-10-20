@@ -142,7 +142,7 @@ public class GraphModel extends WidgetModel {
     fireTableCellUpdated(row, COLUMN_VALUE);
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }

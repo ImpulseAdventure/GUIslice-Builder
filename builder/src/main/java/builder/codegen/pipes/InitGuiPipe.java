@@ -96,8 +96,12 @@ public class InitGuiPipe extends WorkFlowPipe {
   /** The Constants for templates. */
   private final static String BACKGROUND_TEMPLATE       = "<BACKGROUND>";
   private final static String BACKGROUND_IMAGE_TEMPLATE = "<BACKGROUND_IMAGE>";
-  private final static String KEYPAD_CONFIG_TEMPLATE    = "<KEYPAD_CONFIG>"; 
-  private final static String KEYPAD_TEXT_TEMPLATE      = "<KEYPAD_TEXT>"; 
+  private final static String KEYPAD_CONFIG_NUM_TEMPLATE= "<KEYPAD_CONFIG_NUM>"; 
+  private final static String KEYPAD_CONFIG_TXT_TEMPLATE= "<KEYPAD_CONFIG_TXT>"; 
+  private final static String KEYPAD_CREATE_NUM_TEMPLATE= "<KEYPAD_CREATE_NUM>"; 
+  private final static String KEYPAD_CREATE_TXT_TEMPLATE= "<KEYPAD_CREATE_TXT>"; 
+  private final static String KEYPAD_BUTTONSZ_TEMPLATE  = "<KEYPAD_BUTTONSZ>"; 
+  private final static String KEYPAD_ROUNDBUTTONS_TEMPLATE= "<KEYPAD_ROUNDBUTTONS>"; 
   private final static String PAGEADD_TEMPLATE          = "<PAGEADD>"; 
   private final static String PAGEADDKEYPAD_TEMPLATE    = "<PAGEADDKEYPAD>"; 
   private final static String PAGEBASE_TEMPLATE         = "<PAGEBASE>";
@@ -112,6 +116,7 @@ public class InitGuiPipe extends WorkFlowPipe {
   private final static String ENUM_MACRO             = "WIDGET_ENUM";
   private final static String FLOAT_EN_MACRO         = "FLOAT_EN";
   private final static String FONT_ID_MACRO          = "FONT_ID";
+
 //  private final static String GAPX_MACRO             = "GAPX";
 //  private final static String GAPY_MACRO             = "GAPY";
   private final static String PAGE_ENUM_MACRO        = "PAGE_ENUM";
@@ -269,16 +274,16 @@ public class InitGuiPipe extends WorkFlowPipe {
       templateLines = tm.loadTemplate(PAGECOMMENT_TEMPLATE);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
-      templateLines = tm.loadTemplate(KEYPAD_CONFIG_TEMPLATE);
+      templateLines = tm.loadTemplate(KEYPAD_CONFIG_NUM_TEMPLATE);
       map.clear();
       map.put(ELEMREF_MACRO, EnumFactory.KEYPAD_ELEMREF);
       map.put(PAGE_ENUM_MACRO, m.getEnum());
       map.put(ENUM_MACRO, EnumFactory.KEYPAD_ELEM_ENUM);
       map.put(STORAGE_MACRO, EnumFactory.KEYPAD_ELEM_STORAGE);
-      map.put(FLOAT_EN_MACRO, String.valueOf(m.isFloatingPointEn()));
-      map.put(SIGN_EN_MACRO, String.valueOf(m.isSignEn()));
       map.put(BUTTONSZ_W_MACRO, String.valueOf(m.getButtonSz_Width()));
       map.put(BUTTONSZ_H_MACRO, String.valueOf(m.getButtonSz_Height()));
+      map.put(FLOAT_EN_MACRO, String.valueOf(m.isFloatingPointEn()));
+      map.put(SIGN_EN_MACRO, String.valueOf(m.isSignEn()));
       map.put(ROUND_EN_MACRO, String.valueOf(m.isRoundedEn()));
 //      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
 //      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
@@ -295,6 +300,19 @@ public class InitGuiPipe extends WorkFlowPipe {
       map.put(FONT_ID_MACRO, name);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
+      if (!m.useDefBtnSize()) {
+        templateLines = tm.loadTemplate(KEYPAD_BUTTONSZ_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      if (m.isRoundedEn()) {
+        templateLines = tm.loadTemplate(KEYPAD_ROUNDBUTTONS_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      templateLines = tm.loadTemplate(KEYPAD_CREATE_NUM_TEMPLATE);
+      outputLines = tm.expandMacros(templateLines, map);
+      tm.codeWriter(sBd, outputLines);
     }
 
     if (bAddAlphaKeyPad) {
@@ -304,7 +322,7 @@ public class InitGuiPipe extends WorkFlowPipe {
       templateLines = tm.loadTemplate(PAGECOMMENT_TEMPLATE);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
-      templateLines = tm.loadTemplate(KEYPAD_TEXT_TEMPLATE);
+      templateLines = tm.loadTemplate(KEYPAD_CONFIG_TXT_TEMPLATE);
       map.clear();
       map.put(ELEMREF_MACRO, EnumFactory.ALPHAKEYPAD_ELEMREF);
       map.put(PAGE_ENUM_MACRO, m.getEnum());
@@ -326,6 +344,19 @@ public class InitGuiPipe extends WorkFlowPipe {
         }
       }
       map.put(FONT_ID_MACRO, name);
+      outputLines = tm.expandMacros(templateLines, map);
+      tm.codeWriter(sBd, outputLines);
+      if (!m.useDefBtnSize()) {
+        templateLines = tm.loadTemplate(KEYPAD_BUTTONSZ_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      if (m.isRoundedEn()) {
+        templateLines = tm.loadTemplate(KEYPAD_ROUNDBUTTONS_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      templateLines = tm.loadTemplate(KEYPAD_CREATE_TXT_TEMPLATE);
       outputLines = tm.expandMacros(templateLines, map);
       tm.codeWriter(sBd, outputLines);
     }

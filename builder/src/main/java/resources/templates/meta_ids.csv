@@ -129,6 +129,7 @@ IMG-108,Image Extern
 IMG-109,Image Memory Type
 KEY-102,Keypad ENUM
 KEY-019,Keypad EREF
+KEY-109,Keypad Use Default Button Size
 KEY-110,Keypad Button Width
 KEY-111,Keypad Button Height
 PAD-100,Floating Point

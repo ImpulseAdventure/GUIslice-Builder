@@ -308,25 +308,29 @@ $<CALLBACK>
 	    gslc_PopupHide(&m_gui);
         break;
 <STOP>
-<KEYPAD_CONFIG>
+<KEYPAD_CONFIG_NUM>
   static gslc_tsXKeyPadCfg_Num sCfg = gslc_ElemXKeyPadCfgInit_Num();
-  gslc_ElemXKeyPadCfgSetFloatEn(&sCfg, $<FLOAT_EN>);
-  gslc_ElemXKeyPadCfgSetSignEn(&sCfg, $<SIGN_EN>);
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
-  gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
+  gslc_ElemXKeyPadCfgSetFloatEn_Num(&sCfg, $<FLOAT_EN>);
+  gslc_ElemXKeyPadCfgSetSignEn_Num(&sCfg, $<SIGN_EN>);
+<STOP>
+<KEYPAD_CONFIG_TXT>
+  static gslc_tsXKeyPadCfg_Alpha sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
+<STOP>
+<KEYPAD_CREATE_NUM>
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Num(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfg);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
-  
 <STOP>
-<KEYPAD_TEXT>
-  static gslc_tsXKeyPadCfg sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfgTx, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
-  gslc_ElemXKeyPadCfgSetRoundEn(&sCfgTx, $<ROUND_EN>);
+<KEYPAD_CREATE_TXT>
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Alpha(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
-  
+<STOP>
+<KEYPAD_BUTTONSZ>
+  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
+<STOP>
+<KEYPAD_ROUNDBUTTONS>
+  gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
 <STOP>
 <KEYPAD_ELEM_NUM>
 gslc_tsXKeyPad                  $<STORAGE>;

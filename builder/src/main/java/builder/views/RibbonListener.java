@@ -84,7 +84,7 @@ public class RibbonListener implements ActionListener, iSubscriber {
   public RibbonListener() {
     this.controller = Controller.getInstance();
     generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
-    MsgBoard.getInstance().subscribe(this, "RibbonListener");
+    MsgBoard.subscribe(this, "RibbonListener");
   }
 
   /**
