@@ -35,7 +35,6 @@ import java.util.prefs.Preferences;
 
 import builder.Builder;
 import builder.common.EnumFactory;
-import builder.models.GeneralModel;
 import builder.models.KeyPadTextModel;
 import builder.models.WidgetModel;
 
