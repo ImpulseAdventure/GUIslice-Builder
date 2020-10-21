@@ -34,7 +34,8 @@ now will require running with GUIslice API 0.16.0 and higher.
 
 The Builder now support ctrl-Z for Undo and ctrl-Y for Redo.
 
-### HotFix 0.16.0
+### Bug Fixes 0.16.0
+ - Bug No. 191 Crash if slider min=max
  - Bug No. 189 Add shortcut ctrl+z for UnDo
  - Bug No. 187 App window not controllable with java built-in themes issue `#112`
 

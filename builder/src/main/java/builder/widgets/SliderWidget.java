@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import builder.Builder;
 import builder.common.CommonUtils;
 import builder.common.GUIslice;
 import builder.models.SliderModel;
@@ -105,6 +106,10 @@ public class SliderWidget extends Widget {
       nCtrlRng = (nX1-nMargin)-(nX0+nMargin);
     } else {
       nCtrlRng = (nY1-nMargin)-(nY0+nMargin);
+    }
+    if (nPosRng == 0) {
+      nPosRng=10;
+      Builder.postStatusMsg("WARNING: Slider " + m.getEnum() + " max should be > min");
     }
     int nCtrlPos  = (nPosOffset*nCtrlRng/nPosRng)+nMargin;
 
