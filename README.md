@@ -29,10 +29,19 @@ The Software is not designed for use in devices or situations where there may be
 
 ### Enhancements for 0.16.0
 
+With this release the Builder becomes a true WYSIWYG editor for most platforms. The Builder now reads and parses 
+your actual Platform Font header and c files and renders them inside the Builder. This native font support will now 
+be able to give you accurate sizing and positioning information for supported fonts. Plus your text will be now 
+displayed exactly as it will appear on your target TFT display. 
+
+The Native Font support includes, Adafruit's Builtin GLCD fonts, and Adafruit's GFX compatable fonts, and 
+Teensy ILI9341_t3 fonts. You may still tell the Builder to simulate fonts it doesn't directly support, see 
+the User Guide for more information about font handling.
+
 GUIslice API 0.16.0 has upgraded the Keypad support. This is a breaking change for the API so the Builder 
 now will require running with GUIslice API 0.16.0 and higher.
 
-The Builder now support ctrl-Z for Undo and ctrl-Y for Redo.
+The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
 ### Bug Fixes 0.16.0
  - Bug No. 191 Crash if slider min=max
