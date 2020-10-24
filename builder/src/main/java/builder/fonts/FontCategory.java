@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  *
  */
-package builder.common;
+package builder.fonts;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -23,19 +23,16 @@
  * THE SOFTWARE.
  *
  */
-package builder.common;
+package builder.fonts;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -43,10 +40,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import builder.Builder;
-import builder.codegen.CodeGenException;
+import builder.common.CommonUtils;
 import builder.controller.Controller;
-import builder.models.TextModel;
 
 /**
  * A factory for creating and managing GUIslice Library Font objects
@@ -162,7 +160,7 @@ public class FontFactory {
    *          the key
    * @return the font
    */
-  public Font getFont(String key) {
+  public FontTFT getFont(String key) {
     FontItem item = getFontItem(key);
     if (item != null) {
       return item.getFont();
@@ -263,45 +261,16 @@ public class FontFactory {
    */
   public Dimension measureChar(String fontName) {
     FontItem item = getFontItem(fontName);
-    if (item != null) {
-      Dimension nChSz = new Dimension();
-      if (fontName.startsWith("BuiltIn")) {
-        int size = Integer.parseInt(item.getFontSz());
-        nChSz.width = (6 * size);
-        nChSz.height = 8 * size;
-        return nChSz;
-      }
-      String acHeight = "p$";
-      String acWidth  = "%";
-      Font tmpFont = item.createFont();
-      Dimension txtHeight = measureText(fontName, tmpFont,acHeight);
-      Dimension txtWidth = measureText(fontName, tmpFont,acWidth);
-      nChSz.width = txtWidth.width;
-      nChSz.height = txtHeight.height;
-      return nChSz;
+    if (item == null) {
+      Builder.logger.error("measureChar failed because " + fontName + " not found");
+      return new Dimension(0,0);
     }
-    return new Dimension(0,0);
-  }
-  
-  /**
-   * Measure adafruit text.
-   *
-   * @param s
-   *          the s
-   * @param fontName
-   *          the font name
-   * @return the <code>dimension</code> object
-   */
-  public Dimension measureAdafruitText(String fontName, String s) {
-    FontItem item = getFontItem(fontName);
-    if (item != null) {
-      Dimension nChSz = new Dimension();
-      int size = Integer.parseInt(item.getFontSz());
-      nChSz.width = (6 * size) * s.length();
-      nChSz.height = (8 * size) + 2;
-      return nChSz;
-    }
-    return new Dimension(0,0);
+    String acHeight = "p$";
+    String acWidth  = "%";
+    FontTFT tmpFont = item.getFont();
+    Dimension txtHeight = measureText(0,0,tmpFont,acHeight);
+    Dimension txtWidth = measureText(0,0,tmpFont,acWidth);
+    return new Dimension(txtWidth.width, txtHeight.height);
   }
   
   /**
@@ -313,99 +282,199 @@ public class FontFactory {
    *          the font
    * @return the <code>dimension</code> object
    */
-  public Dimension measureText(String fontName, Font font, String s) {
-    if (fontName.startsWith("BuiltIn")) {
-        return measureAdafruitText(fontName, s);
+  public Dimension measureText(int x, int y, FontTFT font, String s) {
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(s, 0, 0);
+    // calculate the size of a box to hold the text with some padding.
+    metrics.w+=2;
+    metrics.h+=2;
+    // clipping
+    if (metrics.w+x > Builder.CANVAS_WIDTH) {
+      metrics.w = metrics.w - (metrics.w + x - Builder.CANVAS_WIDTH);
     }
-    Canvas c = new Canvas();
-    // get metrics from the Canvas
-    FontMetrics metrics = c.getFontMetrics(font);
-    // get the height of a line of text in this
-    // font and render context
-    int hgt = metrics.getHeight();
-    // get the advance of my text in this font
-    // and render context
-    int adv = metrics.stringWidth(s);
-    // calculate the size of a box to hold the
-    // text with some padding.
-    return new Dimension(adv, hgt);
-  }
-  
-  /**
-   * alignString().
-   *
-   * @param g
-   *          the g
-   * @param align
-   *          - String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
-   * @param r
-   *          the r
-   * @param s
-   *          the s
-   * @param font
-   *          the font
-   */
-  public void alignString(Graphics g, String align, Rectangle r, String s, Font font) {
-    if (font != null) {
-      FontRenderContext frc = new FontRenderContext(null, true, true);
-      Rectangle2D r2D = font.getStringBounds(s, frc);
-      int rHeight = (int) Math.round(r2D.getHeight());
-      int rY = (int) Math.round(r2D.getY());
-      int b = (r.height / 2) - (rHeight / 2) - rY;
-      Canvas c = new Canvas();
-      FontMetrics metrics = c.getFontMetrics(font);
-      int adv = metrics.stringWidth(s);
-      g.setFont(font);
-      switch (align)
-      {
-      case TextModel.ALIGN_LEFT:
-          g.drawString(s, r.x, r.y + b);
-          break;
-        case TextModel.ALIGN_CENTER:
-          centerString(g, r, s, font);
-          break;
-        case TextModel.ALIGN_RIGHT:
-          g.drawString(s, r.x + (r.width - adv), r.y + b);
-          break;
-      } 
+    if (metrics.h+y > Builder.CANVAS_HEIGHT) {
+      metrics.h = metrics.h - (metrics.h - y - Builder.CANVAS_HEIGHT);
     }
-  }
-  
-  /**
-   * This method centers a <code>String</code> in a bounding
-   * <code>Rectangle</code>.
-   * 
-   * @param g - The <code>Graphics</code> instance.
-   * @param r - The bounding <code>Rectangle</code>.
-   * @param s - The <code>String</code> to center in the bounding rectangle.
-   * @param font - The display font of the <code>String</code>
-   * 
-   * @see java.awt.Graphics
-   * @see java.awt.Rectangle
-   * @see java.lang.String
-   */
-  public void centerString(Graphics g, Rectangle r, String s, Font font) {
-    if (font != null) {
-      FontRenderContext frc = new FontRenderContext(null, true, true);
-      Rectangle2D r2D = font.getStringBounds(s, frc);
-      
-      int rWidth = (int) Math.round(r2D.getWidth());
-      int rHeight = (int) Math.round(r2D.getHeight());
-      int rY = (int)r2D.getY();
-      
-      int a = (r.width - rWidth) / 2;
-      int b = (r.height / 2) - (rHeight / 2) - rY;
-  
-      g.setFont(font);
-      g.drawString(s, r.x + a, r.y + b);
-    }
-  }
 
+    return new Dimension(metrics.w, metrics.h);
+  }
+  
+  /**
+   * drawText
+   * 
+   * @param g2d      The graphics context
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
+   * @param align    Text alignment / justification mode
+   *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
+   * @param r        Rectangle region to contain the text
+   * @param colTxt   Color for text
+   * @param colBg    Color for background, transparent if color matches colTxt
+   * @param nMargin  Number of pixels gap to leave surrounding text
+   */
+  public void drawText(Graphics2D g2d, String align, Rectangle r, String str, FontTFT font, 
+    Color colTxt, Color colBg, int nMargin) {
+    
+    int nElemH = r.height;
+    int nElemW = r.width;
+    int nTxtOffsetX=0;
+    int nTxtOffsetY=0;
+    int nTxtSzW=0;
+    int nTxtSzH=0;
+
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(str, 0, 0);
+    
+    // Calculate the text alignment
+    int nTxtX = r.x;
+    int nTxtY = r.y;
+    nTxtSzW = metrics.w;
+    nTxtSzH = metrics.h;
+    nTxtOffsetX = metrics.x1;
+    nTxtOffsetY = metrics.y1;
+    switch (align)
+    {
+      case FontTFT.ALIGN_LEFT:
+        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
+        nTxtX = nTxtX+nMargin;
+        break;
+      case FontTFT.ALIGN_CENTER:
+        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
+        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
+        break;
+      case FontTFT.ALIGN_RIGHT:
+        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
+        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
+        break;
+      case FontTFT.ALIGN_TOP_LEFT:
+        nTxtY = nTxtY+nMargin;
+        nTxtX = nTxtX+nMargin;
+        break;
+      case FontTFT.ALIGN_TOP_CENTER:
+        nTxtY = nTxtY+nMargin;
+        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
+        break;
+      case FontTFT.ALIGN_TOP_RIGHT:
+        nTxtY = nTxtY+nMargin;
+        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
+        break;
+      case FontTFT.ALIGN_BOT_LEFT:
+        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
+        nTxtX = nTxtX+nMargin;
+        break;
+      case FontTFT.ALIGN_BOT_CENTER:
+        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
+        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
+        break;
+      case FontTFT.ALIGN_BOT_RIGHT:
+        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
+        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
+        break;
+    } 
+    
+    // Now correct for offset from text bounds
+    nTxtX -= nTxtOffsetX;
+    nTxtY -= nTxtOffsetY;
+    
+    // Boundary Test
+    if (nTxtX <= r.x) nTxtX = r.x+1;
+    
+    // Call the font's text rendering routine
+    Rectangle rTxt = new Rectangle(nTxtX, nTxtY, r.width, r.height);
+    font.drawString(g2d,rTxt,str, colTxt, colBg);
+
+  }
+  
+  /**
+   * drawTextImage
+   * 
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
+   * @param align    Text alignment / justification mode
+   *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
+   * @param r        Rectangle region to contain the text
+   * @param colTxt   Color for text
+   * @param colBg    Color for background, transparent if color matches colTxt
+   * @param nMargin  Number of pixels gap to leave surrounding text
+   */
+  public BufferedImage drawTextImage(String align, Rectangle r, String str, FontTFT font, 
+    Color colTxt, Color colBg, int nMargin) {
+    
+    int nElemH = r.height;
+    int nElemW = r.width;
+    int nTxtOffsetX=0;
+    int nTxtOffsetY=0;
+    int nTxtSzW=0;
+    int nTxtSzH=0;
+
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(str, 0, 0);
+    
+    // Calculate the text alignment
+    int nTxtX = r.x;
+    int nTxtY = r.y;
+    nTxtSzW = metrics.w;
+    nTxtSzH = metrics.h;
+    nTxtOffsetX = metrics.x1;
+    nTxtOffsetY = metrics.y1;
+    switch (align)
+    {
+      case FontTFT.ALIGN_LEFT:
+        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
+        nTxtX = nTxtX+nMargin;
+        break;
+      case FontTFT.ALIGN_CENTER:
+        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
+        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
+        break;
+      case FontTFT.ALIGN_RIGHT:
+        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
+        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
+        break;
+      case FontTFT.ALIGN_TOP_LEFT:
+        nTxtY = nTxtY+nMargin;
+        nTxtX = nTxtX+nMargin;
+        break;
+      case FontTFT.ALIGN_TOP_CENTER:
+        nTxtY = nTxtY+nMargin;
+        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
+        break;
+      case FontTFT.ALIGN_TOP_RIGHT:
+        nTxtY = nTxtY+nMargin;
+        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
+        break;
+      case FontTFT.ALIGN_BOT_LEFT:
+        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
+        nTxtX = nTxtX+nMargin;
+        break;
+      case FontTFT.ALIGN_BOT_CENTER:
+        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
+        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
+        break;
+      case FontTFT.ALIGN_BOT_RIGHT:
+        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
+        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
+        break;
+    } 
+    
+    // Now correct for offset from text bounds
+    nTxtX -= nTxtOffsetX;
+    nTxtY -= nTxtOffsetY;
+    
+    // Boundary Test
+    if (nTxtX <= r.x) nTxtX = r.x+1;
+
+    // Call the font's text rendering routine
+    Rectangle rTxt = new Rectangle(nTxtX, nTxtY, r.width, r.height);
+    return font.drawImage(rTxt,str, colTxt, colBg);
+
+  }
+  
   /**
    * Read fonts.
    *
-   * @param csvFile
-   *          the csv file
+   * @param jsonFile
+   *          the json file
    * @param list
    *          the list
    * @param map
@@ -434,21 +503,19 @@ public class FontFactory {
     platformNames = new String[10];
     fontsByPlatform = new ArrayList[10];
     for (FontPlatform p : builderFonts.getPlatforms()) {
+//      Builder.logger.debug("Platform: " + p.getName());
       platformNames[nPlatforms] = p.getName();
       List<FontItem> list = new ArrayList<FontItem>();
       fontsByPlatform[nPlatforms++] = list;
       for (FontCategory c : p.getCategories()) {
+//        Builder.logger.debug("Platform: " + c.getName());
         for (FontItem item : c.getFonts()) {
           item.setPlatform(p);
           item.setCategory(c);
           item.generateEnum();
           item.generateKey();
-          if (p.getName().toLowerCase().equals("linux")) {
-            item.setFont(72);
-          } else {
-            item.setFont(141);
-          }
           String key = item.getKey();
+//          Builder.logger.debug("Font: " + item.toString());
           // check for duplicates
           if (!fontMap.containsKey(key)) {
             platformFonts.add(item);
@@ -461,13 +528,18 @@ public class FontFactory {
         }
       }
     }
+//    Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of fonts: " + idx);
     if (nErrors > 0) {
       String fileName = CommonUtils.getInstance().getWorkingDir()
           + "logs" 
           + System.getProperty("file.separator")
           + "builder.log";
-      throw new CodeGenException(String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.",
-          nErrors,fileName));
+      String msg = String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.",
+          nErrors,fileName);
+      JOptionPane.showMessageDialog(null, 
+          msg, 
+          "ERROR",
+          JOptionPane.ERROR_MESSAGE);
     }
   }
  

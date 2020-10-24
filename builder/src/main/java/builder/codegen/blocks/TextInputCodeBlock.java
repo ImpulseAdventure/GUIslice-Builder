@@ -51,6 +51,7 @@ public final class TextInputCodeBlock implements CodeBlock {
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   private final static String FILL_EN_TEMPLATE       = "<FILL_EN>";
   private final static String FRAME_EN_TEMPLATE      = "<INPUTFRAME_EN>";
+  private final static String TEXTMARGIN_TEMPLATE     = "<TEXT_MARGIN>";
   private final static String TEXTCOLOR_TEMPLATE     = "<TEXT_COLOR>";
   private final static String TEXT_INPUT_TEMPLATE    = "<TEXT_INPUT>";
   private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
@@ -95,6 +96,11 @@ public final class TextInputCodeBlock implements CodeBlock {
     String strAlign = m.getAlignment();
     if (!strAlign.equals(TextModel.ALIGN_LEFT)) {
       template = tm.loadTemplate(ALIGN_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    if (m.getTextMargin() != 0) {
+      template = tm.loadTemplate(TEXTMARGIN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

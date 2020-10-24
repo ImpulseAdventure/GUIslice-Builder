@@ -44,8 +44,8 @@ import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontPlatform;
+import builder.fonts.FontFactory;
+import builder.fonts.FontPlatform;
 import builder.tables.ImageCellEditor;
 import builder.tables.MultiStringsCell;
 import builder.tables.MultipeLineCellListener;
@@ -656,6 +656,12 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row == DISPLAY_WIDTH) {
+      Builder.CANVAS_WIDTH = getWidth();
+    }
+    if (row == DISPLAY_HEIGHT) {
+      Builder.CANVAS_HEIGHT = getHeight();
+    }
     if (row == PROP_USE_IMAGE_BACKGROUND) {
       if (useBackgroundImage()) {
         data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.FALSE;

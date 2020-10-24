@@ -38,8 +38,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
 import builder.controller.Controller;
+import builder.fonts.FontFactory;
 import builder.models.WidgetModel;
 
 /**
@@ -243,8 +243,8 @@ public class Widget {
    *          the destination point
    */
   public void moveBy(Point d) {
-    model.setX(d.x);
-    model.setY(d.y);
+    model.setValueAt(Integer.valueOf(d.x), WidgetModel.PROP_X, WidgetModel.COLUMN_VALUE);
+    model.setValueAt(Integer.valueOf(d.y), WidgetModel.PROP_Y, WidgetModel.COLUMN_VALUE);
     Controller.sendRepaint();
   }
 

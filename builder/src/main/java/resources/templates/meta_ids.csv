@@ -55,8 +55,6 @@ COM-010,Frame Enable
 COM-011,Fill Enabled
 COM-012,Button Rounded
 COM-013,Button Size
-COM-014,Button GapX
-COM-015,Button GapY
 COM-016,Touch En
 COM-017,Callback En
 COM-018,Key Count (Number in the Key after the $)
@@ -127,8 +125,10 @@ IMG-102,Image Format
 IMG-107,Image Transparency
 IMG-108,Image Extern
 IMG-109,Image Memory Type
-KEY-102,Keypad ENUM
+KEY-014,Button MarginW
+KEY-015,Button MarginH
 KEY-019,Keypad EREF
+KEY-102,Keypad ENUM
 KEY-109,Keypad Use Default Button Size
 KEY-110,Keypad Button Width
 KEY-111,Keypad Button Height

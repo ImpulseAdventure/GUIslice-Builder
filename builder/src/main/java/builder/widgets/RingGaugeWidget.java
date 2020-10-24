@@ -33,8 +33,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
 import builder.common.GUIslice;
+import builder.fonts.FontFactory;
 import builder.models.RingGaugeModel;
 
 /**

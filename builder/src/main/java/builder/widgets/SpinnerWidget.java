@@ -26,12 +26,12 @@
 package builder.widgets;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
+import builder.fonts.FontFactory;
+import builder.fonts.FontTFT;
 import builder.models.SpinnerModel;
 
 /**
@@ -67,7 +67,7 @@ public class SpinnerWidget extends Widget {
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
   public void draw(Graphics2D g2d) {
-    Font font = ff.getFont(m.getFontDisplayName());
+    FontTFT font = ff.getFont(m.getFontDisplayName());
     Rectangle b = super.getWinBounded();
     int buttonsz = m.getButtonSize();
     g2d.setColor(m.getFillColor());
@@ -82,7 +82,8 @@ public class SpinnerWidget extends Widget {
       t.height = b.height-2;
       t.x = b.x + 1;
       t.y = b.y;
-      ff.alignString(g2d, "GSLC_ALIGN_MID_RIGHT", t, "0", font);
+      ff.drawText(g2d, FontTFT.ALIGN_RIGHT, t, "0", font, m.getTextColor(), m.getFillColor(), 0);
+
       int dxDown, dxUp;
       dxDown = b.x + b.width - buttonsz - 1;  // down arrow
       g2d.setColor(m.getButtonColor());
@@ -93,9 +94,11 @@ public class SpinnerWidget extends Widget {
       g2d.setColor(m.getButtonTextColor());
       t.x = dxUp;
       t.width = buttonsz; 
-      ff.alignString(g2d, "GSLC_ALIGN_MID_MID", t, "\u2191", font); // up arrow
+      // up arrow
+      ff.drawText(g2d, FontTFT.ALIGN_CENTER, t, "+", font, m.getTextColor(), m.getFillColor(),0);
       t.x = dxDown;
-      ff.alignString(g2d, "GSLC_ALIGN_MID_MID", t, "\u2193", font); // down arrow
+      // down arrow
+      ff.drawText(g2d, FontTFT.ALIGN_CENTER, t, "-", font, m.getTextColor(), m.getFillColor(), 0);
     } else {
       g2d.setColor(Color.RED);
       g2d.drawRect(b.x, b.y, b.width, b.height);

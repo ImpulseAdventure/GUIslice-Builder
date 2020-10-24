@@ -28,7 +28,6 @@ package builder.common;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferUShort;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -126,9 +125,7 @@ public class HexToImgConv {
     nWidth = 0;
     Token token = null;
     try {
-      FileReader fr = null;
-      fr = new FileReader(file);
-      tokenizer.setSource(fr);
+      tokenizer.setSource(file);
       
       // loop until we find we find 'const'
       while ((token = tokenizer.nextToken()).getToken() != null) {
@@ -189,7 +186,7 @@ public class HexToImgConv {
           bytes[i++] = lowByte;
         }
       }
-      fr.close();
+      tokenizer.close();
       // now we need to convert our byte array to unsigned shorts
       // NOTE: Why not simply use the decoded nRGB which is really a 16-bit value? 
       //       Because Java doesn't support unsigned ints, or shorts.
@@ -205,6 +202,7 @@ public class HexToImgConv {
       short[] data = ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
       byteBuffer.get(data);
     } catch (IOException | ParserException | NumberFormatException e) {
+      tokenizer.close();
       String msg = String.format("File '%s'\n'%s'\n", 
           file.getName(), e.toString());
       JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);

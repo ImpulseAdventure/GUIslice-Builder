@@ -326,11 +326,14 @@ $<CALLBACK>
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
 <STOP>
+<KEYPAD_BUTTONGAP>
+  gslc_ElemXKeyPadCfgSetButtonSpace((gslc_tsXKeyPadCfg*)$<CONFIG>, $<GAPX>, $<GAPY>);
+<STOP>
 <KEYPAD_BUTTONSZ>
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
+  gslc_ElemXKeyPadCfgSetButtonSz((gslc_tsXKeyPadCfg*)$<CONFIG>, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
 <STOP>
 <KEYPAD_ROUNDBUTTONS>
-  gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
+  gslc_ElemXKeyPadCfgSetRoundEn((gslc_tsXKeyPadCfg*)$<CONFIG>, $<ROUND_EN>);
 <STOP>
 <KEYPAD_ELEM_NUM>
 gslc_tsXKeyPad                  $<STORAGE>;
@@ -680,6 +683,9 @@ $<CALLBACK>
   static char m_sInputNumber$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   pElemRef = gslc_ElemCreateTxt(&m_gui,$<COM-002>,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
     (char*)m_sInputNumber$<COM-018>,$<TXT-205>,$<TXT-211>);
+<STOP>
+<TEXT_MARGIN>
+  gslc_ElemSetTxtMargin(&m_gui,pElemRef,$<MARGIN>);
 <STOP>
 <TEXT_UPDATE>
   

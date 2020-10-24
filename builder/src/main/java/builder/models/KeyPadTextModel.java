@@ -31,7 +31,7 @@ import java.io.ObjectInputStream;
 import javax.swing.JTextField;
 
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
+import builder.fonts.FontFactory;
 
 /**
  * The Class KeyPadModel implements the Numeric Keypad model for the builder.
@@ -51,12 +51,16 @@ public class KeyPadTextModel extends WidgetModel {
   static private final int PROP_USE_DEF_BUTTONSZ  = 7;
   static private final int PROP_BUTTONSZ_W        = 8;
   static private final int PROP_BUTTONSZ_H        = 9;
+  static private final int PROP_BUTTON_GAPX       = 10;
+  static private final int PROP_BUTTON_GAPY       = 11;
   
   /** The Property Defaults */
   static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
   static public  final Boolean DEF_USE_DEF_BTNSZ     = Boolean.TRUE;
   static public  final Integer DEF_BUTTONSZ_W        = Integer.valueOf(12);
   static public  final Integer DEF_BUTTONSZ_H        = Integer.valueOf(25);
+  static public  final Integer DEF_BUTTON_GAPX       = Integer.valueOf(0);
+  static public  final Integer DEF_BUTTON_GAPY       = Integer.valueOf(0);
 
   /** The ff. */
   private FontFactory ff = null;
@@ -75,7 +79,7 @@ public class KeyPadTextModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.ALPHAKEYPAD;
-    data = new Object[10][5];
+    data = new Object[12][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",EnumFactory.ALPHAKEYPAD_PAGE_ENUM);
@@ -90,6 +94,8 @@ public class KeyPadTextModel extends WidgetModel {
     initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.TRUE,"Button Size",DEF_BUTTONSZ_W);
     initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.TRUE,"Button Size",DEF_BUTTONSZ_H);
     
+    initProp(PROP_BUTTON_GAPX, Integer.class, "KEY-014", Boolean.FALSE,"Button Gap X",DEF_BUTTON_GAPX);
+    initProp(PROP_BUTTON_GAPY, Integer.class, "KEY-015", Boolean.FALSE,"Button Gap Y",DEF_BUTTON_GAPY);
   }
   
   /**
@@ -163,18 +169,18 @@ public class KeyPadTextModel extends WidgetModel {
    *
    * @return the button gap for X direction
    */
-//  public int getButtonGapX() {
-//    return (((Integer) (data[PROP_BUTTONGAPX][PROP_VAL_VALUE])).intValue());
-//  }
+  public int getButtonGapX() {
+    return (((Integer) (data[PROP_BUTTON_GAPX][PROP_VAL_VALUE])).intValue());
+  }
 
   /**
    * Gets the button gap for Y direction
    *
    * @return the button gap for Y direction
    */
-//  public int getButtonGapY() {
-//    return (((Integer) (data[PROP_BUTTONGAPY][PROP_VAL_VALUE])).intValue());
-//  }
+  public int getButtonGapY() {
+    return (((Integer) (data[PROP_BUTTON_GAPY][PROP_VAL_VALUE])).intValue());
+  }
 
   /**
    * changeValueAt

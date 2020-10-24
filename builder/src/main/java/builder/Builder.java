@@ -61,11 +61,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
 import builder.common.ThemeInfo;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
+import builder.fonts.FontFactory;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;

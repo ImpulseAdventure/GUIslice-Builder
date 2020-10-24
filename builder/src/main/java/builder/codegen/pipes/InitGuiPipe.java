@@ -70,8 +70,8 @@ import builder.codegen.flash.ToggleButton_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
 import builder.controller.Controller;
+import builder.fonts.FontFactory;
 import builder.models.KeyPadTextModel;
 import builder.models.ProjectModel;
 import builder.models.KeyPadModel;
@@ -101,6 +101,7 @@ public class InitGuiPipe extends WorkFlowPipe {
   private final static String KEYPAD_CREATE_NUM_TEMPLATE= "<KEYPAD_CREATE_NUM>"; 
   private final static String KEYPAD_CREATE_TXT_TEMPLATE= "<KEYPAD_CREATE_TXT>"; 
   private final static String KEYPAD_BUTTONSZ_TEMPLATE  = "<KEYPAD_BUTTONSZ>"; 
+  private final static String KEYPAD_BUTTONGAP_TEMPLATE  = "<KEYPAD_BUTTONGAP>"; 
   private final static String KEYPAD_ROUNDBUTTONS_TEMPLATE= "<KEYPAD_ROUNDBUTTONS>"; 
   private final static String PAGEADD_TEMPLATE          = "<PAGEADD>"; 
   private final static String PAGEADDKEYPAD_TEMPLATE    = "<PAGEADDKEYPAD>"; 
@@ -117,8 +118,9 @@ public class InitGuiPipe extends WorkFlowPipe {
   private final static String FLOAT_EN_MACRO         = "FLOAT_EN";
   private final static String FONT_ID_MACRO          = "FONT_ID";
 
-//  private final static String GAPX_MACRO             = "GAPX";
-//  private final static String GAPY_MACRO             = "GAPY";
+  private final static String CONFIG_MACRO           = "CONFIG";
+  private final static String GAPX_MACRO             = "GAPX";
+  private final static String GAPY_MACRO             = "GAPY";
   private final static String PAGE_ENUM_MACRO        = "PAGE_ENUM";
   private final static String ROUND_EN_MACRO         = "ROUND_EN";
   private final static String SIGN_EN_MACRO          = "SIGN_EN";
@@ -276,6 +278,7 @@ public class InitGuiPipe extends WorkFlowPipe {
       tm.codeWriter(sBd, outputLines);
       templateLines = tm.loadTemplate(KEYPAD_CONFIG_NUM_TEMPLATE);
       map.clear();
+      map.put(CONFIG_MACRO,"&sCfg");
       map.put(ELEMREF_MACRO, EnumFactory.KEYPAD_ELEMREF);
       map.put(PAGE_ENUM_MACRO, m.getEnum());
       map.put(ENUM_MACRO, EnumFactory.KEYPAD_ELEM_ENUM);
@@ -285,8 +288,8 @@ public class InitGuiPipe extends WorkFlowPipe {
       map.put(FLOAT_EN_MACRO, String.valueOf(m.isFloatingPointEn()));
       map.put(SIGN_EN_MACRO, String.valueOf(m.isSignEn()));
       map.put(ROUND_EN_MACRO, String.valueOf(m.isRoundedEn()));
-//      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
-//      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
+      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
+      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
       map.put(X_MACRO, String.valueOf(m.getX()));
       map.put(Y_MACRO, String.valueOf(m.getY()));
       name = m.getFontDisplayName();
@@ -302,6 +305,11 @@ public class InitGuiPipe extends WorkFlowPipe {
       tm.codeWriter(sBd, outputLines);
       if (!m.useDefBtnSize()) {
         templateLines = tm.loadTemplate(KEYPAD_BUTTONSZ_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      if (m.getButtonGapX() > 0 || m.getButtonGapY() > 0) {
+        templateLines = tm.loadTemplate(KEYPAD_BUTTONGAP_TEMPLATE);
         outputLines = tm.expandMacros(templateLines, map);
         tm.codeWriter(sBd, outputLines);
       }
@@ -326,13 +334,14 @@ public class InitGuiPipe extends WorkFlowPipe {
       map.clear();
       map.put(ELEMREF_MACRO, EnumFactory.ALPHAKEYPAD_ELEMREF);
       map.put(PAGE_ENUM_MACRO, m.getEnum());
+      map.put(CONFIG_MACRO,"&sCfgTx");
       map.put(ENUM_MACRO, EnumFactory.ALPHAKEYPAD_ELEM_ENUM);
       map.put(STORAGE_MACRO, EnumFactory.ALPHAKEYPAD_ELEM_STORAGE);
       map.put(BUTTONSZ_W_MACRO, String.valueOf(m.getButtonSz_Width()));
       map.put(BUTTONSZ_H_MACRO, String.valueOf(m.getButtonSz_Height()));
       map.put(ROUND_EN_MACRO, String.valueOf(m.isRoundedEn()));
-//      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
-//      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
+      map.put(GAPX_MACRO, String.valueOf(m.getButtonGapX()));
+      map.put(GAPY_MACRO, String.valueOf(m.getButtonGapY()));
       map.put(X_MACRO, String.valueOf(m.getX()));
       map.put(Y_MACRO, String.valueOf(m.getY()));
       name = m.getFontDisplayName();
@@ -348,6 +357,11 @@ public class InitGuiPipe extends WorkFlowPipe {
       tm.codeWriter(sBd, outputLines);
       if (!m.useDefBtnSize()) {
         templateLines = tm.loadTemplate(KEYPAD_BUTTONSZ_TEMPLATE);
+        outputLines = tm.expandMacros(templateLines, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      if (m.getButtonGapX() > 0 || m.getButtonGapY() > 0) {
+        templateLines = tm.loadTemplate(KEYPAD_BUTTONGAP_TEMPLATE);
         outputLines = tm.expandMacros(templateLines, map);
         tm.codeWriter(sBd, outputLines);
       }

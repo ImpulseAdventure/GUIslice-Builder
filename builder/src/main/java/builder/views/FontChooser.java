@@ -4,16 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -25,8 +30,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import builder.common.FontFactory;
-import builder.common.FontItem;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
+import builder.fonts.FontTFT;
 import builder.views.FontChooserHelper;
 
 @SuppressWarnings("unused")
@@ -72,7 +78,10 @@ public class FontChooser extends JDialog {
   boolean bProgramChange;
   
   /** The preview label. */
-  protected FontLabel previewLabel;
+  protected JLabel previewLabel;
+  
+  /** The preview panel */
+  protected JPanel previewPanel;
 
   JComboBox<String> cbFontSize;
   DefaultComboBoxModel<String> dcmFontSize;
@@ -170,12 +179,19 @@ public class FontChooser extends JDialog {
     getContentPane().add(p);
 
     getContentPane().add(Box.createVerticalStrut(5));
-    p = new JPanel(new BorderLayout());
-    p.setBorder(new TitledBorder(new EtchedBorder(), "Preview"));
-    previewLabel = new FontLabel("Preview Font");
+    previewPanel = new JPanel(new GridBagLayout()) {
+      private static final long serialVersionUID = 1L;
 
-    p.add(previewLabel, BorderLayout.CENTER);
-    getContentPane().add(p);
+      @Override
+      public Dimension getPreferredSize() {
+          return new Dimension(500, 100);
+      };
+    };    
+    previewPanel.setBorder(new TitledBorder(new EtchedBorder(), "Preview"));
+    previewLabel = new JLabel();
+
+    previewPanel.add(previewLabel);
+    getContentPane().add(previewPanel);
 
     p = new JPanel(new FlowLayout());
     JPanel p1 = new JPanel(new GridLayout(1, 2, 10, 2));
@@ -249,7 +265,10 @@ public class FontChooser extends JDialog {
     String sStyle = cbFontStyle.getItemAt(i);
     FontItem item = ff.getFontItem(h.getFontName(),sSize, sStyle);
     if (item == null) return;
-    previewLabel.setFont(item.getFont());
+    Dimension ppDim = previewPanel.getSize();
+    Rectangle r = new Rectangle(ppDim);
+    BufferedImage img = ff.drawTextImage(FontTFT.ALIGN_LEFT, r, "Preview Font", item.getFont(), textColor, fillColor, 0);
+    previewLabel.setIcon(new ImageIcon(img));
     selectedName = item.getDisplayName();
     repaint();
   }

@@ -34,10 +34,10 @@ import javax.swing.JTextField;
 
 import builder.codegen.CodeUtils;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
 
 /**
  * The Class TextBoxModel implements the model for the Text Box widget.

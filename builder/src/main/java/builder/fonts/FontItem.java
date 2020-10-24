@@ -23,9 +23,9 @@
  * THE SOFTWARE.
  *
  */
-package builder.common;
+package builder.fonts;
 
-import java.awt.Font;
+import builder.Builder;
 
 /**
  * The Class FontItem is a representation of a single GUIslice Library font.
@@ -45,7 +45,7 @@ import java.awt.Font;
 public class FontItem {
   
   /** The java font. */
-  private transient Font font;
+  private transient FontTFT font;
   
   /** The parent platform */
   private transient FontPlatform platform;
@@ -61,6 +61,13 @@ public class FontItem {
   
   /** The display name. */
   private String displayName;
+  
+  /** 
+   * The external font file name 
+   * Points within GUIsliceBuilder/fonts folder
+   * (ex: fonts/gfx/FreeSans9pt7b.h). 
+   */
+  private String fileName;
   
   /** The include file (ex: Fonts/FreeSans9pt7b.h). */
   private String includeFile;
@@ -100,7 +107,7 @@ public class FontItem {
    * Handled by google's gson now
    */
   public FontItem() {
-
+     font = null;
   }
   
   /**
@@ -108,32 +115,11 @@ public class FontItem {
    *
    * @return the java <code>Font</code> object
    */
-  public Font getFont() {
+  public FontTFT getFont() {
+    if (font == null) {
+      createFont();
+    }
     return font;
-  }
-  
-  /**
-   * setFont
-   * We have to take into account the target display screen's DPI.
-   * Adafruits's 2.8 screen is about DPI of 141 and GFX fonts are
-   * hardcoded to this number. 
-   * Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
-   * @param dpi
-   */
-  public void setFont(int dpi) {
-    scaleFactor = (double)dpi / 72.0d;
-    double size =  ((double)Double.parseDouble(logicalSize));
-    size = size * scaleFactor;
-    font = createFont();
-    font = font.deriveFont((float) size);
-  }
-  
-  /**
-   * setPlatform
-   * @param platform
-   */
-  public void setPlatform(FontPlatform platform) {
-    this.platform = platform;
   }
   
   /**
@@ -145,19 +131,25 @@ public class FontItem {
   }
   
   /**
-   * setCategory
-   * @param category
+   * setPlatform
    */
-  public void setCategory(FontCategory category) {
-    this.category = category;
+  public void setPlatform(FontPlatform platform) {
+    this.platform = platform;
   }
-
+  
   /**
    * getCategory
    * @return category
    */
   public FontCategory getCategory() {
     return category;
+  }
+  
+  /**
+   * setCategory
+   */
+  public void setCategory(FontCategory category) {
+    this.category = category;
   }
   
   /**
@@ -172,15 +164,15 @@ public class FontItem {
     }
     String p = platform.getName().toUpperCase();
     if (p.equals("ARDUINO")) {
-      p ="AO";
+      p ="GFX";
     } else if (p.equals("M5STACK")) {
-      p = "MK";
+      p = "M5";
     } else if (p.equals("TEENSY")) {
-      p = "TY";
+      p = "T3";
     } else if (p.equals("TFT_ESPI")) {
-      p = "TI";
+      p = "GFX";
     } else if (p.equals("LINUX")) {
-      p = "LX";
+      p = "TTF";
     }
     name = name.replace('-', '_');
     nFontId = String.format("E_%s_%s", p,
@@ -210,33 +202,43 @@ public class FontItem {
    * @see java.awt.Font
    * @see java.lang.String
    */
-  public Font createFont() {
-    int style;
-    switch (logicalStyle) {
-    case "BOLD":
-      style = Font.BOLD;
-      break;
-    case "ITALIC":
-      style = Font.ITALIC;
-      break;
-    case "BOLD+ITALIC":
-      style = Font.BOLD + Font.ITALIC;
-      break;
-    default:
-      style = Font.PLAIN;
-      break;
+  public void createFont() {
+    boolean ret = false;
+    String fontRef = null;
+    if (!getFontRef().equals("NULL"))
+      fontRef = getFontRef().substring(1); // remove '&'
+    switch (getCategory().getName()) {
+/* Reserve for future use
+      case FontTFT.FONT_U8G2:
+        font = new FontU8G2();
+        ret = font.create(fileName, fontRef);
+        break;
+*/
+      case FontTFT.FONT_GFX:
+        font = new FontGFX();
+        ret = font.create(fileName, fontRef);
+        break;
+      case FontTFT.FONT_GLCD:
+        font = new FontGlcd();
+        ret = font.create(fileName, displayName);
+        if (getLogicalSizeAsInt() > 0)
+          font.setTextSize(getLogicalSizeAsInt()/5);
+        break;
+      case FontTFT.FONT_SIM:
+        font = new FontSim();
+        ret = font.create(logicalName, getPlatform().getDPI(), getLogicalSizeAsInt(), logicalStyle);
+        break;
+      case FontTFT.FONT_T3:
+        font = new FontT3();
+        ret = font.create(fileName, fontRef);
+        break;
+      default:
+        break;
     }
-    return new Font(logicalName, style, Integer.parseInt(logicalSize));
-  }
-  
-  /**
-   * Sets the font.
-   *
-   * @param font
-   *          the new java <code>Font</code>
-   */
-  public void setFont(Font font) {
-    this.font = font;
+    if (!ret) {
+      font = null;
+      Builder.logger.error("Unable to create font: " + displayName);
+    }
   }
   
   /**
@@ -255,6 +257,15 @@ public class FontItem {
    */
   public String getDisplayName() {
     return displayName;
+  }
+  
+  /**
+   * Gets the external font file name.
+   *
+   * @return the fileName
+   */
+  public String getFileName() {
+    return fileName;
   }
   
   /**
@@ -330,6 +341,15 @@ public class FontItem {
   }
   
   /**
+   * Gets the font size.
+   *
+   * @return the font size
+   */
+  public int getLogicalSizeAsInt() {
+    return Integer.parseInt(logicalSize);
+  }
+  
+ /**
    * Gets the logical style.
    *
    * @return the logical style
@@ -359,6 +379,6 @@ public class FontItem {
    */
   @Override
   public String toString() {
-    return String.format("Font: %s size: %s style: %s", displayName, logicalSize, logicalStyle);
+    return String.format("Platform: %s Font: %s size: %s style: %s", platform.getName(), displayName, logicalSize, logicalStyle);
   }
 }

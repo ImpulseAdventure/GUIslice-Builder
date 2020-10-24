@@ -46,10 +46,10 @@ import builder.commands.History;
 import builder.commands.PropertyCommand;
 import builder.common.ColorFactory;
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
+import builder.fonts.FontFactory;
 
 // TODO: Auto-generated Javadoc
 /**

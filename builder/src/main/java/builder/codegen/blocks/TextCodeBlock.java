@@ -50,6 +50,7 @@ public final class TextCodeBlock implements CodeBlock {
   private final static String FRAME_EN_TEMPLATE      = "<FRAME_EN>";
   private final static String TEXT_TEMPLATE          = "<TEXT>";
   private final static String TEXTCOLOR_TEMPLATE     = "<TEXT_COLOR>";
+  private final static String TEXTMARGIN_TEMPLATE     = "<TEXT_MARGIN>";
   private final static String TEXT_UPDATE_TEMPLATE   = "<TEXT_UPDATE>";
   private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
   private final static String COLOR_TEMPLATE         = "<COLOR>";
@@ -99,6 +100,16 @@ public final class TextCodeBlock implements CodeBlock {
     String strAlign = m.getAlignment();
     if (!strAlign.equals(TextModel.ALIGN_LEFT)) {
       template = tm.loadTemplate(ALIGN_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    if (m.getTextMargin() != 0) {
+      template = tm.loadTemplate(TEXTMARGIN_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    if (!m.getTextColor().equals(TextModel.DEF_TEXT_COLOR)) {
+      template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

@@ -33,10 +33,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
 
 /**
  * The Class RingGaugeModel implements the model for the RingGauge widget.

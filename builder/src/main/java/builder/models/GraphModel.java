@@ -36,9 +36,9 @@ import javax.swing.table.TableCellEditor;
 
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
 
 /**
  * The Class GraphModel implements the model for the Graph widget.

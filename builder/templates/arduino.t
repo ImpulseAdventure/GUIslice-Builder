@@ -404,11 +404,14 @@ $<CALLBACK>
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
 <STOP>
+<KEYPAD_BUTTONGAP>
+  gslc_ElemXKeyPadCfgSetButtonSpace((gslc_tsXKeyPadCfg*)$<CONFIG>, $<GAPX>, $<GAPY>);
+<STOP>
 <KEYPAD_BUTTONSZ>
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
+  gslc_ElemXKeyPadCfgSetButtonSz((gslc_tsXKeyPadCfg*)$<CONFIG>, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
 <STOP>
 <KEYPAD_ROUNDBUTTONS>
-  gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
+  gslc_ElemXKeyPadCfgSetRoundEn((gslc_tsXKeyPadCfg*)$<CONFIG>, $<ROUND_EN>);
 <STOP>
 <KEYPAD_ELEM_NUM>
 gslc_tsXKeyPad                  $<STORAGE>;
@@ -804,7 +807,7 @@ $<CALLBACK>
   static char m_sInputText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_sInputText$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,0,0,
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<TXT-212>,$<TXT-212>,
     true,true,true,false,NULL,NULL,&CbBtnCommon,NULL);
 <STOP>
 <TEXT_INPUT_NUM>
@@ -820,8 +823,11 @@ $<CALLBACK>
   static char m_sInputNumber$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_sInputNumber$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,0,0,
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<TXT-212>,$<TXT-212>,
     true,true,true,false,NULL,NULL,&CbBtnCommon,NULL);
+<STOP>
+<TEXT_MARGIN>
+  gslc_ElemSetTxtMargin(&m_gui,pElemRef,$<TXT-212>);
 <STOP>
 <TEXT_UPDATE>
   
@@ -834,9 +840,10 @@ $<CALLBACK>
   
   // Create $<COM-002> modifiable text using flash API
   static char m_sDisplayText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
-  gslc_ElemCreateTxt_P_R(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
+  gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_sDisplayText$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<COM-010>,$<COM-011>);
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<TXT-212>,$<TXT-212>,
+    $<COM-010>,$<COM-011>,false,false,NULL,NULL,NULL,NULL);
 <STOP>
 <TEXT_UTF8>
   gslc_ElemSetTxtEnc(&m_gui,pElemRef,GSLC_TXT_ENC_UTF8);

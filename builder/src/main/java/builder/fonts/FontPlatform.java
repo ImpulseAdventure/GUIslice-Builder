@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  *
  */
-package builder.common;
+package builder.fonts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,9 @@ public class FontPlatform {
   
   /** The platform name. */
   private String platformName;
+  
+  /** The dpi for displays on this platform */
+  private String dpi;
   
   /** The warnings. */
   private List<String> warnings = new ArrayList<String>();
@@ -67,6 +70,14 @@ public class FontPlatform {
     return platformName;
   }
 
+  /**
+   * getDPI
+   * @return the dpi for this platform's displays
+   */
+  public int getDPI() {
+    return Integer.parseInt(dpi);
+  }
+  
   /**
    * Adds a warning string to be output during code generation.
    *
