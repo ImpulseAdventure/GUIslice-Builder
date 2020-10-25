@@ -39,14 +39,16 @@ Teensy ILI9341_t3 fonts. You may still tell the Builder to simulate fonts it doe
 the User Guide for more information about font handling.
 
 GUIslice API 0.16.0 has upgraded the Keypad support. This is a breaking change for the API so the Builder 
-now will require running with GUIslice API 0.16.0 and higher.
+will now require running with GUIslice API 0.16.0 and higher. For further information on keypads 
+refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIslice/wiki/Custom-KeyPads)
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
 ### Bug Fixes 0.16.0
  - Bug No. 191 Crash if slider min=max
  - Bug No. 189 Add shortcut ctrl+z for UnDo
- - Bug No. 187 App window not controllable with java built-in themes issue `#112`
+ - Bug No. 187 App window not controllable with Java built-in themes issue `#112`
+ - Bug No.  98 Text element "Fill Enabled=false" doesn't render with transparency
 
 ### HotFix 0.15.b005
 
