@@ -220,12 +220,26 @@ public class FontsPipe extends WorkFlowPipe {
     }
 
     // Now we need check for any extra include files that might be needed
-    for (FontCategory c : fontPlatform.getCategories()) {
+    List<String> extraList = new ArrayList<String>();
+    boolean bMatch;
+    /* we need to look at fonts up to category, not category down to fonts
+     * to avoid duplicate headers. teensy for example may have many categories
+     * each with a different header but a common include of SPI.h
+     */
+    for (FontItem f : fonts) {
+      FontCategory c = f.getCategory();
       for (String s : c.getIncludes()) {
-        if (s.equals("NULL")) continue;
-        sBd.append(s);
-        sBd.append(System.lineSeparator());
+        if (s == null || s.isEmpty()) continue;
+        bMatch = false;
+        for (String extra : extraList) {
+          if (extra.equals(s)) bMatch = true;
+        }
+        if (!bMatch) extraList.add(s);
       }
+    }
+    for (String s : extraList) {
+      sBd.append(s);
+      sBd.append(System.lineSeparator());
     }
 
     // we are ready to output our font information

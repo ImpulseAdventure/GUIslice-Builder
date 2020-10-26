@@ -575,7 +575,7 @@ public class FontT3 extends FontTFT {
       token = tokenizer.nextToken(); // comma
       if (token.getType() != SPECIALCHAR) parseError(token, "inside " + fontName + " array missing comma after version");
       token = tokenizer.nextToken(); // reserved
-      int reserved = Integer.parseInt(token.getToken());
+//      int reserved = Integer.parseInt(token.getToken());
       token = tokenizer.nextToken(); // comma
       token = tokenizer.nextToken(); // index1_first
       index1_first = Integer.parseInt(token.getToken());

@@ -108,6 +108,16 @@ public class FontItem {
    */
   public FontItem() {
      font = null;
+     includeFile = "NULL";
+     defineFile = "NULL";
+     nFontId = "NULL";
+     eFontRefType = "GSLC_FONTREF_PTR";
+     pvFontRef = "NULL";
+     nFontSz = "1";
+     logicalName = "NULL";
+     logicalSize = "NULL";
+     logicalStyle = "NULL";
+     fontRefMode = "NULL";
   }
   
   /**
