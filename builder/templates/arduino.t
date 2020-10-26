@@ -162,12 +162,6 @@ $<CALLBACK>
     case $<COM-002>:
       break;
 <STOP>
-<CLICK_EN>
-  gslc_ElemSetClickEn(&m_gui, pElemRef, true);
-<STOP>
-<CLICK_EN_P>
-  // gslc_ElemSetClickEn(); currently not supported by the FLASH _P calls.
-<STOP>
 <COLOR>
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
 <STOP>

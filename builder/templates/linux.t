@@ -118,9 +118,6 @@ $<CALLBACK>
       //TODO- Replace with your handling code
       break;
 <STOP>
-<CLICK_EN>
-  gslc_ElemSetClickEn(&m_gui, pElemRef, true);
-<STOP>
 <COLOR>
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
 <STOP>

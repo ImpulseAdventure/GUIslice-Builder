@@ -47,7 +47,6 @@ public final class NumberInputCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
   private final static String ALIGN_TEMPLATE         = "<TEXTALIGN>";
-  private final static String CLICK_EN_TEMPLATE      = "<CLICK_EN>";
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   private final static String FILL_EN_TEMPLATE       = "<FILL_EN>";
   private final static String FRAME_EN_TEMPLATE      = "<INPUTFRAME_EN>";
@@ -124,9 +123,6 @@ public final class NumberInputCodeBlock implements CodeBlock {
     }
 
     template = tm.loadTemplate(FRAME_EN_TEMPLATE);
-    tm.codeWriter(sBd, template);
-    
-    template = tm.loadTemplate(CLICK_EN_TEMPLATE);
     tm.codeWriter(sBd, template);
     
     template = tm.loadTemplate(TOUCH_EN_TEMPLATE);

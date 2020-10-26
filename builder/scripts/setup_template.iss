@@ -77,7 +77,7 @@ Filename: "{app}\\GUIslice.bat"; Description: "{cm:LaunchProgram,GUIsliceBuilder
 ; set JAVA_HOME
 Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName:"JAVA_HOME"; ValueData:"{code:GetJavaHome}"; Flags: preservestringtype
 ; set PROJECT DIRECTORY
-Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general-13"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
+Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general-16"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
 
 [Code]
 var

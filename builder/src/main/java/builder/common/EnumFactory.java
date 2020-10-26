@@ -150,19 +150,19 @@ public class EnumFactory {
   static final public String WIDGET      = "Widget";  // used as a key to find our models
   
   /** The Constants for KeyPads used mostly by code generation. */
-  static final public String NUMKEYPAD                = "KeyPad";  // widget type
-  static final public String KEYPAD_PAGE_ENUM         = "E_POP_KEYPAD";
-  static final public String KEYPAD_ELEM_ENUM         = "E_ELEM_KEYPAD";
-  static final public String KEYPAD_PAGE_STORAGE      = "m_asKeypadElem";
-  static final public String KEYPAD_ELEM_STORAGE      = "m_sKeyPad";
-  static final public String KEYPAD_ELEMREF           = "m_pElemKeyPad";
+  static final public String NUMKEYPAD                = "KeyPadNum";  // widget type
+  static final public String KEYPAD_PAGE_ENUM         = "E_POP_KEYPAD_NUM";
+  static final public String KEYPAD_ELEM_ENUM         = "E_ELEM_KEYPAD_NUM";
+  static final public String KEYPAD_PAGE_STORAGE      = "m_asKeypadNumElem";
+  static final public String KEYPAD_ELEM_STORAGE      = "m_sKeyPadNum";
+  static final public String KEYPAD_ELEMREF           = "m_pElemKeyPadNum";
  
-  static final public String ALPHAKEYPAD              = "KeyPadText";  // widget type
-  static final public String ALPHAKEYPAD_PAGE_ENUM    = "E_POP_AKEYPAD";
-  static final public String ALPHAKEYPAD_ELEM_ENUM    = "E_ELEM_AKEYPAD";
-  static final public String ALPHAKEYPAD_PAGE_STORAGE = "m_asAKeypadElem";
-  static final public String ALPHAKEYPAD_ELEM_STORAGE = "m_sAKeyPad";
-  static final public String ALPHAKEYPAD_ELEMREF      = "m_pAElemKeyPad";
+  static final public String ALPHAKEYPAD              = "KeyPadAlpha";  // widget type
+  static final public String ALPHAKEYPAD_PAGE_ENUM    = "E_POP_KEYPAD_ALPHA";
+  static final public String ALPHAKEYPAD_ELEM_ENUM    = "E_ELEM_KEYPAD_ALPHA";
+  static final public String ALPHAKEYPAD_PAGE_STORAGE = "m_asKeypadAlphaElem";
+  static final public String ALPHAKEYPAD_ELEM_STORAGE = "m_sKeyPadAlpha";
+  static final public String ALPHAKEYPAD_ELEMREF      = "m_pElemKeyPadAlpha";
   
   // text boxes hidden scrollbar enums
   static final public String LISTBOX_SCROLLBAR_ENUM   = "E_LISTSCROLL";

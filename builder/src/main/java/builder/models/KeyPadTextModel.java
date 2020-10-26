@@ -91,8 +91,8 @@ public class KeyPadTextModel extends WidgetModel {
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
 
     initProp(PROP_USE_DEF_BUTTONSZ, Boolean.class, "KEY-109", Boolean.FALSE,"Use Default Button Sizes?",DEF_USE_DEF_BTNSZ);
-    initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.TRUE,"Button Size",DEF_BUTTONSZ_W);
-    initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.TRUE,"Button Size",DEF_BUTTONSZ_H);
+    initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.TRUE,"Button Width",DEF_BUTTONSZ_W);
+    initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.TRUE,"Button Height",DEF_BUTTONSZ_H);
     
     initProp(PROP_BUTTON_GAPX, Integer.class, "KEY-014", Boolean.FALSE,"Button Gap X",DEF_BUTTON_GAPX);
     initProp(PROP_BUTTON_GAPY, Integer.class, "KEY-015", Boolean.FALSE,"Button Gap Y",DEF_BUTTON_GAPY);
