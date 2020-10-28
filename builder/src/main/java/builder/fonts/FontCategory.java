@@ -42,11 +42,22 @@ public class FontCategory {
   /** The category name. */
   private String categoryName;
   
+  /** The includes path. */
+  private String includePath;
+  
+  /** The ignoreIncludes starting with */
+  String ignoreIncludesStartingWith;
+  
   /** The extra includes. */
   private List<String> extraIncludes = new ArrayList<String>();
   
   /** The fonts. */
   private List<FontItem> fonts = new ArrayList<FontItem>();
+  
+  public FontCategory() {
+    includePath = "NULL";
+    ignoreIncludesStartingWith = "NULL";
+  }
   
   /**
    * Sets the name of this category.
@@ -59,12 +70,37 @@ public class FontCategory {
   }
 
   /**
-   * Gets the name the name of this category.
+   * Gets the name of this category.
    *
    * @return the name
    */
   public String getName() {
     return categoryName;
+  }
+
+  /**
+   * getIngnoreIncludesStartingWith()
+   * Gets the template for fonts that need to ignore adding
+   * an include header for these fonts.
+   * Example: m5stack has the GNU Free fonts with includes
+   * its top level M5Stack.h file so no includes are needed
+   * generally for any Free Font.
+   *
+   * @return the name
+   */
+  public String getIgnoreIncludesStartingWith() {
+    return ignoreIncludesStartingWith;
+  }
+
+  /**
+   * Gets the folder path to add to include file names
+   * This optionally replaces the need for the font definition
+   * to specify a full path to its include file.
+   *
+   * @return the name
+   */
+  public String getIncludePath() {
+    return includePath;
   }
 
   /**
@@ -105,4 +141,17 @@ public class FontCategory {
     return fonts;
   }
 
+  public void addFontItem(FontItem item) {
+    fonts.add(item);
+  }
+  
+  /**
+   * toString
+   *
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return String.format("FontCategory: %s includePath: %s Fonts: ", categoryName, includePath, fonts.size());
+  }
 }

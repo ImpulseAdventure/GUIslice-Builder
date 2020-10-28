@@ -926,12 +926,12 @@ bool CbTickScanner(void* pvGui,void* pvScope)
 <STOP>
 <WARNING_COMPOUND>
 #if !(GSLC_FEATURE_COMPOUND)
-  #error "Config: GSLC_FEATURE_COMPOUND required for this program but not enabled. Please update GUIslice/config."
+  #error "Config: GSLC_FEATURE_COMPOUND required for this program but not enabled. Please see: https://github.com/ImpulseAdventure/GUIslice/wiki/Configuring-GUIslice"
 #endif
 <STOP>
 <WARNING_SD>
 #if !(GSLC_SD_EN)
-  #error "Config: GSLC_SD_EN required for this program but not enabled. Please update GUIslice/config/"
+  #error "Config: GSLC_SD_EN required for this program but not enabled. Please see: https://github.com/ImpulseAdventure/GUIslice/wiki/Configuring-GUIslice"
 #endif
 <STOP>
 <END>

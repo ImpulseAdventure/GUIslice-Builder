@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import builder.common.CommonUtils;
+import builder.fonts.FontChooser;
 
 public class FontListDialog extends JDialog implements ActionListener, ListSelectionListener {
   private static final long serialVersionUID = 1L;

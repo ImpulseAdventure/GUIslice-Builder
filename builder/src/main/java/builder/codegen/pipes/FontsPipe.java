@@ -220,45 +220,39 @@ public class FontsPipe extends WorkFlowPipe {
     }
 
     // Now we need check for any extra include files that might be needed
-    List<String> extraList = new ArrayList<String>();
-    boolean bMatch;
-    /* we need to look at fonts up to category, not category down to fonts
-     * to avoid duplicate headers. teensy for example may have many categories
-     * each with a different header but a common include of SPI.h
-     */
-    for (FontItem f : fonts) {
-      FontCategory c = f.getCategory();
+    for (FontCategory c : fontPlatform.getCategories()) {
       for (String s : c.getIncludes()) {
         if (s == null || s.isEmpty()) continue;
-        bMatch = false;
-        for (String extra : extraList) {
-          if (extra.equals(s)) bMatch = true;
-        }
-        if (!bMatch) extraList.add(s);
+        sBd.append(s);
+        sBd.append(System.lineSeparator());
       }
     }
-    for (String s : extraList) {
-      sBd.append(s);
-      sBd.append(System.lineSeparator());
-    }
-
     // we are ready to output our font information
     List<String> includeTemplate = null;
     List<String> defineTemplate = null;
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String, String>();
+    List<String> includesList = new ArrayList<String>();
     for (FontItem f : fonts) {
       if (!f.getIncludeFile().equals("NULL")) {
-          includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
-          map.put(INCLUDE_FILE_MACRO, f.getIncludeFile());
-          outputLines = tm.expandMacros(includeTemplate, map);
-          tm.codeWriter(sBd, outputLines);
+          includesList.add(f.getIncludeFile());
       } else if (!f.getDefineFile().equals("NULL")) {
         // This code only affects linux implementation.
         defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);
         map.put(FONT_REF_MACRO, f.getFontRef());
         map.put(DEFINE_FILE_MACRO, f.getDefineFile());
         outputLines = tm.expandMacros(defineTemplate, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+    }
+    if (includesList.size() > 0) {
+      // sort the names and remove duplicates
+      CodeUtils.sortListandRemoveDups(includesList);
+      for (String s : includesList) {
+        if (s == null || s.isEmpty()) continue;
+        includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
+        map.put(INCLUDE_FILE_MACRO, s);
+        outputLines = tm.expandMacros(includeTemplate, map);
         tm.codeWriter(sBd, outputLines);
       }
     }

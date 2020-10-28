@@ -1,4 +1,4 @@
-package builder.views;
+package builder.fonts;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,11 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-
-import builder.fonts.FontFactory;
-import builder.fonts.FontItem;
-import builder.fonts.FontTFT;
-import builder.views.FontChooserHelper;
 
 @SuppressWarnings("unused")
 public class FontChooser extends JDialog {
@@ -145,25 +140,12 @@ public class FontChooser extends JDialog {
     JPanel p = new JPanel(new GridLayout(2, 3, 10, 2));
     JLabel lblFont = new JLabel("Font:");
     p.add(lblFont);
-    JLabel lblFontSize = new JLabel("Font Size:");
-    p.add(lblFontSize);
     JLabel lblFontStyle = new JLabel("Font Style:");
     p.add(lblFontStyle);
+    JLabel lblFontSize = new JLabel("Font Size:");
+    p.add(lblFontSize);
 
     p.add(cbFont);
-
-    dcmFontSize = new DefaultComboBoxModel();
-    cbFontSize = new JComboBox<String>();
-    cbFontSize.setModel(dcmFontSize);
-    for (String sz : h.getFontSize()) {
-      cbFontSize.addItem(sz);
-    }
-    cbFontSize.setSelectedItem(currentItem.getLogicalSize());
-    cbFontSize.setToolTipText("Click to Select Font size");
-    cbFontSize.addActionListener(previewListener);
-    cbFontSize.setToolTipText("Click to Select Font Size");
-    p.add(cbFontSize);
-    getContentPane().add(p);
 
     dcmFontStyle = new DefaultComboBoxModel();
     cbFontStyle = new JComboBox<String>();
@@ -176,6 +158,19 @@ public class FontChooser extends JDialog {
     cbFontStyle.addActionListener(previewListener);
     cbFontStyle.setToolTipText("Click to Select Font Style");
     p.add(cbFontStyle);
+    getContentPane().add(p);
+
+    dcmFontSize = new DefaultComboBoxModel();
+    cbFontSize = new JComboBox<String>();
+    cbFontSize.setModel(dcmFontSize);
+    for (String sz : h.getFontSize()) {
+      cbFontSize.addItem(sz);
+    }
+    cbFontSize.setSelectedItem(currentItem.getLogicalSize());
+    cbFontSize.setToolTipText("Click to Select Font size");
+    cbFontSize.addActionListener(previewListener);
+    cbFontSize.setToolTipText("Click to Select Font Size");
+    p.add(cbFontSize);
     getContentPane().add(p);
 
     getContentPane().add(Box.createVerticalStrut(5));
@@ -267,7 +262,8 @@ public class FontChooser extends JDialog {
     if (item == null) return;
     Dimension ppDim = previewPanel.getSize();
     Rectangle r = new Rectangle(ppDim);
-    BufferedImage img = ff.drawTextImage(FontTFT.ALIGN_LEFT, r, "Preview Font", item.getFont(), textColor, fillColor, 0);
+    FontTFT font = item.getFont();
+    BufferedImage img = ff.drawTextImage(FontTFT.ALIGN_LEFT, r, "Preview Font", font, textColor, fillColor, 0);
     previewLabel.setIcon(new ImageIcon(img));
     selectedName = item.getDisplayName();
     repaint();

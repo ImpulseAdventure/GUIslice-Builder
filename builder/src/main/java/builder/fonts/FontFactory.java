@@ -36,6 +36,9 @@ import java.awt.image.BufferedImage;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,10 +68,16 @@ public class FontFactory {
   public BuilderFonts builderFonts = new BuilderFonts();
 
   /** The full font item list. */
-  private List<FontItem> platformFonts = new ArrayList<FontItem>();
+  public static List<FontItem> platformFonts = new ArrayList<FontItem>();
   
+  public static List<FontItem> list;
+  
+  public static int idx = 0;
+
+  public static int nErrors = 0;
+
   /** The font map used as index into font item list. */
-  private HashMap<String, Integer> fontMap = new HashMap<String, Integer>(128);
+  public static HashMap<String, Integer> fontMap = new HashMap<String, Integer>(128);
   
   /** The number of platforms */
   private int nPlatforms;
@@ -104,9 +113,9 @@ public class FontFactory {
   public void init() {
     
     String fullPath = CommonUtils.getInstance().getWorkingDir();
-    String csvFile = fullPath + "templates" + System.getProperty("file.separator") 
+    String jsonFile = fullPath + "templates" + System.getProperty("file.separator") 
         + FONT_TEMPLATE;
-    readFonts(csvFile);
+    readFonts(jsonFile);
     Builder.logger.debug("FontFactory Initialized");
   }
   
@@ -491,56 +500,81 @@ public class FontFactory {
       // Convert JSON File to Java Objects
       builderFonts = gson.fromJson(reader, BuilderFonts.class);
     } catch (IOException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     }
-    /* now we need to walk our top level font object
-     * and fill in each font item with parent information
-     * and build up our font list and index map.
+    /*
+     * now we need to walk our top level font object and fill in each font item with
+     * parent information and build up our font list and index map.
      */
     nPlatforms = 0;
-    int idx = 0;
-    int nErrors = 0;
+    idx = 0;
+    nErrors = 0;
     platformNames = new String[10];
     fontsByPlatform = new ArrayList[10];
     for (FontPlatform p : builderFonts.getPlatforms()) {
-//      Builder.logger.debug("Platform: " + p.getName());
+      // Builder.logger.debug("Platform: " + p.getName());
       platformNames[nPlatforms] = p.getName();
-      List<FontItem> list = new ArrayList<FontItem>();
+      list = new ArrayList<FontItem>();
       fontsByPlatform[nPlatforms++] = list;
       for (FontCategory c : p.getCategories()) {
-//        Builder.logger.debug("Platform: " + c.getName());
-        for (FontItem item : c.getFonts()) {
-          item.setPlatform(p);
-          item.setCategory(c);
-          item.generateEnum();
-          item.generateKey();
-          String key = item.getKey();
-//          Builder.logger.debug("Font: " + item.toString());
-          // check for duplicates
-          if (!fontMap.containsKey(key)) {
-            platformFonts.add(item);
-            list.add(item);
-            fontMap.put(key, Integer.valueOf(idx++));
-          } else {
-            Builder.logger.error("duplicate font: " + key);
-            nErrors++;
+        // Builder.logger.debug("Platform: " + c.getName());
+        if (c.getFonts().size() == 0) {
+          // handle native fonts that did not require JSON entries
+          if (c.getName().equals(FontTFT.FONT_GFX)) {
+            // Builder.logger.debug(c.toString());
+            String fullPath = CommonUtils.getInstance().getWorkingDir();
+            String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "gfx";
+            Path startingDir = Paths.get(fontsPath);
+            FontLoadGFXFiles fileVisitor = new FontLoadGFXFiles(p, c);
+            try {
+              Files.walkFileTree(startingDir, fileVisitor);
+            } catch (IOException e) {
+              nErrors++;
+              Builder.logger.error(e.toString());
+            }
+          } else if (c.getName().equals(FontTFT.FONT_T3)) {
+            // Builder.logger.debug(c.toString());
+            String fullPath = CommonUtils.getInstance().getWorkingDir();
+            String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "t3";
+            Path startingDir = Paths.get(fontsPath);
+            FontLoadT3Files fileVisitor = new FontLoadT3Files(p, c);
+            try {
+              Files.walkFileTree(startingDir, fileVisitor);
+            } catch (IOException e) {
+              nErrors++;
+              Builder.logger.error(e.toString());
+            }
+          }
+        } else {
+          for (FontItem item : c.getFonts()) {
+            item.setPlatform(p);
+            item.setCategory(c);
+            item.generateEnum();
+            item.generateKey();
+            String key = item.getKey();
+            // Builder.logger.debug("Font: " + item.toString());
+            // check for duplicates
+            if (!fontMap.containsKey(key)) {
+              platformFonts.add(item);
+              list.add(item);
+              fontMap.put(key, Integer.valueOf(idx++));
+            } else {
+              Builder.logger.error("duplicate font: " + key);
+              nErrors++;
+            }
           }
         }
       }
     }
-//    Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of fonts: " + idx);
+    // Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of
+    // fonts: " + idx);
     if (nErrors > 0) {
-      String fileName = CommonUtils.getInstance().getWorkingDir()
-          + "logs" 
-          + System.getProperty("file.separator")
+      String fileName = CommonUtils.getInstance().getWorkingDir() + "logs" + System.getProperty("file.separator")
           + "builder.log";
-      String msg = String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.",
-          nErrors,fileName);
-      JOptionPane.showMessageDialog(null, 
-          msg, 
-          "ERROR",
-          JOptionPane.ERROR_MESSAGE);
+      String msg = String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.", nErrors,
+          fileName);
+      JOptionPane.showMessageDialog(null, msg, "ERROR", JOptionPane.ERROR_MESSAGE);
     }
   }
- 
+
 }

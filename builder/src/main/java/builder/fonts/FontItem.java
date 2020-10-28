@@ -44,6 +44,11 @@ import builder.Builder;
  */
 public class FontItem {
   
+  static private String BOLD = "Bold";
+  static private String ITALIC = "Italic";
+  static private String PLAIN = "Regular";
+  static private String BOLD_ITALIC = "Bold+Italic";
+
   /** The java font. */
   private transient FontTFT font;
   
@@ -170,23 +175,12 @@ public class FontItem {
     String name = displayName;
     if (name.startsWith("BuiltIn")) {
       n = name.indexOf(">");
-      name = name.substring(n+1);
-    }
-    String p = platform.getName().toUpperCase();
-    if (p.equals("ARDUINO")) {
-      p ="GFX";
-    } else if (p.equals("M5STACK")) {
-      p = "M5";
-    } else if (p.equals("TEENSY")) {
-      p = "T3";
-    } else if (p.equals("TFT_ESPI")) {
-      p = "GFX";
-    } else if (p.equals("LINUX")) {
-      p = "TTF";
+      name = "BUILTIN" + name.substring(n+1);
     }
     name = name.replace('-', '_');
-    nFontId = String.format("E_%s_%s", p,
-        name.toUpperCase());
+    n = name.indexOf("pt7b");
+    if (n > 0) name = name.substring(0,n);
+    nFontId = String.format("E_%s", name.toUpperCase());
   }
   
   /**
@@ -261,12 +255,29 @@ public class FontItem {
   }
   
   /**
+   * setFamilyName
+   * sets the font family name.
+   */
+  public void setFamilyName(String familyName) {
+    this.familyName = familyName;
+  }
+  
+  /**
    * Gets the display name.
    *
    * @return the display name
    */
   public String getDisplayName() {
     return displayName;
+  }
+  
+  /**
+   * setDisplayName
+   * 
+   * @param displayName
+   */
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
   }
   
   /**
@@ -279,12 +290,30 @@ public class FontItem {
   }
   
   /**
+   * setFileName
+   * 
+   * @param fileName
+   */
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
+  
+  /**
    * Gets the include file.
    *
    * @return the include file
    */
   public String getIncludeFile() {
     return includeFile;
+  }
+  
+  /**
+   * setIncludeFile
+   * 
+   * @param includeFile
+   */
+  public void setIncludeFile(String includeFile) {
+    this.includeFile = includeFile;
   }
   
   /**
@@ -296,6 +325,14 @@ public class FontItem {
     return defineFile;
   }
   
+  /**
+   * setDefineFile
+   * 
+   * @param defineFile
+   */
+  public void setDefineFile(String defineFile) {
+    this.defineFile = defineFile;
+  }
   /**
    * Gets the font id.
    *
@@ -315,6 +352,15 @@ public class FontItem {
   }
 
   /**
+   * setFontRefType
+   * 
+   * @param eFontRefType
+   */
+  public void setFontRefType(String eFontRefType) {
+    this.eFontRefType = eFontRefType;
+  }
+  
+  /**
    * Gets the font ref.
    *
    * @return the font ref
@@ -324,12 +370,30 @@ public class FontItem {
   }
 
   /**
+   * setFontRef
+   * 
+   * @param pvFontRef
+   */
+  public void setFontRef(String pvFontRef) {
+    this.pvFontRef = pvFontRef;
+  }
+  
+  /**
    * Gets the font sz.
    *
    * @return the nFontSz
    */
   public String getFontSz() {
     return nFontSz;
+  }
+  
+  /**
+   * setFontSz
+   * 
+   * @param nFontSz
+   */
+  public void setFontSz(String nFontSz) {
+    this.nFontSz = nFontSz;
   }
   
   /**
@@ -342,12 +406,30 @@ public class FontItem {
   }
   
   /**
+   * setLogicalName
+   * 
+   * @param logicalName
+   */
+  public void setLogicalName(String logicalName) {
+    this.logicalName = logicalName;
+  }
+  
+  /**
    * Gets the logical size.
    *
    * @return the logical size
    */
   public String getLogicalSize() {
     return logicalSize;
+  }
+  
+  /**
+   * setLogicalSize
+   * 
+   * @param logicalSize
+   */
+  public void setLogicalSize(String logicalSize) {
+    this.logicalSize = logicalSize;
   }
   
   /**
@@ -369,6 +451,28 @@ public class FontItem {
   }
   
   /**
+   * setLogicalStyle
+   * 
+   * @param logicalStyle
+   */
+  public void setLogicalStyle(String style) {
+    switch (style) {
+    case "BOLD":
+      this.logicalStyle = BOLD;
+      break;
+    case "BOLD_ITALIC":
+      this.logicalStyle = BOLD_ITALIC;
+      break;
+    case "ITALIC":
+      this.logicalStyle = ITALIC;
+      break;
+    default:
+      this.logicalStyle = PLAIN;
+      break;
+    }
+  }
+  
+  /**
    * Gets the fontRefMode.
    *
    * @return the fontRefMode
@@ -377,7 +481,14 @@ public class FontItem {
     return fontRefMode;
   }
   
-
+  /**
+   * setFontRefMode
+   * @param fontRefMode
+   */
+  public void setFontRefMode(String fontRefMode) {
+    this.fontRefMode = fontRefMode;
+  }
+  
   public double getScaleFactor() {
     return scaleFactor;
   }
@@ -389,6 +500,7 @@ public class FontItem {
    */
   @Override
   public String toString() {
-    return String.format("Platform: %s Font: %s size: %s style: %s", platform.getName(), displayName, logicalSize, logicalStyle);
+    return String.format("Platform: %s Font: %s size: %s style: %s include: %s", 
+        platform.getName(), displayName, logicalSize, logicalStyle, includeFile);
   }
 }
