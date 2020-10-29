@@ -6,26 +6,31 @@ Please refer to the wiki page for installation and usage details:
 
 ![image](https://user-images.githubusercontent.com/8510097/90728338-9a8be100-e279-11ea-969e-cbd8bb0ac6c6.png)
 
-### Builder Contents
-Note that the Builder executables and User Guide are attached to the latest GUIslice Builder Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/releases):
+## Brief Overview
+The GUIslice Builder is a standalone desktop application that is more than a layout tool for your UI. It's designed as 
+No Code GUI Generator for User Interfaces that make use of GUIslice API. 
 
-### Builder Source Code
-The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder](https://github.com/ImpulseAdventure/GUIslice-Builder)
-- Build instructions can be found in `BUILD.txt`
+The cross-platform utility includes a WYSIWYG graphical editor that enables drag & drop placement of UI elements. Once a GUI has been laid out, the Builder can then generate a fully functional GUIslice Graphical UI complete with plug-in points for your custom application. 
 
-### Brief Overview
-The GUIslice Builder is a standalone desktop application that is designed to help generate layouts for GUIslice.
+The GUIslice API framework code can handle hardware like Arduino, ESP8266, ESP32 and more. It supports Graphic libraries like 
+Adafruit's GFX, M5Stack, TFT_eSPI and LINUX with a wide variety of TFT Display Drivers and combinations of Touch support chips.
 
-The cross-platform utility includes a graphical editor that enables drag & drop placement of UI elements. Once a GUI has been laid out, the Builder can then generate the functional GUIslice skeleton framework code, for both Arduino and LINUX targets.
-
-The generated output code (*.c, *.ino, *_GSLC.h) includes all of the necessary defines, UI storage elements and initialization in addition to the placement of the UI elements. This should greatly improve the ease in creating a new GUI.
+The generated output code (*.c, *.ino, *_GSLC.h) includes all of the necessary defines, UI storage elements and initialization 
+in addition to the placement of the UI elements. This will greatly improve the ease in creating a new Graphical Application.
 
 You can find Example project files inside GUIslice/examples/builder
 
 ## Disclaimer ##
 The Software is not designed for use in devices or situations where there may be physical injury if the Software has errors.
 
-### Release History
+## Builder Contents
+Note that the Builder executables and User Guide are attached to the latest GUIslice Builder Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/releases):
+
+## Builder Source Code
+The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder](https://github.com/ImpulseAdventure/GUIslice-Builder)
+- Build instructions can be found in `BUILD.txt`
+
+## Release History
 
 ### Enhancements for 0.16.0
 
@@ -35,8 +40,10 @@ be able to give you accurate sizing and positioning information for supported fo
 displayed exactly as it will appear on your target TFT display. 
 
 The Native Font support includes, Adafruit's Builtin GLCD fonts, and Adafruit's GFX compatable fonts, and 
-Teensy ILI9341_t3 fonts. You may still tell the Builder to simulate fonts it doesn't directly support, see 
-the User Guide for more information about font handling.
+Teensy ILI9341_t3 fonts. This Native Font support includes the ability to add your own fonts to the Builder 
+simply by dropping them into the proper folders. You may also tell the Builder to simulate fonts it doesn't directly support. 
+
+See the User Guide for more information about font handling and how to add your custom fonts.
 
 GUIslice API 0.16.0 has upgraded the Keypad support. This is a breaking change for the API so the Builder 
 will now require running with GUIslice API 0.16.0 and higher. For further information on keypads 
@@ -428,4 +435,3 @@ The Listbox edit list items dialog (entered by pressing '...' in its property ta
  - Bug No. 96 Fatal error can cause crash log loop 
  - Bug No. 97 Install not change project directory
  - Bug No. 99 Progress Bar Frame not showing up on TFT simulation screen
-
