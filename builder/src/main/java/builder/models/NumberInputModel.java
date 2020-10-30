@@ -27,7 +27,6 @@ package builder.models;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -38,11 +37,12 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.prefs.NumKeyPadEditor;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
+import builder.fonts.FontTFT;
 
 /**
  * The Class TextInputModel implements the model for the TextInput widget.
@@ -63,18 +63,20 @@ public class NumberInputModel extends WidgetModel {
   static private final int PROP_UTF8              = 9;
   static private final int PROP_TEXT_SZ           = 10;
   static private final int PROP_TEXT_ALIGN        = 11;
-  static private final int PROP_FILL_EN           = 12;
-  static private final int PROP_USE_FLASH         = 13;
-  static private final int PROP_TEXT_COLOR        = 14;
-  static private final int PROP_FRAME_COLOR       = 15;
-  static private final int PROP_FILL_COLOR        = 16;
-  static private final int PROP_SELECTED_COLOR    = 17;
+  static private final int PROP_TEXT_MARGIN       = 12;
+  static private final int PROP_FILL_EN           = 13;
+  static private final int PROP_USE_FLASH         = 14;
+  static private final int PROP_TEXT_COLOR        = 15;
+  static private final int PROP_FRAME_COLOR       = 16;
+  static private final int PROP_FILL_COLOR        = 17;
+  static private final int PROP_SELECTED_COLOR    = 18;
 
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(6);
   static public  final String  DEF_TEXT_ALIGN        = "GSLC_ALIGN_MID_LEFT";
+  static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(5);
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_TEXT_COLOR        = Color.YELLOW;
@@ -122,7 +124,7 @@ public class NumberInputModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.NUMINPUT;
-    data = new Object[18][5];
+    data = new Object[19][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -132,6 +134,7 @@ public class NumberInputModel extends WidgetModel {
     initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"Field Size",DEF_TEXT_SZ);
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
+    initProp(PROP_TEXT_MARGIN, Integer.class, "TXT-212", Boolean.FALSE,"Text Margin",DEF_TEXT_MARGIN);
     initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
 
     initProp(PROP_USE_FLASH, Boolean.class, "COM-020", Boolean.FALSE,"Use Flash API?",DEF_USE_FLASH);
@@ -222,6 +225,12 @@ public class NumberInputModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row == PROP_X) {
+      calcSizes(true);
+    } 
+    if (row == PROP_Y) {
+      calcSizes(true);
+    } 
     if (row == PROP_FONT) {
       calcSizes(true);
     } 
@@ -230,7 +239,7 @@ public class NumberInputModel extends WidgetModel {
     }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }
@@ -281,6 +290,15 @@ public class NumberInputModel extends WidgetModel {
    */
   public int getTextStorage() {
     return (((Integer) (data[PROP_TEXT_SZ][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * Gets the text margin.
+   *
+   * @return the text margin
+   */
+  public int getTextMargin() {
+    return (((Integer) (data[PROP_TEXT_MARGIN][PROP_VAL_VALUE])).intValue());
   }
 
  /**
@@ -391,7 +409,7 @@ public class NumberInputModel extends WidgetModel {
         fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
       }
     }
-    Font font = ff.getFont(item.getDisplayName());
+    FontTFT font = ff.getFont(item.getDisplayName());
     // our text is input only so create a string getTextStorage() size
     String text = "";
     for (int i=0; i<getTextStorage(); i++) {
@@ -400,7 +418,7 @@ public class NumberInputModel extends WidgetModel {
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
       // calculate the real sizes of our display text
-      Dimension nChSz = ff.measureText(getFontDisplayName(), font, text);
+      Dimension nChSz = ff.measureText(getX(),getY(),font, text);
       setWidth(nChSz.width);
       setHeight(nChSz.height);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);

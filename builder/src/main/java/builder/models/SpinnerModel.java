@@ -27,7 +27,6 @@ package builder.models;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -35,10 +34,11 @@ import javax.swing.JTextField;
 
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
+import builder.fonts.FontTFT;
 
 /**
  * The Class SpinnerModel implements the model for the Spinner widget.
@@ -134,7 +134,7 @@ public class SpinnerModel extends WidgetModel {
     
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }
@@ -292,14 +292,14 @@ public class SpinnerModel extends WidgetModel {
        data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
        fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
      }
-     Font font = ff.getFont(item.getDisplayName());
+     FontTFT font = ff.getFont(item.getDisplayName());
      // our text is input only so create a string getTextStorage() size
      String text_min = String.valueOf(getMin());
      String text = String.valueOf(getMax());
      if (text.length() < text_min.length())
        text = text_min;
      // calculate the real sizes of our display text
-     Dimension d = ff.measureText(item.getDisplayName(), font, text);
+     Dimension d = ff.measureText(getX(),getY(),font, text);
      // now figure out the rect size needed on the target platform
      // that we show to our user and also push out during code generation.
      if (getFontDisplayName().startsWith("BuiltIn")) {

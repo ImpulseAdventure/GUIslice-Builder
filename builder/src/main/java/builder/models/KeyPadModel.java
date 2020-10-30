@@ -31,7 +31,7 @@ import java.io.ObjectInputStream;
 import javax.swing.JTextField;
 
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
+import builder.fonts.FontFactory;
 
 /**
  * The Class KeyPadModel implements the Numeric Keypad model for the builder.
@@ -47,18 +47,24 @@ public class KeyPadModel extends WidgetModel {
   /** The Property Index Constants. */
   static private final int PROP_ELEMENTREF        = 4;
   static private final int PROP_FONT              = 5;
-  static private final int PROP_BUTTONSZ_W        = 6;
-  static private final int PROP_BUTTONSZ_H        = 7;
-  static private final int PROP_ROUNDED           = 8;
-  static private final int PROP_FLOATPT           = 9;
-  static private final int PROP_SIGN              = 10;
+  static private final int PROP_ROUNDED           = 6;
+  static private final int PROP_FLOATPT           = 7;
+  static private final int PROP_SIGN              = 8;
+  static private final int PROP_USE_DEF_BUTTONSZ  = 9;
+  static private final int PROP_BUTTONSZ_W        = 10;
+  static private final int PROP_BUTTONSZ_H        = 11;
+  static private final int PROP_BUTTON_GAPX       = 12;
+  static private final int PROP_BUTTON_GAPY       = 13;
   
   /** The Property Defaults */
   static public  final Boolean DEF_FLOATPT           = Boolean.TRUE;
   static public  final Boolean DEF_SIGN              = Boolean.TRUE;
   static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
+  static public  final Boolean DEF_USE_DEF_BTNSZ     = Boolean.TRUE;
   static public  final Integer DEF_BUTTONSZ_W        = Integer.valueOf(25);
   static public  final Integer DEF_BUTTONSZ_H        = Integer.valueOf(25);
+  static public  final Integer DEF_BUTTON_GAPX       = Integer.valueOf(0);
+  static public  final Integer DEF_BUTTON_GAPY       = Integer.valueOf(0);
 
   /** The ff. */
   private FontFactory ff = null;
@@ -77,7 +83,7 @@ public class KeyPadModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.NUMKEYPAD;
-    data = new Object[11][5];
+    data = new Object[14][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM",EnumFactory.KEYPAD_PAGE_ENUM);
@@ -87,14 +93,15 @@ public class KeyPadModel extends WidgetModel {
 
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
 
+    initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
     initProp(PROP_FLOATPT, Boolean.class, "PAD-100", Boolean.FALSE,"Enable Floating Point?",DEF_FLOATPT);
     initProp(PROP_SIGN, Boolean.class, "PAD-101", Boolean.FALSE,"Enable Minus Sign?",DEF_SIGN);
 
-    initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.FALSE,"Button Size",DEF_BUTTONSZ_W);
-    initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.FALSE,"Button Size",DEF_BUTTONSZ_H);
-    initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
-//    initProp(PROP_BUTTONGAPX, Integer.class, "COM-014", Boolean.FALSE,"Button Gap X",DEF_BUTTONGAPX);
-//    initProp(PROP_BUTTONGAPY, Integer.class, "COM-015", Boolean.FALSE,"Button Gap Y",DEF_BUTTONGAPY);
+    initProp(PROP_USE_DEF_BUTTONSZ, Boolean.class, "KEY-109", Boolean.FALSE,"Use Default Button Sizes?",DEF_USE_DEF_BTNSZ);
+    initProp(PROP_BUTTONSZ_W, Integer.class, "KEY-110", Boolean.TRUE,"Button Width",DEF_BUTTONSZ_W);
+    initProp(PROP_BUTTONSZ_H, Integer.class, "KEY-111", Boolean.TRUE,"Button Height",DEF_BUTTONSZ_H);
+    initProp(PROP_BUTTON_GAPX, Integer.class, "KEY-014", Boolean.FALSE,"Button Gap X",DEF_BUTTON_GAPX);
+    initProp(PROP_BUTTON_GAPY, Integer.class, "KEY-015", Boolean.FALSE,"Button Gap Y",DEF_BUTTON_GAPY);
 
   }
   
@@ -127,6 +134,15 @@ public class KeyPadModel extends WidgetModel {
   }
 
  
+  /**
+   * Use default button size?
+   *
+   * @return true, if we should use defaults
+   */
+  public boolean useDefBtnSize() {
+    return ((Boolean) data[PROP_USE_DEF_BUTTONSZ][PROP_VAL_VALUE]).booleanValue();
+  }
+
   /**
    * Gets the font display name.
    *
@@ -179,18 +195,59 @@ public class KeyPadModel extends WidgetModel {
    *
    * @return the button gap for X direction
    */
-//  public int getButtonGapX() {
-//    return (((Integer) (data[PROP_BUTTONGAPX][PROP_VAL_VALUE])).intValue());
-//  }
+  public int getButtonGapX() {
+    return (((Integer) (data[PROP_BUTTON_GAPX][PROP_VAL_VALUE])).intValue());
+  }
 
   /**
    * Gets the button gap for Y direction
    *
    * @return the button gap for Y direction
    */
-//  public int getButtonGapY() {
-//    return (((Integer) (data[PROP_BUTTONGAPY][PROP_VAL_VALUE])).intValue());
-//  }
+  public int getButtonGapY() {
+    return (((Integer) (data[PROP_BUTTON_GAPY][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * changeValueAt
+   *
+   * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)
+   */
+  @Override
+  public void changeValueAt(Object value, int row) {
+    // The test for Integer. supports copy and paste from clipboard.
+    // Otherwise we get a can't cast class String to Integer fault
+    if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
+        data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
+    } else {
+      data[row][PROP_VAL_VALUE] = value;
+    }
+    fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row == PROP_USE_DEF_BUTTONSZ) {
+      setReadOnlyProperties();
+      fireTableCellUpdated(PROP_BUTTONSZ_W, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_BUTTONSZ_H, COLUMN_VALUE);
+    }
+  }
+
+  /**
+   * Sets the read only properties and any other items 
+   * needed at startup.
+   * 
+   * Called by NumKeyPadEditor on startup Basically this 
+   * replaces a subclassed readModel() since we don't 
+   * serialize the Model for save and restores.
+   * It's saved wherever java stores UserPrefences (registry for windows).
+   */
+  public void setReadOnlyProperties() {
+    if (useDefBtnSize()) {
+      data[PROP_BUTTONSZ_W][PROP_VAL_READONLY] = Boolean.TRUE;
+      data[PROP_BUTTONSZ_H][PROP_VAL_READONLY] = Boolean.TRUE;
+    } else {
+      data[PROP_BUTTONSZ_W][PROP_VAL_READONLY] = Boolean.FALSE;
+      data[PROP_BUTTONSZ_H][PROP_VAL_READONLY] = Boolean.FALSE;
+    }
+  }
 
   /**
    * readModel() will deserialize our model's data from a string object for backup
@@ -239,6 +296,6 @@ public class KeyPadModel extends WidgetModel {
          
        }
      }
-    
+     setReadOnlyProperties();    
    }
 }

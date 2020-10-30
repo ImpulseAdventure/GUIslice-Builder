@@ -180,9 +180,6 @@ public class Controller extends JInternalFrame
   /** The instance. */
   private static Controller instance = null;
   
-  /** The MsgBoard instance */
-  private MsgBoard mb = null;
-
   /**
    * Gets the single instance of Controller.
    *
@@ -201,8 +198,7 @@ public class Controller extends JInternalFrame
   public void initUI() {
     title = "Simulated TFT Panel";
     this.generalEditor = GeneralEditor.getInstance();
-    mb = MsgBoard.getInstance();
-    mb.subscribe(this, "Controller");
+    MsgBoard.subscribe(this, "Controller");
 
     // trap frame resizing
     this.addComponentListener(new ComponentAdapter() {
@@ -479,7 +475,8 @@ public class Controller extends JInternalFrame
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
-      PropManager.getInstance().showPropEditor(pageKey);
+// commented out for  [Selecting Items on Other Pages Doesn't Show Selected Widget Properties #118] 
+//      PropManager.getInstance().showPropEditor(pageKey);
     }
   }
   
@@ -504,7 +501,7 @@ public class Controller extends JInternalFrame
           currentPage.refreshView();
           PropManager.getInstance().showPropEditor(page.getKey());
           // notify treeview
-          mb.sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);
+          MsgBoard.sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);
         }
       }
     }
@@ -744,7 +741,7 @@ public class Controller extends JInternalFrame
    */
   // function is called from DelPageCommand
   public void delPage(PagePane page) {
-    mb.remove(page.getKey());
+    MsgBoard.remove(page.getKey());
     if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
       nBasePages=0;
       basePage = null;
@@ -867,7 +864,7 @@ public class Controller extends JInternalFrame
     tabPages.clear();
     tabbedPane.removeAll();
     for (PagePane p : pages) {
-      mb.remove(p.getKey());
+      MsgBoard.remove(p.getKey());
     }
     pages.clear();
     currentPage = null;
@@ -1019,8 +1016,8 @@ public class Controller extends JInternalFrame
         String enum_backup = (String)in.readObject();
       }
       EnumFactory.getInstance().resetCounts(pages);
-      mb.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
-      mb.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
+      MsgBoard.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
+      MsgBoard.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
     } catch (ClassNotFoundException e) {
       JOptionPane.showMessageDialog(null, "Project File Corrupted", e.toString(), JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
@@ -1365,6 +1362,7 @@ public class Controller extends JInternalFrame
    */
   @Override
   public void updateEvent(MsgEvent e) {
+  //  Builder.logger.debug("Controller: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW) {
       Builder.logger.debug("Controller recv: " + e.toString());
       changeViewFromTree(e);

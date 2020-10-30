@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published October, 2020. Based on GUIslice API Library 0.16.0
+Published November, 2020. Based on GUIslice API Library 0.16.0
 
 **Copyright**
 
@@ -1543,21 +1543,47 @@ The code generator will append whatever string you include so be sure to add fol
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.7 Fonts
+## 5.7 Adding Fonts
 
 The font implementation is somewhat challenging. 
  
-The builder can't actually run the target platform fonts at the actual size since the DPI's won't match. Adafruit has hard-coded its GFX fonts to 141 instead of the standard 72 dpi. So the builder has to scale them for use.  The scaling can't be perfect since the scaling might require decimal sizes like, 6.24dp which must be converted to an integer, either 6 or 7.  Stll the builder will give a pretty good approximation as long as users give a little space between text and elements. You can always adjust the Width and Height of the containing rectangle inside the property view, if required.
-
-The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built for Adafruit's GFX format.  You can use them by copying the headers files from GUIsliceBuilder/gfx_fonts to either 
-libraries Adafruit_GFX/Fonts or TFT_eSPI/Fonts/GFXFF depending upon your target platform.
-
-The builder uses one file inside GUIsliceBuilder/templates to manage fonts: 
+The builder uses one file inside GUIsliceBuilder/templates to define available fonts with their GUIslice API font parameters: 
 
 - **builder_fonts.json**
 
-You are allowed to create your own fonts and add them to the builder.  In which case you will need to modify
- builder_fonts.json file.  The format is documented in Appendix B.
+The builder can now actually run the target platform fonts at the actual size as they will appear on your Target TFT Display Screen.
+For this support the actual font C Headers and C files are stored inside the Builder's fonts folder, organized by gfx, glcd, and t3.
+```
+  | GUIsliceBuilder
+   |- fonts
+     |- gfx
+       |- FreeMono
+         |- BOLD
+         |- BOLD_ITALIC
+         |- ITALIC
+         |- PLAIN
+     |- glcd
+     |- t3
+```  
+
+The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built for Adafruit's GFX format.  You can use them by 
+copying the headers files from GUIsliceBuilder/fonts/gfx to either libraries Adafruit_GFX/Fonts or TFT_eSPI/Fonts/GFXFF 
+depending upon your target platform.
+
+You may add additional Adafruit compatible fonts and/or Teensy ILI9341_T3 fonts by copying them into the Builder's font folder, GUIsliceBuilder/fonts 
+under either the gfx or t3 folder. You must create a folder that can be used by the Builder as the Font's Family name ie: 'FreeMono'. 
+Under this new folder you must create Font Style sub-folders, any combination of BOLD, BOLD_ITALIC, ITALIC, or PLAIN depnding upon what fonts you have decided to add.
+
+For Teensy fonts don't forget to copy both the Headers and C files. 
+
+You do not need to edit the builder_fonts.json file for these new fonts, just drop them into the new folders and restart the Builder.
+
+If you need to use a font that doesn't fall into the above categories then you will need to tell the Builder to simulate it. 
+This is fairly easy to do but can be a bit fussy. There isn't much error handling so be careful with edits. 
+If an error is detected it will be reported inside GUIsliceBuilder/logs/builder.log. You should get a line number and most likely 
+a cryptic message. For example: saying a name was expected. Look for extra or missing commas ',', brackets ']' or curly braces '}'.
+
+The builder_fonts.json file format is documented in Appendix B.
 
 If you edit this file you must restart the Builder it will then use the new font file.
 
@@ -1627,8 +1653,23 @@ allFonts
       |-fonts
         -font definition
         -font definition
+    |- categories
+      |-fonts
+        -font definition
+        -font definition
+  |- platformName
+    |- categories
+      |-fonts
 ```
 Please note that object and fields names must match the case shown inside our json file or they will be ignored!
+
+Platform names are mostly used to identify font handling for code generation.
+The current list of platforms supported are:
+- arduino
+- m5stack
+- teensy
+- tft_espi
+- linux
 
 Within the platformName object you may have optionally a set of warning messages to output during code generation. This can be useful if you accidently choose an incorrect GUIslice configuration file inside GUIslice_config.h.
 For example is say you chose platform arduino but you used a TFT_eSPI driver these warning messages would give you a compile time error.
@@ -1649,51 +1690,80 @@ You simply add them to the warnings array of platformName object like so:
          "#endif" 
       ],
 ```
-If you don't want any warning messages you must set warnings to NULL.
-```
-      "warnings": [
-         "NULL",
-      ],
-```
-This is true for any of the supported arrays, like extraIncludes and fields, like IncludeFile.
+You may also supply a "dpi": field if you are simulating a font. Usually this is set to 72 but Adafruit uses 141. The Builder doesn't need this field for the supported Native fonts.
 
-Categories object supports adding extra include files for its fonts.  
-Example, say you choose one of the freefonts for the arduino platform using Adafruit_GFX library.
+Example:
+```
+      "platformName": "linux",
+      "dpi": "72",
+      "categories": [
+```
+
+The Categories supported are:
+- FONT_GFX which are Adafruit's GFX compatible fonts.
+- FONT_GLCD which are Adafruit's classic built-in fonts
+- FONT_T3 which are Teensy's ili9341_t3 fonts
+- FONT_SIM which are any fonts that the Builder needs to simulate using Java's built-in fonts.
+
+The FONT_GFX, FONT_GLCD, and FONT_T3 fonts are supported as native fonts. That is the BUilder 
+actually reads and parses the C headers or C files that define the font.  It uses that information 
+and bit maps to render the fonts in the TFT Simulation area.  
+  
+Categories object supports adding extra include files for its fonts.
+
+Example, say your new font additions require one C File for all of your new fonts and its called My_Fonts.c and since its not a supported font the Builder needs to simulate it.
 ```
         {
-          "categoryName": "gfx",
+          "categoryName": FONT_SIM,
           "extraIncludes": [
-            "#include <Adafruit_GFX.h>"
+            "#include "\"My_Fonts.c\""
           ],
 ```
-This will cause the code generator to output the `#include <Adafruit_GFX.h>` if a freefont is selected.
+Do Note the need to escape the quote marks.
 
-Just like coding in C or C++ keep your braces `{}` and brackets `[]` balanced and keep note of your commas placements. JSON doesn't give you any error checking feedback.
+This will cause the code generator to output the `#include "My_Fonts.c"` if one of your new fonts is selected during code generation.
 
-The Fonts object holds an array of font definitions.  The fields are:
+Just like coding in C or C++ keep your curly braces `{}` and brackets `[]` balanced and keep note of your commas placements. 
+JSON doesn't give much in the way of error checking feedback.
 
-1.  FontName - refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
-2.  DisplayName - refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
-3.  IncludeFile - on the arduino platform it points to where to find a font, ex: 'Fonts/FreeSansBold12pt7b.h' or NULL
-4.  DefineFile - on linux platform it points to the font, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
-5.  nFontId - GUIslice API parameter ENUM ID to use when referencing this font, Ex: E_FONT_TXT
-6.  eFontRefType - GUIslice API parameter Font reference type (eg. filename or pointer)
-7.  pvFontRef - GUIslice API parameter Reference pointer to identify the font. In the case of SDL mode, it is a filepath to the font file. In the case of Arduino it is a pointer value to the font bitmap array (GFXFont)
-8.  nFontSz - GUIslice API parameter Typeface size to use. For Arduino built-in fonts a number from 1 to 5, AdaFruit's freefonts its always a 1, while in SDL mode its actual size of font.
-9.  LogicalFont - the name java needs to use when accessing this font.
-10. LogicalFontSize - the pre-scaling size to display in the builder.
-11. LogicalFontStyle - the font style, plain, bold, italic, bold+italic
-12. fontRefMode - usually set to "NULL". This is for drivers that need special handling within GUIslice API. 
+The Fonts object holds an array of font definitions. Most of these Fields are required by GUIslice API 
+to use Fonts and therefore we use the same names so you can match them to the required fields. The rest allow 
+the Builder to either give you helpful information within the Font Chooser Dialog or to simply be able to 
+display the font within your UI Elements on the TFT Simulation Panel.
 
-Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced.  I have chosen to use Monospaced to represent Adafruit's built-in fonts which are 5x8 and plain only.
-All fonts you use will be simulated by these built in java fonts. The builder is meant to help you with your UI layout, not be a WYSIWYG editor.
+The fields are:
 
-Adafruit GFX Builtin fonts scales up from 1 to N. As an example scale of 2 gives you a character 10x16.
-I have supported scales of 1 to 5.  You can edit this as you desire.
+1.  FontName - No Default
+    refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
+2.  DisplayName - No Default
+    refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
+3.  IncludeFile - Default: NULL
+    on the arduino platform it points to where to find a font, ex: 'Fonts/FreeSansBold12pt7b.h' or NULL
+4.  DefineFile - Default: NULL
+    On linux platform it points to the font, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
+5.  eFontRefType - Default: GSLC_FONTREF_PTR
+    GUIslice API parameter Font reference type (eg. filename "GSLC_FONTREF_FNAME" or pointer "GSLC_FONTREF_PTR")
+6.  pvFontRef - No default
+    GUIslice API parameter Reference pointer to identify the font. 
+    Example: for GSLC_FONTREF_PTR it's "&display name" like "&FreeMono9pt7b" which must be a 
+    pointer value to the font bitmap array.
+    In the case of SDL mode, it is a filepath to the font file. In the case of Arduino it is 
+     (GFXFont)
+7.  nFontSz - Default: 1
+    GUIslice API parameter Typeface size to use. For Arduino built-in fonts a number from 1 to 5, 
+    Most fonts will set this to 1, while in SDL mode its actual logical size of font.
+8.  LogicalFont - Default: NULL
+    Used only when font type is FONT_SIM. It's the name java needs to use when accessing this font.
+    Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced. 
+    It doesn't have to be a Java builtin font but must be whatever name the operating system uses.
+9.  LogicalFontSize - No Default
+    The size of the Font.
+10. LogicalFontStyle - No Default
+    The font style, PLAIN, BOLD, ITALIC, BOLD+ITALIC
+11. fontRefMode - Default: GSLC_FONTREF_MODE_DEFAULT
+    This is for drivers that need special handling within GUIslice API. 
 
-One thing you should keep in mind is that non-built in fonts take up a fair amount of memory so you should limit your selection to one or two non built-in fonts if your target platform is an Arduino.  
-
-**WARNING!** The only Builder supplied json error checking that exists in the code is to detect duplicate fonts within a single platform so be very careful with any edits.
+If the default value of a font field satisfactory for your font you can simply skip the field.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>

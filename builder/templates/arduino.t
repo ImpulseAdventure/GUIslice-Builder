@@ -162,12 +162,6 @@ $<CALLBACK>
     case $<COM-002>:
       break;
 <STOP>
-<CLICK_EN>
-  gslc_ElemSetClickEn(&m_gui, pElemRef, true);
-<STOP>
-<CLICK_EN_P>
-  // gslc_ElemSetClickEn(); currently not supported by the FLASH _P calls.
-<STOP>
 <COLOR>
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
 <STOP>
@@ -386,25 +380,32 @@ $<CALLBACK>
 	    gslc_PopupHide(&m_gui);
         break;
 <STOP>
-<KEYPAD_CONFIG>
+<KEYPAD_CONFIG_NUM>
   static gslc_tsXKeyPadCfg_Num sCfg = gslc_ElemXKeyPadCfgInit_Num();
-  gslc_ElemXKeyPadCfgSetFloatEn(&sCfg, $<FLOAT_EN>);
-  gslc_ElemXKeyPadCfgSetSignEn(&sCfg, $<SIGN_EN>);
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfg, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
-  gslc_ElemXKeyPadCfgSetRoundEn(&sCfg, $<ROUND_EN>);
+  gslc_ElemXKeyPadCfgSetFloatEn_Num(&sCfg, $<FLOAT_EN>);
+  gslc_ElemXKeyPadCfgSetSignEn_Num(&sCfg, $<SIGN_EN>);
+<STOP>
+<KEYPAD_CONFIG_TXT>
+  static gslc_tsXKeyPadCfg_Alpha sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
+<STOP>
+<KEYPAD_CREATE_NUM>
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Num(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfg);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
-  
 <STOP>
-<KEYPAD_TEXT>
-  static gslc_tsXKeyPadCfg_Alpha sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
-  gslc_ElemXKeyPadCfgSetButtonSz(&sCfgTx, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
-  gslc_ElemXKeyPadCfgSetRoundEn(&sCfgTx, $<ROUND_EN>);
+<KEYPAD_CREATE_TXT>
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Alpha(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
     &$<STORAGE>, $<X>, $<Y>, $<FONT_ID>, &sCfgTx);
   gslc_ElemXKeyPadValSetCb(&m_gui, $<ELEMREF>, &CbKeypad);
-  
+<STOP>
+<KEYPAD_BUTTONGAP>
+  gslc_ElemXKeyPadCfgSetButtonSpace((gslc_tsXKeyPadCfg*)$<CONFIG>, $<GAPX>, $<GAPY>);
+<STOP>
+<KEYPAD_BUTTONSZ>
+  gslc_ElemXKeyPadCfgSetButtonSz((gslc_tsXKeyPadCfg*)$<CONFIG>, $<BUTTONSZ_W>, $<BUTTONSZ_H>);
+<STOP>
+<KEYPAD_ROUNDBUTTONS>
+  gslc_ElemXKeyPadCfgSetRoundEn((gslc_tsXKeyPadCfg*)$<CONFIG>, $<ROUND_EN>);
 <STOP>
 <KEYPAD_ELEM_NUM>
 gslc_tsXKeyPad                  $<STORAGE>;
@@ -800,7 +801,7 @@ $<CALLBACK>
   static char m_sInputText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_sInputText$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,0,0,
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<TXT-212>,$<TXT-212>,
     true,true,true,false,NULL,NULL,&CbBtnCommon,NULL);
 <STOP>
 <TEXT_INPUT_NUM>
@@ -816,8 +817,11 @@ $<CALLBACK>
   static char m_sInputNumber$<COM-018>[$<TXT-205>] = "$<TXT-201>";
   gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_sInputNumber$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,0,0,
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<TXT-212>,$<TXT-212>,
     true,true,true,false,NULL,NULL,&CbBtnCommon,NULL);
+<STOP>
+<TEXT_MARGIN>
+  gslc_ElemSetTxtMargin(&m_gui,pElemRef,$<TXT-212>);
 <STOP>
 <TEXT_UPDATE>
   
@@ -830,9 +834,10 @@ $<CALLBACK>
   
   // Create $<COM-002> modifiable text using flash API
   static char m_sDisplayText$<COM-018>[$<TXT-205>] = "$<TXT-201>";
-  gslc_ElemCreateTxt_P_R(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
+  gslc_ElemCreateTxt_P_R_ext(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     m_sDisplayText$<COM-018>,$<TXT-205>,&m_asFont[$<TXT-211>],
-    $<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<COM-010>,$<COM-011>);
+    $<COL-301>,$<COL-301>,$<COL-302>,$<COL-303>,$<TXT-213>,$<TXT-212>,$<TXT-212>,
+    $<COM-010>,$<COM-011>,false,false,NULL,NULL,NULL,NULL);
 <STOP>
 <TEXT_UTF8>
   gslc_ElemSetTxtEnc(&m_gui,pElemRef,GSLC_TXT_ENC_UTF8);
@@ -921,12 +926,12 @@ bool CbTickScanner(void* pvGui,void* pvScope)
 <STOP>
 <WARNING_COMPOUND>
 #if !(GSLC_FEATURE_COMPOUND)
-  #error "Config: GSLC_FEATURE_COMPOUND required for this program but not enabled. Please update GUIslice/config."
+  #error "Config: GSLC_FEATURE_COMPOUND required for this program but not enabled. Please see: https://github.com/ImpulseAdventure/GUIslice/wiki/Configuring-GUIslice"
 #endif
 <STOP>
 <WARNING_SD>
 #if !(GSLC_SD_EN)
-  #error "Config: GSLC_SD_EN required for this program but not enabled. Please update GUIslice/config/"
+  #error "Config: GSLC_SD_EN required for this program but not enabled. Please see: https://github.com/ImpulseAdventure/GUIslice/wiki/Configuring-GUIslice"
 #endif
 <STOP>
 <END>

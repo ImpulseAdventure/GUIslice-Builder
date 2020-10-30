@@ -49,6 +49,7 @@ public final class TxtButtonCodeBlock implements CodeBlock {
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   private final static String FILL_EN_TEMPLATE       = "<FILL_EN>";
   private final static String FRAME_EN_TEMPLATE      = "<FRAME_EN>";
+  private final static String TEXTMARGIN_TEMPLATE     = "<TEXT_MARGIN>";
   private final static String TEXTCOLOR_TEMPLATE     = "<TEXT_COLOR>";
   private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
   private final static String TXTBUTTON_TEMPLATE     = "<TXTBUTTON>";
@@ -100,6 +101,11 @@ public final class TxtButtonCodeBlock implements CodeBlock {
     String strAlign = m.getAlignment();
     if (!strAlign.equals("GSLC_ALIGN_MID_MID")) {
       template = tm.loadTemplate(ALIGN_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    if (m.getTextMargin() != 0) {
+      template = tm.loadTemplate(TEXTMARGIN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

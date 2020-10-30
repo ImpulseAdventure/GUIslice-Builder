@@ -27,12 +27,12 @@ package builder.widgets;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
+import builder.fonts.FontFactory;
+import builder.fonts.FontTFT;
 import builder.models.TextInputModel;
 
 /**
@@ -70,27 +70,26 @@ public class TextInputWidget extends Widget {
    */
   public void draw(Graphics2D g2d) {
     Rectangle b = getWinBounded();
-    g2d.setColor(((TextInputModel) model).getFillColor());
+    g2d.setColor(m.getFillColor());
     g2d.fillRect(b.x, b.y, b.width, b.height);
-    g2d.setColor(((TextInputModel) model).getFrameColor());
+    g2d.setColor(m.getFrameColor());
     g2d.drawRect(b.x, b.y, b.width, b.height);
-    Font font = ff.getFont(m.getFontDisplayName());
+    FontTFT font = ff.getFont(m.getFontDisplayName());
     if (font != null) {
-      g2d.setColor(((TextInputModel) model).getFrameColor());
+      g2d.setColor(m.getFrameColor());
       g2d.drawRect(b.x, b.y, b.width, b.height);
-      g2d.setColor(m.getTextColor());
       String text = m.getText();
       if (text.isEmpty()) {
         for (int i=0; i<m.getTextStorage(); i++) {
           text = text + "X";
-          Dimension d = ff.measureText(m.getFontDisplayName(), font, text);
+          Dimension d = ff.measureText(b.x,b.y,font, text);
           if (d.width > b.width) {
              text = text.substring(0, text.length() - 1);
              break;
           }
         }
       }
-      ff.alignString(g2d, m.getAlignment(), b, text, font);
+      ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
     } else {
       g2d.setColor(Color.RED);
       g2d.drawRect(b.x, b.y, b.width, b.height);

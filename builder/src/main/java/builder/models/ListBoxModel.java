@@ -38,9 +38,9 @@ import javax.swing.table.TableCellRenderer;
 import builder.codegen.CodeUtils;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.MultiStringsCell.MCDialogType;
 import builder.tables.MultiStringsCell;
@@ -270,7 +270,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }

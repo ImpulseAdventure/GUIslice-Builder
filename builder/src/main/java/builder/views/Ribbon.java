@@ -78,8 +78,6 @@ public class Ribbon extends JRibbonFrame {
   // The listener for ribbon message events */
   private RibbonListener ribbonListener;
   
-  private MsgBoard mb;
-  
   private CommonUtils cu = null;
   
   /** The btn files. */
@@ -143,7 +141,6 @@ public class Ribbon extends JRibbonFrame {
     configureRibbon();
     // create a listener for ribbon message events
     ribbonListener = new RibbonListener();
-    mb = MsgBoard.getInstance();
   }
   
   /**
@@ -213,7 +210,7 @@ public class Ribbon extends JRibbonFrame {
     btn_open.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "open");
+        MsgBoard.sendActionCommand("Ribbon", "open");
       }
     });
 //    btn_open.setToolTipText("Open Project File");
@@ -226,7 +223,7 @@ public class Ribbon extends JRibbonFrame {
     btn_close.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "close");
+        MsgBoard.sendActionCommand("Ribbon", "close");
       }
     });
 //    btn_close.setToolTipText("Close Project File");
@@ -239,7 +236,7 @@ public class Ribbon extends JRibbonFrame {
     btn_save.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "save");
+        MsgBoard.sendActionCommand("Ribbon", "save");
       }
     });
     btn_save.setActionRichTooltip(new RichTooltip(
@@ -254,7 +251,7 @@ public class Ribbon extends JRibbonFrame {
     btn_saveas.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "saveas");
+        MsgBoard.sendActionCommand("Ribbon", "saveas");
       }
     });
     btn_saveas.setActionRichTooltip(new RichTooltip(
@@ -272,7 +269,7 @@ public class Ribbon extends JRibbonFrame {
     btn_undo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "undo");
+        MsgBoard.sendActionCommand("Ribbon", "undo");
       }
     });
     btn_undo.setActionRichTooltip(new RichTooltip(
@@ -290,7 +287,7 @@ public class Ribbon extends JRibbonFrame {
     btn_redo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "redo");
+        MsgBoard.sendActionCommand("Ribbon", "redo");
       }
     });
     btn_redo.setActionRichTooltip(new RichTooltip(
@@ -312,7 +309,7 @@ public class Ribbon extends JRibbonFrame {
     mini_paste.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "paste");
+          MsgBoard.sendActionCommand("Ribbon", "paste");
         }
       });
     this.getRibbon().addTaskbarComponent(mini_paste);
@@ -322,7 +319,7 @@ public class Ribbon extends JRibbonFrame {
     mini_copy.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "copy");
+          MsgBoard.sendActionCommand("Ribbon", "copy");
         }
       });
     mini_copy.setActionRichTooltip(new RichTooltip(
@@ -336,7 +333,7 @@ public class Ribbon extends JRibbonFrame {
     mini_cut.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "cut");
+          MsgBoard.sendActionCommand("Ribbon", "cut");
         }
       });
     mini_cut.setActionRichTooltip(new RichTooltip(
@@ -351,7 +348,7 @@ public class Ribbon extends JRibbonFrame {
       btn_delete.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "Delete");
+        MsgBoard.sendActionCommand("Ribbon", "Delete");
       }
     });
     btn_delete.setActionRichTooltip(new RichTooltip(
@@ -369,7 +366,7 @@ public class Ribbon extends JRibbonFrame {
     mini_grid.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "grid");
+        MsgBoard.sendActionCommand("Ribbon", "grid");
       }
     });
     mini_grid.setActionRichTooltip(new RichTooltip(
@@ -384,7 +381,7 @@ public class Ribbon extends JRibbonFrame {
     mini_zoom_in.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "zoomin");
+        MsgBoard.sendActionCommand("Ribbon", "zoomin");
       }
     });
     mini_zoom_in.setDisabledIcon(
@@ -399,7 +396,7 @@ public class Ribbon extends JRibbonFrame {
     mini_zoom_out.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "zoomout");
+        MsgBoard.sendActionCommand("Ribbon", "zoomout");
       }
     });
     mini_zoom_out.setActionRichTooltip(new RichTooltip(
@@ -422,7 +419,7 @@ public class Ribbon extends JRibbonFrame {
     btn_code.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "code");
+        MsgBoard.sendActionCommand("Ribbon", "code");
       }
     });
     btn_code.setActionRichTooltip(new RichTooltip(
@@ -440,7 +437,7 @@ public class Ribbon extends JRibbonFrame {
     btn_exit.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "exit");
+        MsgBoard.sendActionCommand("Ribbon", "exit");
       }
     });
     btn_exit.setActionRichTooltip(new RichTooltip(
@@ -477,7 +474,7 @@ public class Ribbon extends JRibbonFrame {
     btn_paste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "paste");
+        MsgBoard.sendActionCommand("Ribbon", "paste");
       }
     });
 //    btn_paste.setDisabledIcon(
@@ -490,7 +487,7 @@ public class Ribbon extends JRibbonFrame {
     btn_copy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "copy");
+        MsgBoard.sendActionCommand("Ribbon", "copy");
       }
     });
     btn_copy.setActionRichTooltip(new RichTooltip(
@@ -503,7 +500,7 @@ public class Ribbon extends JRibbonFrame {
     btn_cut.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "cut");
+        MsgBoard.sendActionCommand("Ribbon", "cut");
       }
     });
     btn_cut.setActionRichTooltip(new RichTooltip(
@@ -522,7 +519,7 @@ public class Ribbon extends JRibbonFrame {
     btn_aligntop.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "aligntop");
+        MsgBoard.sendActionCommand("Ribbon", "aligntop");
       }
     });
     btn_aligntop.setDisabledIcon(
@@ -537,7 +534,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignbottom.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignbottom");
+        MsgBoard.sendActionCommand("Ribbon", "alignbottom");
       }
     });
     btn_alignbottom.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_bottom.png"));
@@ -551,7 +548,7 @@ public class Ribbon extends JRibbonFrame {
     btn_aligncenter.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "aligncenter");
+        MsgBoard.sendActionCommand("Ribbon", "aligncenter");
       }
     });
     btn_aligncenter.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_center.png"));
@@ -565,7 +562,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignleft.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignleft");
+        MsgBoard.sendActionCommand("Ribbon", "alignleft");
       }
     });
     btn_alignleft.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_left.png"));
@@ -579,7 +576,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignright.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignright");
+        MsgBoard.sendActionCommand("Ribbon", "alignright");
       }
     });
     btn_alignright.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_right.png"));
@@ -593,7 +590,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignhspace.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignhspacing");
+        MsgBoard.sendActionCommand("Ribbon", "alignhspacing");
       }
     });
     btn_alignhspace.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_hspacing.png"));
@@ -607,7 +604,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignvspace.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignvspacing");
+        MsgBoard.sendActionCommand("Ribbon", "alignvspacing");
       }
     });
     btn_alignvspace.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_vspacing.png"));
@@ -621,7 +618,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignwidth.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignwidth");
+        MsgBoard.sendActionCommand("Ribbon", "alignwidth");
       }
     });
     btn_alignwidth.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_width.png"));
@@ -635,7 +632,7 @@ public class Ribbon extends JRibbonFrame {
     btn_alignheight.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "alignheight");
+        MsgBoard.sendActionCommand("Ribbon", "alignheight");
       }
     });
     btn_alignheight.setDisabledIcon(cu.getResizableIcon("resources/icons/layout/disable_height.png"));
@@ -649,7 +646,7 @@ public class Ribbon extends JRibbonFrame {
     btn_selection.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "selection");
+        MsgBoard.sendActionCommand("Ribbon", "selection");
       }
     });
     band.addCommandButton(btn_selection, TOP);
@@ -659,7 +656,7 @@ public class Ribbon extends JRibbonFrame {
     btn_copy_props.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "copyprops");
+          MsgBoard.sendActionCommand("Ribbon", "copyprops");
         }
       });
     btn_copy_props.setActionRichTooltip(new RichTooltip(
@@ -681,7 +678,7 @@ public class Ribbon extends JRibbonFrame {
     btn_grid.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "grid");
+        MsgBoard.sendActionCommand("Ribbon", "grid");
       }
     });
     band.addCommandButton(btn_grid, TOP);
@@ -691,7 +688,7 @@ public class Ribbon extends JRibbonFrame {
     btn_zoom_in.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "zoomin");
+        MsgBoard.sendActionCommand("Ribbon", "zoomin");
       }
     });
     btn_zoom_in.setDisabledIcon(
@@ -706,7 +703,7 @@ public class Ribbon extends JRibbonFrame {
     btn_zoom_out.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "zoomout");
+        MsgBoard.sendActionCommand("Ribbon", "zoomout");
       }
     });
     btn_zoom_out.setActionRichTooltip(new RichTooltip(
@@ -728,7 +725,7 @@ public class Ribbon extends JRibbonFrame {
     btn_page.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "page");
+        MsgBoard.sendActionCommand("Ribbon", "page");
 			}
 		});
     btn_page.setActionRichTooltip(new RichTooltip(
@@ -741,7 +738,7 @@ public class Ribbon extends JRibbonFrame {
     btn_base_page.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "basepage");
+        MsgBoard.sendActionCommand("Ribbon", "basepage");
 			}
 		});
     btn_base_page.setActionRichTooltip(new RichTooltip(
@@ -754,7 +751,7 @@ public class Ribbon extends JRibbonFrame {
     btn_popup.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "popup");
+        MsgBoard.sendActionCommand("Ribbon", "popup");
 			}
 		});
     btn_popup.setActionRichTooltip(new RichTooltip(
@@ -773,7 +770,7 @@ public class Ribbon extends JRibbonFrame {
     btn_text.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "text");
+        MsgBoard.sendActionCommand("Ribbon", "text");
       }
     });
     btn_text.setActionRichTooltip(new RichTooltip(
@@ -786,7 +783,7 @@ public class Ribbon extends JRibbonFrame {
     btn_txtinput.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "textinput");
+        MsgBoard.sendActionCommand("Ribbon", "textinput");
       }
     });
     btn_txtinput.setActionRichTooltip(new RichTooltip(
@@ -799,7 +796,7 @@ public class Ribbon extends JRibbonFrame {
     btn_numinput.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "numinput");
+        MsgBoard.sendActionCommand("Ribbon", "numinput");
       }
     });
     btn_numinput.setActionRichTooltip(new RichTooltip(
@@ -812,7 +809,7 @@ public class Ribbon extends JRibbonFrame {
       btn_listbox.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "listbox");
+          MsgBoard.sendActionCommand("Ribbon", "listbox");
         }
       });
       RichTooltip tip_listbox = new RichTooltip();
@@ -829,7 +826,7 @@ public class Ribbon extends JRibbonFrame {
     btn_textbox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "textbox");
+        MsgBoard.sendActionCommand("Ribbon", "textbox");
       }
     });
     btn_textbox.setActionRichTooltip(new RichTooltip(
@@ -848,7 +845,7 @@ public class Ribbon extends JRibbonFrame {
       btn_txtbtn.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "textbutton");
+          MsgBoard.sendActionCommand("Ribbon", "textbutton");
         }
       });
       btn_txtbtn.setActionRichTooltip(new RichTooltip(
@@ -861,7 +858,7 @@ public class Ribbon extends JRibbonFrame {
     btn_toggle.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "toggle");
+        MsgBoard.sendActionCommand("Ribbon", "toggle");
       }
     });
     btn_toggle.setActionRichTooltip(new RichTooltip(
@@ -874,7 +871,7 @@ public class Ribbon extends JRibbonFrame {
     btn_checkbox.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "checkbox");
+        MsgBoard.sendActionCommand("Ribbon", "checkbox");
 			}
 		});
     btn_checkbox.setActionRichTooltip(new RichTooltip(
@@ -887,7 +884,7 @@ public class Ribbon extends JRibbonFrame {
     btn_radiobtn.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "radiobutton");
+        MsgBoard.sendActionCommand("Ribbon", "radiobutton");
 			}
 		});
     btn_radiobtn.setActionRichTooltip(new RichTooltip(
@@ -900,7 +897,7 @@ public class Ribbon extends JRibbonFrame {
     btn_imgbtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "imagebutton");
+        MsgBoard.sendActionCommand("Ribbon", "imagebutton");
       }
     });
     btn_imgbtn.setActionRichTooltip(new RichTooltip(
@@ -913,7 +910,7 @@ public class Ribbon extends JRibbonFrame {
     btn_seekbar.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "seekbar");
+        MsgBoard.sendActionCommand("Ribbon", "seekbar");
       }
     });
     btn_seekbar.setActionRichTooltip(new RichTooltip(
@@ -926,7 +923,7 @@ public class Ribbon extends JRibbonFrame {
     btn_spinner.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "spinner");
+        MsgBoard.sendActionCommand("Ribbon", "spinner");
 			}
 		});
     RichTooltip tip_spinner = new RichTooltip();
@@ -943,7 +940,7 @@ public class Ribbon extends JRibbonFrame {
     btn_slider.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "slider");
+        MsgBoard.sendActionCommand("Ribbon", "slider");
       }
     });
     RichTooltip tip_slider = new RichTooltip();
@@ -960,7 +957,7 @@ public class Ribbon extends JRibbonFrame {
       btn_image.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "image");
+          MsgBoard.sendActionCommand("Ribbon", "image");
         }
       });
       btn_image.setActionRichTooltip(new RichTooltip(
@@ -979,7 +976,7 @@ public class Ribbon extends JRibbonFrame {
     btn_ringgauge.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "ringgauge");
+          MsgBoard.sendActionCommand("Ribbon", "ringgauge");
         }
       });
     btn_ringgauge.setActionRichTooltip(new RichTooltip(
@@ -992,7 +989,7 @@ public class Ribbon extends JRibbonFrame {
     btn_progressbar.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "progressbar");
+        MsgBoard.sendActionCommand("Ribbon", "progressbar");
 			}
 		});
     btn_progressbar.setActionRichTooltip(new RichTooltip(
@@ -1005,7 +1002,7 @@ public class Ribbon extends JRibbonFrame {
     btn_radial.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "radial");
+        MsgBoard.sendActionCommand("Ribbon", "radial");
 			}
 		});
     btn_radial.setActionRichTooltip(new RichTooltip(
@@ -1018,7 +1015,7 @@ public class Ribbon extends JRibbonFrame {
     btn_ramp.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "ramp");
+        MsgBoard.sendActionCommand("Ribbon", "ramp");
 			}
 		});
     btn_ramp.setActionRichTooltip(new RichTooltip(
@@ -1037,7 +1034,7 @@ public class Ribbon extends JRibbonFrame {
     btn_box.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "box");
+        MsgBoard.sendActionCommand("Ribbon", "box");
 			}
 		});
     btn_box.setActionRichTooltip(new RichTooltip(
@@ -1050,7 +1047,7 @@ public class Ribbon extends JRibbonFrame {
     btn_line.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "line");
+        MsgBoard.sendActionCommand("Ribbon", "line");
       }
     });
     btn_line.setActionRichTooltip(new RichTooltip(
@@ -1063,7 +1060,7 @@ public class Ribbon extends JRibbonFrame {
       btn_graph.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mb.sendActionCommand("Ribbon", "graph");
+          MsgBoard.sendActionCommand("Ribbon", "graph");
         }
       });
       btn_graph.setActionRichTooltip(new RichTooltip(
@@ -1079,7 +1076,7 @@ public class Ribbon extends JRibbonFrame {
     btn_group.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "group");
+        MsgBoard.sendActionCommand("Ribbon", "group");
       }
     });
     btn_group.setDisabledIcon(
@@ -1092,7 +1089,7 @@ public class Ribbon extends JRibbonFrame {
     btn_circle.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mb.sendActionCommand("Ribbon", "circle");
+        MsgBoard.sendActionCommand("Ribbon", "circle");
       }
     });
     btn_circle.setActionRichTooltip(new RichTooltip(

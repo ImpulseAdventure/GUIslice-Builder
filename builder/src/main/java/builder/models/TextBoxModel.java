@@ -34,10 +34,10 @@ import javax.swing.JTextField;
 
 import builder.codegen.CodeUtils;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
 
 /**
  * The Class TextBoxModel implements the model for the Text Box widget.
@@ -184,7 +184,7 @@ public class TextBoxModel extends WidgetModel {
     
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }

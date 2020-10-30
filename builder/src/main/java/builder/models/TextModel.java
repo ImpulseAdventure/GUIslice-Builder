@@ -27,7 +27,6 @@ package builder.models;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -38,10 +37,11 @@ import javax.swing.table.TableCellEditor;
 
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
+import builder.fonts.FontTFT;
 
 /**
  * The Class TextModel implements the model for the Text widget.
@@ -67,19 +67,21 @@ public class TextModel extends WidgetModel {
   static private final int PROP_UTF8              = 9;
   static private final int PROP_TEXT_SZ           = 10;
   static private final int PROP_TEXT_ALIGN        = 11;
-  static private final int PROP_FILL_EN           = 12;
-  static private final int PROP_FRAME_EN          = 13;
-  static private final int PROP_USE_FLASH         = 14;
-  static private final int PROP_TEXT_COLOR        = 15;
-  static private final int PROP_FRAME_COLOR       = 16;
-  static private final int PROP_FILL_COLOR        = 17;
-  static private final int PROP_SELECTED_COLOR    = 18;
+  static private final int PROP_TEXT_MARGIN       = 12;
+  static private final int PROP_FILL_EN           = 13;
+  static private final int PROP_FRAME_EN          = 14;
+  static private final int PROP_USE_FLASH         = 15;
+  static private final int PROP_TEXT_COLOR        = 16;
+  static private final int PROP_FRAME_COLOR       = 17;
+  static private final int PROP_FILL_COLOR        = 18;
+  static private final int PROP_SELECTED_COLOR    = 19;
 
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
   static public  final String  DEF_TEXT_ALIGN        = ALIGN_LEFT;
+  static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(0);
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
@@ -134,7 +136,7 @@ public class TextModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TEXT;
-    data = new Object[19][5];
+    data = new Object[20][5];
 
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -143,6 +145,7 @@ public class TextModel extends WidgetModel {
     initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
     initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"External Storage Size",DEF_TEXT_SZ);
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
+    initProp(PROP_TEXT_MARGIN, Integer.class, "TXT-212", Boolean.FALSE,"Text Margin",DEF_TEXT_MARGIN);
     initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
 
@@ -182,6 +185,12 @@ public class TextModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row == PROP_X) {
+      calcSizes(true);
+    } 
+    if (row == PROP_Y) {
+      calcSizes(true);
+    } 
     if (row == PROP_TEXT) {
       if (getTextStorage() == 0)
         calcSizes(true);
@@ -189,6 +198,9 @@ public class TextModel extends WidgetModel {
     if (row == PROP_FONT) {
       calcSizes(true);
     } 
+    if (row == PROP_TEXT_ALIGN) {
+      calcSizes(true);
+    }
     if (row == PROP_TEXT_SZ) {
       if (getTextStorage() > 0) {
         if (getElementRef().isEmpty()) {
@@ -200,7 +212,7 @@ public class TextModel extends WidgetModel {
     }
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }
@@ -217,6 +229,16 @@ public class TextModel extends WidgetModel {
     data[PROP_FONT][PROP_VAL_READONLY] = true;
     data[PROP_FONT][PROP_VAL_VALUE] = "";
   }
+  
+  /**
+   * Gets the text margin.
+   *
+   * @return the text margin
+   */
+  public int getTextMargin() {
+    return (((Integer) (data[PROP_TEXT_MARGIN][PROP_VAL_VALUE])).intValue());
+  }
+
   /**
    * Use Flash API.
    *
@@ -453,7 +475,7 @@ public class TextModel extends WidgetModel {
         fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
       }
     }
-    Font font = ff.getFont(item.getDisplayName());
+    FontTFT font = ff.getFont(item.getDisplayName());
     String text = getText();
     if (getTextStorage() > 0) {
       text = "";
@@ -467,7 +489,7 @@ public class TextModel extends WidgetModel {
     // calculate the sizes of our display text
     if (fireUpdates) {
       // calculate the real sizes of our display text
-      Dimension nChSz = ff.measureText(getFontDisplayName(), font, text);
+      Dimension nChSz = ff.measureText(getX(),getY(),font, text);
       setWidth(nChSz.width);
       setHeight(nChSz.height);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);

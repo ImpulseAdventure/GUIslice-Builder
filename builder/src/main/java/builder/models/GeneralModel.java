@@ -36,9 +36,9 @@ import javax.swing.table.TableCellEditor;
 import builder.Builder;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontPlatform;
 import builder.common.ThemeInfo;
+import builder.fonts.FontFactory;
+import builder.fonts.FontPlatform;
 
 /**
  * The Class GeneralModel implements the model for the builder.

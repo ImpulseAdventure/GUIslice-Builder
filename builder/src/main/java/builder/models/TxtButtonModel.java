@@ -35,10 +35,10 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import builder.common.EnumFactory;
-import builder.common.FontFactory;
-import builder.common.FontItem;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.fonts.FontFactory;
+import builder.fonts.FontItem;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -60,23 +60,25 @@ public class TxtButtonModel extends WidgetModel {
   static private final int PROP_FRAME_EN          = 12;
   static private final int PROP_TEXT_SZ           = 13;
   static private final int PROP_TEXT_ALIGN        = 14;
-  static private final int PROP_JUMP_PAGE         = 15;
-  static private final int PROP_POPUP_PAGE        = 16;
-  static private final int PROP_POPUP_HIDE        = 17;
-  static private final int PROP_USE_FLASH         = 18;
-  static private final int PROP_TEXT_COLOR        = 19;
-  static private final int PROP_FRAME_COLOR       = 20;
-  static private final int PROP_FILL_COLOR        = 21;
-  static private final int PROP_SELECTED_COLOR    = 22;
+  static private final int PROP_TEXT_MARGIN       = 15;
+  static private final int PROP_JUMP_PAGE         = 16;
+  static private final int PROP_POPUP_PAGE        = 17;
+  static private final int PROP_POPUP_HIDE        = 18;
+  static private final int PROP_USE_FLASH         = 19;
+  static private final int PROP_TEXT_COLOR        = 20;
+  static private final int PROP_FRAME_COLOR       = 21;
+  static private final int PROP_FILL_COLOR        = 22;
+  static private final int PROP_SELECTED_COLOR    = 23;
   
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
-  static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
+  static public  final Boolean DEF_FRAME_EN          = Boolean.TRUE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
   static public  final String  DEF_TEXT_ALIGN        = TextModel.ALIGN_CENTER;
+  static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(0);
   static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_TEXT_COLOR        = Color.WHITE;
@@ -125,7 +127,7 @@ public class TxtButtonModel extends WidgetModel {
   {
     widgetType = EnumFactory.TEXTBUTTON;
     
-    data = new Object[23][5];
+    data = new Object[24][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -138,6 +140,7 @@ public class TxtButtonModel extends WidgetModel {
     initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
     initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"External Storage Size",DEF_TEXT_SZ);
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
+    initProp(PROP_TEXT_MARGIN, Integer.class, "TXT-212", Boolean.FALSE,"Text Margin",DEF_TEXT_MARGIN);
     
     initProp(PROP_JUMP_PAGE, String.class, "TBNT-101", Boolean.FALSE,"Jump Page ENUM","");
     initProp(PROP_POPUP_PAGE, String.class, "TBTN-104", Boolean.TRUE,"Popup Page Enum","");
@@ -252,11 +255,20 @@ public class TxtButtonModel extends WidgetModel {
     
     if (bSendEvents) {
       if (row == PROP_ENUM) {
-        MsgBoard.getInstance().sendEnumChange(getKey(), getKey(), getEnum());
+        MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
       } else {
         Controller.sendRepaint();
       }
     } 
+  }
+
+  /**
+   * Gets the text margin.
+   *
+   * @return the text margin
+   */
+  public int getTextMargin() {
+    return (((Integer) (data[PROP_TEXT_MARGIN][PROP_VAL_VALUE])).intValue());
   }
 
   /**

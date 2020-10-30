@@ -33,9 +33,13 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.io.BufferedReader;
-import java.io.Reader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Tokenizer is a class for reading an input file or (string for testing) and
@@ -149,16 +153,29 @@ public class Tokenizer {
     ignoringString = "";
     ignoring = Pattern.compile(ignoringString);
     keywordType = -1;
+    inFile = null;
   }
 
+  public void close() {
+    if (inFile != null)
+      try {
+        inFile.close();
+      } catch (IOException e) {
+      }
+    inFile = null;
+  }
   /**
    * Specify the file to be used as token source.
    * 
    * @param file
    *          the input file
+   * @throws FileNotFoundException 
+   * @throws UnsupportedEncodingException 
    */
-  public void setSource(Reader file) {
-    inFile = new BufferedReader(file);
+  public void setSource(File file) throws UnsupportedEncodingException, FileNotFoundException {
+    inFile = new BufferedReader(
+        new InputStreamReader(
+            new FileInputStream(file), "UTF8"));
     token = new Token(-1, null, -1);
     lineCount = 0;
     line = "";
@@ -271,6 +288,7 @@ public class Tokenizer {
           if (line == null) { // EOF reached
             token = new Token(0, null, lineCount);
             inFile.close();
+            inFile = null;
             return;
           }
           lineCount++;
@@ -312,19 +330,15 @@ public class Tokenizer {
    *
    * @return a Token object
    */
-  public Token nextToken() {
-    try {
-      // don't go pass EOF
-      if (token.getType() != 0) {
-        if (!bRepeatToken) {
-          advance();
-        }
-        bRepeatToken=false;
-      } else {
-        throw new TokenizerException("read pass EOF");
+  public Token nextToken() throws TokenizerException {
+    // don't go pass EOF
+    if (token.getType() != 0) {
+      if (!bRepeatToken) {
+        advance();
       }
-    } catch(TokenizerException e) {
-      e.printStackTrace();
+      bRepeatToken=false;
+    } else {
+      throw new TokenizerException("read pass EOF");
     }
     return token;
   }

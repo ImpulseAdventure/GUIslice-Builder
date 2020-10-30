@@ -94,7 +94,7 @@ public class PageModel extends WidgetModel {
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
     if (bSendEvents && row == PROP_ENUM) {
-      MsgBoard.getInstance().sendEvent(getKey(), MsgEvent.PAGE_ENUM_CHANGE, getKey(), getEnum());
+      MsgBoard.sendEvent(getKey(), MsgEvent.PAGE_ENUM_CHANGE, getKey(), getEnum());
     }
   }
 

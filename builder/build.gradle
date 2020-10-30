@@ -112,8 +112,8 @@ task copyLinuxResToLinux(type: Copy) {
 task copyFontsToLinux(type: Copy) {
   dependsOn copyInstallScriptToLinux
   description = "copy font resources to linux temp folder"
-    from "${projectDir}/gfx_fonts"
-    into "${buildDir}/tmp/linux/GUIsliceBuilder/gfx_fonts"
+    from "${projectDir}/fonts"
+    into "${buildDir}/tmp/linux/GUIsliceBuilder/fonts"
 }
 
 task copyTemplatesToLinux(type: Copy) {
@@ -162,8 +162,8 @@ task copyArduinoResToMacOS(type: Copy) {
 task copyFontsToMacOS(type: Copy) {
   dependsOn copyMacOSDir
   description = "copy font resources to macApp temp folder"
-    from "${projectDir}/gfx_fonts"
-    into "${buildDir}/tmp/macApp/GUIsliceBuilder/gfx_fonts"
+    from "${projectDir}/fonts"
+    into "${buildDir}/tmp/macApp/GUIsliceBuilder/fonts"
 }
 
 task copyLinuxResToMacOS(type: Copy) {

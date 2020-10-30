@@ -155,8 +155,6 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The inverse AffineTransform at. */
   public static AffineTransform inv_at;
   
-  MsgBoard msg = null;
-  
   private String[] commands = {
                                   "UP",
                                   "DOWN",
@@ -187,7 +185,6 @@ public class PagePane extends JPanel implements iSubscriber {
     ribbon = Ribbon.getInstance();
     pm = Controller.getProjectModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
-    msg = MsgBoard.getInstance();
     model = new PageModel();
     mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
     dragPt = mousePt;
@@ -525,7 +522,7 @@ public class PagePane extends JPanel implements iSubscriber {
       if (selectedCnt > 0) selectedCnt--;
     }
     if (selectedCnt == 0) {
-      msg.sendEvent(getKey(),MsgEvent.OBJECT_UNSELECT_PAGEPANE,"",getKey());
+      MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_UNSELECT_PAGEPANE,"",getKey());
     }
   }
 
@@ -618,7 +615,7 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     TreeView.getInstance().delWidget(getKey(), w.getKey());
     repaint();
-     msg.sendEvent(getKey(),MsgEvent.WIDGET_DELETE, w.getKey(), getKey());
+     MsgBoard.sendEvent(getKey(),MsgEvent.WIDGET_DELETE, w.getKey(), getKey());
   }
 
   /**
@@ -640,7 +637,7 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     TreeView.getInstance().delWidget(getKey(), m.getKey());
     repaint();
-    msg.sendEvent(getKey(),MsgEvent.WIDGET_DELETE, m.getKey(), getKey());
+    MsgBoard.sendEvent(getKey(),MsgEvent.WIDGET_DELETE, m.getKey(), getKey());
   }
 
   /**
@@ -688,7 +685,7 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     }
     if (first != null) { // send off a new selected message
-      msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
+      MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
           first.getKey(), getKey());
     }
   }
@@ -769,7 +766,7 @@ public class PagePane extends JPanel implements iSubscriber {
   ev.message = w.getModel().getKey();
   ev.xdata = getKey();
   ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-  msg.publish(ev, getKey());
+  MsgBoard.publish(ev, getKey());
   repaint();
 }
 
@@ -818,13 +815,13 @@ public class PagePane extends JPanel implements iSubscriber {
             List<Widget> list = getSelectedList();
             if (list.size() > 0) {
               Widget selected = list.get(0);
-              msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
+              MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
                   selected.getModel().getKey(),
                   getKey());
             }
           } else {
             selectWidget(w);
-            msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
+            MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, 
                 w.getModel().getKey(),
                 getKey());
           }
@@ -836,7 +833,7 @@ public class PagePane extends JPanel implements iSubscriber {
         // Single Left-click + Shift means to select under cursor
         if (w != null) {
           selectWidget(w);
-          msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
+          MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
               w.getModel().getKey(),
               getKey());
           e.getComponent().repaint();
@@ -847,12 +844,12 @@ public class PagePane extends JPanel implements iSubscriber {
       selectNone();
       if (w == null) {
         ribbon.setEditButtons(selectedGroupCnt);
-        msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
+        MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
             getKey(), "");
       } else {
 //        System.out.println("selectWidget: " + w.getEnum());
         selectWidget(w);
-        msg.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
+        MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE,
             w.getModel().getKey(), getKey());
         e.getComponent().repaint();
       }
@@ -991,9 +988,27 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   public void updateEvent(MsgEvent e) {
-    if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
-//      Builder.logger.debug("PagePane " + getEnum() + " recv: " + e.toString());
+//  System.out.println("PagePane: " + e.toString());
+    if (e.code == MsgEvent.WIDGET_REPAINT) {
+      Builder.logger.debug("PagePane: " + e.toString());
+      Widget w = findWidget(e.message);
+      if (w != null) {
+        repaint();
+      }
+    } else if (e.code == MsgEvent.OBJECT_SELECTED_TREEVIEW && 
+               e.xdata.equals(getKey())) {
+      Builder.logger.debug("PagePane: " + e.toString());
       selectNone();
+      Widget w = findWidget(e.message);
+      if (w != null) {
+        selectWidget(w);
+        repaint();
+      }
+    } else if (e.code == MsgEvent.OBJECT_UNSELECT_TREEVIEW) {
+      Builder.logger.debug("PagePane: " + e.toString());
+      selectNone();
+      repaint();
+    } else if (e.code == MsgEvent.CANVAS_MODEL_CHANGE) {
       repaint();
     }
   }
@@ -1089,7 +1104,7 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void setPageType(String pageType) {
     model.setType(pageType);
-    msg.subscribe(this, model.getKey());
+    MsgBoard.subscribe(this, model.getKey());
     if (pageType.equals(EnumFactory.PROJECT)  ||
         pageType.equals(EnumFactory.BASEPAGE) ||
         pageType.equals(EnumFactory.POPUP)) {

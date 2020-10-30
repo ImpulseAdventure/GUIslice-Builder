@@ -47,11 +47,11 @@ public final class NumberInputCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
   private final static String ALIGN_TEMPLATE         = "<TEXTALIGN>";
-  private final static String CLICK_EN_TEMPLATE      = "<CLICK_EN>";
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   private final static String FILL_EN_TEMPLATE       = "<FILL_EN>";
   private final static String FRAME_EN_TEMPLATE      = "<INPUTFRAME_EN>";
   private final static String TEXTCOLOR_TEMPLATE     = "<TEXT_COLOR>";
+  private final static String TEXTMARGIN_TEMPLATE     = "<TEXT_MARGIN>";
   private final static String TEXT_INPUT_NUM_TEMPLATE = "<TEXT_INPUT_NUM>";
   private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
   private final static String TOUCH_EN_TEMPLATE      = "<TOUCH_EN>";
@@ -98,7 +98,11 @@ public final class NumberInputCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    
+    if (m.getTextMargin() != 0) {
+      template = tm.loadTemplate(TEXTMARGIN_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
     if (!m.getTextColor().equals(NumberInputModel.DEF_TEXT_COLOR)) {
       template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
@@ -119,9 +123,6 @@ public final class NumberInputCodeBlock implements CodeBlock {
     }
 
     template = tm.loadTemplate(FRAME_EN_TEMPLATE);
-    tm.codeWriter(sBd, template);
-    
-    template = tm.loadTemplate(CLICK_EN_TEMPLATE);
     tm.codeWriter(sBd, template);
     
     template = tm.loadTemplate(TOUCH_EN_TEMPLATE);

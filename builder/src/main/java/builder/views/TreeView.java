@@ -119,9 +119,6 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   /** The root object */
   private TreeItem rootItem;
   
-  /** The MsgBoard instance */
-  private MsgBoard mb = null;
-
   /**
    * Gets the single instance of TreeView.
    *
@@ -138,8 +135,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * Instantiates a new tree view.
    */
   public TreeView() {
-    mb = MsgBoard.getInstance();
-    mb.subscribe(this, "TreeView");
+    MsgBoard.subscribe(this, "TreeView");
     initUI();
   }
   
@@ -185,7 +181,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
             selectWidget = widget;
             TreePath parentPath = e.getPath().getParentPath();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-            mb.sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
+            MsgBoard.sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
                 selectWidget.getKey(),
                 ((TreeItem) parentNode.getUserObject()).getKey());
           }
@@ -229,7 +225,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       if(row==-1) { //When user clicks on the "empty surface"
         tree.clearSelection();
         selectWidget= null;
-        mb.sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
+        MsgBoard.sendEvent("TreeView",MsgEvent.OBJECT_UNSELECT_TREEVIEW,
             "", ((TreeItem)currentPage.getUserObject()).getKey());
       }
     }
@@ -857,7 +853,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
           ev.xdata = ((TreeItem) parentNode.getUserObject()).getKey();
           ev.fromIdx = fromIndex;
           ev.toIdx = toRow;
-          mb.publish(ev, "TreeView");
+          MsgBoard.publish(ev, "TreeView");
           Builder.logger.debug("TV-Drag success: " +
               ((TreeItem) parentNode.getUserObject()).getKey() +
               " widget: " + item.toDebugString() +
@@ -911,6 +907,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   
   @Override
   public void updateEvent(MsgEvent e) {
+//  System.out.println("TreeView: " + e.toString());
     if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE ||
         e.code == MsgEvent.PAGE_TAB_CHANGE) {
       Builder.logger.debug("TreeView recv: " + e.toString());

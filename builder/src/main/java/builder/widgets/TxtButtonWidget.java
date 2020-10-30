@@ -26,12 +26,12 @@
 package builder.widgets;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
-import builder.common.FontFactory;
+import builder.fonts.FontFactory;
+import builder.fonts.FontTFT;
 import builder.models.TxtButtonModel;
 import builder.prefs.TxtButtonEditor;
 
@@ -69,20 +69,24 @@ public class TxtButtonWidget extends Widget {
    * @see builder.widgets.Widget#draw(java.awt.Graphics2D)
    */
   public void draw(Graphics2D g2d) {
-    Font font = null;
+    FontTFT font = null;
     Rectangle b = getWinBounded();
     if (bSelected) {
       g2d.setColor(m.getSelectedColor());
-      if (m.isRoundedEn())
-        g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
-      else
-        g2d.fillRect(b.x, b.y, b.width, b.height);
+      if (m.isFillEnabled()) {
+        if (m.isRoundedEn())
+          g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
+        else
+          g2d.fillRect(b.x, b.y, b.width, b.height);
+      }
     } else {
-      g2d.setColor(m.getFillColor());
-      if (m.isRoundedEn())
-        g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
-      else
-        g2d.fillRect(b.x, b.y, b.width, b.height);
+      if (m.isFillEnabled()) {
+        g2d.setColor(m.getFillColor());
+        if (m.isRoundedEn())
+          g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
+        else
+          g2d.fillRect(b.x, b.y, b.width, b.height);
+      }
     }
     String text = m.getText();
     if (text.isEmpty()) {
@@ -98,8 +102,11 @@ public class TxtButtonWidget extends Widget {
           g2d.drawRect(b.x, b.y, b.width, b.height);
         }
       }
-      g2d.setColor(m.getTextColor());
-      ff.alignString(g2d, m.getAlignment(), b, text, font);
+      if (m.isFillEnabled()) {
+        ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+      } else {
+        ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getTextColor(), m.getTextMargin());
+      }
     } else {
       g2d.setColor(Color.RED);
       if (m.isRoundedEn()) {

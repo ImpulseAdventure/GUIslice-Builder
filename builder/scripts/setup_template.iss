@@ -60,7 +60,7 @@ Name: "{app}\\logs"; Permissions: everyone-full
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\GUIslice.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\guislicebuilder.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\lib\\*"; DestDir: "{app}\\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\\tmp\\windows\\GUIsliceBuilder\\gfx_fonts\\*"; DestDir: "{app}\\gfx_fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\tmp\\windows\\GUIsliceBuilder\\fonts\\*"; DestDir: "{app}\\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\..\\templates\\*"; DestDir: "{app}\\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\..\\arduino_res\\*"; DestDir: "{app}\\arduino_res"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\..\\linux_res\\*"; DestDir: "{app}\\linux_res"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -77,7 +77,7 @@ Filename: "{app}\\GUIslice.bat"; Description: "{cm:LaunchProgram,GUIsliceBuilder
 ; set JAVA_HOME
 Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName:"JAVA_HOME"; ValueData:"{code:GetJavaHome}"; Flags: preservestringtype
 ; set PROJECT DIRECTORY
-Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general-13"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
+Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general-16"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
 
 [Code]
 var
