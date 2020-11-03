@@ -65,6 +65,8 @@ public abstract class FontTFT {
   public static final int CLOSE_BRACE             = 8;
   public static final int COMMA                   = 9;
   public static final int SEMICOLON               = 10;
+  public static final int COMMENT_START           = 11;
+  public static final int COMMENT_END             = 12;
   public static final int SPECIALCHAR             = 99;
 
   /** The Tokenizer. */
@@ -89,10 +91,12 @@ public abstract class FontTFT {
       tokenizer.add("[a-zA-Z][a-zA-Z0-9_]*", WORD);
       tokenizer.add("-?[0-9]+", INTEGER);
 //      tokenizer.add("\\,", COMMA);
+      tokenizer.add("/\\*",COMMENT_START);
+      tokenizer.add("\\*/",COMMENT_END);
       tokenizer.add("\\[", OPEN_SQBRACKET);
       tokenizer.add("\\{", OPEN_BRACE);
 //      tokenizer.add("\\{", CLOSE_SQBRACKET);
-//      tokenizer.add("\\}", CLOSE_BRACE);
+      tokenizer.add("\\}", CLOSE_BRACE);
       tokenizer.add("\\;", SEMICOLON);
       tokenizer.add(".", SPECIALCHAR);
     }
@@ -107,23 +111,7 @@ public abstract class FontTFT {
    * @return true if successful
    * @throws FontException
    */
-  public abstract boolean create(String fileName, String fontName) throws FontException;
-
-  /**
-   * create
-   * creates a new font of type FONT_SIM
-   * 
-   * We have to take into account the target display screen's DPI.
-   * Adafruits's  GFX fonts are hardcoded to a DPI of 141
-   * while TrueType fonts are 72
-   *  
-   * @param fontName
-   * @param dpi
-   * @param size
-   * @param style
-   * @return
-   */
-  public abstract boolean create(String fontName, int dpi, int size, String style);
+  public abstract boolean create(String fileName, String fontName, int size, String style) throws FontException;
 
   /**
    * setTextSize
@@ -138,22 +126,19 @@ public abstract class FontTFT {
   }
 
   /**
-   * setDPI
-   * 
-   * We have to take into account the target display screen's DPI.
-   * Adafruits's 2.8 screen is about DPI of 141 and GFX fonts are
-   * hardcoded to this number. 
-   * Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
-   * 
-   * This routine is only valid for the set of FONT_SIM fonts and must be called before
-   * createFont()
-   * 
-   * @param dpi
+   * Gets the logical size.
+   *
+   * @return the logical size
    */
-  public void setDPI(int dpi) {
-    // Must be overridden to support
-  }
-
+  public abstract int getLogicalSize();
+  
+  /**
+   * Gets the logical style.
+   *
+   * @return the logical style
+   */
+  public abstract String getLogicalStyle();
+  
   /**
    * Determine size of a string with current font/size. 
    * Pass string and a cursor position, returns UL corner and W,H.

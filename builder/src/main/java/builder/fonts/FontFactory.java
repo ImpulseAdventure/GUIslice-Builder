@@ -234,6 +234,34 @@ public class FontFactory {
   }
   
   /**
+   * Gets the font display name.
+   *
+   * @param fontEnum
+   *          the font enum
+   * @return the font display name or null on failure
+   */
+  public FontTFT getFontbySizeStyle(String family, int size, String style) {
+    List<FontItem> list = getFontList();
+    FontTFT holdFont = null;
+    int fontMax = 0;
+    int fontSz = 0;
+    // this isn't called often enough to warrant anything but brute force search
+    for (FontItem item : list) {
+      if (item.getFamilyName().equals(family) && item.getLogicalStyle().equals(style)) {
+        fontSz = item.getLogicalSizeAsInt();
+        if (fontSz == size) {
+          holdFont = item.getFont();
+          break;
+        } else if (fontSz < size && fontSz > fontMax) {
+          fontMax = fontSz;
+          holdFont = item.getFont();
+        }
+      }
+    }
+    return holdFont;
+  }
+  
+  /**
    * This method gets a Font's item with a Display name using 
    * the String values displayed to users of GUIsliceBuider 
    * by our Font Chooser.
@@ -251,7 +279,7 @@ public class FontFactory {
   public FontItem getFontItem(String fontName, String fontSize, String fontStyle) {
     List<FontItem> list = getFontList();
     for (FontItem item : list) {
-      if (item.getName().equals(fontName)         &&
+      if (item.getFamilyName().equals(fontName)         &&
           item.getLogicalSize().equals(fontSize)  &&
           item.getLogicalStyle().equals(fontStyle)) {
         return item;
@@ -308,6 +336,32 @@ public class FontFactory {
     return new Dimension(metrics.w, metrics.h);
   }
   
+  /**
+   * measureText() - Give back the size of our text.
+   *
+   * @param s
+   *          the s
+   * @param font
+   *          the font
+   * @return the <code>dimension</code> object
+   */
+  public Rectangle getTextBounds(int x, int y, FontTFT font, String s) {
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(s, 0, 0);
+    // calculate the size of a box to hold the text with some padding.
+    metrics.w+=2;
+    metrics.h+=2;
+    // clipping
+    if (metrics.w+x > Builder.CANVAS_WIDTH) {
+      metrics.w = metrics.w - (metrics.w + x - Builder.CANVAS_WIDTH);
+    }
+    if (metrics.h+y > Builder.CANVAS_HEIGHT) {
+      metrics.h = metrics.h - (metrics.h - y - Builder.CANVAS_HEIGHT);
+    }
+
+    return new Rectangle(x, y, metrics.w, metrics.h);
+  }
+
   /**
    * drawText
    * 

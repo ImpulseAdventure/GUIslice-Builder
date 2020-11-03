@@ -161,13 +161,19 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
                 item.setIncludeFile(includeFile);
                 String fontRef = "&" + displayName;
                 item.setFontRef(fontRef);
-                Matcher m = numPattern.matcher(displayName);
-                if (m.find()) {
-                  item.setLogicalSize(m.group());
-                } else {
+                item.setFontRefMode("FONTREF_MODE_1");
+
+                n = name.indexOf("_");
+                Matcher m = numPattern.matcher(displayName.substring(n));
+                String size = null;
+                while (m.find()) {
+                  size = m.group(); // we want the last number
+                } 
+                if (size == null) {
                   Builder.logger.error("unable to parse font: " + file);
                   return CONTINUE;
                 }
+                item.setLogicalSize(size);
                 item.setLogicalStyle(logicalStyle);
                 item.setPlatform(p);
                 item.setCategory(c);
