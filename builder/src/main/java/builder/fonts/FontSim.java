@@ -46,6 +46,11 @@ import java.awt.Font;
  */
 public class FontSim extends FontTFT {
   
+  private int logicalSize;
+  private String logicalStyle;
+
+  private int dpi;
+  
   /** The java font. */
   private Font font;
   
@@ -61,9 +66,11 @@ public class FontSim extends FontTFT {
    * @see builder.fonts.FontTFT#create(java.lang.String, int, int, java.lang.String)
    */
   @Override
-  public boolean create(String fontName, int dpi, int size, String style) {
+  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
     this.fontName = fontName;
     this.fontType = FONT_SIM;
+    this.logicalSize = size;
+    this.logicalStyle = style;
     this.text_size = size;
 
     // Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
@@ -148,11 +155,6 @@ public class FontSim extends FontTFT {
     return metrics;
   }
 
-  @Override
-  public boolean create(String fileName, String fontName) throws FontException {
-    return false;
-  }
-
   /**
    * drawImage
    *
@@ -175,4 +177,42 @@ public class FontSim extends FontTFT {
     g2d.dispose();
     return image;
   }
+  
+  /**
+   * setDPI
+   * 
+   * We have to take into account the target display screen's DPI.
+   * Adafruits's 2.8 screen is about DPI of 141 and GFX fonts are
+   * hardcoded to this number. 
+   * Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
+   * 
+   * This routine is only valid for the set of FONT_SIM fonts and must be called before
+   * createFont()
+   * 
+   * @param dpi
+   */
+  public void setDPI(int dpi) {
+    this.dpi = dpi;
+  }
+  
+  /**
+   * Gets the logical size.
+   *
+   * @return the logical size
+   */
+  @Override
+  public int getLogicalSize() {
+    return logicalSize;
+  }
+  
+  /**
+   * Gets the logical style.
+   *
+   * @return the logical style
+   */
+  @Override
+  public String getLogicalStyle() {
+    return logicalStyle;
+  }
+
 }

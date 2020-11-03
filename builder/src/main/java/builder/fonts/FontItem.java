@@ -220,21 +220,22 @@ public class FontItem {
 */
       case FontTFT.FONT_GFX:
         font = new FontGFX();
-        ret = font.create(fileName, fontRef);
+        ret = font.create(fileName, fontRef, getLogicalSizeAsInt(), logicalStyle);
         break;
       case FontTFT.FONT_GLCD:
         font = new FontGlcd();
-        ret = font.create(fileName, displayName);
+        ret = font.create(fileName, displayName, getLogicalSizeAsInt(), logicalStyle);
         if (getLogicalSizeAsInt() > 0)
           font.setTextSize(getLogicalSizeAsInt()/5);
         break;
       case FontTFT.FONT_SIM:
         font = new FontSim();
-        ret = font.create(logicalName, getPlatform().getDPI(), getLogicalSizeAsInt(), logicalStyle);
+        ((FontSim)font).setDPI(platform.getDPI());
+        ret = font.create(null, logicalName, getLogicalSizeAsInt(), logicalStyle);
         break;
       case FontTFT.FONT_T3:
         font = new FontT3();
-        ret = font.create(fileName, fontRef);
+        ret = font.create(fileName, fontRef, getLogicalSizeAsInt(), logicalStyle);
         break;
       default:
         break;
@@ -250,7 +251,7 @@ public class FontItem {
    *
    * @return the name
    */
-  public String getName() {
+  public String getFamilyName() {
     return familyName;
   }
   

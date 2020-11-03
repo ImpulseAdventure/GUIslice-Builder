@@ -43,6 +43,9 @@ import builder.parser.TokenizerException;
 
 public class FontGlcd extends FontTFT {
   
+  private int logicalSize;
+  private String logicalStyle;
+
   // Font variables
   private byte[] bitmap;   ///< Character bitmaps
 
@@ -83,11 +86,18 @@ public class FontGlcd extends FontTFT {
     this.textsize_y = size;
   }
 
+  /**
+   * create
+   *
+   * @see builder.fonts.FontTFT#create(java.lang.String, java.lang.String)
+   */
   @Override
-  public boolean create(String fileName, String fontName) throws FontException {
+  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
     this.fontFileName = fileName;
     this.fontName = fontName;
     this.fontType = FONT_GLCD;
+    this.logicalSize = size;
+    this.logicalStyle = style;
     this.bWrap = true;
     this.textsize_x = 1;
     this.textsize_y = 1;
@@ -404,10 +414,24 @@ public class FontGlcd extends FontTFT {
     }
   }
 
+  /**
+   * Gets the logical size.
+   *
+   * @return the logical size
+   */
   @Override
-  public boolean create(String fontName, int dpi, int size, String style) {
-    // TODO Auto-generated method stub
-    return false;
+  public int getLogicalSize() {
+    return logicalSize;
+  }
+  
+  /**
+   * Gets the logical style.
+   *
+   * @return the logical style
+   */
+  @Override
+  public String getLogicalStyle() {
+    return logicalStyle;
   }
 
 }

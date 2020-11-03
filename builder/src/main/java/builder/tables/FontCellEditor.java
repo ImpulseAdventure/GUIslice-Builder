@@ -28,7 +28,7 @@ package builder.tables;
 import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
 
-import builder.views.FontChooser;
+import builder.fonts.FontChooser;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;

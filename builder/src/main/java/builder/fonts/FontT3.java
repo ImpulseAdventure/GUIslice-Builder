@@ -43,6 +43,10 @@ import builder.parser.TokenizerException;
 
 public class FontT3 extends FontTFT {
   
+  // Font Parameters
+  private int logicalSize;
+  private String logicalStyle;
+  
   // Font variables
   private byte[] font_index; 
   private byte[] font_data;
@@ -82,10 +86,17 @@ public class FontT3 extends FontTFT {
   public void setTextSize(int size) {
   }
 
+  /**
+   * create
+   *
+   * @see builder.fonts.FontTFT#create(java.lang.String, java.lang.String)
+   */
   @Override
-  public boolean create(String fileName, String fontName) throws FontException {
+  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
     this.fontFileName = fileName;
     this.fontName = fontName;
+    this.logicalSize = size;
+    this.logicalStyle = style;
     this.fontType = FONT_T3;
     return parseT3Font();
   }
@@ -216,6 +227,7 @@ public class FontT3 extends FontTFT {
         continue;
       }
       chSz = charBounds(ch);  // modifies class variables for sizing
+      if (chSz == null) continue; //skip undefined chacters
       if (chSz.height > h) h = chSz.height;
       w += chSz.width;
     }
@@ -262,21 +274,21 @@ public class FontT3 extends FontTFT {
 
     if (encoding != 0) return null;
     
-    //uint32_t width = fetchbits_unsigned(subset, 3, font->bits_width);
+//    int width = fetchbits_unsigned(font_data, data_pos, 3, bits_width);
     bitoffset = bits_width + 3;
 
-    //uint32_t height = fetchbits_unsigned(subset, bitoffset, font->bits_height);
+//    int height = fetchbits_unsigned(font_data, data_pos, bitoffset, bits_height);
     bitoffset += bits_height;
 
-    //int32_t xoffset = fetchbits_signed(subset, bitoffset, font->bits_xoffset);
+//    int xoffset = fetchbits_signed(font_data, data_pos, bitoffset, bits_xoffset);
     bitoffset += bits_xoffset;
 
-    //int32_t yoffset = fetchbits_signed(subset, bitoffset, font->bits_yoffset);
+//    int yoffset = fetchbits_signed(font_data, data_pos, bitoffset, bits_yoffset);
     bitoffset += bits_yoffset;
 
     int delta = fetchbits_unsigned(font_data, data_pos, bitoffset, bits_delta);
     w = (int)delta;
-
+    if (w == 0 || h == 0) return null;
     return new Dimension(w,h);
   }
 
@@ -461,6 +473,7 @@ public class FontT3 extends FontTFT {
   private int fetchbits_unsigned(byte[] p, int pos, int idx, int required) {
     long val;
     int i = pos + (idx >>> 3);
+    
     val  = Byte.toUnsignedInt(p[i]) << 24;
     val |= Byte.toUnsignedInt(p[i+1]) << 16;
     val |= Byte.toUnsignedInt(p[i+2]) << 8;
@@ -514,13 +527,21 @@ public class FontT3 extends FontTFT {
        */
       ArrayList<Short> byteList = new ArrayList<Short>();
       Short  n;
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
+      while ((token = tokenizer.nextToken()).getType() != CLOSE_BRACE ) {
+        if (token.getType() == COMMENT_START) {
+          do { 
+            token = tokenizer.nextToken();
+            if (token.getType() == 0) {
+              parseError(token, "font data [" + fontData + "] comment didn't end");
+            }
+          } while (token.getType() != COMMENT_END);
+        }
         if (token.getType() == HEX) {
           n = new Short(Integer.decode(token.getToken()).shortValue());
           byteList.add(n);
         }
       }
-//      Builder.logger.debug("data bytes: " + byteList.size());
+//    Builder.logger.debug("data bytes: " + byteList.size());
       font_data = new byte[byteList.size()];
       n = 0;
       for (Short b : byteList) {
@@ -532,7 +553,7 @@ public class FontT3 extends FontTFT {
       //----------------------------------------------------------------------------------------
       String fontIndex = fontName + "_index";
       bFound = false;
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
+      while ((token = tokenizer.nextToken()).getType() != 0) {
         if (token.getType() == WORD &&
             token.getToken().equals(fontIndex)) {
           bFound = true;
@@ -541,17 +562,17 @@ public class FontT3 extends FontTFT {
       }
       if (!bFound) parseError(token, "font index [" + fontIndex + "] not found");
       byteList.clear();
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
+      while ((token = tokenizer.nextToken()).getType() != CLOSE_BRACE) {
         if (token.getType() == HEX) {
           n = new Short(Integer.decode(token.getToken()).shortValue());
           byteList.add(n);
         }
       }
-  //    Builder.logger.debug("data bytes: " + byteList.size());
+//    Builder.logger.debug("index bytes: " + byteList.size());
       font_index = new byte[byteList.size()];
       n = 0;
       for (Short b : byteList) {
-        font_index[n++] = (byte) (b.byteValue() & 0xFF);
+        font_index[n++] = (byte) (b.shortValue() & 0x00FF);
       }
       byteList.clear();
       byteList = null;
@@ -560,7 +581,7 @@ public class FontT3 extends FontTFT {
       // Find T3 glyph data
       //----------------------------------------------------------------------------------------
       bFound = false;
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
+      while ((token = tokenizer.nextToken()).getType() != 0) {
         if (token.getType() == WORD &&
             token.getToken().equals(fontName)) {
           bFound = true;
@@ -569,7 +590,7 @@ public class FontT3 extends FontTFT {
       }
       if (!bFound) parseError(token, "font name [" + fontName + "] not found");
       // scan past font index name   
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
+      while ((token = tokenizer.nextToken()).getType() != 0) {
         if (token.getType() == WORD &&
             token.getToken().equals(fontIndex)) {
           bFound = true;
@@ -600,7 +621,8 @@ public class FontT3 extends FontTFT {
       token = tokenizer.nextToken(); // comma
       if (token.getType() != SPECIALCHAR) parseError(token, "inside " + fontName + " array missing comma after version");
       token = tokenizer.nextToken(); // reserved
-//      int reserved = Integer.parseInt(token.getToken());
+      @SuppressWarnings("unused")
+      int reserved = Integer.parseInt(token.getToken());
       token = tokenizer.nextToken(); // comma
       token = tokenizer.nextToken(); // index1_first
       index1_first = Integer.parseInt(token.getToken());
@@ -665,10 +687,25 @@ public class FontT3 extends FontTFT {
       return false;
     }
   }
-
+  
+  /**
+   * Gets the logical size.
+   *
+   * @return the logical size
+   */
   @Override
-  public boolean create(String fontName, int dpi, int size, String style) {
-    return false;
+  public int getLogicalSize() {
+    return logicalSize;
+  }
+  
+  /**
+   * Gets the logical style.
+   *
+   * @return the logical style
+   */
+  @Override
+  public String getLogicalStyle() {
+    return logicalStyle;
   }
 
 }

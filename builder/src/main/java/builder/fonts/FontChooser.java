@@ -277,11 +277,11 @@ public class FontChooser extends JDialog {
     currentItem = null;
     for (int i=0; i<fonts.size(); i++) {
       FontItem fontItem = fonts.get(i);
-      if (!name.equals(fontItem.getName())) {
+      if (!name.equals(fontItem.getFamilyName())) {
         if (nextHelper != null) {
           helper.add(nextHelper);
         }
-        name = fontItem.getName();
+        name = fontItem.getFamilyName();
         nextHelper = new FontChooserHelper();
         nextHelper.setFontName(name);
         nextHelper.addFontSize(fontItem.getLogicalSize());
