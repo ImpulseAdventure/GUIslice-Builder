@@ -94,10 +94,11 @@ public final class ImageCodeBlock implements CodeBlock {
     tm.codeWriter(sBd, outputLines);
 
     // handle transparency
-    template = tm.loadTemplate(IMAGETRANSPARENT_TEMPLATE);
-    outputLines = tm.expandMacros(template, map);
-    tm.codeWriter(sBd, outputLines);
-    
+    if (m.isTransparent()) {
+      template = tm.loadTemplate(IMAGETRANSPARENT_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
     if (m.isTouchEn()) {
       template = tm.loadTemplate(TOUCH_EN_TEMPLATE);
       tm.codeWriter(sBd, template);

@@ -93,10 +93,11 @@ public final class ImgButtonCodeBlock implements CodeBlock {
     tm.codeWriter(sBd, outputLines);
 
     // handle transparency
-    template = tm.loadTemplate(IMAGETRANSPARENT_TEMPLATE);
-    outputLines = tm.expandMacros(template, map);
-    tm.codeWriter(sBd, outputLines);
-    
+    if (m.isTransparent()) {
+      template = tm.loadTemplate(IMAGETRANSPARENT_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }    
     if (m.isFrameEnabled()) {
       template = tm.loadTemplate(FRAME_EN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
