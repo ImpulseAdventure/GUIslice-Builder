@@ -338,10 +338,10 @@ gslc_tsElemRef                  m_as$<STRIP_KEY>ElemRef[MAX_ELEM_$<STRIP_ENUM>];
           &CbBtnCommon);
 <STOP>
 <IMAGETRANSPARENT>
-  gslc_ElemSetFillEn(&m_gui,pElemRef,$<IMG-107>);
+  gslc_ElemSetFillEn(&m_gui,pElemRef,false);
 <STOP>
 <IMGBTNTRANSPARENT>
-  gslc_ElemSetFillEn(&m_gui,pElemRef,$<IBTN-107>);
+  gslc_ElemSetFillEn(&m_gui,pElemRef,false);
 <STOP>
 <INPUTFRAME_EN>
   gslc_ElemSetFrameEn(&m_gui,pElemRef,true);
