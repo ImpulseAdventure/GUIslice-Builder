@@ -381,12 +381,14 @@ $<CALLBACK>
         break;
 <STOP>
 <KEYPAD_CONFIG_NUM>
-  static gslc_tsXKeyPadCfg_Num sCfg = gslc_ElemXKeyPadCfgInit_Num();
+  static gslc_tsXKeyPadCfg_Num sCfg;
+  sCfg = gslc_ElemXKeyPadCfgInit_Num();
   gslc_ElemXKeyPadCfgSetFloatEn_Num(&sCfg, $<FLOAT_EN>);
   gslc_ElemXKeyPadCfgSetSignEn_Num(&sCfg, $<SIGN_EN>);
 <STOP>
 <KEYPAD_CONFIG_TXT>
-  static gslc_tsXKeyPadCfg_Alpha sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
+  static gslc_tsXKeyPadCfg_Alpha sCfgTx;
+  sCfgTx = gslc_ElemXKeyPadCfgInit_Alpha();
 <STOP>
 <KEYPAD_CREATE_NUM>
   $<ELEMREF> = gslc_ElemXKeyPadCreate_Num(&m_gui, $<WIDGET_ENUM>, $<PAGE_ENUM>,
