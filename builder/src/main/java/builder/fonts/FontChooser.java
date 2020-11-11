@@ -292,7 +292,7 @@ public class FontChooser extends JDialog {
         nextHelper.addFontSize(fontItem.getLogicalSize());
         nextHelper.addFontStyle(fontItem.getLogicalStyle());
       }
-      if (currentName.equals(fontItem.getDisplayName())) {
+      if (currentName != null && currentName.equals(fontItem.getDisplayName())) {
         selectedHelper = j;
         currentItem = fontItem;
       }

@@ -99,31 +99,43 @@ public class FontSim extends FontTFT {
   }
 
   /**
-   * Draw a text string at the given coordinate
-   * @param g2d     The graphics context
-   * @param r       Rectangle region to contain the text
-   * @param str     String to display
-   * @param colTxt  Color to draw text
-   * @param colBg   Color of background
+   * canDisplay
+   *
+   * @see builder.fonts.FontTFT#canDisplay(int)
+   */
+  public boolean canDisplay(int codePoint) {
+    if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
+      return false;
+    }
+    return font.canDisplay(codePoint);
+  }
+  
+  /**
+   * drawString
+   *
+   * @see builder.fonts.FontTFT#drawString(java.awt.Graphics2D, java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public void drawString(Graphics2D g2d, Rectangle r, String str, Color colTxt, Color colBg) {
+  public void drawString(Graphics2D g2d, Rectangle r, String str, Color colTxt, Color colBg, boolean bClippingEn) {
+    /* test for zero length string */
+    if (str == null || str.isEmpty()) return;
+   
     g2d.setColor(colTxt);
     g2d.setFont(font);
     g2d.drawString(str, r.x, r.y);
   }
 
   /**
-   * Determine size of a string with current font/size. 
-   * Pass string and a cursor position, returns UL corner and W,H.
-   * @param str     The string to measure
-   * @param x       The current cursor X
-   * @param y       The current cursor Y
-   * @return  FontMetrics
+   * getTextBounds
+   *
+   * @see builder.fonts.FontTFT#getTextBounds(java.lang.String, int, int, boolean)
    */
   @Override
-  public FontMetrics getTextBounds(String str, int x, int y) {
+  public FontMetrics getTextBounds(String str, int x, int y, boolean bClippingEn) {
 
+    /* test for zero length string */
+    if (str == null || str.isEmpty()) return new FontMetrics(0,0,0,0);
+   
     /*
      * Because font metrics is based on a graphics context, we need to create
      * a small, temporary image so we can ascertain the width and height
@@ -158,22 +170,26 @@ public class FontSim extends FontTFT {
   /**
    * drawImage
    *
-   * @see builder.fonts.FontTFT#drawImage(java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color)
+   * @see builder.fonts.FontTFT#drawImage(java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg) {
+  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
+    /* test for zero length string */
+    if (s == null || s.isEmpty()) return null;
+    
+    /* test for valid rectangle */
+    if (r.width <=0 || r.height <= 0) return null;
+
     /*
      * Because font metrics is based on a graphics context, we need to create
      * a small, temporary image so we can ascertain the width and height
      * of the final image
      */
-    FontMetrics strMetrics = getTextBounds(s,0,0);
-    
-    BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage image = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g2d = image.createGraphics();    
     g2d.setColor(colTxt);
     g2d.setFont(font);
-    g2d.drawString(s, 0, 0);
+    g2d.drawString(s, r.x, r.y);
     g2d.dispose();
     return image;
   }

@@ -64,12 +64,17 @@ public class FontGFX extends FontTFT {
   private int miny;
   private int maxx;
   private int maxy;
+  private int minbase;
+  private int maxbase;
   
   // text drawing variables
   WritableRaster raster;
   private int cursor_x;
   private int cursor_y;
   FontMetrics strMetrics;
+
+  // DEBUG
+  char dbgCh;
   
   public FontGFX() {
   }
@@ -104,36 +109,49 @@ public class FontGFX extends FontTFT {
   }
 
   /**
-   * Draw a text string at the given coordinate into an image
-   * 
-   * WARNING: Newlines and Wrap are NOT supported.
-   * 
-   * @param g2d     The graphics context
-   * @param r       Rectangle region to contain the text
-   * @param str     String to display
-   * @param colTxt  Color to draw text
-   * @param colBg   Color of background
-   * @return Image  a rendered image given a string using this font.
+   * canDisplay
+   *
+   * @see builder.fonts.FontTFT#canDisplay(int)
+   */
+  public boolean canDisplay(int codePoint) {
+    if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
+      return false;
+    }
+    if ((codePoint >= first) && (codePoint <= last)) { // Char present in this font?
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * drawString
+   *
+   * @see builder.fonts.FontTFT#drawString(java.awt.Graphics2D, java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public void drawString(Graphics2D g2d, Rectangle r, String s, Color colTxt, Color colBg) {
+  public void drawString(Graphics2D g2d, Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
     
 //    Builder.logger.debug("Enter drawTxt: [" + s + "]");
 
     int ch;
+    if (s == null) return;
     int length = s.length();
-    strMetrics = getTextBounds(s,0,0);
+    if (length == 0) return;
+
+    strMetrics = getTextBounds(s,0,0,bClippingEn);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
     // clipping
-    if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
-      strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+    if (bClippingEn) {
+      if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
+        strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+      }
+      if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
+        strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+      }
     }
-    if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
-      strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
-    }
-
-//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
+//    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -148,7 +166,7 @@ public class FontGFX extends FontTFT {
       }
     }
     cursor_x = strMetrics.x1;
-    cursor_y = strMetrics.h;
+    cursor_y = strMetrics.base_height;
     char c;
     for (int i = 0; i < length; i++) {
       c = s.charAt(i);
@@ -168,25 +186,38 @@ public class FontGFX extends FontTFT {
       }
     }
     g2d.drawImage(image, r.x, r.y+strMetrics.y1, null);
-//    Builder.logger.debug("minx=" + minx + " maxx=" + maxx + " miny=" + miny + " maxy=" + maxy);
   }
 
   /**
-   * 
    * drawImage
    *
-   * @see builder.fonts.FontTFT#drawImage(java.awt.Graphics2D, java.lang.String, java.awt.Color, java.awt.Color)
+   * @see builder.fonts.FontTFT#drawImage(java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg) {
+  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
   //  Builder.logger.debug("Enter drawImage: [" + s + "]");
   
     int ch;
+    if (s == null) return null;
+
     int length = s.length();
-    strMetrics = getTextBounds(s,0,0);
+    if (length == 0) return null;
+
+    strMetrics = getTextBounds(s,0,0,bClippingEn);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
   
-//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
+    // clipping
+    if (bClippingEn) {
+      if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
+        strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+      }
+      if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
+        strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+      }
+    }
+
+//    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -201,7 +232,7 @@ public class FontGFX extends FontTFT {
       }
     }
     cursor_x = strMetrics.x1;
-    cursor_y = strMetrics.h;
+    cursor_y = strMetrics.base_height;
   
     for (int i = 0; i < length; i++) {
       ch = s.charAt(i);
@@ -241,10 +272,15 @@ public class FontGFX extends FontTFT {
    * @param str     The string to measure
    * @param x       The current cursor X
    * @param y       The current cursor Y
+   * @param clippingEn
    * @return  FontMetrics
    */
   @Override
-  public FontMetrics getTextBounds(String str, int x, int y) throws FontException {
+  public FontMetrics getTextBounds(String str, int x, int y, boolean bClippingEn) throws FontException {
+
+    /* test for zero length string */
+    if (str == null || str.isEmpty()) return new FontMetrics(0,0,0,0);
+   
     char ch; // Current character
 
     int x1 = x;
@@ -254,15 +290,23 @@ public class FontGFX extends FontTFT {
     int w  = 0;
     int h = 0;
     // clipping
-    minx = Builder.CANVAS_WIDTH;
-    miny = Builder.CANVAS_HEIGHT;
+    if (bClippingEn) {
+      minx = Builder.CANVAS_WIDTH;
+      miny = Builder.CANVAS_HEIGHT;
+      minbase = Builder.CANVAS_HEIGHT;
+    } else {
+      minx = 32767;
+      miny = 32767;
+      minbase = 32767;
+    }
     maxx = -1;
     maxy = -1;
+    maxbase = -1;
     
     for (int i=0; i<str.length(); i++) {
       ch = str.charAt(i);
       if (ch == '\n' || ch == '\r') throw new FontException("newlines are not supported");
-      charBounds(ch);  // modifies class variables for sizing
+      charBounds(ch, bClippingEn);  // modifies class variables for sizing
     }
     
     if (maxx >= minx) {
@@ -273,10 +317,17 @@ public class FontGFX extends FontTFT {
       y1 = miny;
       h = maxy - miny + 1;
     }
+    if (maxbase >= minbase) {
+      maxbase = maxbase - minbase + 1;
+    }
     // clipping
-    if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
-    if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
-    return new FontMetrics(x1,y1,w,h);
+    if (bClippingEn) {
+      if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
+      if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
+    }
+    FontMetrics metrics = new FontMetrics(x1,y1,w,h,maxbase);
+//    Builder.logger.debug("getTextBounds: " + str + " " + metrics.toString());
+    return metrics;
   }
  
   /**
@@ -285,12 +336,11 @@ public class FontGFX extends FontTFT {
    * It modifies class variables: minX,maxX,minY, and maxY
    * @param    ch    The character in question
    */
-  private void charBounds(char ch) {
-
+  private void charBounds(char ch, boolean bClippingEn) {
     if ((ch >= first) && (ch <= last)) { // Char present in this font?
       FontGFXGlyph glyph = glyphList.get(ch - first);
-      int gw = glyph.width;
-      int gh = glyph.height;
+      int gw = glyph.image_width;
+      int gh = glyph.image_height;
       int xa = glyph.xAdvance;
       int xo = glyph.xOffset;
       int yo = glyph.yOffset;
@@ -303,14 +353,21 @@ public class FontGFX extends FontTFT {
       int y1 = tmpY + yo * tsy;
       int x2 = x1 + gw * tsx - 1;
       int y2 = y1 + gh * tsy - 1;
+      int yBase1 = tmpY + yo * tsy;
+      int yBase2 = yBase1 + glyph.height * tsy - 1;
       if (x1 < minx)
         minx = x1;
-      if (y1 < miny)
-        miny = y1;
       if (x2 > maxx)
         maxx = x2;
+      if (y1 < miny)
+        miny = y1;
       if (y2 > maxy)
         maxy = y2;
+      // determine our baseline offset
+      if (yBase1 < minbase)
+        minbase = yBase1;
+      if (yBase2 > maxbase)
+        maxbase = yBase2;
       tmpX += xa * tsx;
     }
   }
@@ -345,12 +402,13 @@ public class FontGFX extends FontTFT {
     int bits = 0;
     int xo16 = 0;
     int yo16 = 0;
-
+    
+//    y = h;
+    
     if (size_x > 1 || size_y > 1) {
       xo16 = xo;
       yo16 = yo;
     }
-
     // Todo: Add character clipping here
     int dbit;
     int bit = 0;
@@ -365,9 +423,9 @@ public class FontGFX extends FontTFT {
         }
         if ((bits & 0x80) > 0) {
           if (size_x == 1 && size_y == 1) {
-            writePixel(x + xo + xx, y + yo + yy, colTxt);
+            writePixel((char)ch, x + xo + xx, y + yo + yy, colTxt);
           } else {
-            writeFillRect(x + (xo16 + xx) * size_x, y + (yo16 + yy) * size_y, size_x, size_y, colTxt);
+            writeFillRect((char)ch,x + (xo16 + xx) * size_x, y + (yo16 + yy) * size_y, size_x, size_y, colTxt);
           }
         }
         bits = (bits << 1) & 0xFF;
@@ -379,37 +437,37 @@ public class FontGFX extends FontTFT {
   /**
    * Write a pixel into destination array
    * 
+   * @param ch character we are displaying - only needed for debug
    * @param x Top left corner x coordinate
    * @param y Top left corner y coordinate
    * @param col Color to fill
    */
-  private void writePixel(int x, int y, Color col) {
+  private void writePixel(char ch, int x, int y, Color col) {
       // we need to work around the Adafruit's bug in sizing
       x = x - (strMetrics.x1 * 2);
       y = y - 1;
-      // our gate protection against crashes
-      if (x< 0 || x > strMetrics.w-1) {
-        return;
-      }
-      if (y< 0 || y > strMetrics.h-1) {
-        return;
-      }
+    // our gate protection against crashes
+    try {
       raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
+    } catch(ArrayIndexOutOfBoundsException e) {
+//      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", fontName, ch, x,y));
+    }
   }
 
   /**
    * Fill a rectangle completely with one color into destArray
    * 
+   * @param ch character we are displaying - only needed for debug
    * @param x Top left corner x coordinate
    * @param y Top left corner y coordinate
    * @param w Width in pixels
    * @param h Height in pixels
    * @param colFill Color to fill
    */
-  private void writeFillRect(int x, int y, int w, int h, Color colFill) {
+  private void writeFillRect(char ch, int x, int y, int w, int h, Color colFill) {
     for (int i = x; i < x + w; i++) {
       for (int j = y; j < y + h; j++) {
-        writePixel(i, j, colFill);
+        writePixel(ch, i, j, colFill);
       }
     }
   }
@@ -534,6 +592,10 @@ public class FontGFX extends FontTFT {
       byteList.clear();
       byteList = null;
       tokenizer.close();
+      // now we need to repair our glyphs due to the fact descent isn't recorded.
+      for (int i=first; i<=last; i++) {
+        repairGlyph((char)i);
+      }
       return true;
     } catch (IOException | ParserException | FontException | NumberFormatException | TokenizerException e) {
       String msg = String.format("File [%s]: %s", 
@@ -563,5 +625,92 @@ public class FontGFX extends FontTFT {
   public String getLogicalStyle() {
     return logicalStyle;
   }
+
+  /**
+   * repairGlyph()
+   * It turns out that the information inside the Adafruit's GFX glyphs is wrong.
+   * While width is sometimes incorrect the biggest issue is the the glyph height
+   * is for the baseline of the character not its real height. This means that
+   * characters with a descent are not properly sized for bounding boxes.
+   * This isn't a big problem for Adafruit since they can write past a boundary box
+   * bit Java won't let us to do that.
+   * Fixing height and width is one issue but if that is all thats done we will still
+   * truncate characters with a descent because to do the display we need to adjust
+   * the y parameter to the baseline since all of the bitmaps assume thats the
+   * starting point for drawing.
+   * @param    ch    The character in question
+   */
+  private void repairGlyph(char ch) {
+    if ((ch >= first) && (ch <= last)) { // Char present in this font?
+      FontGFXGlyph glyph = glyphList.get(ch - first);
+      int w = glyph.width;
+      int h = glyph.height;
+      int xo = glyph.xOffset;
+      int yo = glyph.yOffset;
+      int bo = glyph.bitmapOffset;
+      int xx, yy;
+      int dbit;
+      int bit = 0;
+      int bits = 0;
+      int x = 0;
+      int y = h;
+
+      int maxx = -32767;
+      int maxy = -32767;
+      int minx = 32767;
+      int miny = 32767;
+      int posX = 0;
+      int posY = 0;
+      /* So the idea here is to pretend to draw the character to an imaginary display
+       * tracking maximum x and y values so we can later adjust the height and width
+       * stored for the glyph.
+       */
+      for (yy = 0; yy < h; yy++) {
+        for (xx = 0; xx < w; xx++) {
+          dbit = bit++ & 7;
+          if (dbit == 0) {
+            bits = bitmap[bo++] & 0xFF;
+          }
+          if ((bits & 0x80) > 0) {
+            posX = x + xo + xx;
+            posY = y + yo + yy;
+            if (posX > maxx)
+              maxx = posX;
+            if (posY > maxy)
+              maxy = posY;
+            if (posX < minx)
+              minx = posX;
+            if (posY < miny)
+              miny = posY;
+          }
+          bits = (bits << 1) & 0xFF;
+        } // end xx < w
+      } // end yy < h
+      if (maxx + 1 > glyph.width) {
+        glyph.image_width = maxx + 1;
+      } else {
+        glyph.image_width = glyph.width;
+      }
+      if (maxy + 1 > glyph.height) {
+        glyph.image_height = maxy + 1;
+      } else {
+        glyph.image_height = glyph.height;
+      }
+/*
+      Builder.logger.debug(String.format(
+          "Char [%c]->width=%d height=%d xAdvance=%d xOffset=%d yOffset=%d img_w=%d img_h=%d"  
+          ,ch 
+          ,glyph.width
+          ,glyph.height
+          ,glyph.xAdvance
+          ,glyph.xOffset
+          ,glyph.yOffset
+          ,glyph.image_width
+          ,glyph.image_height
+          ));
+*/
+    }
+  }
+
 
 }

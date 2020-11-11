@@ -28,6 +28,7 @@ package builder.fonts;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -72,6 +73,7 @@ public class FontT3 extends FontTFT {
   private int cursor_y;
   FontMetrics strMetrics;
   
+  // sizing variables
   public FontT3() {
   }
 
@@ -102,36 +104,60 @@ public class FontT3 extends FontTFT {
   }
 
   /**
-   * Draw a text string at the given coordinate into an image
+   * canDisplay
    *
-   * WARNING: Newlines and Wrap are NOT supported.
-   * 
-   * @param g2d     The graphics context
-   * @param r       Rectangle region to contain the text
-   * @param str     String to display
-   * @param colTxt  Color to draw text
-   * @param colBg   Color of background
-   * @return Image  a rendered image given a string using this font.
+   * @see builder.fonts.FontTFT#canDisplay(int)
+   */
+  public boolean canDisplay(int codePoint) {
+    if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
+      return false;
+    }
+    if (codePoint >= index1_first && codePoint <= index1_last) {
+      Dimension chSz = charBounds((char)codePoint,false);
+      if (chSz == null) return false;
+      if (chSz.width <= 0 || chSz.height <=0) return false;
+      return true;
+    }
+    if (!(index2_first == 0 && index2_last == 0)) {
+      if (codePoint >= index2_first && codePoint <= index2_last) {
+        Dimension chSz = charBounds((char)codePoint,false);
+        if (chSz == null) return false;
+        if (chSz.width <= 0 || chSz.height <=0) return false;
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * drawString
+   *
+   * @see builder.fonts.FontTFT#drawString(java.awt.Graphics2D, java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public void drawString(Graphics2D g2d, Rectangle r, String s, Color colTxt, Color colBg) {
+  public void drawString(Graphics2D g2d, Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
     
 //    Builder.logger.debug("Enter drawTxt: [" + s + "]");
 
     int ch;
+    if (s == null) return;
     int length = s.length();
-    strMetrics = getTextBounds(s,0,0);
+    if (length == 0) return;
+    strMetrics = getTextBounds(s,0,0,bClippingEn);
 
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
+    
     // clipping
-    if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
-      strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
-    }
-    if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
-      strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+    if (bClippingEn) {
+      if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
+        strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+      }
+      if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
+        strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+      }
     }
 
-//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
+//    Builder.logger.debug("drawString: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -154,7 +180,7 @@ public class FontT3 extends FontTFT {
       if (ch == '\n' || ch == '\r') {
         continue;
       }
-      if (!copyChar(ch, colTxt, colBg)) break;
+      if (!copyChar(ch, colTxt, colBg, bClippingEn)) break;
     }
 
     g2d.drawImage(image, r.x, r.y, null);
@@ -167,22 +193,34 @@ public class FontT3 extends FontTFT {
    * @see builder.fonts.FontTFT#drawImage(java.awt.Graphics2D, java.lang.String, java.awt.Color, java.awt.Color)
    */
   @Override
-  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg) {
+  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
     
   //  Builder.logger.debug("Enter drawTxt: [" + s + "]");
   
     int ch;
+    if (s == null) return null;
     int length = s.length();
-    strMetrics = getTextBounds(s,0,0);
+    if (length == 0) return null;
+    strMetrics = getTextBounds(s,0,0,bClippingEn);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
   
-  //  Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-  //      + " w=" + strMetrics.w + " h=" + strMetrics.h);
+    // clipping
+    if (bClippingEn) {
+      if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
+        strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+      }
+      if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
+        strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+      }
+    }
+//    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
     
-  //  Builder.logger.debug("width=" + image.getWidth() + " height=" + image.getHeight());
+//    Builder.logger.debug("width=" + image.getWidth() + " height=" + image.getHeight());
   
     // create a transparent background
     for (int i = 0; i < image.getWidth(); i++) {
@@ -200,23 +238,26 @@ public class FontT3 extends FontTFT {
       if (ch == '\n' || ch == '\r') {
         continue;
       }
-      if (!copyChar(ch, colTxt, colBg)) break;
+      if (!copyChar(ch, colTxt, colBg, bClippingEn)) break;
     }
     return image;
   }
 
   /**
-   * Determine size of a string with current font/size. 
-   * Pass string and a cursor position, returns UL corner and W,H.
-   * 
-   * @param str     The string to measure
-   * @param x       The current cursor X
-   * @param y       The current cursor Y
-   * @return  FontMetrics
+   * getTextBounds
+   *
+   * @see builder.fonts.FontTFT#getTextBounds(java.lang.String, int, int, boolean)
    */
   @Override
-  public FontMetrics getTextBounds(String str, int x, int y) {
+  public FontMetrics getTextBounds(String str, int x, int y, boolean bClippingEn) {
+
+    /* test for zero length string */
+    if (str == null || str.isEmpty()) return new FontMetrics(0,0,0,0);
+   
     char ch; // Current character
+
+    cursor_x = 0;
+    cursor_y = 0;
 
     int w  = 0;
     int h = 0;
@@ -226,71 +267,201 @@ public class FontT3 extends FontTFT {
       if (ch == '\n' || ch == '\r') { // ignore newlines
         continue;
       }
-      chSz = charBounds(ch);  // modifies class variables for sizing
-      if (chSz == null) continue; //skip undefined chacters
+      chSz = charBounds(ch,bClippingEn);  // modifies class variables for sizing
+      if (chSz == null) 
+        continue; //skip undefined characters
       if (chSz.height > h) h = chSz.height;
       w += chSz.width;
     }
     if (h >= 48) h++; // fudge factor for larger fonts
     
     // clipping
-    if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
-    if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
-    return new FontMetrics(0,0,w,h);
+    if (bClippingEn) {
+      if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
+      if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
+    }
+    FontMetrics metrics = new FontMetrics(0,0,w,h);
+//    Builder.logger.debug("getTextBounds: " + str + " " + metrics.toString());
+    return metrics;
   }
  
   /**
    * Helper to determine size of a character with this font/size.
    * used by getTextBounds() function.
    * @param    ch    The character in question
+   * @param bClippingEn 
    */
-  private Dimension charBounds(char ch) {
-    int w = 0;
-    int h = cap_height;
-    // Ported from Paul Stoffregen's ILI9341_t3.cpp
-    
-    // Treat non-breaking space as normal space
-    // And Yes, I have no idea what a non-breaking space means...
-    int c = (int)ch;
-    if (c == 0xa0) {
-      c = ' ';
-    }
-
+  private Dimension charBounds(char ch, boolean bClippingEn) {
+//    Builder.logger.debug(String.format("charBounds [%c] hex=0x%02X", ch, (int)ch));
+    int maxHeight = -1;
     int bitoffset;
-    
-    if (c >= index1_first && c <= index1_last) {
-      bitoffset = c - index1_first;
+
+    if (ch >= index1_first && ch <= index1_last) {
+      bitoffset = ch - index1_first;
       bitoffset *= bits_index;
-    } else if (c >= index2_first && c <= index2_last) {
-      bitoffset = c - index2_first + index1_last - index1_first + 1;
+    } else if (ch >= index2_first && ch <= index2_last) {
+      bitoffset = ch - index2_first + index1_last - index1_first + 1;
       bitoffset *= bits_index;
     } else {
       return null;
     }
-
+//    Builder.logger.debug(String.format("bitoffset [%d]", bitoffset));
     int data_pos = fetchbits_unsigned(font_index, 0, bitoffset, bits_index);
+//    Builder.logger.debug(String.format("data_pos [%d]", data_pos));
 
     int encoding = fetchbits_unsigned(font_data, data_pos, 0, 3);
+    if (encoding != 0)
+      return null;
 
-    if (encoding != 0) return null;
-    
-//    int width = fetchbits_unsigned(font_data, data_pos, 3, bits_width);
+    int width = fetchbits_unsigned(font_data, data_pos, 3, bits_width);
     bitoffset = bits_width + 3;
-
-//    int height = fetchbits_unsigned(font_data, data_pos, bitoffset, bits_height);
+    int height = fetchbits_unsigned(font_data, data_pos, bitoffset, bits_height);
     bitoffset += bits_height;
+    // Builder.logger.debug(String.format(" size = %d,%d", width, height));
 
-//    int xoffset = fetchbits_signed(font_data, data_pos, bitoffset, bits_xoffset);
+    int xoffset = fetchbits_signed(font_data, data_pos, bitoffset, bits_xoffset);
+//    Builder.logger.debug(String.format("ch[%c] xoffset=%d",ch,xoffset));
     bitoffset += bits_xoffset;
-
-//    int yoffset = fetchbits_signed(font_data, data_pos, bitoffset, bits_yoffset);
+    int yoffset = fetchbits_signed(font_data, data_pos, bitoffset, bits_yoffset);
     bitoffset += bits_yoffset;
+    // Builder.logger.debug(String.format(" offset = %d,%d\n", xoffset, yoffset));
 
     int delta = fetchbits_unsigned(font_data, data_pos, bitoffset, bits_delta);
-    w = (int)delta;
-    if (w == 0 || h == 0) return null;
-    return new Dimension(w,h);
+    bitoffset += bits_delta;
+    // Builder.logger.debug(String.format(" delta = %d\n", delta));
+
+    // Builder.logger.debug(String.format(" cursor = %d,%d\n", cursor_x, cursor_y));
+
+    // horizontally, we draw every pixel, or none at all
+    if (cursor_x < 0) {
+      cursor_x = 0;
+    }
+    int origin_x = cursor_x + xoffset;
+    if (origin_x < 0) {
+      cursor_x -= xoffset;
+      origin_x = 0;
+    }
+    if (bClippingEn) {
+      if (origin_x + width > Builder.CANVAS_WIDTH) {
+        if (!bWrap) {
+          return null;
+        }
+        origin_x = 0;
+        if (xoffset >= 0) {
+          cursor_x = 0;
+        } else {
+          cursor_x = -xoffset;
+        }
+        cursor_y += line_space;
+      }
+
+      if (cursor_y >= Builder.CANVAS_HEIGHT)
+        return null;
+    }
+    cursor_x += delta;
+
+    // vertically, the top and/or bottom can be clipped
+    int origin_y = cursor_y + cap_height - height - yoffset;
+    // Builder.logger.debug(String.format(" origin = %d,%d\n", origin_x, origin_y));
+
+    // TODO: compute top skip and number of lines
+    int linecount = height;
+    int y = origin_y;
+    Point p = null;
+    if (linecount == 0) {
+      maxHeight = cap_height;
+    }
+    while (linecount > 0) {
+      int b = fetchbit(font_data, data_pos, bitoffset);
+      bitoffset++;
+      // Builder.logger.debug(String.format("linecount=%d b=%d
+      // bitoffset=%d",linecount,b,bitoffset));
+      if (b == 0) {
+        // Builder.logger.debug(" single line");
+        int x = 0;
+        do {
+          int xsize = width - x;
+          if (xsize > 32)
+            xsize = 32;
+          int bits = fetchbits_unsigned(font_data, data_pos, bitoffset, xsize);
+          p = sizeGlyph((char) ch, bits, xsize, origin_x + x, y, 1);
+          if (p != null) {
+            if (p.y > maxHeight) maxHeight = p.y;
+          }
+          bitoffset += xsize;
+          x += xsize;
+        } while (x < width);
+        y++;
+        linecount--;
+      } else {
+        int n = fetchbits_unsigned(font_data, data_pos, bitoffset, 3) + 2;
+        bitoffset += 3;
+        int x = 0;
+        do {
+          int xsize = width - x;
+          if (xsize > 32)
+            xsize = 32;
+          // Builder.logger.debug(String.format(" multi line %d\n", n));
+          int bits = fetchbits_unsigned(font_data, data_pos, bitoffset, xsize);
+          p = sizeGlyph((char) ch, bits, xsize, origin_x + x, y, n);
+          if (p != null) {
+            if (p.y > maxHeight) maxHeight = p.y;
+          }
+          bitoffset += xsize;
+          x += xsize;
+        } while (x < width);
+        y += n;
+        linecount -= n;
+      }
+    }
+    if (delta <= 0 || maxHeight <=0) 
+      return null;
+    Dimension chSz = new Dimension(delta,maxHeight+1);
+    return chSz;
   }
+
+  private Point sizeGlyph(char ch, int bits, int numbits, int x, int y, int repeat) {
+//  Builder.logger.debug("sizeGlyph bits = 0x%04X",bits));
+//  Builder.logger.debug(String.format("numbits=%d repeat=%d x=%d, y=%d",
+//      numbits,repeat,x,y));
+  int nZeroes;
+  int minx = 32767;
+  int miny = 32767;
+  int maxx = -1;
+  int maxy = -1;
+  if (bits == 0) return null;
+  bits <<= (32-numbits); // left align bits 
+  do {
+    nZeroes = Integer.numberOfLeadingZeros(bits); // skip over zeros
+    if (nZeroes > numbits) nZeroes = numbits;
+    numbits -= nZeroes;
+    x += nZeroes;
+    bits <<= nZeroes;
+    bits = ~bits; // invert to count 1s as 0s
+    nZeroes = Integer.numberOfLeadingZeros(bits);
+    if (nZeroes > numbits) nZeroes = numbits; 
+    numbits -= nZeroes;
+    bits <<= nZeroes;
+    bits = ~bits; // invert back to original polarity
+    if (nZeroes > 0) {
+      x += nZeroes;
+      for (int i=x-nZeroes; i<=x-1; i++) {
+        for (int j=y; j<=y+repeat-1; j++) {
+          if (i > maxx) maxx = i;
+          if (j > maxy) maxy = j;
+          if (i < minx) minx = i;
+          if (j > miny) miny = j;
+//          Builder.logger.debug(String.format("Pixel: %d,%d", i,j));
+        }
+      }
+    }
+  } while (numbits > 0);
+//  Builder.logger.debug(String.format("sizeGlyph: ch[%c] minx=%d maxx=%d miny=%d maxy=%d", 
+//      ch, minx, maxx, miny, maxy));
+  if (maxx <= 0 || maxy <=0) return null;
+  Point p = new Point(maxx,maxy);
+  return p;
+}
 
   /**
    * Copy a single character into display raster in order to render text. 
@@ -300,10 +471,9 @@ public class FontT3 extends FontTFT {
    * @param ch          The 8-bit font-indexed character
    * @param colTxt
    * @param colBg
-   * @param size_x
-   * @param size_y
+   * @param bClippingEn
    */
-  private boolean copyChar(int ch, Color colTxt, Color colBg) {
+  private boolean copyChar(int ch, Color colTxt, Color colBg, boolean bClippingEn) {
 
 //    Builder.logger.debug("***copyChar [" + Integer.toHexString(ch) + "]");
     int bitoffset;
@@ -323,7 +493,8 @@ public class FontT3 extends FontTFT {
     int data_pos = fetchbits_unsigned(font_index,0,bitoffset, bits_index);
 
     int encoding = fetchbits_unsigned(font_data, data_pos, 0, 3);
-    if (encoding != 0) return false;
+    if (encoding != 0) 
+      return false;
     
     int width = fetchbits_unsigned(font_data, data_pos, 3, bits_width);
     bitoffset = bits_width + 3;
@@ -350,17 +521,21 @@ public class FontT3 extends FontTFT {
       cursor_x -= xoffset;
       origin_x = 0;
     }
-    if (origin_x + width > Builder.CANVAS_WIDTH) {
-      if (!bWrap) return false;
-      origin_x = 0;
-      if (xoffset >= 0) {
-        cursor_x = 0;
-      } else {
-        cursor_x = -xoffset;
+    if (bClippingEn) {
+      if (origin_x + width > Builder.CANVAS_WIDTH) {
+        if (!bWrap) 
+          return false;
+        origin_x = 0;
+        if (xoffset >= 0) {
+          cursor_x = 0;
+        } else {
+          cursor_x = -xoffset;
+        }
+        cursor_y += line_space;
       }
-      cursor_y += line_space;
+      
+      if (cursor_y >= Builder.CANVAS_HEIGHT) return false;
     }
-    if (cursor_y >= Builder.CANVAS_HEIGHT) return false;
     cursor_x += delta;
 
     // vertically, the top and/or bottom can be clipped
@@ -382,7 +557,7 @@ public class FontT3 extends FontTFT {
           int xsize = width - x;
           if (xsize > 32) xsize = 32;
           int bits = fetchbits_unsigned(font_data, data_pos, bitoffset, xsize);
-          drawFontBits(bits, xsize, origin_x + x, y, 1, colTxt);
+          drawFontBits((char)ch, bits, xsize, origin_x + x, y, 1, colTxt);
           bitoffset += xsize;
           x += xsize;
         } while (x < width);
@@ -397,7 +572,7 @@ public class FontT3 extends FontTFT {
           if (xsize > 32) xsize = 32;
 //          Builder.logger.debug(String.format("    multi line %d\n", n));
           int bits = fetchbits_unsigned(font_data, data_pos, bitoffset, xsize);
-          drawFontBits(bits, xsize, origin_x + x, y, n, colTxt);
+          drawFontBits((char)ch, bits, xsize, origin_x + x, y, n, colTxt);
           bitoffset += xsize;
           x += xsize;
         } while (x < width);
@@ -412,35 +587,35 @@ public class FontT3 extends FontTFT {
     return true;
   }
   
-  private void drawFontBits(int bits, int numbits, int x, int y, int repeat, Color colTxt) {
+  private void drawFontBits(char ch, int bits, int numbits, int x, int y, int repeat, Color colTxt) {
 //    Builder.logger.debug("bits = 0" + Integer.toHexString(bits));
 //    Builder.logger.debug(String.format("numbits=%d repeat=%d x=%d, y=%d",
 //        numbits,repeat,x,y));
-    int w;
+    int nZeroes;
     if (bits == 0) return;
     bits <<= (32-numbits); // left align bits 
     do {
-      w = Integer.numberOfLeadingZeros(bits); // skip over zeros
-      if (w > numbits) w = numbits;
-      numbits -= w;
-      x += w;
-      bits <<= w;
+      nZeroes = Integer.numberOfLeadingZeros(bits); // skip over zeros
+      if (nZeroes > numbits) nZeroes = numbits;
+      numbits -= nZeroes;
+      x += nZeroes;
+      bits <<= nZeroes;
       bits = ~bits; // invert to count 1s as 0s
-      w = Integer.numberOfLeadingZeros(bits);
-      if (w > numbits) w = numbits; 
-      numbits -= w;
-      bits <<= w;
+      nZeroes = Integer.numberOfLeadingZeros(bits);
+      if (nZeroes > numbits) nZeroes = numbits; 
+      numbits -= nZeroes;
+      bits <<= nZeroes;
       bits = ~bits; // invert back to original polarity
-      if (w > 0) {
-        x += w;
-//        setAddr(x-w, y, x-1, y+repeat-1); // write a block of pixels w x repeat sized
-//        while (w-- > 1) { // draw line
+      if (nZeroes > 0) {
+        x += nZeroes;
+//        setAddr(x-nZeroes, y, x-1, y+repeat-1); // write a block of pixels nZeroes x repeat sized
+//        while (nZeroes-- > 1) { // draw line
 //          writedata16_cont(textcolor);
 //        }
 //        writedata16_last(textcolor);
-        for (int i=x-w; i<=x-1; i++) {
+        for (int i=x-nZeroes; i<=x-1; i++) {
           for (int j=y; j<=y+repeat-1; j++) {
-            writePixel(i,j,colTxt);
+            writePixel(ch,i,j,colTxt);
           }
         }
       }
@@ -454,30 +629,28 @@ public class FontT3 extends FontTFT {
    * @param y Top left corner y coordinate
    * @param col Color to fill
    */
-  private void writePixel(int x, int y, Color col) {
+  private void writePixel(char ch, int x, int y, Color col) {
     // our gate protection against crashes
-    if (x< 0 || x > strMetrics.w-1) {
-      return;
-    }
-    if (y< 0 || y > strMetrics.h-1) {
-      return;
-    }
+    try {
     raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
+    } catch(ArrayIndexOutOfBoundsException e) {
+//      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", fontName,ch,x,y));
+    }
   }
 
-  private int fetchbit(byte[] p, int pos, int idx) {
+  private int fetchbit(byte[] p, int pos, int idx) throws ArrayIndexOutOfBoundsException {
     int i = pos + (idx >>> 3);
     return  Byte.toUnsignedInt(p[i]) & (0x80 >>> (idx & 7));
   }
 
-  private int fetchbits_unsigned(byte[] p, int pos, int idx, int required) {
+  private int fetchbits_unsigned(byte[] p, int pos, int idx, int required)
+    throws ArrayIndexOutOfBoundsException {
     long val;
     int i = pos + (idx >>> 3);
-    
-    val  = Byte.toUnsignedInt(p[i]) << 24;
-    val |= Byte.toUnsignedInt(p[i+1]) << 16;
-    val |= Byte.toUnsignedInt(p[i+2]) << 8;
-    val |= Byte.toUnsignedInt(p[i+3]);
+    val  = Byte.toUnsignedInt(p[i]) << 24 & 0x00000000FFFFFFFFL;
+    val |= Byte.toUnsignedInt(p[i+1]) << 16 & 0x00000000FFFFFFFFL;
+    val |= Byte.toUnsignedInt(p[i+2]) << 8 & 0x00000000FFFFFFFFL;
+    val |= Byte.toUnsignedInt(p[i+3]) & 0x00000000FFFFFFFFL;
     val =  (val << (idx & 7)) & 0x00000000FFFFFFFFL; // shift out used bits
     if (Integer.compareUnsigned(32- (idx & 7), required) < 0) { // need to get more bits
       val = (val | (Byte.toUnsignedInt(p[i+4]) >>> (8 - (idx & 7)))) & 0xFFFFFFFFL; 
@@ -486,7 +659,7 @@ public class FontT3 extends FontTFT {
     return (int)val;
   }
 
-  private int fetchbits_signed(byte[] p, int pos, int idx, int required) {
+  private int fetchbits_signed(byte[] p, int pos, int idx, int required) throws ArrayIndexOutOfBoundsException {
     int val = fetchbits_unsigned(p, pos, idx, required);
     long tmp = Integer.toUnsignedLong(val & (1 << (required - 1)));
     if (tmp > 0) {
@@ -541,7 +714,17 @@ public class FontT3 extends FontTFT {
           byteList.add(n);
         }
       }
-//    Builder.logger.debug("data bytes: " + byteList.size());
+      /* Arg! Debugging the T3 code in C++ shows that they address beyond the data size
+       * So if the data size is 808 bytes valid address are 0 to 807 but
+       * they address 808 and 809 and maybe more.
+       * C++ is giving back 0's in this case.  Why no crashes? I have no idea.
+       * Addressing this simply requires adding a couple of zeroes to our data.
+       */
+      for (int i=0; i<4; i++) {
+        n = 0;
+        byteList.add(n);
+      }
+//    Builder.logger.debug(String.format("%s data bytes: %d",fontName, byteList.size()));
       font_data = new byte[byteList.size()];
       n = 0;
       for (Short b : byteList) {
@@ -567,6 +750,15 @@ public class FontT3 extends FontTFT {
           n = new Short(Integer.decode(token.getToken()).shortValue());
           byteList.add(n);
         }
+      }
+      /* Arg! Debugging the T3 code in C++ shows that they address beyond the index size
+       * So if the index size is 119 bytes they address 119 and 120 and maybe more
+       * C++ is giving back 0's in this case.  why no crashes? I have no idea.
+       * Addressing this simply requires adding a couple of zeroes to out index.
+       */
+      for (int i=0; i<4; i++) {
+        n = 0;
+        byteList.add(n);
       }
 //    Builder.logger.debug("index bytes: " + byteList.size());
       font_index = new byte[byteList.size()];

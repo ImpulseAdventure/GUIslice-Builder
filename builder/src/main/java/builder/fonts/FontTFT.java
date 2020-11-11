@@ -114,6 +114,14 @@ public abstract class FontTFT {
   public abstract boolean create(String fileName, String fontName, int size, String style) throws FontException;
 
   /**
+   * canDisplay()
+   * Checks if this Font has a glyph for the specified character.
+   * @param codePoint
+   * @return
+   */
+  public abstract boolean canDisplay(int codePoint);
+  
+  /**
    * setTextSize
    * 
    * Set text 'magnification' size.
@@ -147,9 +155,10 @@ public abstract class FontTFT {
    * @param str     The string to measure
    * @para  x       The current cursor X
    * @param y       The current cursor Y
+   * @param bClippingEn Enable Clipping? true or false
    * @return  FontMetrics
    */
-  public abstract FontMetrics getTextBounds(String str, int x, int y);
+  public abstract FontMetrics getTextBounds(String str, int x, int y, boolean bClippingEn);
 
   /**
    * Draw a text string at the given coordinate
@@ -161,8 +170,9 @@ public abstract class FontTFT {
    * @param str     String to display
    * @param colTxt  Color to draw text
    * @param colBg   Color of background
+   * @param bClippingEn Enable Clipping? true or false
    */
-  public abstract void drawString(Graphics2D g2d, Rectangle r, String str, Color colTxt, Color colBg);
+  public abstract void drawString(Graphics2D g2d, Rectangle r, String str, Color colTxt, Color colBg, boolean bClippingEn);
 
   /**
    * Draw a text string image
@@ -173,9 +183,10 @@ public abstract class FontTFT {
    * @param str     String to display
    * @param colTxt  Color to draw text
    * @param colBg   Color of background
+   * @param bClippingEn Enable Clipping? true or false
    * @return Image  a rendered image given a string using this font.
    */
-  public abstract BufferedImage drawImage(Rectangle r, String str, Color colTxt, Color colBg);
+  public abstract BufferedImage drawImage(Rectangle r, String str, Color colTxt, Color colBg, boolean bClippingEn);
 
 /**
  * getFontType
