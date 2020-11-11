@@ -56,11 +56,6 @@ public class TextModel extends WidgetModel {
   /** The Constant ELEMENTREF_NAME. */
   public static final String ELEMENTREF_NAME = "m_pElemOutTxt";
 
-  /** Text Alignment constants */
-  static public  final String  ALIGN_LEFT            = "GSLC_ALIGN_MID_LEFT";
-  static public  final String  ALIGN_CENTER          = "GSLC_ALIGN_MID_MID";
-  static public  final String  ALIGN_RIGHT           = "GSLC_ALIGN_MID_RIGHT";
-
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
   static private final int PROP_TEXT              = 8;
@@ -80,7 +75,7 @@ public class TextModel extends WidgetModel {
   static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
-  static public  final String  DEF_TEXT_ALIGN        = ALIGN_LEFT;
+  static public  final String  DEF_TEXT_ALIGN        = FontTFT.ALIGN_LEFT;
   static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(0);
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
@@ -124,9 +119,9 @@ public class TextModel extends WidgetModel {
   private void initEditors()
   {
     cbAlign = new JComboBox<String>();
-    cbAlign.addItem(ALIGN_LEFT);
-    cbAlign.addItem(ALIGN_CENTER);
-    cbAlign.addItem(ALIGN_RIGHT);
+    cbAlign.addItem(FontTFT.ALIGN_LEFT);
+    cbAlign.addItem(FontTFT.ALIGN_CENTER);
+    cbAlign.addItem(FontTFT.ALIGN_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
   }
   
@@ -443,11 +438,11 @@ public class TextModel extends WidgetModel {
      throws IOException, ClassNotFoundException {
    super.readModel(in,  widgetType);
    if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("left"))
-      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_LEFT;
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_LEFT;
      else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
-      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_RIGHT;
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_RIGHT;
      else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
-      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = TextModel.ALIGN_CENTER;
+      data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_CENTER;
    calcSizes(false);
  }
 

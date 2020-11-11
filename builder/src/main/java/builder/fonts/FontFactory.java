@@ -262,7 +262,7 @@ public class FontFactory {
   }
   
   /**
-   * This method gets a Font's item with a Display name using 
+   * This method gets a Font's item with a Family name using 
    * the String values displayed to users of GUIsliceBuider 
    * by our Font Chooser.
    *
@@ -321,7 +321,7 @@ public class FontFactory {
    */
   public Dimension measureText(int x, int y, FontTFT font, String s) {
     // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(s, 0, 0);
+    FontMetrics metrics = font.getTextBounds(s, 0, 0, true);
     // calculate the size of a box to hold the text with some padding.
     metrics.w+=2;
     metrics.h+=2;
@@ -347,7 +347,7 @@ public class FontFactory {
    */
   public Rectangle getTextBounds(int x, int y, FontTFT font, String s) {
     // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(s, 0, 0);
+    FontMetrics metrics = font.getTextBounds(s, 0, 0,true);
     // calculate the size of a box to hold the text with some padding.
     metrics.w+=2;
     metrics.h+=2;
@@ -366,11 +366,11 @@ public class FontFactory {
    * drawText
    * 
    * @param g2d      The graphics context
-   * @param str      The text string to display
-   * @param font     The TFT font to use for this text string
    * @param align    Text alignment / justification mode
    *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
    * @param r        Rectangle region to contain the text
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
    * @param colTxt   Color for text
    * @param colBg    Color for background, transparent if color matches colTxt
    * @param nMargin  Number of pixels gap to leave surrounding text
@@ -378,84 +378,27 @@ public class FontFactory {
   public void drawText(Graphics2D g2d, String align, Rectangle r, String str, FontTFT font, 
     Color colTxt, Color colBg, int nMargin) {
     
-    int nElemH = r.height;
-    int nElemW = r.width;
-    int nTxtOffsetX=0;
-    int nTxtOffsetY=0;
-    int nTxtSzW=0;
-    int nTxtSzH=0;
-
+    if (font == null) return;
+    
     // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(str, 0, 0);
+    FontMetrics metrics = font.getTextBounds(str, 0, 0, true);
     
     // Calculate the text alignment
-    int nTxtX = r.x;
-    int nTxtY = r.y;
-    nTxtSzW = metrics.w;
-    nTxtSzH = metrics.h;
-    nTxtOffsetX = metrics.x1;
-    nTxtOffsetY = metrics.y1;
-    switch (align)
-    {
-      case FontTFT.ALIGN_LEFT:
-        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
-        nTxtX = nTxtX+nMargin;
-        break;
-      case FontTFT.ALIGN_CENTER:
-        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
-        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
-        break;
-      case FontTFT.ALIGN_RIGHT:
-        nTxtY = nTxtY+(nElemH/2)-(nTxtSzH/2);
-        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
-        break;
-      case FontTFT.ALIGN_TOP_LEFT:
-        nTxtY = nTxtY+nMargin;
-        nTxtX = nTxtX+nMargin;
-        break;
-      case FontTFT.ALIGN_TOP_CENTER:
-        nTxtY = nTxtY+nMargin;
-        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
-        break;
-      case FontTFT.ALIGN_TOP_RIGHT:
-        nTxtY = nTxtY+nMargin;
-        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
-        break;
-      case FontTFT.ALIGN_BOT_LEFT:
-        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
-        nTxtX = nTxtX+nMargin;
-        break;
-      case FontTFT.ALIGN_BOT_CENTER:
-        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
-        nTxtX = nTxtX+(nElemW/2)-(nTxtSzW/2);
-        break;
-      case FontTFT.ALIGN_BOT_RIGHT:
-        nTxtY = nTxtY+nElemH-nMargin-nTxtSzH;
-        nTxtX = nTxtX+nElemW-nMargin-nTxtSzW;
-        break;
-    } 
-    
-    // Now correct for offset from text bounds
-    nTxtX -= nTxtOffsetX;
-    nTxtY -= nTxtOffsetY;
-    
-    // Boundary Test
-    if (nTxtX <= r.x) nTxtX = r.x+1;
-    
+    Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
+
     // Call the font's text rendering routine
-    Rectangle rTxt = new Rectangle(nTxtX, nTxtY, r.width, r.height);
-    font.drawString(g2d,rTxt,str, colTxt, colBg);
+    font.drawString(g2d,rTxt,str, colTxt, colBg,true);
 
   }
   
   /**
    * drawTextImage
    * 
-   * @param str      The text string to display
-   * @param font     The TFT font to use for this text string
+   * @param r        Rectangle region to contain the text
    * @param align    Text alignment / justification mode
    *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
-   * @param r        Rectangle region to contain the text
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
    * @param colTxt   Color for text
    * @param colBg    Color for background, transparent if color matches colTxt
    * @param nMargin  Number of pixels gap to leave surrounding text
@@ -463,6 +406,74 @@ public class FontFactory {
   public BufferedImage drawTextImage(String align, Rectangle r, String str, FontTFT font, 
     Color colTxt, Color colBg, int nMargin) {
     
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(str, 0, 0, false);
+    
+    if (str.equals("A"))
+      Builder.logger.debug("A");
+
+    // determine bounds
+    Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
+
+    // Call the font's text rendering routine
+    return font.drawImage(rTxt,str, colTxt, colBg,false);
+
+  }
+  
+  /**
+   * getCharBounds
+   * Used by Character Map
+   * 
+   * @param x        x position
+   * @param y        y position
+   * @param w        width of box
+   * @param h        height of box
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
+   * @param align    Text alignment / justification mode
+   *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
+   * @param nMargin  Number of pixels gap to leave surrounding text
+   */
+  public Rectangle getCharBounds(int x, int y, int w, int h, String str, String align, FontTFT font, int nMargin) {
+    
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(str, 0, 0, false);
+    if (metrics.w <= 0 || metrics.h <= 0) return null;
+    // determine bounds
+    Rectangle r = new Rectangle(x,y,w,h);
+    
+    return alignBounds(align, r, metrics, nMargin);
+  }
+  
+  /**
+   * drawChar
+   * Used by CharacterMap
+   * @param g2d      The graphics context
+   * @param align    Text alignment / justification mode
+   *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
+   * @param r        Rectangle region to contain the text
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
+   * @param colTxt   Color for text
+   * @param colBg    Color for background, transparent if color matches colTxt
+   * @param nMargin  Number of pixels gap to leave surrounding text
+   */
+  public void drawChar(Graphics2D g2d, String align, Rectangle r, String str, FontTFT font, 
+    Color colTxt, Color colBg, int nMargin) {
+    
+    if (font == null) return;
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(str, 0, 0, false);
+
+    // determine bounds
+    Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
+
+    // Call the font's text rendering routine
+    font.drawString(g2d,rTxt,str, colTxt, colBg,false);
+
+  }
+  
+  public Rectangle alignBounds(String align, Rectangle r, FontMetrics metrics, int nMargin) {
     int nElemH = r.height;
     int nElemW = r.width;
     int nTxtOffsetX=0;
@@ -470,9 +481,6 @@ public class FontFactory {
     int nTxtSzW=0;
     int nTxtSzH=0;
 
-    // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(str, 0, 0);
-    
     // Calculate the text alignment
     int nTxtX = r.x;
     int nTxtY = r.y;
@@ -526,11 +534,7 @@ public class FontFactory {
     
     // Boundary Test
     if (nTxtX <= r.x) nTxtX = r.x+1;
-
-    // Call the font's text rendering routine
-    Rectangle rTxt = new Rectangle(nTxtX, nTxtY, r.width, r.height);
-    return font.drawImage(rTxt,str, colTxt, colBg);
-
+    return new Rectangle(nTxtX, nTxtY, r.width, r.height);
   }
   
   /**

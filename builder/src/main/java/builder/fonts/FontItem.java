@@ -44,10 +44,10 @@ import builder.Builder;
  */
 public class FontItem {
   
-  static private String BOLD = "Bold";
-  static private String ITALIC = "Italic";
-  static private String PLAIN = "Regular";
-  static private String BOLD_ITALIC = "Bold+Italic";
+  static public String BOLD = "Bold";
+  static public String ITALIC = "Italic";
+  static public String PLAIN = "Regular";
+  static public String BOLD_ITALIC = "Bold+Italic";
 
   /** The java font. */
   private transient FontTFT font;

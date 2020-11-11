@@ -105,34 +105,47 @@ public class FontGlcd extends FontTFT {
   }
 
   /**
-   * Draw a text string at the given coordinate into an image
+   * canDisplay
    *
-   * WARNING: Newlines and Wrap are NOT supported.
-   * 
-   * @param g2d     The graphics context
-   * @param r       Rectangle region to contain the text
-   * @param str     String to display
-   * @param colTxt  Color to draw text
-   * @param colBg   Color of background
-   * @return Image  a rendered image given a string using this font.
+   * @see builder.fonts.FontTFT#canDisplay(int)
+   */
+  public boolean canDisplay(int codePoint) {
+    if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
+      return false;
+    }
+    if ((codePoint > 0) && (codePoint < 255)) { // Char present in this font?
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * drawString
+   *
+   * @see builder.fonts.FontTFT#drawString(java.awt.Graphics2D, java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public void drawString(Graphics2D g2d, Rectangle r, String s, Color colTxt, Color colBg) {
+  public void drawString(Graphics2D g2d, Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
     
 //    Builder.logger.debug("Enter drawTxt: [" + s + "]");
 
     int ch;
+    if (s == null) return;
     int length = s.length();
-    strMetrics = getTextBounds(s,0,0);
+    if (length == 0) return;
+    strMetrics = getTextBounds(s,0,0,bClippingEn);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
     // clipping
-    if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
-      strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+    if (bClippingEn) {
+      if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
+        strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+      }
+      if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
+        strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+      }
     }
-    if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
-      strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
-    }
-
 //    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
 //        + " w=" + strMetrics.w + " h=" + strMetrics.h);
     
@@ -160,7 +173,7 @@ public class FontGlcd extends FontTFT {
       if (ch == '\n' || ch == '\r') {
         continue;
       }
-      copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y);
+      copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y, bClippingEn);
       cursor_x += textsize_x * 6; // Advance x one char
     }
     g2d.drawImage(image, r.x, r.y, null);
@@ -168,20 +181,32 @@ public class FontGlcd extends FontTFT {
   }
 
   /**
-   * 
    * drawImage
    *
-   * @see builder.fonts.FontTFT#drawImage(java.awt.Graphics2D, java.lang.String, java.awt.Color, java.awt.Color)
+   * @see builder.fonts.FontTFT#drawImage(java.awt.Rectangle, java.lang.String, java.awt.Color, java.awt.Color, boolean)
    */
   @Override
-  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg) {
+  public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
     
   //  Builder.logger.debug("Enter drawTxt: [" + s + "]");
   
     int ch;
+    if (s == null) return null;
     int length = s.length();
-    strMetrics = getTextBounds(s,0,0);
+    if (length == 0) return null;
+    strMetrics = getTextBounds(s,0,0,bClippingEn);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
   
+    // clipping
+    if (bClippingEn) {
+      if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
+        strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
+      }
+      if (strMetrics.h+r.y > Builder.CANVAS_HEIGHT) {
+        strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
+      }
+    }
 //    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
 //        + " w=" + strMetrics.w + " h=" + strMetrics.h);
     
@@ -209,23 +234,23 @@ public class FontGlcd extends FontTFT {
       if (ch == '\n' || ch == '\r') {
         continue;
       }
-      copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y);
+      copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y, bClippingEn);
       cursor_x += textsize_x * 6; // Advance x one char
     }
     return image;
   }
 
   /**
-   * Determine size of a string with current font/size. 
-   * Pass string and a cursor position, returns UL corner and W,H.
-   * 
-   * @param str     The string to measure
-   * @param x       The current cursor X
-   * @param y       The current cursor Y
-   * @return  FontMetrics
+   * getTextBounds
+   *
+   * @see builder.fonts.FontTFT#getTextBounds(java.lang.String, int, int, boolean)
    */
   @Override
-  public FontMetrics getTextBounds(String str, int x, int y) {
+  public FontMetrics getTextBounds(String str, int x, int y, boolean bClippingEn) {
+
+    /* test for zero length string */
+    if (str == null || str.isEmpty()) return new FontMetrics(0,0,0,0);
+   
     char ch; // Current character
 
     x1 = x;
@@ -235,8 +260,13 @@ public class FontGlcd extends FontTFT {
     int w  = 0;
     int h = 0;
     // clipping
-    minx = Builder.CANVAS_WIDTH;
-    miny = Builder.CANVAS_HEIGHT;
+    if (bClippingEn) {
+      minx = Builder.CANVAS_WIDTH;
+      miny = Builder.CANVAS_HEIGHT;
+    } else {
+      minx = 32767;
+      miny = 32767;
+    }
     maxx = -1;
     maxy = -1;
     
@@ -258,8 +288,10 @@ public class FontGlcd extends FontTFT {
     }
 
     // clipping
-    if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
-    if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
+    if (bClippingEn) {
+      if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
+      if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
+    }
     return new FontMetrics(x1,y1,w,h);
   }
  
@@ -293,17 +325,20 @@ public class FontGlcd extends FontTFT {
    * @param colBg
    * @param size_x
    * @param size_y
+   * @param bClippingEn
    */
-  private void copyChar(int x, int y, int ch, Color colTxt, Color colBg, int size_x, int size_y) {
+  private void copyChar(int x, int y, int ch, Color colTxt, Color colBg, int size_x, int size_y, boolean bClippingEn) {
 
 //    Builder.logger.debug("***copyChar [" + Integer.toHexString(ch) + "]");
 
-    if ((x >= Builder.CANVAS_WIDTH) || // Clip right
-        (y >= Builder.CANVAS_HEIGHT) || // Clip bottom
-        ((x + 6 * size_x - 1) < 0) || // Clip left
-        ((y + 8 * size_y - 1) < 0)) // Clip top
-      return;
-
+    if (bClippingEn) {
+      if ((x >= Builder.CANVAS_WIDTH) || // Clip right
+          (y >= Builder.CANVAS_HEIGHT) || // Clip bottom
+          ((x + 6 * size_x - 1) < 0) || // Clip left
+          ((y + 8 * size_y - 1) < 0)) // Clip top
+        return;
+    }
+    
     for (int i = 0; i < 5; i++) { // Char bitmap = 5 columns
       int line = bitmap[ch * 5 + i] & 0xFF;
       for (int j = 0; j < 8; j++, line >>= 1) {

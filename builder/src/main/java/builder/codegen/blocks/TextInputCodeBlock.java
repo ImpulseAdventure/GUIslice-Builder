@@ -31,8 +31,8 @@ import java.util.Map;
 
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
+import builder.fonts.FontTFT;
 import builder.models.TextInputModel;
-import builder.models.TextModel;
 import builder.models.WidgetModel;
 
 /**
@@ -93,7 +93,7 @@ public final class TextInputCodeBlock implements CodeBlock {
     
     // now deal with any extra switches
     String strAlign = m.getAlignment();
-    if (!strAlign.equals(TextModel.ALIGN_LEFT)) {
+    if (!strAlign.equals(FontTFT.ALIGN_LEFT)) {
       template = tm.loadTemplate(ALIGN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

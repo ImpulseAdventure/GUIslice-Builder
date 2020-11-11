@@ -92,7 +92,7 @@ public class ImageModel extends WidgetModel {
   /** memory Constants */
   public  final static String SRC_SD   = "gslc_GetImageFromSD((const char*)";
   public  final static String SRC_PROG = "gslc_GetImageFromProg((const unsigned char*)";
-  public  final static String SRC_RAM  = "gslc_GetImageFromRam((const unsigned char*)";
+  public  final static String SRC_RAM  = "gslc_GetImageFromRam((unsigned char*)";
   public  final static String SRC_FILE = "gslc_GetImageFromFile(";
 
   /** format Constants */

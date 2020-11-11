@@ -52,6 +52,9 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
 ### Bug Fixes 0.16.0
+ - Bug No. 195 Enhancement - Add Top/Bot to Text Button text alignment fields `#127`
+ - Bug No. 194 gslc_GetImageFromRAM creates const pointer issue `#126` 
+ - Bug No. 193 codegen fails to work for GSLCX_CHECKBOX_STYLE_ BOX or ROUND issue `#128`
  - Bug No. 191 Crash if slider min=max
  - Bug No. 189 Add shortcut ctrl+z for UnDo
  - Bug No. 187 App window not controllable with Java built-in themes issue `#112`
@@ -136,7 +139,7 @@ Added Apache log4j2 trace logging in GUIsliceBuilder/logs/builder.log to help hu
  - Bug No. 167 Changing target platform to LINUX in Project Tab can cause font errors and crashes
 
 #### HotFix 0.14.b003
- - Bug No. 164 Reordering pages in Tree View causes NullPointerException - issue 85
+ - Bug No. 164 Reordering pages in Tree View causes NullPointerException - issue `#85`
 
 #### HotFix 0.14.b002
  - Bug No. 161 Code gen for XGraph doesn't add font unless used by another element
