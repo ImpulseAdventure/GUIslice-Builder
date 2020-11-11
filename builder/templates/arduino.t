@@ -106,7 +106,7 @@ $<CALLBACK>
    
   // create checkbox $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXCheck$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},false,GSLCX_CHECKBOX_STYLE_X,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},false,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <CHECKBOX_P>
    
