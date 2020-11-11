@@ -41,6 +41,7 @@ import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
+import builder.fonts.FontTFT;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.MultiStringsCell.MCDialogType;
 import builder.tables.MultiStringsCell;
@@ -96,7 +97,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static public  final Integer  DEF_ITEM_GAP          = Integer.valueOf(0);
   static public  final Integer  DEF_TXT_MARGIN_WIDTH  = Integer.valueOf(5);
   static public  final Integer  DEF_TXT_MARGIN_HEIGHT = Integer.valueOf(0);
-  static public  final String   DEF_TEXT_ALIGN        = TextModel.ALIGN_LEFT;
+  static public  final String   DEF_TEXT_ALIGN        = FontTFT.ALIGN_LEFT;
   static public  final Boolean  DEF_FRAME_EN          = Boolean.TRUE;
   static public  final Boolean  DEF_SCROLLBAR         = Boolean.TRUE;
   static public  final String   DEF_SCROLLBAR_ENUM    = "";
@@ -180,9 +181,9 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   private void initEditors()
   {
     cbAlign = new JComboBox<String>();
-    cbAlign.addItem(TextModel.ALIGN_LEFT);
-    cbAlign.addItem(TextModel.ALIGN_CENTER);
-    cbAlign.addItem(TextModel.ALIGN_RIGHT);
+    cbAlign.addItem(FontTFT.ALIGN_LEFT);
+    cbAlign.addItem(FontTFT.ALIGN_CENTER);
+    cbAlign.addItem(FontTFT.ALIGN_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
 
     itemsCell = new MultiStringsCell("List of Items", MCDialogType.STRING_DIALOG);

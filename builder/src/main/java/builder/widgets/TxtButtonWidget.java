@@ -30,6 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import builder.common.CommonUtils;
+import builder.common.GUIslice;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
 import builder.models.TxtButtonModel;
@@ -103,7 +104,12 @@ public class TxtButtonWidget extends Widget {
         }
       }
       if (m.isFillEnabled()) {
-        ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+        if (m.isFrameEnabled()) {
+          Rectangle rElemInner = GUIslice.expandRect(b, -1, -1);
+          ff.drawText(g2d, m.getAlignment(), rElemInner, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+        } else {
+          ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+        }
       } else {
         ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getTextColor(), m.getTextMargin());
       }
