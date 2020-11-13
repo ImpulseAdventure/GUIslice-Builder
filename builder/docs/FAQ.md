@@ -13,7 +13,7 @@ GUIslice API
 
 **Publication date and software versions**
 
-Published October, 2020. Based on GUIslice Builder 0.15.b008 and GUIslice API Library 0.15.0
+Published November, 2020. Based on GUIslice Builder 0.16.0 and GUIslice API Library 0.16.0
 
 ## Using the GUIsliceBuilder
 
@@ -241,6 +241,34 @@ Yes.
 ```
 
 Note however, The button can't dynamically change size at runtime so don't place more characters then will fit in the button's frame.
+
+### Can I make a long-press button to continuously add a value until released?
+
+Button callback functions are triggered when you first start touching a button, while still holding and when releasing it. 
+ 
+Starting with the basic ex02_ard_btn_txt example, replace the callback with the following:
+```
+  int16_t m_nCount = 0;         // Simple counter
+  uint32_t m_tmLastPress = 0;   // Time of last press interval
+
+  // Button callbacks
+  bool CbBtnQuit(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY)
+  {
+    if (eTouch == GSLC_TOUCH_DOWN_IN) {         // Started press (inside button)
+      m_tmLastPress = millis();
+    } else if (eTouch == GSLC_TOUCH_UP_IN) {    // Released (inside button)
+      m_nCount += 1;
+      GSLC_DEBUG_PRINT("Count = %d\n",m_nCount);
+    } else if (eTouch == GSLC_TOUCH_MOVE_IN) {  // Continued press (inside button)
+      if ((millis() - m_tmLastPress) > 500) {
+        m_nCount += 10;
+        m_tmLastPress = millis();
+        GSLC_DEBUG_PRINT("Count = %d\n",m_nCount);
+      }
+    }
+    return true;
+  }
+```
 
 ### How can I reset the buffer of the XTextBox element?
 
