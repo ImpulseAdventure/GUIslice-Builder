@@ -146,8 +146,10 @@ public class FontGlcd extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
+
+    //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -207,8 +209,10 @@ public class FontGlcd extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
+
+    //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );

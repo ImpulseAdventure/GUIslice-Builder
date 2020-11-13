@@ -109,11 +109,6 @@ public final class TextCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    if (!m.getTextColor().equals(TextModel.DEF_TEXT_COLOR)) {
-      template = tm.loadTemplate(TEXTCOLOR_TEMPLATE);
-      outputLines = tm.expandMacros(template, map);
-      tm.codeWriter(sBd, outputLines);
-    }
     if (!m.isFillEnabled()) {
       template = tm.loadTemplate(FILL_EN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);

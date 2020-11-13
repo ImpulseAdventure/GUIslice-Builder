@@ -151,8 +151,11 @@ public class FontGFX extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-//    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
-    
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
+
+    //    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
+
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
@@ -217,7 +220,9 @@ public class FontGFX extends FontTFT {
       }
     }
 
-//    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
+
+    //    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );

@@ -279,7 +279,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   public void addWidget(String pageID, String pageEnum, String widgetID, String widgetEnum) {
     TreeItem pageItem = new TreeItem(pageID, pageEnum);
     TreeItem item = new TreeItem(widgetID, widgetEnum);
-    Builder.logger.debug("TV-add: " + item.toDebugString());
+//    Builder.logger.debug("TV-add: " + item.toDebugString());
     selectWidget = item;  // avoids loop in pagePane
     if (!((TreeItem)currentPage.getUserObject()).equals(pageItem)) {
       currentPage = findNode(pageItem);
