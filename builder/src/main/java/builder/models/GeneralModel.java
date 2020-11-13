@@ -240,6 +240,12 @@ public class GeneralModel extends WidgetModel {
           return;
         }
       }
+      if (row == DISPLAY_WIDTH) {
+        Builder.CANVAS_WIDTH = getWidth();
+      }
+      if (row == DISPLAY_HEIGHT) {
+        Builder.CANVAS_HEIGHT = getHeight();
+      }
 //      changeValueAt(value, row);
       // commands are used to support undo and redo actions.
       PropertyCommand c = new PropertyCommand(this, value, row);
@@ -630,6 +636,8 @@ public class GeneralModel extends WidgetModel {
     if (getTarget().equals("arduino TFT_eSPI")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }
+    Builder.CANVAS_WIDTH = getWidth();
+    Builder.CANVAS_HEIGHT = getHeight();
   }
 
 
