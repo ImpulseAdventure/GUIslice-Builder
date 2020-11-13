@@ -157,7 +157,9 @@ public class FontT3 extends FontTFT {
       }
     }
 
-//    Builder.logger.debug("drawString: " + s + " font: " + fontName + " " + strMetrics.toString());
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
+
+    //    Builder.logger.debug("drawString: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -214,7 +216,10 @@ public class FontT3 extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-//    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
+
+    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
+
+    //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );

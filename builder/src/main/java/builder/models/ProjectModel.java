@@ -770,6 +770,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     if (getTargetPlatform().equals("arduino TFT_eSPI")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
     }
+    Builder.CANVAS_WIDTH = getWidth();
+    Builder.CANVAS_HEIGHT = getHeight();
     fontsListCell.setData((String[])data[PROP_FONT_LIST][PROP_VAL_VALUE]);
   }
 
