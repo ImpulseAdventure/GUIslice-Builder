@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import builder.Builder;
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
@@ -571,31 +572,51 @@ public class ButtonCbPipe extends WorkFlowPipe {
     String enumName = "";
     int i = 0;
     String sTestTag= "";
+    // read everything into an array first so we can go backwards if needed
+    List<String> inputLines = new ArrayList<String>();
     while((scan = br.readLine()) != null) {
       sTestTag = LTRIM.matcher(scan).replaceAll(EMPTY_STRING);
       if (sTestTag.equals(MY_ENUM_END_TAG)) 
         break;
+      inputLines.add(scan);
+    } 
+    int nState = 0;
+    List<String> lines = null;
+    for (int n=0; n<inputLines.size(); n++) {
+      scan = inputLines.get(n);
       // break the line up into words
       if (scan.isEmpty()) continue;
       String[] words = CodeUtils.splitWords(scan);
+      if (words.length == 0) {
+        if (nState == 1) {
+          lines.add(scan);
+        }
+        continue;
+      }
       // first word must be "case"
       if (words[0].equals("case")) {
-        enumName = words[1];
-        List<String> lines = new ArrayList<String>();
-        lines.add(scan);
-        while((scan = br.readLine()) != null) {
-           lines.add(scan);
-           if (scan.isEmpty()) continue;
-           String[] atoms = CodeUtils.splitWords(scan);
-           if (atoms.length == 0) continue;
-           if (atoms[0].equals("break")) 
-             break;
+        if (nState == 0) {
+          enumName = words[1];
+          lines = new ArrayList<String>();
+          nState = 1;
+        } else {
+          caseMap.put(enumName, i);
+          listOfCases[i] = lines;
+//          Builder.logger.debug("Stored Case Statement: " + enumName + " idx=" + i);
+          i++;
+          nState = 0;
+          n--;
         }
-        caseMap.put(enumName, i);
-        listOfCases[i] = lines;
-//        System.out.println("Stored Case Statement: " + enumName + " idx=" + i);
-        i++;
       }
+      if (nState == 1) {
+        lines.add(scan);
+      }
+    }
+    if (nState == 1) {
+      caseMap.put(enumName, i);
+      listOfCases[i] = lines;
+//      Builder.logger.debug("Stored Case Statement: " + enumName + " idx=" + i);
+      i++;
     }
   }
 

@@ -119,7 +119,6 @@ public class RibbonListener implements ActionListener, iSubscriber {
     chooser.setApproveButtonText("Select Folder");
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     chooser.setAcceptAllFileFilterUsed(false);
-    chooser.setAcceptAllFileFilterUsed(false);
     // Open Dialog  
     if (chooser.showOpenDialog(new JFrame()) == JFileChooser.APPROVE_OPTION) { 
       currentDirectory = chooser.getSelectedFile();

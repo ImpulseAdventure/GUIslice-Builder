@@ -26,6 +26,7 @@
 package builder.fonts;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -47,11 +48,15 @@ public class FontGFX extends FontTFT {
 
   // Font variables
   private ArrayList<FontGFXGlyph>  glyphList  = new ArrayList<FontGFXGlyph>();
-  private byte[] bitmap;   ///< Character bitmaps
-  private int  first;     ///< ASCII extents (first char)
-  private int  last;      ///< ASCII extents (last char)
+  private byte[] bitmap;      ///< Character bitmaps
+  private int  first;         ///< ASCII extents (first char)
+  private int  last;          ///< ASCII extents (last char)
   @SuppressWarnings("unused")
-  private int  yAdvance;  ///< Newline distance (y axis)
+  private int  yAdvance;      ///< Newline distance (y axis)
+  private int  cap_width;     ///< Spaces have no width so use this value if field is all spaces
+  private int  cap_height;    ///< Spaces have no height so use this value if field is all spaces
+  private int char_maxwidth;
+  private int char_maxheight;
 
   // state variables
   int         textsize_x;  
@@ -104,7 +109,6 @@ public class FontGFX extends FontTFT {
     this.fontType = FONT_GFX;
     this.textsize_x = 1;
     this.textsize_y = 1;
-
     return parseGFXFont();
   }
 
@@ -140,8 +144,13 @@ public class FontGFX extends FontTFT {
 
     strMetrics = getTextBounds(s,0,0,bClippingEn);
 
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
-
+    if (strMetrics.w <=0) {
+      strMetrics.w = char_maxwidth * length;
+    };
+    if (strMetrics.h <= 0) {
+      strMetrics.h = char_maxheight * length;
+    }
+    
     // clipping
     if (bClippingEn) {
       if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
@@ -154,8 +163,8 @@ public class FontGFX extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
-    //    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
-
+//    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
+    
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
@@ -208,7 +217,12 @@ public class FontGFX extends FontTFT {
 
     strMetrics = getTextBounds(s,0,0,bClippingEn);
 
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
+    if (strMetrics.w <=0) {
+      strMetrics.w = char_maxwidth * length;
+    };
+    if (strMetrics.h <= 0) {
+      strMetrics.h = char_maxheight * length;
+    }
   
     // clipping
     if (bClippingEn) {
@@ -222,7 +236,7 @@ public class FontGFX extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
 
-    //    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
+//    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -286,6 +300,7 @@ public class FontGFX extends FontTFT {
     /* test for zero length string */
     if (str == null || str.isEmpty()) return new FontMetrics(0,0,0,0);
    
+    int length = str.length();
     char ch; // Current character
 
     int x1 = x;
@@ -308,7 +323,7 @@ public class FontGFX extends FontTFT {
     maxy = -1;
     maxbase = -1;
     
-    for (int i=0; i<str.length(); i++) {
+    for (int i=0; i<length; i++) {
       ch = str.charAt(i);
       if (ch == '\n' || ch == '\r') throw new FontException("newlines are not supported");
       charBounds(ch, bClippingEn);  // modifies class variables for sizing
@@ -325,6 +340,14 @@ public class FontGFX extends FontTFT {
     if (maxbase >= minbase) {
       maxbase = maxbase - minbase + 1;
     }
+    // adjust for field of spaces
+    if (w <=0) {
+      w = cap_width * length;
+    };
+    if (h <= 0) {
+      h = cap_height * length;
+    }
+  
     // clipping
     if (bClippingEn) {
       if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
@@ -335,6 +358,41 @@ public class FontGFX extends FontTFT {
     return metrics;
   }
  
+  /**
+   * getCharSize
+   *
+   * @see builder.fonts.FontTFT#getCharSize(char, boolean)
+   */
+  @Override
+  public Dimension getCharSize(char ch) {
+    tmpX = 0;
+    tmpY = 0;
+    int w  = 0;
+    int h = 0;
+    minx = 32767;
+    miny = 32767;
+    maxx = -1;
+    maxy = -1;
+    
+    if (ch == '\n' || ch == '\r') return null;
+    charBounds(ch, false);  // modifies class variables for sizing
+    
+    if (maxy >= miny) {
+      h = maxy - miny + 1;
+    }
+    w = tmpX;
+    return new Dimension(w,h);
+  }
+
+  /**
+   * getMaxCharSize
+   *
+   * @see builder.fonts.FontTFT#getMaxCharSize()
+   */
+  public Dimension getMaxCharSize() {
+    return new Dimension(char_maxwidth,char_maxheight);
+  }
+
   /**
    * Helper to determine size of a character with this font/size.
    * used by getTextBounds() function.
@@ -349,8 +407,10 @@ public class FontGFX extends FontTFT {
       int xa = glyph.xAdvance;
       int xo = glyph.xOffset;
       int yo = glyph.yOffset;
-      if (((tmpX + ((xo + gw) * textsize_x)) > Builder.CANVAS_WIDTH)) {
-        return;
+      if (bClippingEn) {
+        if (((tmpX + ((xo + gw) * textsize_x)) > Builder.CANVAS_WIDTH)) {
+          return;
+        }
       }
       int tsx = textsize_x;
       int tsy = textsize_y;
@@ -455,7 +515,7 @@ public class FontGFX extends FontTFT {
     try {
       raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
     } catch(ArrayIndexOutOfBoundsException e) {
-//      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", fontName, ch, x,y));
+      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", fontName, ch, x,y));
     }
   }
 
@@ -524,7 +584,7 @@ public class FontGFX extends FontTFT {
       }
       if (token.getType() != OPEN_BRACE) parseError(token, "glyph data");
       FontGFXGlyph glyph = null;
-//      char test_idx = ' ';
+      int test_idx = first;
       while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
         if (token.getType() == OPEN_BRACE) {
           // found a glyph
@@ -552,9 +612,14 @@ public class FontGFX extends FontTFT {
           token = tokenizer.nextToken();
           if (token.getType() != INTEGER) parseError(token, "glyph missing yOffset");
           glyph.yOffset = Integer.parseInt(token.getToken());
+          if (test_idx++ == 65) {
+            // letter A - save height for fields of all spaces
+            cap_width = glyph.width;
+            cap_height = glyph.height;
+          }
 /*
           Builder.logger.debug(String.format(
-              "Char [%c]-> bitmapOffset=%d  width=%d height=%d xAdvance=%d xOffset=%d yOffset="  
+              "Char [%d]-> bitmapOffset=%d  width=%d height=%d xAdvance=%d xOffset=%d yOffset="  
               ,test_idx++ 
               ,glyph.bitmapOffset
               ,glyph.width
@@ -598,6 +663,8 @@ public class FontGFX extends FontTFT {
       byteList = null;
       tokenizer.close();
       // now we need to repair our glyphs due to the fact descent isn't recorded.
+      char_maxwidth = 0;
+      char_maxheight = 0;
       for (int i=first; i<=last; i++) {
         repairGlyph((char)i);
       }
@@ -701,6 +768,12 @@ public class FontGFX extends FontTFT {
       } else {
         glyph.image_height = glyph.height;
       }
+      if (glyph.image_width >= char_maxwidth) {
+        char_maxwidth = glyph.image_width;
+      }
+      if (glyph.image_height >= char_maxheight) {
+        char_maxheight = glyph.image_height;
+      }
 /*
       Builder.logger.debug(String.format(
           "Char [%c]->width=%d height=%d xAdvance=%d xOffset=%d yOffset=%d img_w=%d img_h=%d"  
@@ -716,6 +789,5 @@ public class FontGFX extends FontTFT {
 */
     }
   }
-
 
 }

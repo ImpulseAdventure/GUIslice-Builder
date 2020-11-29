@@ -113,7 +113,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.16.0";
+  public static final String VERSION = "0.16.b002";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
@@ -378,7 +378,7 @@ public class Builder  extends JDesktopPane {
     statusBar.add(welcomeDate, BorderLayout.EAST);
     frame.add(statusBar, BorderLayout.SOUTH);
     //display date time to status bar
-    timee = new Timer(1000, new ActionListener() {
+    timee = new Timer(5000, new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {

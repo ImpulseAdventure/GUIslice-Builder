@@ -289,42 +289,78 @@ public class FontFactory {
   }
   
   /**
-   * measureChar() - Give back the size of a character adjusted for target
-   * platform.
-   *
-   * @param fontName
-   *          the font name
-   * @return the <code>dimension</code> object
+   * getCharBounds
+   * Used by Character Map
+   * 
+   * @param x        x position
+   * @param y        y position
+   * @param w        width of box
+   * @param h        height of box
+   * @param str      The text string to display
+   * @param font     The TFT font to use for this text string
+   * @param align    Text alignment / justification mode
+   *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
+   * @param nMargin  Number of pixels gap to leave surrounding text
    */
-  public Dimension measureChar(String fontName) {
-    FontItem item = getFontItem(fontName);
-    if (item == null) {
-      Builder.logger.error("measureChar failed because " + fontName + " not found");
-      return new Dimension(0,0);
-    }
-    String acHeight = "p$";
-    String acWidth  = "%";
-    FontTFT tmpFont = item.getFont();
-    Dimension txtHeight = measureText(0,0,tmpFont,acHeight);
-    Dimension txtWidth = measureText(0,0,tmpFont,acWidth);
-    return new Dimension(txtWidth.width, txtHeight.height);
+  public Rectangle getCharBounds(int x, int y, int w, int h, String str, String align, FontTFT font, int nMargin) {
+    
+    // Fetch the size of the text to allow for justification
+    FontMetrics metrics = font.getTextBounds(str, 0, 0, false);
+    if (metrics.w <= 0 || metrics.h <= 0) return null;
+    // determine bounds
+    Rectangle r = new Rectangle(x,y,w,h);
+    
+    return alignBounds(align, r, metrics, nMargin);
   }
   
   /**
-   * measureText() - Give back the size of our text.
-   *
+   * getMaxTextBounds 
+   * Size for maximum character size times storage length.
+   * Used for dynamic text that will change during runtime.
+   * @param x
+   * @param y
+   * @param font
+   * @param s
+   * @return the <code>dimension</code> object
+   */
+  public Dimension getMaxTextBounds(int x, int y, FontTFT font, int length) {
+    // Fetch the maximum size of a character
+    Dimension size = font.getMaxCharSize();
+    // calculate the size of a box to hold the text with some padding.
+    size.width = size.width * length + 2;
+    size.height = size.height + 2;
+    // clipping
+    if (size.width+x > Builder.CANVAS_WIDTH) {
+      size.width = size.width - (size.width + x - Builder.CANVAS_WIDTH);
+    }
+    if (size.height+y > Builder.CANVAS_HEIGHT) {
+      size.height = size.height - (size.height - y - Builder.CANVAS_HEIGHT);
+    }
+
+    return size;
+  }
+  
+  /**
+   * getTextBounds() - Give back the size of a String.
+   * Used for static text like labels
    * @param s
    *          the s
    * @param font
    *          the font
    * @return the <code>dimension</code> object
    */
-  public Dimension measureText(int x, int y, FontTFT font, String s) {
+  /**
+   * getTextBounds() - Give back the size of a String.
+   * Used for static text like labels
+   * @param x
+   * @param y
+   * @param font
+   * @param s
+   * @return
+   */
+  public Dimension getTextBounds(int x, int y, FontTFT font, String s) {
     // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(s, 0, 0, true);
-    // calculate the size of a box to hold the text with some padding.
-    metrics.w+=2;
-    metrics.h+=2;
+    FontMetrics metrics = font.getTextBounds(s, 0, 0,false);
     // clipping
     if (metrics.w+x > Builder.CANVAS_WIDTH) {
       metrics.w = metrics.w - (metrics.w + x - Builder.CANVAS_WIDTH);
@@ -335,9 +371,9 @@ public class FontFactory {
 
     return new Dimension(metrics.w, metrics.h);
   }
-  
+
   /**
-   * measureText() - Give back the size of our text.
+   * getCharSize() - Give back the size of a Character.
    *
    * @param s
    *          the s
@@ -345,21 +381,8 @@ public class FontFactory {
    *          the font
    * @return the <code>dimension</code> object
    */
-  public Rectangle getTextBounds(int x, int y, FontTFT font, String s) {
-    // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(s, 0, 0,true);
-    // calculate the size of a box to hold the text with some padding.
-    metrics.w+=2;
-    metrics.h+=2;
-    // clipping
-    if (metrics.w+x > Builder.CANVAS_WIDTH) {
-      metrics.w = metrics.w - (metrics.w + x - Builder.CANVAS_WIDTH);
-    }
-    if (metrics.h+y > Builder.CANVAS_HEIGHT) {
-      metrics.h = metrics.h - (metrics.h - y - Builder.CANVAS_HEIGHT);
-    }
-
-    return new Rectangle(x, y, metrics.w, metrics.h);
+  public Dimension getCharSize(char ch, FontTFT font) {
+    return font.getCharSize(ch);
   }
 
   /**
@@ -409,40 +432,12 @@ public class FontFactory {
     // Fetch the size of the text to allow for justification
     FontMetrics metrics = font.getTextBounds(str, 0, 0, false);
     
-    if (str.equals("A"))
-      Builder.logger.debug("A");
-
     // determine bounds
     Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
 
     // Call the font's text rendering routine
     return font.drawImage(rTxt,str, colTxt, colBg,false);
 
-  }
-  
-  /**
-   * getCharBounds
-   * Used by Character Map
-   * 
-   * @param x        x position
-   * @param y        y position
-   * @param w        width of box
-   * @param h        height of box
-   * @param str      The text string to display
-   * @param font     The TFT font to use for this text string
-   * @param align    Text alignment / justification mode
-   *                 String "GSLC_ALIGN_MID_LEFT", "GSLC_ALIGN_MID_RIGHT", or "GSLC_ALIGN_MID_MID"
-   * @param nMargin  Number of pixels gap to leave surrounding text
-   */
-  public Rectangle getCharBounds(int x, int y, int w, int h, String str, String align, FontTFT font, int nMargin) {
-    
-    // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(str, 0, 0, false);
-    if (metrics.w <= 0 || metrics.h <= 0) return null;
-    // determine bounds
-    Rectangle r = new Rectangle(x,y,w,h);
-    
-    return alignBounds(align, r, metrics, nMargin);
   }
   
   /**

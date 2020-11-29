@@ -26,8 +26,10 @@
 package builder.fonts;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
@@ -48,6 +50,9 @@ public class FontSim extends FontTFT {
   
   private int logicalSize;
   private String logicalStyle;
+
+  private int char_maxwidth;
+  private int char_maxheight;
 
   private int dpi;
   
@@ -92,9 +97,10 @@ public class FontSim extends FontTFT {
       javaStyle = Font.PLAIN;
       break;
     }
-    font = new Font(fontName, javaStyle, text_size);
+    font = new Font(fileName, javaStyle, text_size);
     font = font.deriveFont((float) scaleSize);
 
+    calculateMaxCharSize();
     return true;
   }
 
@@ -107,7 +113,19 @@ public class FontSim extends FontTFT {
     if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
       return false;
     }
-    return font.canDisplay(codePoint);
+    boolean bCanDisplay = false;
+    try {
+      if (font.canDisplay(codePoint)) {
+        Character.UnicodeBlock block = Character.UnicodeBlock.of( codePoint );
+        bCanDisplay = (!Character.isISOControl(codePoint)) &&
+          (codePoint != KeyEvent.CHAR_UNDEFINED) &&
+                block != null &&
+                block != Character.UnicodeBlock.SPECIALS;
+      }
+      } catch(IllegalArgumentException e) {
+        ;
+      }
+    return bCanDisplay;
   }
   
   /**
@@ -160,11 +178,48 @@ public class FontSim extends FontTFT {
     FontMetrics metrics = new FontMetrics();
     metrics.x1 = (int) layout.getDescent();
     metrics.y1 = -((int)javaMetrics.getAscent());
-    metrics.w = (int) r2D.getWidth();
+    metrics.w = (int) r2D.getWidth() + 5; // add fudge factor
     metrics.h = javaMetrics.getHeight();
 
     g2d.dispose();
     return metrics;
+  }
+
+  /**
+   * getCharSize
+   *
+   * @see builder.fonts.FontTFT#getCharSize(char)
+   */
+  @Override
+  public Dimension getCharSize(char ch) {
+    /* test for zero length string */
+    String str = String.valueOf(ch);
+    if (str == null || str.isEmpty()) return new Dimension(0,0);
+   
+    /*
+     * Because font metrics is based on a graphics context, we need to create
+     * a small, temporary image so we can ascertain the width and height
+     * of the final image
+     */
+    BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = image.createGraphics();
+    
+    g2d.setFont(font);
+    java.awt.FontMetrics javaMetrics = g2d.getFontMetrics(font);
+    int w = javaMetrics.charWidth(ch);
+    int h = javaMetrics.getHeight();
+
+    g2d.dispose();
+    return new Dimension(w, h);
+  }
+
+  /**
+   * getMaxCharSize
+   *
+   * @see builder.fonts.FontTFT#getMaxCharSize()
+   */
+  public Dimension getMaxCharSize() {
+    return new Dimension(char_maxwidth,char_maxheight);
   }
 
   /**
@@ -212,6 +267,14 @@ public class FontSim extends FontTFT {
   }
   
   /**
+   * getTTF_Font
+   * @return actual ttf font
+   */
+  public Font getTTF_Font() {
+    return font;
+  }
+  
+  /**
    * Gets the logical size.
    *
    * @return the logical size
@@ -231,4 +294,31 @@ public class FontSim extends FontTFT {
     return logicalStyle;
   }
 
+  private void calculateMaxCharSize() {
+    char_maxwidth = 0;
+    char_maxheight = 0;
+    BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = image.createGraphics();
+    
+    g2d.setFont(font);
+    java.awt.FontMetrics javaMetrics = g2d.getFontMetrics(font);
+    int w = 0;
+    int h = 0;
+    for (int i=32; i<=126; i++ ) {
+      char ch = (char)i;
+      if ((ch == '\n') ||
+          (ch == '\r') ||
+          (ch == ' '))
+        continue;
+
+      w = javaMetrics.charWidth(ch);
+      h = javaMetrics.getHeight();
+
+      if (w > char_maxwidth) char_maxwidth = w;
+      if (h > char_maxheight) char_maxheight = h;
+    }
+
+    g2d.dispose();
+
+  }
 }

@@ -51,6 +51,10 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### HotFix 0.16.b002
+GUISlice crashing after clicking generate code issue `#134`
+Assigning storage to text field gives incorrect height API issue `#292`
+
 ### HotFix 0.16.b001
  - Bug No. 197 Crash opening project with screen larger that 320x240
  - Bug No. 196 Dup gslc_ElemSetTxtCol when text not set to the default color

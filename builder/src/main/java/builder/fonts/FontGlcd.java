@@ -27,6 +27,7 @@
 package builder.fonts;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -146,10 +147,8 @@ public class FontGlcd extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
-
-    //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
+//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
+//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -209,10 +208,8 @@ public class FontGlcd extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
-
-    //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
+//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
+//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -299,6 +296,46 @@ public class FontGlcd extends FontTFT {
     return new FontMetrics(x1,y1,w,h);
   }
  
+  /**
+   * getCharSize
+   *
+   * @see builder.fonts.FontTFT#getCharSize(char)
+   */
+  @Override
+  public Dimension getCharSize(char ch) {
+    tmpX = 0;
+    tmpY = 0;
+    int w  = 0;
+    int h = 0;
+    minx = 32767;
+    miny = 32767;
+    maxx = -1;
+    maxy = -1;
+    
+    if (ch == '\n' || ch == '\r') return null;
+    charBounds(ch);  // modifies class variables for sizing
+
+    if (maxx >= minx) {
+      w = maxx - minx + 1;
+    }
+    if (maxy >= miny) {
+      h = maxy - miny + 1;
+    }
+    w = tmpX;
+    return new Dimension(w,h);
+  }
+
+  /**
+   * getMaxCharSize
+   *
+   * @see builder.fonts.FontTFT#getMaxCharSize()
+   */
+  public Dimension getMaxCharSize() {
+    int w = textsize_x * 6;
+    int h = textsize_y * 8;
+    return new Dimension(w,h);
+  }
+
   /**
    * Helper to determine size of a character with this font/size.
    * used by getTextBounds() function.

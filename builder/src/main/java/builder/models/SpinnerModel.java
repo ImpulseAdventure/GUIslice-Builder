@@ -299,7 +299,7 @@ public class SpinnerModel extends WidgetModel {
      if (text.length() < text_min.length())
        text = text_min;
      // calculate the real sizes of our display text
-     Dimension d = ff.measureText(getX(),getY(),font, text);
+     Dimension d = ff.getTextBounds(getX(),getY(),font, text);
      // now figure out the rect size needed on the target platform
      // that we show to our user and also push out during code generation.
      if (getFontDisplayName().startsWith("BuiltIn")) {

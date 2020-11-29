@@ -80,7 +80,7 @@ public class NumberInputWidget extends Widget {
       if (text.isEmpty()) {
         for (int i=0; i<m.getTextStorage(); i++) {
           text = text + "9";
-          Dimension d = ff.measureText(b.x,b.y,font, text);
+          Dimension d = ff.getTextBounds(b.x,b.y,font, text);
           if (d.width > b.width) {
              text = text.substring(0, text.length() - 1);
              break;
