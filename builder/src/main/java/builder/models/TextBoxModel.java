@@ -38,6 +38,7 @@ import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
+import builder.fonts.FontTFT;
 
 /**
  * The Class TextBoxModel implements the model for the Text Box widget.
@@ -328,9 +329,10 @@ public class TextBoxModel extends WidgetModel {
     if (!item.getDisplayName().equals(name)) {
       data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
     }
-    Dimension nChSz = ff.measureChar(getFontDisplayName());
-    nRowWidth = (nCols * nChSz.width) + 33;
-    nBoxHeight = (getNumTextRows() * nChSz.height) + 15;
+    FontTFT font = ff.getFont(item.getDisplayName());
+    Dimension nChSz = ff.getMaxTextBounds(0,0,font,nCols);
+    nRowWidth = nChSz.width;
+    nBoxHeight = getNumTextRows() * nChSz.height;
     data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(nRowWidth);
     data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(nBoxHeight);
   }

@@ -65,6 +65,8 @@ public class FontT3 extends FontTFT {
   private int line_space;
   private int cap_height;
   
+  private int char_maxwidth;
+  private int char_maxheight;
   private boolean bWrap = false;
   
   // text drawing variables
@@ -145,8 +147,13 @@ public class FontT3 extends FontTFT {
     if (length == 0) return;
     strMetrics = getTextBounds(s,0,0,bClippingEn);
 
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return;
-    
+    if (strMetrics.w <=0) {
+      strMetrics.w = char_maxwidth * length;
+    };
+    if (strMetrics.h <= 0) {
+      strMetrics.h = char_maxheight * length;
+    }
+  
     // clipping
     if (bClippingEn) {
       if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
@@ -159,7 +166,7 @@ public class FontT3 extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
-    //    Builder.logger.debug("drawString: " + s + " font: " + fontName + " " + strMetrics.toString());
+//    Builder.logger.debug("drawString: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -205,7 +212,12 @@ public class FontT3 extends FontTFT {
     if (length == 0) return null;
     strMetrics = getTextBounds(s,0,0,bClippingEn);
 
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
+    if (strMetrics.w <=0) {
+      strMetrics.w = char_maxwidth * length;
+    };
+    if (strMetrics.h <= 0) {
+      strMetrics.h = char_maxheight * length;
+    }
   
     // clipping
     if (bClippingEn) {
@@ -219,7 +231,7 @@ public class FontT3 extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
 
-    //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
+//    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
@@ -290,6 +302,32 @@ public class FontT3 extends FontTFT {
     return metrics;
   }
  
+  /**
+   * getCharSize
+   *
+   * @see builder.fonts.FontTFT#getCharSize(char)
+   */
+  @Override
+  public Dimension getCharSize(char ch) {
+    int w = 0;
+    int h = 0;
+    Dimension chSz = charBounds(ch,false);
+    if (chSz != null) {
+      w = chSz.width;
+      h = chSz.height;
+    }
+    return new Dimension(w,h);
+  }
+
+  /**
+   * getMaxCharSize
+   *
+   * @see builder.fonts.FontTFT#getMaxCharSize()
+   */
+  public Dimension getMaxCharSize() {
+    return new Dimension(char_maxwidth,char_maxheight);
+  }
+
   /**
    * Helper to determine size of a character with this font/size.
    * used by getTextBounds() function.
@@ -875,6 +913,34 @@ public class FontT3 extends FontTFT {
       Builder.logger.debug("cap_height: " + cap_height);
 */
       tokenizer.close();
+      // now rip through the font and find max character size
+      cursor_x = 0;
+      cursor_y = 0;
+
+      char_maxwidth = 0;
+      char_maxheight = 0;
+//      (ch >= index2_first && ch <= index2_last)) {
+      for (int i=index1_first; i<=index1_last; i++ ) {
+        char ch = (char)i;
+        if ((ch == '\n') ||
+            (ch == '\r') ||
+            (ch == ' '))
+          continue;
+
+        Dimension chSz = charBounds(ch,false);  // modifies class variables for sizing
+        if (chSz == null) continue; //skip undefined characters
+        if (chSz.width > char_maxwidth) char_maxwidth = chSz.width;
+        if (chSz.height > char_maxheight) char_maxheight = chSz.height;
+      }
+      if (index2_first != 0 && index2_last != 0) {
+        for (int i=index2_first; i<=index2_last; i++ ) {
+          char ch = (char)i;
+          Dimension chSz = charBounds(ch,false);  // modifies class variables for sizing
+          if (chSz == null) continue; //skip undefined characters
+          if (chSz.width > char_maxwidth) char_maxwidth = chSz.width;
+          if (chSz.height > char_maxheight) char_maxheight = chSz.height;
+        }
+      }
       return true;
     } catch (IOException | ParserException | FontException | NumberFormatException | TokenizerException e) {
       String msg = String.format("File [%s]: %s", 

@@ -26,6 +26,7 @@
 package builder.fonts;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -159,6 +160,19 @@ public abstract class FontTFT {
    * @return  FontMetrics
    */
   public abstract FontMetrics getTextBounds(String str, int x, int y, boolean bClippingEn);
+
+  /**
+   * getCharSize()
+   * @param ch
+   * @return Dimension of character
+   */
+  public abstract Dimension getCharSize(char ch);
+
+  /**
+   * getMaxCharSize()
+   * @return Maximum Dimension for a character
+   */
+  public abstract Dimension getMaxCharSize();
 
   /**
    * Draw a text string at the given coordinate

@@ -231,7 +231,7 @@ public class FontItem {
       case FontTFT.FONT_SIM:
         font = new FontSim();
         ((FontSim)font).setDPI(platform.getDPI());
-        ret = font.create(null, logicalName, getLogicalSizeAsInt(), logicalStyle);
+        ret = font.create(logicalName, displayName, getLogicalSizeAsInt(), logicalStyle);
         break;
       case FontTFT.FONT_T3:
         font = new FontT3();

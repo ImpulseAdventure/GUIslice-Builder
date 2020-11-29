@@ -484,7 +484,7 @@ public class TextModel extends WidgetModel {
     // calculate the sizes of our display text
     if (fireUpdates) {
       // calculate the real sizes of our display text
-      Dimension nChSz = ff.measureText(getX(),getY(),font, text);
+      Dimension nChSz = ff.getTextBounds(getX(),getY(),font, text);
       setWidth(nChSz.width);
       setHeight(nChSz.height);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
