@@ -289,6 +289,8 @@ public class FontGlcd extends FontTFT {
     }
 
     // clipping
+    w++;
+    h++;
     if (bClippingEn) {
       if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
       if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
