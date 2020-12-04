@@ -225,6 +225,8 @@ public class NumberInputModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row > PROP_HEIGHT || row == PROP_ENUM)
+      super.setModelChanged();
     if (row == PROP_X) {
       calcSizes(true);
     } 
@@ -419,8 +421,8 @@ public class NumberInputModel extends WidgetModel {
     if (fireUpdates) {
       // calculate the real sizes of our display text
       Dimension nChSz = ff.getTextBounds(getX(),getY(),font, text);
-      setWidth(nChSz.width);
-      setHeight(nChSz.height);
+      setWidth(nChSz.width+(getTextMargin()*2)); // account for margin
+      setHeight(nChSz.height+1); // account for frame
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }

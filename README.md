@@ -51,8 +51,13 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### HotFix 0.16.b003
+ - Bug No. 200 New Keypad support causes input field button case-statement to be deleted and recreated
+ - Bug No. 199 Sizing of rect for Text with margin doesn't include space on right-side
+
 ### HotFix 0.16.b002
 GUISlice crashing after clicking generate code issue `#134`
+
 Assigning storage to text field gives incorrect height API issue `#292`
 
 ### HotFix 0.16.b001

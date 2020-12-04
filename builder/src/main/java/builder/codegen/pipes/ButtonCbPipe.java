@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import builder.Builder;
 import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
@@ -355,6 +354,15 @@ public class ButtonCbPipe extends WorkFlowPipe {
         idx = findCaseStatement(e);
       }
       if (idx != -1) {
+        /* fail-safe if model hasn't changed in this session 
+         * leave case statements alone.
+         */
+        if (!modelInfo.isModelChanged()) {
+          // output what we have stored
+          outputLines = listOfCases[idx];
+          tm.codeWriter(sBd, outputLines);
+          bNeedOutput = false;
+        } else {
         /*
          * we do have an existing case statement so now the fun begins need to parse it
          * for case type and compare it to what our model now wants if everything
@@ -507,6 +515,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
           break;
         }
       }
+      }
       if (bNeedOutput) {
         // No existing case statement or we need to regenerate it.
         map.clear();
@@ -639,6 +648,10 @@ public class ButtonCbPipe extends WorkFlowPipe {
   public CaseInfo getCaseType(WidgetModel m) {
     CaseInfo ci = new CaseInfo(m.getEnum());
     ci.setCaseType(CT_STANDARD);
+    /* fail-safe if model hasn't changed in this session 
+     * leave case statements alone.
+     */
+    ci.setModelChanged(m.bModelChanged);
     if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
       if (((TxtButtonModel) m).getJumpPage() != null && 
           !((TxtButtonModel) m).getJumpPage().isEmpty()) {
@@ -724,15 +737,15 @@ public class ButtonCbPipe extends WorkFlowPipe {
         continue;
       }
       if (split[0].equals("gslc_ElemXKeyPadInputAsk")) {
-        if (split.length > 5) {
-          if (split[4].equals("E_POP_KEYPAD")) {
+        if (split.length > 4) {
+          if (split[3].equals(EnumFactory.KEYPAD_PAGE_ENUM)) {
             ci.setCaseType(CT_INPUTNUM);
           } else {
             ci.setCaseType(CT_INPUTTXT);
           }
-          ci.setKeyElementRef(split[3]);
-          ci.setPageEnum(split[4]);
-          ci.setElementRef(split[5]);
+          ci.setKeyElementRef(split[2]);
+          ci.setPageEnum(split[3]);
+          ci.setElementRef(split[4]);
           ci.setLineNo(n);
         }
         continue;
@@ -768,6 +781,9 @@ public class ButtonCbPipe extends WorkFlowPipe {
    * any required changes to any existing Case Statements.
    */
    class CaseInfo {
+     
+    /** Model changed flag */
+    boolean bModelChanged;
     
     /** The key. */
     String key;
@@ -806,8 +822,17 @@ public class ButtonCbPipe extends WorkFlowPipe {
       this.keyElementRef = "";
       this.line_no = -1;
       this.stop_no = -1;
+      this.bModelChanged = false;
     }
  
+    public boolean isModelChanged() {
+      return bModelChanged;
+    }
+    
+    public void setModelChanged(boolean bModelChanged) {
+      this.bModelChanged = bModelChanged;
+    }
+    
     /**
      * Gets the key.
      *

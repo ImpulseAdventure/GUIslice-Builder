@@ -130,6 +130,9 @@ public class WidgetModel extends AbstractTableModel {
   /** The b send events. */
   boolean bSendEvents = true;
   
+  /** Did the model change during this session */
+  public boolean bModelChanged = false;
+  
   /**
    * initProp - helper method for loading a set of property attributes.
    *
@@ -170,6 +173,7 @@ public class WidgetModel extends AbstractTableModel {
     initProp(PROP_WIDTH, Integer.class, "COM-005", Boolean.FALSE,"Width",Integer.valueOf(width));
     initProp(PROP_HEIGHT, Integer.class, "COM-006", Boolean.FALSE,"Height",Integer.valueOf(height));
     initProp(PROP_ELEMENTREF, String.class, "COM-019", Boolean.FALSE,"ElementRef","");
+    bModelChanged = false;
   }
   
   /**
@@ -184,6 +188,11 @@ public class WidgetModel extends AbstractTableModel {
    */
   public void TurnOnEvents() {
     bSendEvents = true;
+  }
+  
+  public void setModelChanged() {
+    if (bSendEvents)
+      bModelChanged = true;
   }
   
   /**
@@ -653,6 +662,8 @@ public class WidgetModel extends AbstractTableModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row > PROP_HEIGHT || row == PROP_ENUM)
+      bModelChanged = true;
 
     if (bSendEvents) {
       if (row == PROP_ENUM) {
