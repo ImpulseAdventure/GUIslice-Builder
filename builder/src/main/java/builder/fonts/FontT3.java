@@ -44,10 +44,6 @@ import builder.parser.TokenizerException;
 
 public class FontT3 extends FontTFT {
   
-  // Font Parameters
-  private int logicalSize;
-  private String logicalStyle;
-  
   // Font variables
   private byte[] font_index; 
   private byte[] font_data;
@@ -96,13 +92,10 @@ public class FontT3 extends FontTFT {
    * @see builder.fonts.FontTFT#create(java.lang.String, java.lang.String)
    */
   @Override
-  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
-    this.fontFileName = fileName;
-    this.fontName = fontName;
-    this.logicalSize = size;
-    this.logicalStyle = style;
+  public boolean create(FontItem item) throws FontException {
+    this.item = item;
     this.fontType = FONT_T3;
-    return parseT3Font();
+    return parseT3Font(item.getFileName(), item.getDisplayName());
   }
 
   /**
@@ -716,7 +709,7 @@ public class FontT3 extends FontTFT {
    * @return true if successful
    * @throws FontException
    */
-  private boolean parseT3Font() throws FontException {
+  private boolean parseT3Font(String fontFileName, String fontName) throws FontException {
     Token token = null;
     File file = new File(fontFileName);
     try {
@@ -951,24 +944,4 @@ public class FontT3 extends FontTFT {
     }
   }
   
-  /**
-   * Gets the logical size.
-   *
-   * @return the logical size
-   */
-  @Override
-  public int getLogicalSize() {
-    return logicalSize;
-  }
-  
-  /**
-   * Gets the logical style.
-   *
-   * @return the logical style
-   */
-  @Override
-  public String getLogicalStyle() {
-    return logicalStyle;
-  }
-
 }

@@ -30,7 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
+import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
+import builder.fonts.FontFactory;
+import builder.fonts.FontTFT;
 import builder.models.TxtButtonModel;
 import builder.models.WidgetModel;
 
@@ -55,6 +58,9 @@ public final class TxtButtonCodeBlock implements CodeBlock {
   private final static String TXTBUTTON_TEMPLATE     = "<TXTBUTTON>";
   private final static String TXTBUTTON_UPDATE_TEMPLATE = "<TXTBUTTON_UPDATE>";
   private final static String COLOR_TEMPLATE         = "<COLOR>";
+
+  /** The Constants for MACROS */
+  private final static String TEXT_MACRO             = "TEXT";
 
   /**
    * Instantiates a new check box code block.
@@ -94,6 +100,15 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       templateName = TXTBUTTON_TEMPLATE;
     }
     template = tm.loadTemplate(templateName);
+
+    String fontName = m.getFontDisplayName();
+    FontTFT font = FontFactory.getInstance().getFont(fontName);
+    /* we can't use standard mapping of TXT-202 since we may need
+     * to handle converting utf8 to hex characters and deal with builtin
+     * (classic) character sets that be not be in display 32-126 ascii range.
+     */
+    map.put(TEXT_MACRO, CodeUtils.createLiteral(font, "\"", m.getText()));
+
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
     
@@ -137,7 +152,7 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    if (m.isFrameEnabled()) {
+    if (!m.isFrameEnabled()) {
       template = tm.loadTemplate(FRAME_EN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

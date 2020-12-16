@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
+import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
+import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
 import builder.models.TextModel;
 import builder.models.WidgetModel;
@@ -55,6 +57,9 @@ public final class TextCodeBlock implements CodeBlock {
   private final static String TEXT_UPDATE_TEMPLATE   = "<TEXT_UPDATE>";
   private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
   private final static String COLOR_TEMPLATE         = "<COLOR>";
+
+  /** The Constants for MACROS */
+  private final static String TEXT_MACRO             = "TEXT";
 
   /**
    * Instantiates a new check box code block.
@@ -94,6 +99,15 @@ public final class TextCodeBlock implements CodeBlock {
       templateName = TEXT_TEMPLATE;
     }
     template = tm.loadTemplate(templateName);
+    
+    String fontName = m.getFontDisplayName();
+    FontTFT font = FontFactory.getInstance().getFont(fontName);
+    /* we can't use standard mapping of TXT-201 since we may need
+     * to handle converting utf8 to hex characters and deal with builtin
+     * (classic) character sets that be not be in display 32-126 ascii range.
+     */
+    map.put(TEXT_MACRO, CodeUtils.createLiteral(font, "\"", m.getText()));
+
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
     

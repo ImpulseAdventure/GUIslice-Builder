@@ -94,13 +94,25 @@ public class FontLoadGFXFiles extends SimpleFileVisitor<Path> {
         }
         String fontRef = "&" + displayName;
         item.setFontRef(fontRef);
-        Matcher m = numPattern.matcher(name);
-        if (m.find()) {
-          item.setLogicalSize(m.group());
-        } else {
+        // find size of font
+        String size = null;
+        String testSize =name;
+        n = testSize.indexOf("pt7b");
+        if (n == -1) {
+          n = testSize.indexOf("pt8b");
+        }
+        if (n != -1) {
+           testSize = testSize.substring(0,n);
+        }
+        Matcher m = numPattern.matcher(testSize);
+        while (m.find()) {
+          size = m.group(); // we want the last number
+        } 
+        if (size == null) {
           Builder.logger.error("unable to parse font: " + file);
           return CONTINUE;
         }
+        item.setLogicalSize(size);
         item.setLogicalStyle(logicalStyle);
         item.setPlatform(p);
         item.setCategory(c);

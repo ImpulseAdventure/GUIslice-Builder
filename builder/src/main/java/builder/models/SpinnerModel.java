@@ -30,7 +30,10 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import builder.common.ColorFactory;
 import builder.common.EnumFactory;
@@ -39,6 +42,8 @@ import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
+import builder.fonts.TextTFT;
+import builder.tables.TextTFTCellRenderer;
 
 /**
  * The Class SpinnerModel implements the model for the Spinner widget.
@@ -61,6 +66,9 @@ public class SpinnerModel extends WidgetModel {
   static private final int PROP_CURVALUE       = 10;
   static private final int PROP_INCREMENT      = 11;
   static private final int PROP_BUTTONSZ       = 12;
+  static private final int PROP_INCRBUTTON     = 13;
+  static private final int PROP_DECRBUTTON     = 14;
+  
 
   /** The Property Defaults */
   static public final Integer DEF_MIN                   = Integer.valueOf(0);
@@ -68,7 +76,8 @@ public class SpinnerModel extends WidgetModel {
   static public final Integer DEF_CURVALUE              = Integer.valueOf(0);
   static public final Integer DEF_INCREMENT             = Integer.valueOf(1);
   static public final Integer DEF_BUTTONSZ              = Integer.valueOf(20);
-
+  static public final String  DEF_INCRBUTTON            = "\030";
+  static public final String  DEF_DECRBUTTON            = "\031";
  
   /** The ff. */
   private FontFactory ff = null;
@@ -76,6 +85,12 @@ public class SpinnerModel extends WidgetModel {
   /** The calculated text width. */
   private int textWidth = 0;
 
+  private TextTFT txtIncr = new TextTFT(DEF_INCRBUTTON, 1);
+  private TextTFT txtDecr = new TextTFT(DEF_DECRBUTTON, 1);
+  private DefaultCellEditor editorIncr;
+  private DefaultCellEditor editorDecr;
+  private TextTFTCellRenderer rendererText;
+  
   /**
    * Instantiates a new spinner model.
    */
@@ -92,7 +107,7 @@ public class SpinnerModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.SPINNER;
-    data = new Object[13][5];
+    data = new Object[15][5];
     
     initCommonProps(0, 0);
     
@@ -103,7 +118,17 @@ public class SpinnerModel extends WidgetModel {
     initProp(PROP_CURVALUE, Integer.class, "SLD-102", Boolean.FALSE,"Starting Value",DEF_CURVALUE);
     initProp(PROP_INCREMENT, Integer.class, "SPIN-100", Boolean.FALSE,"Increment by",DEF_INCREMENT);
     initProp(PROP_BUTTONSZ, Integer.class, "COM-013", Boolean.FALSE,"Button Size",DEF_BUTTONSZ);
+    initProp(PROP_INCRBUTTON, String.class, "SPIN-102", Boolean.FALSE,"Increment Label",DEF_INCRBUTTON);
+    initProp(PROP_DECRBUTTON, String.class, "SPIN-103", Boolean.FALSE,"Decrement Label",DEF_DECRBUTTON);
 
+    String fontName = getFontDisplayName();
+    FontTFT myFont = ff.getFont(fontName);
+    txtIncr.setFontTFT(ff, myFont);
+    txtDecr.setFontTFT(ff, myFont);
+    editorIncr = new DefaultCellEditor(txtIncr);
+    editorDecr = new DefaultCellEditor(txtDecr);
+    rendererText = new TextTFTCellRenderer();
+    rendererText.setFontTFT(ff, myFont);
   }
   
   /**
@@ -127,7 +152,23 @@ public class SpinnerModel extends WidgetModel {
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
     if (row == PROP_FONT) {
+      String fontName = getFontDisplayName();
+      FontTFT myFont = ff.getFont(fontName);
+      txtIncr.setFontTFT(ff, myFont);
+      txtDecr.setFontTFT(ff, myFont);
+      rendererText.setFontTFT(ff, myFont);
+      if (getFontDisplayName().startsWith("BuiltIn")) {
+        txtIncr.setText(DEF_INCRBUTTON);
+        txtDecr.setText(DEF_DECRBUTTON);
+      } else {
+        txtIncr.setText("+");
+        txtDecr.setText("-");
+      }
+      data[PROP_INCRBUTTON][PROP_VAL_VALUE] = txtIncr.getText();
+      data[PROP_DECRBUTTON][PROP_VAL_VALUE] = txtDecr.getText();
       calcSizes();
+      fireTableCellUpdated(PROP_INCRBUTTON, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_DECRBUTTON, COLUMN_VALUE);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
@@ -139,6 +180,34 @@ public class SpinnerModel extends WidgetModel {
         Controller.sendRepaint();
       }
     } 
+    
+  }
+
+  /**
+   * getEditorAt
+   *
+   * @see builder.models.WidgetModel#getEditorAt(int)
+   */
+  @Override
+  public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_INCRBUTTON)
+      return editorIncr;
+    if (row == PROP_DECRBUTTON)
+      return editorDecr;
+    return null;
+  }
+
+  /**
+   * getRendererAt
+   *
+   * @see builder.models.WidgetModel#getRendererAt(int)
+   */
+  @Override
+  public TableCellRenderer getRendererAt(int row) {
+    if (row == PROP_INCRBUTTON || row == PROP_DECRBUTTON) {
+      return rendererText;
+    }
+    return null;
   }
 
   /**
@@ -160,6 +229,29 @@ public class SpinnerModel extends WidgetModel {
     textWidth = w;
   }
 
+  /**
+   * Gets the Increment button label.
+   *
+   * @return the increment button label
+   */
+  public String getIncrementChar() {
+    String temp = ((String)data[PROP_INCRBUTTON][PROP_VAL_VALUE]);
+    if (temp.length() > 1) {
+      char ch = temp.charAt(0);
+      temp = Character.toString(ch);
+    }
+    return temp;
+  }
+  
+  /**
+   * Gets the Decrement button label.
+   *
+   * @return increment button label
+   */
+  public String getDecrementChar() {
+    return ((String)data[PROP_DECRBUTTON][PROP_VAL_VALUE]);
+  }
+  
   /**
    * Gets the font display name.
    *
@@ -301,19 +393,10 @@ public class SpinnerModel extends WidgetModel {
      // calculate the real sizes of our display text
      Dimension d = ff.getTextBounds(getX(),getY(),font, text);
      // now figure out the rect size needed on the target platform
-     // that we show to our user and also push out during code generation.
-     if (getFontDisplayName().startsWith("BuiltIn")) {
-       textWidth = d.width;
-       d.width = d.width + 10 + (getButtonSize() * 2);
-       data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(d.width);
-       data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(d.height);
-     } else {
-       // if font is not one of the built-in fonts than actual size is correct even though font is scaled.
-       textWidth = d.width;
-       d.width = d.width + 10 + (getButtonSize() * 2);
-       data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(d.width);
-       data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(d.height);
-     }
+     textWidth = d.width;
+     d.width = d.width + 10 + (getButtonSize() * 2);
+     data[PROP_WIDTH][PROP_VAL_VALUE]=Integer.valueOf(d.width);
+     data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(getButtonSize());
    }
 
   /**
@@ -334,6 +417,13 @@ public class SpinnerModel extends WidgetModel {
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
+    String fontName = getFontDisplayName();
+    FontTFT myFont = ff.getFont(fontName);
+    txtIncr.setText(DEF_INCRBUTTON);
+    txtIncr.setFontTFT(ff, myFont);
+    txtDecr.setText(DEF_DECRBUTTON);
+    txtDecr.setFontTFT(ff, myFont);
+    rendererText.setFontTFT(ff, myFont);
   }
 
   /**

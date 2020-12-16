@@ -43,9 +43,6 @@ import builder.parser.TokenizerException;
 
 public class FontGFX extends FontTFT {
   
-  private int logicalSize;
-  private String logicalStyle;
-
   // Font variables
   private ArrayList<FontGFXGlyph>  glyphList  = new ArrayList<FontGFXGlyph>();
   private byte[] bitmap;      ///< Character bitmaps
@@ -101,15 +98,12 @@ public class FontGFX extends FontTFT {
    * @see builder.fonts.FontTFT#create(java.lang.String, java.lang.String)
    */
   @Override
-  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
-    this.fontFileName = fileName;
-    this.fontName = fontName;
-    this.logicalSize = size;
-    this.logicalStyle = style;
+  public boolean create(FontItem item) throws FontException {
+    this.item = item;
     this.fontType = FONT_GFX;
     this.textsize_x = 1;
     this.textsize_y = 1;
-    return parseGFXFont();
+    return parseGFXFont(item.getFileName(), item.getDisplayName());
   }
 
   /**
@@ -207,7 +201,7 @@ public class FontGFX extends FontTFT {
    */
   @Override
   public BufferedImage drawImage(Rectangle r, String s, Color colTxt, Color colBg, boolean bClippingEn) {
-  //  Builder.logger.debug("Enter drawImage: [" + s + "]");
+//    Builder.logger.debug("Enter drawImage: [" + s + "]");
   
     int ch;
     if (s == null) return null;
@@ -220,11 +214,14 @@ public class FontGFX extends FontTFT {
     if (strMetrics.w <=0) {
       strMetrics.w = char_maxwidth * length;
     };
+  
     if (strMetrics.h <= 0) {
       strMetrics.h = char_maxheight * length;
     }
-  
     // clipping
+    strMetrics.w = strMetrics.w + (strMetrics.x1 * 2);
+//    strMetrics.h = char_maxheight;
+    
     if (bClippingEn) {
       if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
         strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
@@ -508,14 +505,13 @@ public class FontGFX extends FontTFT {
    * @param col Color to fill
    */
   private void writePixel(char ch, int x, int y, Color col) {
-      // we need to work around the Adafruit's bug in sizing
-      x = x - (strMetrics.x1 * 2);
-      y = y - 1;
+    // we need to work around the Adafruit's bug in sizing
+    x = x - (strMetrics.x1 * 2);
     // our gate protection against crashes
     try {
       raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
     } catch(ArrayIndexOutOfBoundsException e) {
-      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", fontName, ch, x,y));
+      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", getDisplayName(), ch, x,y));
     }
   }
 
@@ -542,7 +538,7 @@ public class FontGFX extends FontTFT {
    * @return true if successful
    * @throws FontException
    */
-  private boolean parseGFXFont() throws FontException {
+  private boolean parseGFXFont(String fontFileName, String fontName) throws FontException {
     Token token = null;
     File file = new File(fontFileName);
     try {
@@ -676,26 +672,6 @@ public class FontGFX extends FontTFT {
       Builder.logger.error(msg);
       return false;
     }
-  }
-
-  /**
-   * Gets the logical size.
-   *
-   * @return the logical size
-   */
-  @Override
-  public int getLogicalSize() {
-    return logicalSize;
-  }
-  
-  /**
-   * Gets the logical style.
-   *
-   * @return the logical style
-   */
-  @Override
-  public String getLogicalStyle() {
-    return logicalStyle;
   }
 
   /**

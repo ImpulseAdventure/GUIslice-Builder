@@ -165,6 +165,8 @@ SLD-109,Remaining Width
 SLD-110,Add Frame to Thumb?
 SPIN-100,Increment
 SPIN-101,Button Size
+SPIN-102,Incr Character
+SPIN-103,Decr Character
 TXT-200,Font
 TXT-201,Text
 TXT-202,Label

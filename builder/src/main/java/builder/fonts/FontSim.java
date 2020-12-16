@@ -40,17 +40,13 @@ import java.awt.Font;
  * FontSim will simulate a TFT Font using one of Java's Built-in fonts.
  * 
  * This allows the Builder to future proof by allowing users to add
- * fonts that we currently can't handle and to support those platforms like
- * Linux that use actual TrueType Fonts.  
+ * fonts that we currently can't handle.  
  * 
  * @author Paul Conti
  *
  */
 public class FontSim extends FontTFT {
   
-  private int logicalSize;
-  private String logicalStyle;
-
   private int char_maxwidth;
   private int char_maxheight;
 
@@ -71,19 +67,17 @@ public class FontSim extends FontTFT {
    * @see builder.fonts.FontTFT#create(java.lang.String, int, int, java.lang.String)
    */
   @Override
-  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
-    this.fontName = fontName;
+  public boolean create(FontItem item) throws FontException {
+    this.item = item;
     this.fontType = FONT_SIM;
-    this.logicalSize = size;
-    this.logicalStyle = style;
-    this.text_size = size;
+    this.text_size = item.getLogicalSizeAsInt();
 
     // Fonts are in Points with 72 points per inch so DPI / 72 is our scaling factor.
     double scaleFactor = (double)dpi / 72.0d;
     double scaleSize = (double)text_size * scaleFactor;
     
     int javaStyle;
-    switch (style) {
+    switch (item.getLogicalStyle()) {
     case "Bold":
       javaStyle = Font.BOLD;
       break;
@@ -97,7 +91,7 @@ public class FontSim extends FontTFT {
       javaStyle = Font.PLAIN;
       break;
     }
-    font = new Font(fileName, javaStyle, text_size);
+    font = new Font(item.getLogicalName(), javaStyle, text_size);
     font = font.deriveFont((float) scaleSize);
 
     calculateMaxCharSize();
@@ -274,26 +268,6 @@ public class FontSim extends FontTFT {
     return font;
   }
   
-  /**
-   * Gets the logical size.
-   *
-   * @return the logical size
-   */
-  @Override
-  public int getLogicalSize() {
-    return logicalSize;
-  }
-  
-  /**
-   * Gets the logical style.
-   *
-   * @return the logical style
-   */
-  @Override
-  public String getLogicalStyle() {
-    return logicalStyle;
-  }
-
   private void calculateMaxCharSize() {
     char_maxwidth = 0;
     char_maxheight = 0;

@@ -34,6 +34,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
@@ -42,6 +43,8 @@ import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
+import builder.fonts.InputTextField;
+import builder.tables.TextTFTCellRenderer;
 
 /**
  * The Class TextModel implements the model for the Text widget.
@@ -102,6 +105,10 @@ public class TextModel extends WidgetModel {
   
   /** The align cell editor. */
   DefaultCellEditor alignCellEditor;
+  
+  private InputTextField textBox = new InputTextField(DEF_TEXT);
+  private DefaultCellEditor editorText;
+  private TextTFTCellRenderer rendererText;
 
   /**
    * Instantiates a new text model.
@@ -122,7 +129,19 @@ public class TextModel extends WidgetModel {
     cbAlign.addItem(FontTFT.ALIGN_LEFT);
     cbAlign.addItem(FontTFT.ALIGN_CENTER);
     cbAlign.addItem(FontTFT.ALIGN_RIGHT);
+    cbAlign.addItem(FontTFT.ALIGN_TOP_LEFT);
+    cbAlign.addItem(FontTFT.ALIGN_TOP_CENTER);
+    cbAlign.addItem(FontTFT.ALIGN_TOP_RIGHT);
+    cbAlign.addItem(FontTFT.ALIGN_BOT_LEFT);
+    cbAlign.addItem(FontTFT.ALIGN_BOT_CENTER);
+    cbAlign.addItem(FontTFT.ALIGN_BOT_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
+    String fontName = getFontDisplayName();
+    FontTFT myFont = ff.getFont(fontName);
+    textBox.setFontTFT(ff, myFont);
+    editorText = new DefaultCellEditor(textBox);
+    rendererText = new TextTFTCellRenderer();
+    rendererText.setFontTFT(ff, myFont);
   }
   
   /**
@@ -159,9 +178,24 @@ public class TextModel extends WidgetModel {
    * @see builder.models.WidgetModel#getEditorAt(int)
    */
   @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_TEXT_ALIGN)
+  public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_TEXT)
+      return editorText;
+    if (row == PROP_TEXT_ALIGN)
       return alignCellEditor;
+    return null;
+  }
+
+  /**
+   * getRendererAt
+   *
+   * @see builder.models.WidgetModel#getRendererAt(int)
+   */
+  @Override
+  public TableCellRenderer getRendererAt(int row) {
+    if (row == PROP_TEXT) {
+      return rendererText;
+    }
     return null;
   }
 
@@ -191,7 +225,12 @@ public class TextModel extends WidgetModel {
         calcSizes(true);
     } 
     if (row == PROP_FONT) {
+      String fontName = getFontDisplayName();
+      FontTFT myFont = ff.getFont(fontName);
+      textBox.setFontTFT(ff, myFont);
+      rendererText.setFontTFT(ff, myFont);
       calcSizes(true);
+      fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
     if (row == PROP_TEXT_ALIGN) {
       calcSizes(true);

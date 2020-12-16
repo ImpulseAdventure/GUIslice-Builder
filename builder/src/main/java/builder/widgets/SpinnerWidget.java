@@ -95,10 +95,10 @@ public class SpinnerWidget extends Widget {
       t.x = dxUp;
       t.width = buttonsz; 
       // up arrow
-      ff.drawText(g2d, FontTFT.ALIGN_CENTER, t, "+", font, m.getTextColor(), m.getFillColor(),0);
+      ff.drawChar(g2d, FontTFT.ALIGN_CENTER, t, m.getIncrementChar(), font, m.getTextColor(), m.getTextColor(),0);
       t.x = dxDown;
       // down arrow
-      ff.drawText(g2d, FontTFT.ALIGN_CENTER, t, "-", font, m.getTextColor(), m.getFillColor(), 0);
+      ff.drawChar(g2d, FontTFT.ALIGN_CENTER, t, m.getDecrementChar(), font, m.getTextColor(), m.getTextColor(), 0);
     } else {
       g2d.setColor(Color.RED);
       g2d.drawRect(b.x, b.y, b.width, b.height);

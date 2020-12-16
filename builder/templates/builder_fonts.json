@@ -239,7 +239,7 @@
       "dpi": "72",
       "categories": [
         {
-          "categoryName": "FONT_SIM",
+          "categoryName": "FONT_TTF",
           "fonts": [
             {
               "familyName": "FreeMono",
@@ -248,7 +248,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO9",
               "nFontSz": "9",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "9",
               "logicalStyle": "Regular"
             },
@@ -259,7 +259,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO12",
               "nFontSz": "12",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "12",
               "logicalStyle": "Regular"
             },
@@ -270,8 +270,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO18",
               "nFontSz": "18",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Regular"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMono20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONO20",
+              "nFontSz": "20",
+              "logicalName": "FreeMono.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Regular"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMono22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONO22",
+              "nFontSz": "22",
+              "logicalName": "FreeMono.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Regular"
             },
             {
@@ -281,7 +303,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO24",
               "nFontSz": "24",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "24",
               "logicalStyle": "Regular"
             },
@@ -292,7 +314,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO26",
               "nFontSz": "26",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "26",
               "logicalStyle": "Regular"
             },
@@ -303,7 +325,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO28",
               "nFontSz": "28",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "28",
               "logicalStyle": "Regular"
             },
@@ -314,7 +336,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO36",
               "nFontSz": "36",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "36",
               "logicalStyle": "Regular"
             },
@@ -325,7 +347,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONO48",
               "nFontSz": "48",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMono.ttf",
               "logicalSize": "48",
               "logicalStyle": "Regular"
             },
@@ -336,7 +358,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB9",
               "nFontSz": "9",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "9",
               "logicalStyle": "Bold"
             },
@@ -347,7 +369,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB12",
               "nFontSz": "12",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "12",
               "logicalStyle": "Bold"
             },
@@ -358,8 +380,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB18",
               "nFontSz": "18",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOB20",
+              "nFontSz": "20",
+              "logicalName": "FreeMonoBold.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOB22",
+              "nFontSz": "22",
+              "logicalName": "FreeMonoBold.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Bold"
             },
             {
@@ -369,7 +413,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB24",
               "nFontSz": "24",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "24",
               "logicalStyle": "Bold"
             },
@@ -380,7 +424,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB26",
               "nFontSz": "26",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "26",
               "logicalStyle": "Bold"
             },
@@ -391,7 +435,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB28",
               "nFontSz": "28",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "28",
               "logicalStyle": "Bold"
             },
@@ -402,7 +446,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB36",
               "nFontSz": "36",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "36",
               "logicalStyle": "Bold"
             },
@@ -413,7 +457,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOB48",
               "nFontSz": "48",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "48",
               "logicalStyle": "Bold"
             },
@@ -424,7 +468,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOI9",
               "nFontSz": "9",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "9",
               "logicalStyle": "Italic"
             },
@@ -435,7 +479,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOI12",
               "nFontSz": "12",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "12",
               "logicalStyle": "Italic"
             },
@@ -446,8 +490,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOI18",
               "nFontSz": "18",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOI20",
+              "nFontSz": "20",
+              "logicalName": "FreeMonoOblique.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOI22",
+              "nFontSz": "22",
+              "logicalName": "FreeMonoOblique.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Italic"
             },
             {
@@ -457,8 +523,52 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_MONOI24",
               "nFontSz": "24",
-              "logicalName": "Monospaced",
+              "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "24",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique26pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOI26",
+              "nFontSz": "26",
+              "logicalName": "FreeMonoOblique.ttf",
+              "logicalSize": "26",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique28pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOI28",
+              "nFontSz": "28",
+              "logicalName": "FreeMonoOblique.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique36pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOI36",
+              "nFontSz": "36",
+              "logicalName": "FreeMonoOblique.ttf",
+              "logicalSize": "36",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique48pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_MONOI48",
+              "nFontSz": "48",
+              "logicalName": "FreeMonoOblique.ttf",
+              "logicalSize": "48",
               "logicalStyle": "Italic"
             },
             {
@@ -468,7 +578,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS9",
               "nFontSz": "9",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "9",
               "logicalStyle": "Regular"
             },
@@ -479,7 +589,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS12",
               "nFontSz": "12",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "12",
               "logicalStyle": "Regular"
             },
@@ -490,8 +600,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS18",
               "nFontSz": "18",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Regular"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSans20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANS20",
+              "nFontSz": "20",
+              "logicalName": "FreeSans.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Regular"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSans22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANS22",
+              "nFontSz": "22",
+              "logicalName": "FreeSans.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Regular"
             },
             {
@@ -501,7 +633,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS24",
               "nFontSz": "24",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "24",
               "logicalStyle": "Regular"
             },
@@ -512,7 +644,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS26",
               "nFontSz": "26",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "26",
               "logicalStyle": "Regular"
             },
@@ -523,7 +655,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS28",
               "nFontSz": "28",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "28",
               "logicalStyle": "Regular"
             },
@@ -534,7 +666,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS36",
               "nFontSz": "36",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "36",
               "logicalStyle": "Regular"
             },
@@ -545,7 +677,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANS48",
               "nFontSz": "48",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSans.ttf",
               "logicalSize": "48",
               "logicalStyle": "Regular"
             },
@@ -556,7 +688,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSB9",
               "nFontSz": "9",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansBold.ttf",
               "logicalSize": "9",
               "logicalStyle": "Bold"
             },
@@ -567,7 +699,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSB12",
               "nFontSz": "12",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansBold.ttf",
               "logicalSize": "12",
               "logicalStyle": "Bold"
             },
@@ -578,8 +710,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSB18",
               "nFontSz": "18",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansBold.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSB20",
+              "nFontSz": "20",
+              "logicalName": "FreeSansBold.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSB22",
+              "nFontSz": "22",
+              "logicalName": "FreeSansBold.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Bold"
             },
             {
@@ -589,8 +743,52 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSB24",
               "nFontSz": "24",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansBold.ttf",
               "logicalSize": "24",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold26pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSB26",
+              "nFontSz": "26",
+              "logicalName": "FreeSansBold.ttf",
+              "logicalSize": "26",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold28pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSB28",
+              "nFontSz": "28",
+              "logicalName": "FreeSansBold.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold36pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSB36",
+              "nFontSz": "36",
+              "logicalName": "FreeSansBold.ttf",
+              "logicalSize": "36",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold48pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSB48",
+              "nFontSz": "48",
+              "logicalName": "FreeSansBold.ttf",
+              "logicalSize": "48",
               "logicalStyle": "Bold"
             },
             {
@@ -600,7 +798,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI9",
               "nFontSz": "9",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "9",
               "logicalStyle": "Italic"
             },
@@ -611,7 +809,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI12",
               "nFontSz": "12",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "12",
               "logicalStyle": "Italic"
             },
@@ -622,8 +820,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI18",
               "nFontSz": "18",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSI20",
+              "nFontSz": "20",
+              "logicalName": "FreeSansOblique.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SANSI22",
+              "nFontSz": "22",
+              "logicalName": "FreeSansOblique.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Italic"
             },
             {
@@ -633,7 +853,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI24",
               "nFontSz": "24",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "24",
               "logicalStyle": "Italic"
             },
@@ -644,7 +864,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI26",
               "nFontSz": "26",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "26",
               "logicalStyle": "Italic"
             },
@@ -655,7 +875,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI28",
               "nFontSz": "28",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "28",
               "logicalStyle": "Italic"
             },
@@ -666,7 +886,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI36",
               "nFontSz": "36",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "36",
               "logicalStyle": "Italic"
             },
@@ -677,7 +897,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SANSI48",
               "nFontSz": "48",
-              "logicalName": "SansSerif",
+              "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "48",
               "logicalStyle": "Italic"
             },
@@ -688,7 +908,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF9",
               "nFontSz": "9",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "9",
               "logicalStyle": "Regular"
             },
@@ -699,7 +919,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF12",
               "nFontSz": "12",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "12",
               "logicalStyle": "Regular"
             },
@@ -710,8 +930,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF18",
               "nFontSz": "18",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Regular"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIF20",
+              "nFontSz": "20",
+              "logicalName": "FreeSerif.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Regular"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIF22",
+              "nFontSz": "22",
+              "logicalName": "FreeSerif.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Regular"
             },
             {
@@ -721,7 +963,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF24",
               "nFontSz": "24",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "24",
               "logicalStyle": "Regular"
             },
@@ -732,7 +974,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF26",
               "nFontSz": "26",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "26",
               "logicalStyle": "Regular"
             },
@@ -743,7 +985,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF28",
               "nFontSz": "28",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "28",
               "logicalStyle": "Regular"
             },
@@ -754,7 +996,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF36",
               "nFontSz": "36",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "36",
               "logicalStyle": "Regular"
             },
@@ -765,7 +1007,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIF48",
               "nFontSz": "48",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerif.ttf",
               "logicalSize": "48",
               "logicalStyle": "Regular"
             },
@@ -776,7 +1018,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIFB9",
               "nFontSz": "9",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "9",
               "logicalStyle": "Bold"
             },
@@ -787,7 +1029,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIFB12",
               "nFontSz": "12",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "12",
               "logicalStyle": "Bold"
             },
@@ -798,8 +1040,30 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIFB18",
               "nFontSz": "18",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "18",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFB20",
+              "nFontSz": "20",
+              "logicalName": "FreeSerifBold.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFB22",
+              "nFontSz": "22",
+              "logicalName": "FreeSerifBold.ttf",
+              "logicalSize": "22",
               "logicalStyle": "Bold"
             },
             {
@@ -809,8 +1073,52 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIFB24",
               "nFontSz": "24",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "24",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold26pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFB26",
+              "nFontSz": "26",
+              "logicalName": "FreeSerifBold.ttf",
+              "logicalSize": "26",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold28pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFB28",
+              "nFontSz": "28",
+              "logicalName": "FreeSerifBold.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold36pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFB36",
+              "nFontSz": "36",
+              "logicalName": "FreeSerifBold.ttf",
+              "logicalSize": "36",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold48pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFB48",
+              "nFontSz": "48",
+              "logicalName": "FreeSerifBold.ttf",
+              "logicalSize": "48",
               "logicalStyle": "Bold"
             },
             {
@@ -820,7 +1128,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_FREE_SERIFI9",
               "nFontSz": "9",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "9",
               "logicalStyle": "Italic"
             },
@@ -829,9 +1137,9 @@
               "displayName": "FreeSerifItalic12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
               "eFontRefType": "GSLC_FONTREF_FNAME",
-              "pvFontRef": "FONT_FREE_SERIFI9",
+              "pvFontRef": "FONT_FREE_SERIFI12",
               "nFontSz": "12",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "12",
               "logicalStyle": "Italic"
             },
@@ -840,7 +1148,7 @@
               "displayName": "FreeSerifItalic18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
               "eFontRefType": "GSLC_FONTREF_FNAME",
-              "pvFontRef": "FONT_FREE_SERIFI9",
+              "pvFontRef": "FONT_FREE_SERIFI18",
               "nFontSz": "18",
               "logicalName": "Serif",
               "logicalSize": "18",
@@ -848,13 +1156,79 @@
             },
             {
               "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic20pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFI20",
+              "nFontSz": "20",
+              "logicalName": "FreeSerifItalic.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic22pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFI22",
+              "nFontSz": "22",
+              "logicalName": "FreeSerifItalic.ttf",
+              "logicalSize": "22",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
               "eFontRefType": "GSLC_FONTREF_FNAME",
-              "pvFontRef": "FONT_FREE_SERIFI9",
+              "pvFontRef": "FONT_FREE_SERIFI24",
               "nFontSz": "24",
-              "logicalName": "Serif",
+              "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "24",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic26pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFI26",
+              "nFontSz": "26",
+              "logicalName": "FreeSerifItalic.ttf",
+              "logicalSize": "26",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic28pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFI28",
+              "nFontSz": "28",
+              "logicalName": "FreeSerifItalic.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic36pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFI36",
+              "nFontSz": "36",
+              "logicalName": "FreeSerifItalic.ttf",
+              "logicalSize": "36",
+              "logicalStyle": "Italic"
+            },
+            {
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic48pt",
+              "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "FONT_FREE_SERIFI48",
+              "nFontSz": "48",
+              "logicalName": "FreeSerifItalic.ttf",
+              "logicalSize": "48",
               "logicalStyle": "Italic"
             },
             {
@@ -864,7 +1238,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO8",
               "nFontSz": "8",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "8",
               "logicalStyle": "Regular"
             },
@@ -875,7 +1249,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO10",
               "nFontSz": "10",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "10",
               "logicalStyle": "Regular"
             },
@@ -886,7 +1260,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO12",
               "nFontSz": "12",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "12",
               "logicalStyle": "Regular"
             },
@@ -897,7 +1271,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO14",
               "nFontSz": "14",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "14",
               "logicalStyle": "Regular"
             },
@@ -908,7 +1282,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO16",
               "nFontSz": "16",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "16",
               "logicalStyle": "Regular"
             },
@@ -919,7 +1293,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO18",
               "nFontSz": "18",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "18",
               "logicalStyle": "Regular"
             },
@@ -930,7 +1304,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO20",
               "nFontSz": "20",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "20",
               "logicalStyle": "Regular"
             },
@@ -941,7 +1315,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO22",
               "nFontSz": "22",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "22",
               "logicalStyle": "Regular"
             },
@@ -952,7 +1326,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO24",
               "nFontSz": "24",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "24",
               "logicalStyle": "Regular"
             },
@@ -963,7 +1337,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO26",
               "nFontSz": "26",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "26",
               "logicalStyle": "Regular"
             },
@@ -974,7 +1348,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO28",
               "nFontSz": "28",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "28",
               "logicalStyle": "Regular"
             },
@@ -985,7 +1359,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO36",
               "nFontSz": "36",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "36",
               "logicalStyle": "Regular"
             },
@@ -996,7 +1370,7 @@
               "eFontRefType": "GSLC_FONTREF_FNAME",
               "pvFontRef": "FONT_NOTO_MONO48",
               "nFontSz": "48",
-              "logicalName": "Monospaced",
+              "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "48",
               "logicalStyle": "Regular"
             }
