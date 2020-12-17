@@ -86,7 +86,7 @@ public class PropertyCommand extends Command {
    */
   @Override
   public String toString() {
-    return String.format("model: " + model.getKey() + " Property: '"  
+    return new String("model: " + model.getKey() + " Property: '"  
         +  model.getPropertyName(row) + "' Changed from->" 
         + curValue.toString() + " to->"
         + newValue.toString() + " row=" + row);

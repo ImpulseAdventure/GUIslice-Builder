@@ -44,9 +44,6 @@ import builder.parser.TokenizerException;
 
 public class FontGlcd extends FontTFT {
   
-  private int logicalSize;
-  private String logicalStyle;
-
   // Font variables
   private byte[] bitmap;   ///< Character bitmaps
 
@@ -93,16 +90,13 @@ public class FontGlcd extends FontTFT {
    * @see builder.fonts.FontTFT#create(java.lang.String, java.lang.String)
    */
   @Override
-  public boolean create(String fileName, String fontName, int size, String style) throws FontException {
-    this.fontFileName = fileName;
-    this.fontName = fontName;
+  public boolean create(FontItem item) throws FontException {
+    this.item = item;
     this.fontType = FONT_GLCD;
-    this.logicalSize = size;
-    this.logicalStyle = style;
     this.bWrap = true;
     this.textsize_x = 1;
     this.textsize_y = 1;
-    return parseGlcdFont();
+    return parseGlcdFont(item.getFileName(), item.getDisplayName());
   }
 
   /**
@@ -114,7 +108,7 @@ public class FontGlcd extends FontTFT {
     if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
       return false;
     }
-    if ((codePoint > 0) && (codePoint < 255)) { // Char present in this font?
+    if ((codePoint >= 0) && (codePoint <= 255)) { // Char present in this font?
       return true;
     }
     return false;
@@ -444,12 +438,12 @@ public class FontGlcd extends FontTFT {
    * @return true if successful
    * @throws FontException
    */
-  private boolean parseGlcdFont() throws FontException {
+  private boolean parseGlcdFont(String fontFileName, String fontName) throws FontException {
     Token token = null;
     File file = new File(fontFileName);
     try {
       tokenizer.setSource(file);
-//      Builder.logger.debug("Opened file: " + fileName);
+//      Builder.logger.debug("Opened file: " + fontFileName);
       // loop until we find we find open brace '{'
       boolean bFound = false;
       while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
@@ -490,26 +484,6 @@ public class FontGlcd extends FontTFT {
       Builder.logger.error(msg);
       return false;
     }
-  }
-
-  /**
-   * Gets the logical size.
-   *
-   * @return the logical size
-   */
-  @Override
-  public int getLogicalSize() {
-    return logicalSize;
-  }
-  
-  /**
-   * Gets the logical style.
-   *
-   * @return the logical style
-   */
-  @Override
-  public String getLogicalStyle() {
-    return logicalStyle;
   }
 
 }

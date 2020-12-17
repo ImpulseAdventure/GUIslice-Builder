@@ -38,6 +38,8 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import builder.fonts.FontTFT;
+import builder.fonts.FontTtf;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -110,6 +112,40 @@ public final class CodeUtils {
       }
     }
     return count;
+  }
+
+  public static String createLiteral(FontTFT font, String qmark, String text) {
+    StringBuilder sBd = new StringBuilder();
+    StringBuilder code = new StringBuilder();
+    String hex;
+    if (font instanceof FontTtf) {
+      for (int i=0; i<text.length(); i++) {
+        char ch = text.charAt(i);
+        // we can output unicode which will be converted to utf8
+        code.append(ch);
+      }
+    } else {
+      for (int i=0; i<text.length(); i++) {
+        char ch = text.charAt(i);
+        // is this printable ascii?
+        int nChar = (int)ch;
+        if (nChar < 127) {
+          if (nChar < 32) {
+            // we need to create hex value of character
+            hex = String.format("\\x%02x", nChar);
+            code.append(hex);
+          } else {
+            code.append(ch);
+          }
+        } else {
+          // we need to create hex value of character
+          hex = String.format("\\x%02x", nChar);
+          code.append(hex);
+        }
+      }
+    }
+    sBd.append(String.format("%s%s%s", qmark,code.toString(),qmark));
+    return sBd.toString();
   }
 
   /**

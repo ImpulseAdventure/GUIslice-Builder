@@ -208,34 +208,35 @@ public class FontItem {
    */
   public void createFont() {
     boolean ret = false;
-    String fontRef = null;
-    if (!getFontRef().equals("NULL"))
-      fontRef = getFontRef().substring(1); // remove '&'
     switch (getCategory().getName()) {
 /* Reserve for future use
       case FontTFT.FONT_U8G2:
         font = new FontU8G2();
-        ret = font.create(fileName, fontRef);
+        ret = font.create(this);
         break;
 */
       case FontTFT.FONT_GFX:
         font = new FontGFX();
-        ret = font.create(fileName, fontRef, getLogicalSizeAsInt(), logicalStyle);
+        ret = font.create(this);
         break;
       case FontTFT.FONT_GLCD:
         font = new FontGlcd();
-        ret = font.create(fileName, displayName, getLogicalSizeAsInt(), logicalStyle);
+        ret = font.create(this);
         if (getLogicalSizeAsInt() > 0)
           font.setTextSize(getLogicalSizeAsInt()/5);
         break;
       case FontTFT.FONT_SIM:
         font = new FontSim();
         ((FontSim)font).setDPI(platform.getDPI());
-        ret = font.create(logicalName, displayName, getLogicalSizeAsInt(), logicalStyle);
+        ret = font.create(this);
         break;
       case FontTFT.FONT_T3:
         font = new FontT3();
-        ret = font.create(fileName, fontRef, getLogicalSizeAsInt(), logicalStyle);
+        ret = font.create(this);
+        break;
+      case FontTFT.FONT_TTF:
+        font = new FontTtf();
+        ret = font.create(this);
         break;
       default:
         break;

@@ -29,7 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 import builder.codegen.CodeGenerator;
+import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
+import builder.fonts.FontFactory;
+import builder.fonts.FontTFT;
 import builder.models.SpinnerModel;
 import builder.models.WidgetModel;
 
@@ -44,8 +47,13 @@ public class SpinnerCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
   private final static String SPINNER_TEMPLATE       = "<SPINNER>";
+  private final static String SPINNER_ARROWS_TEMPLATE       = "<SPINNER_ARROWS>";
   private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
   
+  /** The Constants for MACROS */
+  private final static String INCR_MACRO             = "ARROW_UP";
+  private final static String DECR_MACRO             = "ARROW_DOWN";
+
   /**
    * Instantiates a new box code block.
    */
@@ -79,6 +87,22 @@ public class SpinnerCodeBlock implements CodeBlock {
     template = tm.loadTemplate(SPINNER_TEMPLATE);
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
+    
+    // deal with any overrides
+    if (!(m.getIncrementChar().equals(SpinnerModel.DEF_INCRBUTTON)) ||
+        !(m.getDecrementChar().equals(SpinnerModel.DEF_DECRBUTTON))) {
+      template = tm.loadTemplate(SPINNER_ARROWS_TEMPLATE);
+      String fontName = m.getFontDisplayName();
+      FontTFT font = FontFactory.getInstance().getFont(fontName);
+      /* we can't use standard mapping of SPIN-102 and SPIN-103 since we may need
+       * to handle converting utf8 to hex characters and deal with builtin
+       * (classic) character sets that be not be in display 32-126 ascii range.
+       */
+      map.put(INCR_MACRO, CodeUtils.createLiteral(font, "'", m.getIncrementChar()));
+      map.put(DECR_MACRO, CodeUtils.createLiteral(font, "'", m.getDecrementChar()));
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
     
     template = tm.loadTemplate(ELEMENTREF_TEMPLATE);
     outputLines = tm.expandMacros(template, map);

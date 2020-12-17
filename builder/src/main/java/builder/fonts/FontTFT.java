@@ -41,6 +41,7 @@ public abstract class FontTFT {
   static public  final String FONT_GFX               = "FONT_GFX"; 
   static public  final String FONT_GLCD              = "FONT_GLCD"; 
   static public  final String FONT_SIM               = "FONT_SIM"; 
+  static public  final String FONT_TTF               = "FONT_TTF"; 
   static public  final String FONT_T3                = "FONT_T3"; 
 //  static public  final String FONT_U8G2              = "FONT_U8G2"; 
   
@@ -73,14 +74,13 @@ public abstract class FontTFT {
   /** The Tokenizer. */
   protected static Tokenizer tokenizer = null;
 
-  public String fontType;
-  public String fontName;
-  public String fontFileName;
+  
+  protected String fontType;
+  protected FontItem item;
 
   public FontTFT() {
     fontType = null;
-    fontName = null;
-    fontFileName = null;
+    item = null;
     
     if (tokenizer == null) {
       tokenizer = new Tokenizer();
@@ -107,12 +107,11 @@ public abstract class FontTFT {
    * create
    * creates a new font
    * 
-   * @param fileName
-   * @param fontName
+   * @param item The FontItem
    * @return true if successful
    * @throws FontException
    */
-  public abstract boolean create(String fileName, String fontName, int size, String style) throws FontException;
+  public abstract boolean create(FontItem item) throws FontException;
 
   /**
    * canDisplay()
@@ -139,14 +138,42 @@ public abstract class FontTFT {
    *
    * @return the logical size
    */
-  public abstract int getLogicalSize();
+  public int getLogicalSizeAsInt() {
+    return item.getLogicalSizeAsInt();
+  }
   
   /**
    * Gets the logical style.
    *
    * @return the logical style
    */
-  public abstract String getLogicalStyle();
+  public String getLogicalStyle() {
+    return item.getLogicalStyle();
+  }
+  
+  /**
+   * Gets the font name that is displayed to users
+   * @return display name
+   */
+  public String getDisplayName() {
+    return item.getDisplayName();
+  }
+  
+  /**
+   * Gets the font's family name
+   * @return family name
+   */
+  public String getFamilyName() {
+    return item.getFamilyName();
+  }
+  
+  /**
+   * Get the font item
+   * @return font item
+   */
+  public FontItem getFontItem() {
+    return item;
+  }
   
   /**
    * Determine size of a string with current font/size. 
@@ -212,21 +239,13 @@ public abstract class FontTFT {
   }
   
 /**
- * getFontName 
- * @return The name of the font
- */
-  public String getFontName() {
-    return fontName;
-  }
-  
-/**
- * getFontFileName
+ * getFileName
  * 
  * @return The file name used to load font, can be null
  */
     
-  public  String getFontFileName() {
-    return fontFileName;
+  public  String getFileName() {
+    return item.getFileName();
   }
 
   /**

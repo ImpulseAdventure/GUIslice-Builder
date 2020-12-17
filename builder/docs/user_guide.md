@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.16.0
+        Ver: 0.16.b004
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published November, 2020. Based on GUIslice API Library 0.16.0
+Published December, 2020. Based on GUIslice API Library 0.16.0.8
 
 **Copyright**
 
@@ -168,6 +168,7 @@ Before beginning lets go over over the mouse selecting rules for the TFT Simulat
 - A Left-click on an object deselects any existing selection and selects the object.
 - A Control Left-click on an object toggles its selection without affecting the selection of any other objects.
 - A Shift Left-click on an object selects it without deselecting any other objects.
+- A Right-click on a "Text" or "Label" property will bring up a mini-popup that lets you choose either to clear the text field or invoke the CharacterMap Dialog.
 - Using the Rectangle Selection Tool ![](images/layout/selection.png) on the Page Layout tab will allow you to create a rubber band by pressing down the left mouse button and keeping it down while you move the band over the a group of objects and will select them all. For Example:
 ![](images/multi_sel.png)
 
@@ -561,7 +562,7 @@ bool CbTickScanner(void* pvGui,void* pvScope)
 | Touch Enabled?      | false                                             |
 | Draw Function       | false, Set true Creates a CbDrawScanner callback  |
 | Tick Function       | false, Set true Creates a CbTickScanner callback  |
-| Use Flash API?      | false       |
+| Use Flash API?      | false. set to true if you need to save ram        |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -576,7 +577,11 @@ bool CbCheckbox(void* pvGui, void* pvElemRef, int16_t nSelId, bool bState)
     switch (pElem->nId) {
      //<Checkbox Enums !Start!>
      case E_ELEM_CHECK1:
-      //TODO- Replace with your handling code
+      Serial.print("Callback: Check[ID="); Serial.print(pElem->nId); Serial.print("] state=");
+      if(bChecked)
+        Serial.println("true");
+      else
+        Serial.println("false");
       break;
   ...
   return 1;
@@ -599,7 +604,7 @@ See example ex04_bld_ctrls.
 |                     | GSLCX_CHECKBOX_STYLE_ROUND                        |
 | Check Mark Color    | Color.ORANGE Determines the color of check mark   |
 | Callback Enabled?   | false                                             |
-| Use Flash API?      | false                                             |
+| Use Flash API?      | false. set to true if you need to save ram        |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -787,7 +792,7 @@ Draws a progress bar element that represents a proportion value (nVal) between n
 | Maximum Value         | 100                                            |
 | Starting Value        | 0                                              |
 | Gauge Indicator Color | Color.GREEN                                    |
-| Use Flash API?        | false                                          |
+| Use Flash API?        | false. set to true if you need to save ram     |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -832,7 +837,16 @@ bool CbCheckbox(void* pvGui, void* pvElemRef, int16_t nSelId, bool bState)
     switch (pElem->nId) {
      //<Checkbox Enums !Start!>
      case E_ELEM_RADIO1:
-      //TODO- Replace with your handling code
+      // For the radio buttons, determine which ID is currently selected (nSelId)
+      // - Note that this may not always be the same as the element that
+      //   issued the callback (pElem->nId)
+      // - A return value of GSLC_ID_NONE indicates that no radio buttons
+      //   in the group are currently selected
+      if (nSelId == GSLC_ID_NONE) {
+        Serial.println("Callback: Radio[ID=NONE] selected");
+      } else {
+        Serial.print("Callback: Radio[ID="); Serial.print(nSelId); Serial.println(")] selected");
+      }
       break;
   ...
 ```
@@ -840,7 +854,7 @@ If you select multiple radio buttons you can use the 'Group' Control Tool ![](im
 | NAME                | VALUE                                             |
 |---------------------|---------------------------------------------------|
 | Key                 | RadioButton$1                                     |
-| ENUM                | E_ELEM_RADIO1
+| ENUM                | E_ELEM_RADIO1                                     |
 | X                   |                                                   |
 | Y                   |                                                   |
 | Width               | 20                                                |
@@ -852,7 +866,7 @@ If you select multiple radio buttons you can use the 'Group' Control Tool ![](im
 |                     | GSLCX_CHECKBOX_STYLE_X                            |
 | Check Mark Color    | Color.ORANGE Determines the color of check mark   |
 | Callback Enabled?   | false                                             |
-| Use Flash API?      | false                                             |
+| Use Flash API?      | false. set to true if you need to save ram        |
 | Group ID            | GSLC_GROUP_ID_NONE                                |
 
 -----------------------------------------------
@@ -974,7 +988,7 @@ See example ex47_ard_seekbar for the visual options and look over the examples f
 | Tick Divisions      | 0                                                     |
 | Tick Size           | 10                                                    |
 | Tick Color          | GSLC_COL_GRAY                                         |
-| Use Flash API?      | false                                                 |
+| Use Flash API?      | false. set to true if you need to save ram.           |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1049,7 +1063,6 @@ bool CbSpinner(void* pvGui, void *pvElemRef, int16_t nState, void* pvData)
       case E_ELEM_COMP1:
         //TODO- Add Spinner handling code
         // using gslc_ElemXSpinnerGetCounter(&m_gui, &m_sXSpinner1);
-        gslc_ElemSetTxtStr(&m_gui,m_pElemComp1,acTxtNum);
         break;
   ...
 }
@@ -1078,6 +1091,9 @@ So you can plug in your custom handling code in place of the TODO comment.
 |----------------|-------------------------------------------------------|
 | Increment by   | 1                                                     |
 | Button Size    | 20                                                    |
+| Increment Label| Up Arrow. Right-click to invoke CharacterMap Dialog   |
+| Decrement Label| Down Arrow.                                           |
+
 
 You must have the following set inside your GUIslice/config/ard_xxxx.h file to use this control.
 ```
@@ -1099,14 +1115,16 @@ Most of the builder examples use text fields as labels while some use them to di
 | Height                | 12 based upon the text entered                 |
 | ElementRef            | Allows runtime access to this element if set   |
 | Font                  | Name of your chosen font                       |
-| Text                  | The text to display                            |
-| UTF-8?                | Only 7 bit ascii characters unless checked.    |
-|                       | NOTE: AdaFruit's GFX does not support UTF-8    |
+| Text                  | The text to display. Right click this field    |
+|                       | will bring up a popup that can either clear the|
+|                       | field or invoke CharacterMap dialog.           |
+| UTF-8?                | Only ascii characters unless checked.          |
+|                       | NOTE: Only Target Platform Linux supports UTF-8|
 | External Storage Size | Setting to 0 makes text read-only.             |
 | Text Alignment        | GSLC_ALIGN_MID_LEFT (can be RIGHT or CENTERED) |                          |
 | Fill Enabled?         | true                                           |
 | Frame Enabled?        | false                                          |
-| Use Flash API?        | false set to true if you need to save ram      |
+| Use Flash API?        | false. set to true if you need to save ram     |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1220,8 +1238,11 @@ A fuller explanation of when the Builder will create, delete or modify a case st
 | Height                | 40                                             |
 | ElementRef            |                                                |
 | Font                  | BuiltIn(1x)->5x8pt7b                           |
-| Label                 |                                                |
-| UTF-8?                | false                                          |
+| Label                 | The text to display. Right click this field    |
+|                       | will bring up a popup that can either clear the|
+|                       | field or invoke CharacterMap dialog.           |
+| UTF-8?                | Only ascii characters unless checked.          |
+|                       | NOTE: Only Target Platform Linux supports UTF-8|
 | Corners Rounded?      | false                                          |
 | Fill Enabled?         | false                                          |
 | Frame Enabled?        | false                                          |
@@ -1308,14 +1329,15 @@ See ex26_bld_calc for an example of usage.
 | Height                | 12                                               |
 | ElementRef            | m_pElemVal1                                      |
 | Font                  | BuiltIn(1x)->5x8pt7b                             |
-| UTF-8?                | false                                            |
-| Field Size            | 6                                                |
-| Text Alignment        | GSLC_ALIGN_MID_LEFT                              |
+| UTF-8?                | Only ascii characters unless checked.            |
+|                       | NOTE: Only Target Platform Linux supports UTF-8  |
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
 | NAME                  | VALUE                                            |
 |-----------------------|--------------------------------------------------|
+| Field Size            | 6                                                |
+| Text Alignment        | GSLC_ALIGN_MID_LEFT                              |
 | Fill Enabled?         | true                                             |
 | Use Flash API?        | false set to true if you need to save ram        |
 | Text Color            | Color.YELLOW                                     |
@@ -1365,12 +1387,16 @@ See ex26_bld_alpha for an example.
 | Height                | 10                                               |
 | ElementRef            | m_pElemInTxt1                                    |
 | Font                  | BuiltIn(1x)->5x8pt7b                             |
-| UTF-8?                | false                                            |
+| Text                  | The text to display. Right click this field      |
+|                       | will bring up a popup that can either clear the  |
+|                       | field or invoke CharacterMap dialog.             |
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
 | NAME                  | VALUE                                            |
 |-----------------------|--------------------------------------------------|
+| UTF-8?                | Only ascii characters unless checked.            |
+|                       | NOTE: Only Target Platform Linux supports UTF-8  |
 | Field Size            | 10                                               |
 | Text Alignment        | GSLC_ALIGN_MID_LEFT                              |
 | Fill Enabled?         | true                                             |
@@ -1564,6 +1590,7 @@ For this support the actual font C Headers and C files are stored inside the Bui
          |- PLAIN
      |- glcd
      |- t3
+     |- ttf (Place linux true type font files here and add the names to builder_fonts.json)
 ```  
 
 The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built for Adafruit's GFX format.  You can use them by 
@@ -1604,7 +1631,7 @@ The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project writt
 
 The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
 
-- **flatlaf-0.38.jar**
+- **flatlaf-0.44.jar**
 
 The FlatLaf project is on GitHub: 
 <https://github.com/JFormDesigner/FlatLaf>
@@ -1704,6 +1731,7 @@ The Categories supported are:
 - FONT_GLCD which are Adafruit's classic built-in fonts
 - FONT_T3 which are Teensy's ili9341_t3 fonts
 - FONT_SIM which are any fonts that the Builder needs to simulate using Java's built-in fonts.
+- FONT_TTF which are TrueType fonts used by Linux
 
 The FONT_GFX, FONT_GLCD, and FONT_T3 fonts are supported as native fonts. That is the BUilder 
 actually reads and parses the C headers or C files that define the font.  It uses that information 

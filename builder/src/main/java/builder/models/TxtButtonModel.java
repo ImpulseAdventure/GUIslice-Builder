@@ -33,6 +33,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import builder.common.EnumFactory;
 import builder.controller.Controller;
@@ -40,6 +41,8 @@ import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
+import builder.fonts.InputTextField;
+import builder.tables.TextTFTCellRenderer;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -99,8 +102,12 @@ public class TxtButtonModel extends WidgetModel {
   /** The align cell editor. */
   DefaultCellEditor alignCellEditor;
 
+  private InputTextField textBox = new InputTextField(DEF_TEXT);
+  private DefaultCellEditor editorText;
+  private TextTFTCellRenderer rendererText;
+
   /**
-   * Instantiates a new txt button model.
+   * Instantiates a new text button model.
    */
   public TxtButtonModel() {
     ff = FontFactory.getInstance();
@@ -125,6 +132,12 @@ public class TxtButtonModel extends WidgetModel {
     cbAlign.addItem(FontTFT.ALIGN_BOT_CENTER);
     cbAlign.addItem(FontTFT.ALIGN_BOT_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
+    String fontName = getFontDisplayName();
+    FontTFT myFont = ff.getFont(fontName);
+    textBox.setFontTFT(ff, myFont);
+    editorText = new DefaultCellEditor(textBox);
+    rendererText = new TextTFTCellRenderer();
+    rendererText.setFontTFT(ff, myFont);
   }
   
   /**
@@ -179,9 +192,24 @@ public class TxtButtonModel extends WidgetModel {
    * @see builder.models.WidgetModel#getEditorAt(int)
    */
   @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_TEXT_ALIGN)
+  public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_TEXT)
+      return editorText;
+    if (row == PROP_TEXT_ALIGN)
       return alignCellEditor;
+    return null;
+  }
+
+  /**
+   * getRendererAt
+   *
+   * @see builder.models.WidgetModel#getRendererAt(int)
+   */
+  @Override
+  public TableCellRenderer getRendererAt(int row) {
+    if (row == PROP_TEXT) {
+      return rendererText;
+    }
     return null;
   }
 
@@ -200,6 +228,8 @@ public class TxtButtonModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row > PROP_HEIGHT || row == PROP_ENUM)
+      super.setModelChanged();
     if (row == PROP_JUMP_PAGE) {
       if (getJumpPage().isEmpty()) {
         data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -257,7 +287,12 @@ public class TxtButtonModel extends WidgetModel {
       }
     }
     if (row == PROP_FONT) {
+      String fontName = getFontDisplayName();
+      FontTFT myFont = ff.getFont(fontName);
+      textBox.setFontTFT(ff, myFont);
+      rendererText.setFontTFT(ff, myFont);
       calcSizes(true);
+      fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
     
     if (bSendEvents) {
