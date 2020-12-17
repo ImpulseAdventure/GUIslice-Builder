@@ -161,7 +161,7 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
                 item.setIncludeFile(includeFile);
                 String fontRef = "&" + displayName;
                 item.setFontRef(fontRef);
-                item.setFontRefMode("FONTREF_MODE_1");
+                item.setFontRefMode("GSLC_FONTREF_MODE_1");
 
                 n = name.indexOf("_");
                 Matcher m = numPattern.matcher(displayName.substring(n));
