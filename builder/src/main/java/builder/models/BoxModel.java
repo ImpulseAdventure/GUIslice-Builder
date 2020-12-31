@@ -108,19 +108,16 @@ public class BoxModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row > PROP_HEIGHT || row == PROP_ENUM)
+      super.setModelChanged();
     if (row == PROP_DRAW) {
-      String strKey = "";
-      String strCount = "";
-      String strEnum = "E_SCAN";
-      if (!hasDrawFunc()) {
-        strEnum = "E_BOX";
-      } 
-      strKey = getKey();
-      int i = strKey.indexOf("$");
-      strCount = strKey.substring(i+1, strKey.length());
-      strEnum = strEnum + strCount;
-      setEnum(strEnum);
-      fireTableCellUpdated(PROP_ENUM, COLUMN_VALUE);
+      if (hasDrawFunc()) {
+        data[PROP_ROUNDED][PROP_VAL_VALUE] = Boolean.FALSE;
+        data[PROP_ROUNDED][PROP_VAL_READONLY] = Boolean.TRUE;
+      } else {
+        data[PROP_ROUNDED][PROP_VAL_READONLY] = Boolean.FALSE;
+      }
+      fireTableCellUpdated(PROP_ROUNDED, COLUMN_VALUE);
     } 
     if (bSendEvents) {
       if (row == PROP_ENUM) {

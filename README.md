@@ -51,6 +51,11 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### HotFix for 0.16.b005
+ - Bug No. 204 Crash  occurs while selecting NotoLatin1 when size of font is > 28 issue `#143`
+ - Bug No. 203 Box using Flash API can't do code gen for Draw callback
+ - Bug No. 202 Draw function selected for Box frame the rounded property should be disabled API issue `#326`
+
 ### Enhancements for 0.16.b004
 Added CharacterMap dialog to "Text" propery fields for UIElements Text, Text Button, Text Input, Spinner, and Number Input.
 
@@ -66,7 +71,7 @@ The UI Element Spinner has been upgraded to support changing the Increment and D
 
 
 ### Bug Fixes 0.16.b004
- - Bug No. 201 Text button frame cannot be disabled #139
+ - Bug No. 201 Text button frame cannot be disabled issue `#139`
 
 ### HotFix 0.16.b003
  - Bug No. 200 New Keypad support causes input field button case-statement to be deleted and recreated
