@@ -35,13 +35,13 @@
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     $<COL-302>,$<COL-303>,true,true,&CbDrawScanner,&CbTickScanner);
 <STOP>
-<BOX_DRAW_P>
+<BOX_DRAW_FUNCT_P>
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
     $<COL-302>,$<COL-303>,true,true,&CbDrawScanner,NULL);
 <STOP>
-<BOX_TICK_P>
+<BOX_TICK_FUNCT_P>
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
@@ -273,7 +273,7 @@ gslc_tsElemRef* $<18>$<ELEMREF>= NULL;
   // gslc_ElemSetFillEn(); currently not supported by the FLASH _P calls.
 <STOP>
 <FONT_DEFINE>
-// #define $<FONT_REF> "$<DEFINE_FILE>" linux only
+#define $<FONT_REF> "$<DEFINE_FILE>"
 <STOP>
 <FONT_INCLUDE>
 #include "$<INCLUDE_FILE>"
