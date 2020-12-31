@@ -69,7 +69,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   
   /** The Property Index Constants. */
   public static final int PROP_TARGET               = 2;
-  public static final int PROP_FONT_LIST        = 3;
+  public static final int PROP_FONT_LIST            = 3;
   public static final int DISPLAY_WIDTH             = 4;
   public static final int DISPLAY_HEIGHT            = 5;
   public static final int PROP_BACKGROUND           = 6;
@@ -275,6 +275,10 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
           Builder.logger.error("PM Row: " + row + " non-numeric data in an number field");
           return;
         }
+      }
+      if (row == PROP_FONT_LIST) {
+        if ((Object)value == null || ((String)value).isEmpty())
+          return;
       }
       if (row == PROP_ROTATION) {
         if (test < -1 || test > 3) {
