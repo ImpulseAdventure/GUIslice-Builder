@@ -651,9 +651,9 @@ public class FontGFX extends FontTFT {
       if (!bFound) parseError(token, "GFXfont struct missing");
 //      Builder.logger.debug("GFXfont struct: first=" + first + " last=" + last + " yAdvance=" + yAdvance);
       bitmap = new byte[byteList.size()];
-      n = 0;
+      int nn = 0;
       for (Short b : byteList) {
-        bitmap[n++] = (byte) (b.byteValue() & 0xFF);
+        bitmap[nn++] = (byte) (b.byteValue() & 0xFF);
       }
       byteList.clear();
       byteList = null;
