@@ -1,3 +1,28 @@
+/**
+ *
+ * The MIT License
+ *
+ * Copyright 2018, 2021 Paul Conti
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ */
 package builder.fonts;
 
 import java.awt.BasicStroke;
@@ -16,7 +41,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import builder.Builder;
-import builder.controller.Controller;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -290,7 +314,7 @@ public class CharacterMap extends JDialog {
   private void updateFont() {
     currentCharacter = null;
     int fontSz = 12;
-    if (Controller.getTargetPlatform().equals("linux")) {
+    if (inFont instanceof FontTtf || inFont instanceof FontVLW) {
       fontSz = 20;
     }
     font = ff.getFontbySizeStyle(currentName, fontSz, FontItem.PLAIN);
@@ -306,7 +330,7 @@ public class CharacterMap extends JDialog {
       bValidFont = false;
       return;
     }
-    if (font instanceof FontTtf) {
+    if (font instanceof FontTtf || font instanceof FontVLW) {
       bTrueTypeFont = true;
       characterPane.setPreferredSize(new Dimension(700, 7500));
     } else {

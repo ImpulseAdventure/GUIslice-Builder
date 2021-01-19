@@ -52,6 +52,24 @@ public class InputTextField extends JTextField implements MouseListener, ActionL
    */
   public void setFontTFT(FontFactory ff, FontTFT myFont) {
     this.myFont = myFont;
+    if (myFont != null) {
+      int fontSz = 10;
+      if (myFont instanceof FontTtf || myFont instanceof FontVLW) {
+        fontSz = 18;
+      }
+      if (myFont.getLogicalSizeAsInt() == fontSz) {
+        this.myFont = myFont;
+      } else {
+        FontItem item = ff.getFontItem(myFont.getDisplayName());
+        if (item != null) {
+          FontTFT testFont = ff.getFontbySizeStyle(item.getFamilyName(), 
+              fontSz, item.getLogicalStyle());
+          if (testFont != null) {
+            this.myFont = testFont;
+          }
+        }
+      }
+    }
   }
 
   /**

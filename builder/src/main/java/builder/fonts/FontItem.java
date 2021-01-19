@@ -177,7 +177,8 @@ public class FontItem {
       n = name.indexOf(">");
       name = "BUILTIN" + name.substring(n+1);
     }
-    name = name.replace('-', '_');
+    name = name.replace("-", "_");
+    name = name.replace(".", "_");
     n = name.indexOf("pt7b");
     if (n > 0) name = name.substring(0,n);
     nFontId = String.format("E_%s", name.toUpperCase());
@@ -236,6 +237,10 @@ public class FontItem {
         break;
       case FontTFT.FONT_TTF:
         font = new FontTtf();
+        ret = font.create(this);
+        break;
+      case FontTFT.FONT_VLW:
+        font = new FontVLW();
         ret = font.create(this);
         break;
       default:

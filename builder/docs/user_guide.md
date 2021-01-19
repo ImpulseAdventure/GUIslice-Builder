@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.16.b004
+        Ver: 0.16.b006
     </H3>
 </center>
 
@@ -14,13 +14,13 @@
 
 **Publication date and software version**
 
-Published December, 2020. Based on GUIslice API Library 0.16.0.8
+Published January, 2021. Based on GUIslice API Library 0.16.0.14
 
 **Copyright**
 
-This document is Copyright © 2018-2020 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
+This document is Copyright © 2018-2021 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
 
-GUIslice Copyright (c) Calvin Hass 2016-2020
+GUIslice Copyright (c) Calvin Hass 2016-2021
 
 Copyright Notices for third party libraries are included in Appendixes C and D.
 All trademarks within this guide belong to their legitimate owners.
@@ -1591,6 +1591,7 @@ For this support the actual font C Headers and C files are stored inside the Bui
      |- glcd
      |- t3
      |- ttf (Place linux true type font files here and add the names to builder_fonts.json)
+     |- vlw smooth fonts created by Processing IDE for TFT_eSPI driver
 ```  
 
 The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built for Adafruit's GFX format.  You can use them by 
@@ -1599,16 +1600,27 @@ depending upon your target platform.
 
 You may add additional Adafruit compatible fonts and/or Teensy ILI9341_T3 fonts by copying them into the Builder's font folder, GUIsliceBuilder/fonts 
 under either the gfx or t3 folder. You must create a folder that can be used by the Builder as the Font's Family name ie: 'FreeMono'. 
-Under this new folder you must create Font Style sub-folders, any combination of BOLD, BOLD_ITALIC, ITALIC, or PLAIN depnding upon what fonts you have decided to add.
+Under this new folder you must create Font Style sub-folders, any combination of BOLD, BOLD_ITALIC, ITALIC, or PLAIN depending upon what fonts you have decided to add.
 
 For Teensy fonts don't forget to copy both the Headers and C files. 
 
-You do not need to edit the builder_fonts.json file for these new fonts, just drop them into the new folders and restart the Builder.
+You do not need to edit the builder_fonts.json file for these new Adafruit GFX or T3 fonts, just drop them into the new folders and restart the Builder.
+
+VLW smoothfonts do need edits to the builder_fonts.json file to add them. Google's Noto Bold is already 
+supported so you can use its entries as a guide.  Note that you don't place the actual *.vlw fonts in the 
+Builders folders. You place the *.ttf file that you used as input to Processing IDE that created your *.vlw 
+fonts. The Builder can't read the *.vlw files only the TrueType fonts. You will however notice a sub folder 
+called data where the NotoBold vlw files have been placed as a convenience so you don't need to generate them, 
+just copy to your Arduino project data folder. See Appendix G for information on creating vlw fonts.
+
+Please remember usage of the fonts require you to copy them to either Adafruit-GFX/Fonts or to TFT_eSPI/Fonts/GFXFF depending upon your driver.
 
 If you need to use a font that doesn't fall into the above categories then you will need to tell the Builder to simulate it. 
 This is fairly easy to do but can be a bit fussy. There isn't much error handling so be careful with edits. 
 If an error is detected it will be reported inside GUIsliceBuilder/logs/builder.log. You should get a line number and most likely 
 a cryptic message. For example: saying a name was expected. Look for extra or missing commas ',', brackets ']' or curly braces '}'.
+
+When you add your own fonts there is one additional requirement. For Adafruit GFX fonts you need to create at least one fone size 10 or less, while TrueType, or vlw needs at least one size 18 or less. The Builder requires this for Property Table display of your text fields.
 
 The builder_fonts.json file format is documented in Appendix B.
 
@@ -1730,8 +1742,9 @@ The Categories supported are:
 - FONT_GFX which are Adafruit's GFX compatible fonts.
 - FONT_GLCD which are Adafruit's classic built-in fonts
 - FONT_T3 which are Teensy's ili9341_t3 fonts
-- FONT_SIM which are any fonts that the Builder needs to simulate using Java's built-in fonts.
+- FONT_SIM which are any fonts that the Builder needs to simulate using Java's built-in fonts which limits you to using "logicalName": "Monospaced" or "SansSerif" or "Serif". It limits you to 255 characters in your character set maximum.
 - FONT_TTF which are TrueType fonts used by Linux
+- FONT_VLW which are smoothfonts supported by TFT_eSPI driver. 
 
 The FONT_GFX, FONT_GLCD, and FONT_T3 fonts are supported as native fonts. That is the BUilder 
 actually reads and parses the C headers or C files that define the font.  It uses that information 
@@ -1761,34 +1774,33 @@ display the font within your UI Elements on the TFT Simulation Panel.
 
 The fields are:
 
-1.  FontName - No Default
+1.  **fontName** - No Default
     refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
-2.  DisplayName - No Default
+2.  **displayName** - No Default
     refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
-3.  IncludeFile - Default: NULL
+3.  **includeFile** - Default: NULL
     on the arduino platform it points to where to find a font, ex: 'Fonts/FreeSansBold12pt7b.h' or NULL
-4.  DefineFile - Default: NULL
+4.  **defineFile** - Default: NULL
     On linux platform it points to the font, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
-5.  eFontRefType - Default: GSLC_FONTREF_PTR
+5.  **eFontRefType** - Default: GSLC_FONTREF_PTR
     GUIslice API parameter Font reference type (eg. filename "GSLC_FONTREF_FNAME" or pointer "GSLC_FONTREF_PTR")
-6.  pvFontRef - No default
+6.  **pvFontRef** - No default
     GUIslice API parameter Reference pointer to identify the font. 
-    Example: for GSLC_FONTREF_PTR it's "&display name" like "&FreeMono9pt7b" which must be a 
-    pointer value to the font bitmap array.
-    In the case of SDL mode, it is a filepath to the font file. In the case of Arduino it is 
-     (GFXFont)
-7.  nFontSz - Default: 1
+    Example: Adafruit FreeFonts would be GSLC_FONTREF_PTR it's "&display name" like "&FreeMono9pt7b" which must be a 
+    pointer value to the font bitmap array. TFT_eSPI Smooth Fonts stored in Flash would also be defined this way.
+    In the case of SDL mode or TFT_eSPI Smooth Fonts, it is a filepath to the font file.
+7.  **nFontSz** - Default: 1
     GUIslice API parameter Typeface size to use. For Arduino built-in fonts a number from 1 to 5, 
     Most fonts will set this to 1, while in SDL mode its actual logical size of font.
-8.  LogicalFont - Default: NULL
+8.  **logicalFont** - Default: NULL
     Used only when font type is FONT_SIM. It's the name java needs to use when accessing this font.
     Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced. 
     It doesn't have to be a Java builtin font but must be whatever name the operating system uses.
-9.  LogicalFontSize - No Default
+9.  **logicalFontSize** - No Default
     The size of the Font.
-10. LogicalFontStyle - No Default
+10. **logicalFontStyle** - No Default
     The font style, PLAIN, BOLD, ITALIC, BOLD+ITALIC
-11. fontRefMode - Default: GSLC_FONTREF_MODE_DEFAULT
+11. **fontRefMode** - Default: GSLC_FONTREF_MODE_DEFAULT
     This is for drivers that need special handling within GUIslice API. 
 
 If the default value of a font field satisfactory for your font you can simply skip the field.
@@ -1808,9 +1820,9 @@ By default, most graphics libraries use the FontRefMode GSLC_FONTREF_MODE_DEFAUL
 For example:
 
 * The RA8876 display driver uses FONTREF_MODE_DEFAULT to select the internal ROM fonts, whereas other modes are used to select fonts from external ROM chips.
-* The RA8875_SUMO display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas FONTREF_MODE_1 is used to select an ILI9341_t3_font.
-* The ILI9341_t3 display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas FONTREF_MODE_1 is used to select an ILI9341_t3_font.
-
+* The RA8875_SUMO display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas GSLC_FONTREF_MODE_1 is used to select an ILI9341_t3_font.
+* The ILI9341_t3 display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas GSLC_FONTREF_MODE_1 is used to select an ILI9341_t3_font.
+* TFT_eSPI Smooth Fonts stored in Flash must have fontRefMode defined as GSLC_FONTREF_MODE_1.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
@@ -2217,4 +2229,32 @@ There are some cases where meta-id is not used and a few places where templates 
 The most current and complete list of Ids is inside the source code 
 
 `builder/src/main/java/resources/templates/meta_ids.csv`
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+# Appendix G - Create VLW Fonts
+
+Begin by downloading the Processing IDE from
+[Download Processing](https://processing.org/download/)
+
+Open Processing IDE and select tools->create_font
+![](images/fonts/tools.png)
+
+Select your font from the installed fonts and also the font size:
+![](images/fonts/create_font.png)
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+Optionally you can make your font use less memeory by selecting character selector and picking your unicode code blocks for specific characters:
+![](images/fonts/character_selector.png)
+
+You may repeat this process as often as required. 
+
+Once you have converted all the fonts and sizes needed you need then open your sketch to find these new fonts:
+![](images/fonts/show_folder.png)
+
+Your new fonts will be inside the data sub folder. Copy them to your project's data folder.
+
 

@@ -565,12 +565,12 @@ public class FontFactory {
     platformNames = new String[10];
     fontsByPlatform = new ArrayList[10];
     for (FontPlatform p : builderFonts.getPlatforms()) {
-      // Builder.logger.debug("Platform: " + p.getName());
+//    Builder.logger.debug("Platform: " + p.getName());
       platformNames[nPlatforms] = p.getName();
       list = new ArrayList<FontItem>();
       fontsByPlatform[nPlatforms++] = list;
       for (FontCategory c : p.getCategories()) {
-        // Builder.logger.debug("Platform: " + c.getName());
+//      Builder.logger.debug("Platform: " + c.getName());
         if (c.getFonts().size() == 0) {
           // handle native fonts that did not require JSON entries
           if (c.getName().equals(FontTFT.FONT_GFX)) {

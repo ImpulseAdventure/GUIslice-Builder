@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -128,12 +128,10 @@ public class TextInputModel extends WidgetModel {
     cbAlign.addItem(FontTFT.ALIGN_BOT_CENTER);
     cbAlign.addItem(FontTFT.ALIGN_BOT_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
-    String fontName = getFontDisplayName();
-    FontTFT myFont = ff.getFont(fontName);
-    textBox.setFontTFT(ff, myFont);
+    textBox.setFontTFT(ff, null);
     editorText = new DefaultCellEditor(textBox);
     rendererText = new TextTFTCellRenderer();
-    rendererText.setFontTFT(ff, myFont);
+    rendererText.setFontTFT(ff, null);
   }
   
   /**

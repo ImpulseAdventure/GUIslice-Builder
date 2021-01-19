@@ -225,6 +225,166 @@
           ]
         },
         {
+          "categoryName": "FONT_VLW",
+          "fonts": [
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold16V",
+              "defineFile": "DosisBold16",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK16_VLW",
+              "nFontSz": "16",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "16",
+              "logicalStyle": "Bold",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold20V",
+              "defineFile": "DosisBold20",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK20_VLW",
+              "nFontSz": "20",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold24V",
+              "defineFile": "DosisBold24",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK24_VLW",
+              "nFontSz": "24",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "24",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold28V",
+              "defineFile": "DosisBold28",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK28_VLW",
+              "nFontSz": "28",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold30V",
+              "defineFile": "DosisBold30",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK30_VLW",
+              "nFontSz": "30",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "30",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold36V",
+              "defineFile": "DosisBold36",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK36_VLW",
+              "nFontSz": "36",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "36",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "DosisBold.vlw",
+              "displayName": "DosisBold48V",
+              "defineFile": "DosisBold48",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "DOSISBOOK48_VLW",
+              "nFontSz": "48",
+              "logicalName": "dosis_bold.ttf",
+              "logicalSize": "48",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold16V",
+              "defineFile": "NotoSansBold16",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS16_VLW",
+              "nFontSz": "16",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "16",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold20V",
+              "defineFile": "NotoSansBold20",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS20_VLW",
+              "nFontSz": "20",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "20",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold24V",
+              "defineFile": "NotoSansBold24",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS24_VLW",
+              "nFontSz": "24",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "24",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold28V",
+              "defineFile": "NotoSansBold28",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS28_VLW",
+              "nFontSz": "28",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold30V",
+              "defineFile": "NotoSansBold30",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS30_VLW",
+              "nFontSz": "30",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "30",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold36V",
+              "defineFile": "NotoSansBold36",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS36_VLW",
+              "nFontSz": "36",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "36",
+              "logicalStyle": "Bold"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold48V",
+              "defineFile": "NotoSansBold48",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANS48_VLW",
+              "nFontSz": "48",
+              "logicalName": "NotoSans-Bold.ttf",
+              "logicalSize": "48",
+              "logicalStyle": "Bold"
+            }
+          ]
+        },
+        {
           "categoryName": "FONT_GFX",
           "ignoreIncludesStartingWith": "Free",
           "extraIncludes": [

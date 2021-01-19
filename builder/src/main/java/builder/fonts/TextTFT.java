@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2019 Paul Conti
+ * Copyright 2018, 2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -209,7 +209,7 @@ public class TextTFT extends JTextField implements MouseListener, ActionListener
       return;
     }
     int fontSz = 10;
-    if (myFont instanceof FontTtf) {
+    if (myFont instanceof FontTtf || myFont instanceof FontVLW) {
       fontSz = 18;
     }
     if (myFont.getLogicalSizeAsInt() == fontSz) {
@@ -288,7 +288,6 @@ public class TextTFT extends JTextField implements MouseListener, ActionListener
     }
 
     Highlighter highlighter = getHighlighter();
-//    Caret caret = getCaret();
 
     // paint the background
     if (isOpaque()) {

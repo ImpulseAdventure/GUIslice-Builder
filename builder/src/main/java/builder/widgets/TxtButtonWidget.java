@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,19 @@ public class TxtButtonWidget extends Widget {
   public void draw(Graphics2D g2d) {
     FontTFT font = null;
     Rectangle b = getWinBounded();
+    Color colBg = m.getFillColor();
     if (bSelected) {
+      colBg = m.getSelectedColor();
+    }
+    g2d.setColor(colBg);
+    if (m.isFillEnabled()) {
+      if (m.isRoundedEn())
+        g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
+      else
+        g2d.fillRect(b.x, b.y, b.width, b.height);
+    }
+
+/* 
       g2d.setColor(m.getSelectedColor());
       if (m.isFillEnabled()) {
         if (m.isRoundedEn())
@@ -89,6 +101,7 @@ public class TxtButtonWidget extends Widget {
           g2d.fillRect(b.x, b.y, b.width, b.height);
       }
     }
+*/
     String text = m.getText();
     if (text.isEmpty()) {
       text = "TODO";
@@ -106,9 +119,9 @@ public class TxtButtonWidget extends Widget {
       if (m.isFillEnabled()) {
         if (m.isFrameEnabled()) {
           Rectangle rElemInner = GUIslice.expandRect(b, -1, -1);
-          ff.drawText(g2d, m.getAlignment(), rElemInner, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+          ff.drawText(g2d, m.getAlignment(), rElemInner, text, font, m.getTextColor(), colBg, m.getTextMargin());
         } else {
-          ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+          ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), colBg, m.getTextMargin());
         }
       } else {
         ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getTextColor(), m.getTextMargin());

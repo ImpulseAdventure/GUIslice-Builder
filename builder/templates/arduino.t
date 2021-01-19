@@ -130,7 +130,7 @@ $<CALLBACK>
   gslc_ElemXCheckboxSetStateFunc(&m_gui, pElemRef, &CbCheckbox);
 <STOP>
 <CHECKBOXSETSTATE_P>
-  // gslc_ElemXCheckboxSetStateFunc(); currently not supported by the FLASH _P calls.
+  gslc_ElemXCheckboxSetStateFunc(&m_gui, $<COM-019>, &CbCheckbox);
 <STOP>
 <CHECKBOX_CB>
 // Checkbox / radio callbacks
