@@ -736,8 +736,8 @@ public class RibbonListener implements ActionListener, iSubscriber {
     switch(command) {
     case "about":
       Builder.logger.debug("Menu: about");
-      String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight (c) Paul Conti 2018-2020</center>"
-          + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2020</center></p>", Builder.VERSION);
+      String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight (c) Paul Conti 2018-2021</center>"
+          + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2021</center></p>", Builder.VERSION);
       htmlBody = htmlBody + "<br>For the latest guides, updates and support view:<br>";
       MessageWithLink msgDialog = new MessageWithLink(htmlBody, "https://github.com/ImpulseAdventure/GUIslice/wiki");
       msgDialog.showMessage();
