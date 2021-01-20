@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import builder.fonts.FontTFT;
 import builder.fonts.FontTtf;
+import builder.fonts.FontVLW;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -118,7 +119,7 @@ public final class CodeUtils {
     StringBuilder sBd = new StringBuilder();
     StringBuilder code = new StringBuilder();
     String hex;
-    if (font instanceof FontTtf) {
+    if (font instanceof FontTtf || font instanceof FontVLW) {
       for (int i=0; i<text.length(); i++) {
         char ch = text.charAt(i);
         // we can output unicode which will be converted to utf8

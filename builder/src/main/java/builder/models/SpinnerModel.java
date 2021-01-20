@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -121,14 +121,14 @@ public class SpinnerModel extends WidgetModel {
     initProp(PROP_INCRBUTTON, String.class, "SPIN-102", Boolean.FALSE,"Increment Label",DEF_INCRBUTTON);
     initProp(PROP_DECRBUTTON, String.class, "SPIN-103", Boolean.FALSE,"Decrement Label",DEF_DECRBUTTON);
 
-    String fontName = getFontDisplayName();
-    FontTFT myFont = ff.getFont(fontName);
-    txtIncr.setFontTFT(ff, myFont);
-    txtDecr.setFontTFT(ff, myFont);
+//    String fontName = getFontDisplayName();
+//    FontTFT myFont = ff.getFont(fontName);
+    txtIncr.setFontTFT(ff, null);
+    txtDecr.setFontTFT(ff, null);
     editorIncr = new DefaultCellEditor(txtIncr);
     editorDecr = new DefaultCellEditor(txtDecr);
     rendererText = new TextTFTCellRenderer();
-    rendererText.setFontTFT(ff, myFont);
+    rendererText.setFontTFT(ff, null);
   }
   
   /**

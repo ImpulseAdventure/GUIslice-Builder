@@ -51,6 +51,14 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### Enhancements 0.16.b006
+Added support for TFT_eSPI smoothfonts (*.vlw). Google's Dosis Bold and NotoSans Bold is built in. 
+
+You may add your own vlw fonts by following the updated User Guide chapter 5.7 Adding Fonts and Appendix G Creating VLW Fonts.
+
+### Bug Fixes 0.16.b006
+ - Bug No. 205 No CallBack from Checkbox using Flash API issue `#347` 
+
 ### HotFix for 0.16.b005
  - Bug No. 204 Crash  occurs while selecting NotoLatin1 when size of font is > 28 issue `#143`
  - Bug No. 203 Box using Flash API can't do code gen for Draw callback
