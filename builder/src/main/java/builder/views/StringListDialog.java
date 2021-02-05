@@ -1,3 +1,28 @@
+/**
+ *
+ * The MIT License
+ *
+ * Copyright (c) 2018-2021 Paul Conti
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ */
 package builder.views;
 
 import java.awt.BorderLayout;
@@ -39,7 +64,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import hu.csekme.RibbonMenu.Util;
 
 public class StringListDialog extends JDialog implements ActionListener, ListSelectionListener {
   private static final long serialVersionUID = 1L;
@@ -111,8 +136,7 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
     btn_down.addActionListener(this);
 
     btn_remove = new JButton(
-        CommonUtils.getInstance().getResizableSmallIcon("resources/icons/edit/delete.png", new Dimension(24,24)));
-//        new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png")));
+        Util.accessImageFile("resources/icons/edit/delete.png", 24,24));
     btn_remove.setActionCommand(removeString);
     btn_remove.addActionListener(this);
     btn_remove.setToolTipText("Select an item then press to delete.");

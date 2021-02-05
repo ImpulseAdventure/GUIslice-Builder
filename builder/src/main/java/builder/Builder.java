@@ -70,6 +70,8 @@ import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
 import builder.views.Ribbon;
+import builder.views.RibbonListener;
+import builder.views.ToolBar;
 import builder.views.TreeView;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -113,7 +115,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.16.b006";
+  public static final String VERSION = "0.16.b007";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
@@ -136,7 +138,7 @@ public class Builder  extends JDesktopPane {
   public static int CANVAS_HEIGHT;
   
   /** The frame. */
-  private Ribbon frame;
+  private JFrame frame;
   
   /** The themes. */
   public static List<ThemeInfo> themes;
@@ -166,6 +168,8 @@ public class Builder  extends JDesktopPane {
   
   public static String osName;
   
+  public static Ribbon ribbon;
+  
   /** our logger */
   public static Logger logger = null;
   
@@ -183,9 +187,14 @@ public class Builder  extends JDesktopPane {
     Builder builder = new Builder();
     version = Double.parseDouble(System.getProperty("java.specification.version"));
     if (version < 1.8) {
-      String msg = String.format("Java 8 is needed to run. Yours is %.2f", version);
+      String msg = String.format("Java 8 is needed to run correctly. Yours is %.2f", version);
       JOptionPane.showMessageDialog(null, 
-        msg, "Failure", JOptionPane.ERROR_MESSAGE);
+        msg, "Warning", JOptionPane.ERROR_MESSAGE);
+    }
+    if (version >= 14) {
+      String msg = String.format("Java 14 and above are known to cause crashes and stability issues. Yours is %.2f", version);
+      JOptionPane.showMessageDialog(null, 
+        msg, "Warning", JOptionPane.ERROR_MESSAGE);
     }
     osName = System.getProperty("os.name").toLowerCase();
     isMAC = osName.startsWith("mac os x");
@@ -298,25 +307,36 @@ public class Builder  extends JDesktopPane {
     userPreferences = new UserPrefsManager(frame, prefEditors);
     controller.setUserPrefs(userPreferences);
     
-    // create our menu bar
-    MenuBar mb = new MenuBar();
-
     // create the tree view
     TreeView treeView = TreeView.getInstance();
 
     // create our main frame and add our panels
     String frameTitle = PROGRAM_TITLE + NEW_PROJECT;
-    // create our ribbon
-    frame = Ribbon.getInstance();
+    frame = new JFrame();
+
+    // The listener for message events */
+    RibbonListener ribbonListener = new RibbonListener();
     
-    // setup our listeners
-    mb.addListeners(frame.getRibbonListener());
+    // create our menu bar
+    MenuBar mb = new MenuBar();
+    mb.addListeners(ribbonListener);
 
     // set a listener to capture resize window events
     frame.addComponentListener(new FrameListen());
     
     frame.setTitle(frameTitle);
     frame.setJMenuBar(mb);
+
+    ToolBar toolbar = ToolBar.getInstance();
+
+    toolbar.addListeners(ribbonListener);
+    frame.getContentPane().add(toolbar.get(),BorderLayout.EAST);
+
+    // create our ribbon
+    ribbon = Ribbon.getInstance();
+    ribbon.addListeners(ribbonListener);
+    
+    frame.getContentPane().add(ribbon,BorderLayout.NORTH);
 
     frame.setIconImage(new ImageIcon(Builder.class.getResource("/resources/icons/guislicebuilder.png")).getImage());
 
@@ -360,11 +380,11 @@ public class Builder  extends JDesktopPane {
     if (GeneralEditor.getInstance().getTFTWinWidth() > 0) 
         width = GeneralEditor.getInstance().getTFTWinWidth();
     splitPane.setDividerLocation(width);
-    frame.add(splitPane,BorderLayout.CENTER);
+    frame.getContentPane().add(splitPane,BorderLayout.CENTER);
 
-//    frame.add(propManager, BorderLayout.EAST);
-//    frame.add(controller,BorderLayout.CENTER);
-    frame.add(treeView, BorderLayout.WEST);
+//    frame.getContentPane().add(propManager, BorderLayout.EAST);
+//    frame.getContentPane().add(controller,BorderLayout.CENTER);
+    frame.getContentPane().add(treeView, BorderLayout.WEST);
     
     // create our status bar
     statusBar = new JPanel();
@@ -422,16 +442,20 @@ public class Builder  extends JDesktopPane {
       if (themeInfo != null) {
         if( themeInfo.lafClassName != null ) {
           UIManager.setLookAndFeel( themeInfo.lafClassName );
+          ribbon.setRibbonColors();
           return;
         } else if( themeInfo.themeFile != null ) {
           FlatLaf.install(IntelliJTheme.createLaf(new FileInputStream(themeInfo.themeFile)));
+          ribbon.setRibbonColors();
           return;
         }
       }
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      ribbon.setRibbonColors();
     } catch (Exception ex) {
       try {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        ribbon.setRibbonColors();
       } catch (Exception e) {
         e.printStackTrace();
       }

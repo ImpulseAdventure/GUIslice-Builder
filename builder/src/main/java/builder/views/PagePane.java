@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -317,8 +317,7 @@ public class PagePane extends JPanel implements iSubscriber {
   public static void zoomIn() {
     zoomFactor *= 1.1;
     ZoomTransform();
-    ribbon.btn_zoom_out.setEnabled(true);
-    ribbon.mini_zoom_out.setEnabled(true);
+    ribbon.enableZoom(true);
     MenuBar.miZoomOut.setEnabled(true);
   }
   
@@ -328,8 +327,7 @@ public class PagePane extends JPanel implements iSubscriber {
   public static void zoomOut() {
     zoomFactor /= 1.1;
     if (zoomFactor < 1.1) {
-      ribbon.btn_zoom_out.setEnabled(false);
-      ribbon.mini_zoom_out.setEnabled(false);
+      ribbon.enableZoom(false);
       MenuBar.miZoomOut.setEnabled(false);
     }
     ZoomTransform();
@@ -340,8 +338,7 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public static void zoomOff() {
     zoomFactor = 1.0;
-    ribbon.btn_zoom_out.setEnabled(false);
-    ribbon.mini_zoom_out.setEnabled(false);
+    ribbon.enableZoom(false);
     ZoomTransform();
   }
 

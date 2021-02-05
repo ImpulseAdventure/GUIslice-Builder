@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.16.b006
+        Ver: 0.16.b007
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published January, 2021. Based on GUIslice API Library 0.16.0.14
+Published February, 2021. Based on GUIslice API Library 0.16.0.14
 
 **Copyright**
 
@@ -106,7 +106,7 @@ Install: <https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder>
 
 ![](images/modules.png)
 
-1. Tabs for Toolbox and Page Layout.  Toolbox is where you select the UI Elements to drop on the TFT Simulation.  Page Layout tab has icon buttons for aligning UI Elements on a page.
+1. Tabs for Ribbon and Page Layout.  Ribbon is where you select the UI Elements to drop on the TFT Simulation.  Page Layout tab has icon buttons for aligning UI Elements on a page.
 
 2. TFT Simulation is where you create your UI.
 
@@ -201,9 +201,7 @@ Also, any element you plan on directly accessing at runtime should have a meanin
 
 ## 3.1 Main Parts
 
-## 3.1.1 Taskbar 
-
-![](images/taskbar.png)
+## Taskbar 
 
 ![](images/tasks/open.png) This will open an existing project.
 
@@ -215,6 +213,16 @@ Also, any element you plan on directly accessing at runtime should have a meanin
 
 ![](images/tasks/delete.png) Delete allows removal of a element.  You can only select a page for deletion by selecting it inside the treeview or on the page tabs. You must, however, have removed all elements from the page before attempting a deletion.  Furthermore you are never allowed to delete the first or main page.
 
+![](images/tasks/selection.png) Rectangular Selection creates a rubber band that you can drag over UI elements to select them.  You start by pressing and holding the left mouse button then dragging the rubber band over yourUI Elements.  Once you release the left mouse button the transaction ends.
+
+![](images/tasks/copy_props.png) Copy Properties to other UI Elements
+
+![](images/tasks/copy.png) Copy will copy selected UI Elements to the clipboard.
+
+![](images/tasks/cut.png) Cut will copy selected UI Elements to the clipboard and delete them from the current page.
+
+![](images/tasks/paste.png) Paste will copy UI Elements from the clipboard to the current page.  You may use that Page tabs to move to a new page. The copied Elements will be slightly offset from the original copied positions.  This is to avoid placing them directly on top of the original Elements.
+
 ![](images/tasks/export.png) Export the generate code skeleton for the current project.
 
 ![](images/tasks/logout.png) Exit the builder.
@@ -222,15 +230,13 @@ Also, any element you plan on directly accessing at runtime should have a meanin
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.1.2 Toolbox Tab ![](images/toolbox.png)
+## Toolbox Tab ![](images/toolbox.png)
 
-See Section 4.0 for complete details.
+This is broken into bands Text, Controls, Gauges, Misc and View.
 
-## 3.1.3 Page Layout Tab ![](images/pagelayout.png)]
+For Bands Text,Controls, Gauges and Misc See Section 4.0 for details of each UI Element.
 
-This is broken into three bands View, Layout, and Edit.
-
-## 3.2 View Band
+### View Band
 
 ![](images/layout/view_band.png)
 
@@ -240,24 +246,18 @@ The Zoom In button will enlarge the size of the TFT Simulation.
 
 The Zoom Out button will reduce your view of the TFT Simulation.  Note: You can't make it smaller than your Target Platform's Screen Dimensions.
 
-## 3.3 Edit Band
-
-![](images/layout/edit_band.png)
-
-Copy will copy selected UI Elements to the clipboard.
-
-Cut will copy selected UI Elements to the clipboard and delete them from the current page.
-
-Paste will copy UI Elements from the clipboard to the current page.  You may use that Page tabs to move to a new page. The copied Elements will be slightly offset from the original copied positions.  This is to avoid placing them directly on top of the original Elements.
-
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4 Layout Band
+## Page Layout Tab ![](images/pagelayout.png)]
+
+Contains Layout Band
+
+### Layout Band
 
 ![](images/layout/layout_band.png)
 
-## 3.4.1 Align Top ![](images/layout/align_top.png)
+### Align Top ![](images/layout/align_top.png)
 The easiest way I can think of to show how to use the alignment buttons is with a couple of checkboxes.  Go ahead and create two boxes it doesn't matter where they end up on the TFT Simulation.
 
 ![](images/align_before.png)
@@ -270,14 +270,14 @@ This gives you:
 
 ![](images/top_after.png)
 
-If you click it a second time the elements move to the top margin (set as a default of 5).  You can change the size of margins in the General tab. You can click the UNDO button to get back to the original position and test the other alignment buttons.
+If you click it a second time the elements move to the top margin (set as a default of 10).  You can change the size of margins in the General tab. You can click the UNDO button to get back to the original position and test the other alignment buttons.
 
 ![](images/top_after2.png)
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.2 Align Bottom ![](images/layout/align_bottom.png)
+### Align Bottom ![](images/layout/align_bottom.png)
 Before:
 
 ![](images/align_before.png)
@@ -295,7 +295,7 @@ If you click it a second time the elements move to the bottom margin.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.3 Align Center ![](images/layout/align_center.png)
+### Align Center ![](images/layout/align_center.png)
 
 You can only center one element at a time.
 
@@ -314,7 +314,7 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.4 Align Left ![](images/layout/align_left.png)
+### Align Left ![](images/layout/align_left.png)
 
 Before:
 
@@ -333,7 +333,7 @@ If you click it a second time the elements move to the left margin.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.5 Align Right ![](images/layout/align_right.png)
+### Align Right ![](images/layout/align_right.png)
 
 Before:
 
@@ -352,7 +352,7 @@ If you click it a second time the elements move to the right margin.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.6 Align Horizontal Spacing ![](images/layout/align_hspacing.png)
+### Align Horizontal Spacing ![](images/layout/align_hspacing.png)
 
 Before:
 
@@ -373,7 +373,7 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.7 Align Vertical Spacing ![](images/layout/align_vspacing.png)
+### Align Vertical Spacing ![](images/layout/align_vspacing.png)
 
 Before:
 
@@ -394,7 +394,7 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.8 Align Width ![](images/layout/align_width.png)
+### Align Width ![](images/layout/align_width.png)
 
 Before:
 
@@ -411,7 +411,7 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.9 Align Height ![](images/layout/align_height.png)
+### Align Height ![](images/layout/align_height.png)
 
 Before:
 
@@ -428,39 +428,7 @@ This gives you:
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 3.4.10 Rectangular Selection ![](images/layout/selection.png)
-
-Clicking the Rectangular Selection button changes your cursor to a cross and allows you to create a rubber band that you can drag over UI elements to select them.  You start by pressing and holding the left mouse button then dragging the rubber band over yourUI Elements.  Once you release the left mouse button the transaction ends.
-
-![](images/layout/rectangle_select.png)
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-## 3.4.11 Copy Properties ![](images/layout/copy_props.png)
-
-Clicking the Copy Properties button after selecting a UI Element that has one or more properties that you wish to 
-propagate to other UI Elements will bring up a Checklist dialog.  
-
-
-![](images/layout/checklist.png)
-
-You mark the properties you wish copied and click OK. 
- 
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-Once you have done that a second dialog will come up:
-
-![](images/layout/copyprops_select.png)
-
-Now you to select the Target UI Elements you want to modify. After you have made your selections, click copy and the properties you marked earlier will be copied. 
-
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-## 3.5 Z-Order
+## 3.2 Z-Order
 
 Images in GUIslice are placed one on top of the other.  Drawing begins from the first UI element created to the last.  This is referred to as Z-Order. This generally doesn't cause any issues but there are times you will need to change this Z-Order to avoid obstructing components.
 
@@ -1631,19 +1599,20 @@ If you edit this file you must restart the Builder it will then use the new font
 
 # Appendix A - Acknowledgements
 
-## Insubstantial Project
+## JRibbonBar Project
 
-The GUIsliceBuilder's Ribbon code is provided by the Insubstantial project written by Kirill Grouchnikov. This project is no longer supported and has been replaced by Radiance project which requires Java 9 or Higher so we can't use it. The Insubstantial jar files involved are:
+The GUIsliceBuilder's Ribbon code is provided by the JRibbonBar project written by Csekme Krisztián, Software Engineer at CalTec.
 
-- **flamingo-7.3.1-SNAPSHOT.jar**
-- **trident-7.3.1-SNAPSHOT.jar**
-- **substance-7.3.1-SNAPSHOT.jar**
+- **RibbonMenu-1.0.6.jar**
+
+The JRibbonBar project is on GitHub:
+<https://github.com/csekme/JRibbonMenu>
 
 ## FlatLaf Project
 
 The Non-Built IN Java Themes are supported by the FlatLaf project. The jar file is:
 
-- **flatlaf-0.44.jar**
+- **flatlaf-1.0-rc1.jar**
 
 The FlatLaf project is on GitHub: 
 <https://github.com/JFormDesigner/FlatLaf>
@@ -1828,42 +1797,7 @@ For example:
 
 # Appendix C - CopyRight Notices
 
-## Insubstantial project CopyRight
-
-The CopyRight Notice for the Insubstantial project is reproduced in full here:
-
-Copyright (c) 2005-2010 Kirill Grouchnikov. All Rights Reserved.
-
-Redistribution and use in source and binary forms, with or without 
-modification, are permitted provided that the following conditions are met:
-
- - Redistributions of source code must retain the above copyright notice, 
-   this list of conditions and the following disclaimer. 
-   
- - Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
-   and/or other materials provided with the distribution. 
-   
- - Neither the name of Flamingo Kirill Grouchnikov nor the names of 
-   its contributors may be used to endorse or promote products derived 
-   from this software without specific prior written permission. 
-   
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-## FlatLaf project, Google's gson and Apache Logging CopyRights are based upon Apache License version 2.0.
+## Apache Logging, FlatLaf project, Google's gson, and JRibbonBar CopyRights are based upon Apache License version 2.0.
 
                                  Apache License
                            Version 2.0, January 2004
@@ -2233,7 +2167,7 @@ The most current and complete list of Ids is inside the source code
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix G - Create VLW Fonts
+# Appendix G - Creating VLW Fonts
 
 Begin by downloading the Processing IDE from
 [Download Processing](https://processing.org/download/)

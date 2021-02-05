@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.DropMode;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
@@ -60,17 +61,15 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
-
 import builder.Builder;
 import builder.clipboard.TreeItem;
 import builder.clipboard.TreeItemSelection;
-import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
+import hu.csekme.RibbonMenu.Util;
 
 /**
  * The Class TreeView provides a view of all widgets on all pages.
@@ -202,8 +201,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     scrollPane.setPreferredSize(new Dimension(300, 650));
     add(scrollPane);
     this.setTitle("Tree View");        
-     CommonUtils cu = CommonUtils.getInstance();
-    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png",new Dimension(24,24)));
+    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png",24,24));
     this.setPreferredSize(new Dimension(250, 400));
     this.pack();
     this.setVisible(true);
@@ -484,60 +482,57 @@ public class TreeView extends JInternalFrame implements iSubscriber {
  */
   private class MyTreeRenderer extends DefaultTreeCellRenderer {
     private static final long serialVersionUID = 1L;
-    private final CommonUtils cu;
-    private final ResizableIcon widgetIcon;
-    private final ResizableIcon projectIcon;
-    private final ResizableIcon pageIcon;
-    private final ResizableIcon basepageIcon;
-    private final ResizableIcon popupIcon;
-    private final ResizableIcon labelIcon;
-    private final ResizableIcon textinputIcon;
-    private final ResizableIcon numinputIcon;
-    private final ResizableIcon textboxIcon;
-    private final ResizableIcon txtbuttonIcon;
-    private final ResizableIcon imgbuttonIcon;
-    private final ResizableIcon checkboxIcon;
-    private final ResizableIcon radiobuttonIcon;
-    private final ResizableIcon imageIcon;
-    private final ResizableIcon listboxIcon;
-    private final ResizableIcon sliderIcon;
-    private final ResizableIcon spinnerIcon;
-    private final ResizableIcon ringgaugeIcon;
-    private final ResizableIcon progressbarIcon;
-    private final ResizableIcon radialIcon;
-    private final ResizableIcon rampIcon;
-    private final ResizableIcon boxIcon;
-    private final ResizableIcon lineIcon;
-    private final ResizableIcon graphIcon;
+    private final ImageIcon widgetIcon;
+    private final ImageIcon projectIcon;
+    private final ImageIcon pageIcon;
+    private final ImageIcon basepageIcon;
+    private final ImageIcon popupIcon;
+    private final ImageIcon labelIcon;
+    private final ImageIcon textinputIcon;
+    private final ImageIcon numinputIcon;
+    private final ImageIcon textboxIcon;
+    private final ImageIcon txtbuttonIcon;
+    private final ImageIcon imgbuttonIcon;
+    private final ImageIcon checkboxIcon;
+    private final ImageIcon radiobuttonIcon;
+    private final ImageIcon imageIcon;
+    private final ImageIcon listboxIcon;
+    private final ImageIcon sliderIcon;
+    private final ImageIcon spinnerIcon;
+    private final ImageIcon ringgaugeIcon;
+    private final ImageIcon progressbarIcon;
+    private final ImageIcon radialIcon;
+    private final ImageIcon rampIcon;
+    private final ImageIcon boxIcon;
+    private final ImageIcon lineIcon;
+    private final ImageIcon graphIcon;
 
     public MyTreeRenderer() {
-      Dimension iconSz = new Dimension(24,24);
-      cu = CommonUtils.getInstance();
-      projectIcon = cu.getResizableSmallIcon("resources/icons/misc/project.png",new Dimension(48,48));
-      pageIcon = cu.getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
-      basepageIcon = cu.getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
-      boxIcon = cu.getResizableSmallIcon("resources/icons/shapes/box_32x.png", iconSz);
-      checkboxIcon = cu.getResizableSmallIcon("resources/icons/controls/checkbox_32x.png", iconSz);
-      graphIcon = cu.getResizableSmallIcon("resources/icons/controls/graph_32x.png", iconSz);
-      imageIcon = cu.getResizableSmallIcon("resources/icons/controls/image_32x.png", iconSz);
-      imgbuttonIcon = cu.getResizableSmallIcon("resources/icons/controls/imgbutton_32x.png", iconSz);
-      lineIcon = cu.getResizableSmallIcon("resources/icons/shapes/line_32x.png", iconSz);
-      listboxIcon = cu.getResizableSmallIcon("resources/icons/controls/listbox_32x.png", iconSz);
-      numinputIcon = cu.getResizableSmallIcon("resources/icons/text/numinput_32x.png", iconSz);
-      popupIcon = cu.getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
-      progressbarIcon = cu.getResizableSmallIcon("resources/icons/gauges/progressbar_32x.png", iconSz);
-      radiobuttonIcon = cu.getResizableSmallIcon("resources/icons/controls/radiobutton_32x.png", iconSz);
-      radialIcon = cu.getResizableSmallIcon("resources/icons/gauges/radial_32x.png", iconSz);
-      rampIcon = cu.getResizableSmallIcon("resources/icons/gauges/ramp_32x.png", iconSz);
-      ringgaugeIcon = cu.getResizableSmallIcon("resources/icons/gauges/ringgauge_32x.png", iconSz);
-      sliderIcon = cu.getResizableSmallIcon("resources/icons/controls/slider_32x.png", iconSz);
-      spinnerIcon = cu.getResizableSmallIcon("resources/icons/controls/spinner_32x.png", iconSz);
-      labelIcon = cu.getResizableSmallIcon("resources/icons/text/label_32x.png", iconSz);
-      textboxIcon = cu.getResizableSmallIcon("resources/icons/text/textbox_32x.png", iconSz);
-      txtbuttonIcon = cu.getResizableSmallIcon("resources/icons/controls/button_32x.png", iconSz);
-      textinputIcon = cu.getResizableSmallIcon("resources/icons/text/textinput_32x.png", iconSz);
+      projectIcon = Util.accessImageFile("resources/icons/misc/project.png",24,24);
+      pageIcon = Util.accessImageFile("resources/icons/page/page_32x.png",  24,24);
+      basepageIcon = Util.accessImageFile("resources/icons/page/basepage_32x.png",  24,24);
+      boxIcon = Util.accessImageFile("resources/icons/shapes/box_32x.png",  24,24);
+      checkboxIcon = Util.accessImageFile("resources/icons/controls/checkbox_32x.png",  24,24);
+      graphIcon = Util.accessImageFile("resources/icons/controls/graph_32x.png",  24,24);
+      imageIcon = Util.accessImageFile("resources/icons/controls/image_32x.png",  24,24);
+      imgbuttonIcon = Util.accessImageFile("resources/icons/controls/imgbutton_32x.png",  24,24);
+      lineIcon = Util.accessImageFile("resources/icons/shapes/line_32x.png",  24,24);
+      listboxIcon = Util.accessImageFile("resources/icons/controls/listbox_32x.png",  24,24);
+      numinputIcon = Util.accessImageFile("resources/icons/text/numinput_32x.png",  24,24);
+      popupIcon = Util.accessImageFile("resources/icons/page/popup_32x.png",  24,24);
+      progressbarIcon = Util.accessImageFile("resources/icons/gauges/progressbar_32x.png",  24,24);
+      radiobuttonIcon = Util.accessImageFile("resources/icons/controls/radiobutton_32x.png",  24,24);
+      radialIcon = Util.accessImageFile("resources/icons/gauges/radial_32x.png",  24,24);
+      rampIcon = Util.accessImageFile("resources/icons/gauges/ramp_32x.png",  24,24);
+      ringgaugeIcon = Util.accessImageFile("resources/icons/gauges/ringgauge_32x.png",  24,24);
+      sliderIcon = Util.accessImageFile("resources/icons/controls/slider_32x.png",  24,24);
+      spinnerIcon = Util.accessImageFile("resources/icons/controls/spinner_32x.png",  24,24);
+      labelIcon = Util.accessImageFile("resources/icons/text/label_32x.png",  24,24);
+      textboxIcon = Util.accessImageFile("resources/icons/text/textbox_32x.png",  24,24);
+      txtbuttonIcon = Util.accessImageFile("resources/icons/controls/button_32x.png",  24,24);
+      textinputIcon = Util.accessImageFile("resources/icons/text/textinput_32x.png",  24,24);
       
-      widgetIcon = cu.getResizableSmallIcon("resources/icons/misc/widget.png",iconSz);
+      widgetIcon = Util.accessImageFile("resources/icons/misc/widget.png", 24,24);
    }
 
     @Override
