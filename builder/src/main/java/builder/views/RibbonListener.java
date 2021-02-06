@@ -505,7 +505,7 @@ public class RibbonListener implements ActionListener {
       controller.cutWidgets();
       break;
     
-    case "Delete":
+    case "delete":
       Builder.logger.debug("Menu: delete");
       controller.removeComponent();
       break;

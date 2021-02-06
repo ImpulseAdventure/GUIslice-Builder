@@ -61,9 +61,9 @@ public class ToolBar {
   public static synchronized ToolBar getInstance() {
     if (instance == null) {
       instance = new ToolBar();
-      instance.initFileButtons();  
-      instance.initEditButtons();
       instance.initQuitButtons();
+      instance.initEditButtons();
+      instance.initFileButtons();  
     }
     return instance;
   }
@@ -172,17 +172,17 @@ public class ToolBar {
    * Initializes the quit buttons.
    */
   public void initQuitButtons() {
-    btn_code = new JButton(
-        Util.accessImageFile("resources/icons/file/export.png",22,22));
-    btn_code.setToolTipText("Generate Code");
-    btn_code.setActionCommand("code");
-    toolbar.add(btn_code);
-
     btn_exit = new JButton(
         Util.accessImageFile("resources/icons/file/logout.png",22,22));
     btn_exit.setToolTipText("Exit Builder");
     btn_exit.setActionCommand("exit");
     toolbar.add(btn_exit);
+
+    btn_code = new JButton(
+        Util.accessImageFile("resources/icons/file/export.png",22,22));
+    btn_code.setToolTipText("Generate Code");
+    btn_code.setActionCommand("code");
+    toolbar.add(btn_code);
     
   }
   
@@ -206,8 +206,10 @@ public class ToolBar {
     btn_undo.addActionListener(al);
     btn_redo.addActionListener(al);
     btn_delete.addActionListener(al);
+    btn_selection.addActionListener(al);
     btn_paste.addActionListener(al);
     btn_copy.addActionListener(al);
+    btn_copy_props.addActionListener(al);
     btn_cut.addActionListener(al);
 
   }
