@@ -52,7 +52,11 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
 ### Enhancements 0.16.b007
-Replaced Ribbon with a simplier design using JRibbonBar provided by Csekme Krisztián. Hopefully this will fix the crashes and burns we have been having on Apple's OSX and various odd cursor behaviors that have occurred on different Linux platforms.
+Replaced Ribbon with a simplier design using JRibbonBar provided by Csekme Krisztián. 
+His github project is at:
+[JRibbonBar](https://github.com/csekme/JRibbonMenu)
+
+Hopefully this will fix the crashes and burns we have been having on Apple's OSX and various odd cursor behaviors that have occurred on different Linux platforms.
 
 Our User Guide has been updated with the new UI layout.
 
