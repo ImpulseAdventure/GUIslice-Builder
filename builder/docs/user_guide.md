@@ -112,7 +112,7 @@ Install: <https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder>
 
 3. Treeview displays all elements you have selected in z-order of display.
 
-4. Property List allows you to view and change various properties of the selected UI Element.
+4. Property View allows you to view and change various properties of the selected UI Element.
 
 5. Status Bar will give confirmation messages, like your project has been saved.
 
