@@ -52,6 +52,8 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 */
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -103,8 +105,7 @@ import builder.views.PagePane;
 import builder.views.TreeView;
 import builder.widgets.Widget;
 
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
-import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
+import hu.csekme.RibbonMenu.Util;
 
 /**
  * The Class Controller of the Model View Controller Pattern.
@@ -127,7 +128,7 @@ public class Controller extends JInternalFrame
   JTabbedPane tabbedPane;
   
   /** The top frame. */
-  private JRibbonFrame topFrame;  // used to set title when changing projects
+  private JFrame topFrame;  // used to set title when changing projects
 
   /** The user preferences. */
   private UserPrefsManager userPreferences;
@@ -175,7 +176,7 @@ public class Controller extends JInternalFrame
   ListIterator<PagePane> litr;
   
   /** saved icons */
-  ResizableIcon ic_project_tab,ic_page_tab, ic_base_tab, ic_popup_tab;
+  ImageIcon ic_project_tab,ic_page_tab, ic_base_tab, ic_popup_tab;
   
   /** The instance. */
   private static Controller instance = null;
@@ -213,11 +214,16 @@ public class Controller extends JInternalFrame
     clipboard = new Clipboard ("My clipboard");
     
     // save icons
-    Dimension iconSz = new Dimension(16,16);
-    ic_page_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
-    ic_base_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
-    ic_popup_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
-    ic_project_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/project.png", iconSz);
+//    Dimension iconSz = new Dimension(16,16);
+
+//    ic_page_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
+//    ic_base_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
+//    ic_popup_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
+//    ic_project_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/project.png", iconSz);
+    ic_page_tab = Util.accessImageFile("resources/icons/page/page_32x.png", 16,16);
+    ic_base_tab = Util.accessImageFile("resources/icons/page/basepage_32x.png", 16,16);
+    ic_popup_tab = Util.accessImageFile("resources/icons/page/popup_32x.png", 16,16);
+    ic_project_tab = Util.accessImageFile("resources/icons/misc/project.png", 16,16);
     
     tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     tabbedPane.addChangeListener(new ChangeListener() {
@@ -233,8 +239,9 @@ public class Controller extends JInternalFrame
     
     this.add(tabbedPane,BorderLayout.CENTER);
     this.setTitle(title);
-    CommonUtils cu = CommonUtils.getInstance();
-    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
+//    CommonUtils cu = CommonUtils.getInstance();
+//    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
+    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png", 24,24));
 //    this.pack();
     this.setVisible(true);
     Builder.logger.debug("New Project");
@@ -246,11 +253,11 @@ public class Controller extends JInternalFrame
    * @param frame
    *          the new frame
    */
-  public void setFrame(JRibbonFrame frame) {
+  public void setFrame(JFrame frame) {
     topFrame = frame;
   }
   
-  public JRibbonFrame getFrame() {
+  public JFrame getFrame() {
     return topFrame;
   }
   

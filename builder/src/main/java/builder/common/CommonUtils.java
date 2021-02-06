@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
  */
 package builder.common;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -39,17 +38,12 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
-import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
-
-import builder.Builder;
 import builder.controller.Controller;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 
 import java.util.Base64;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CommonUtils is a catch all for useful routines that don't seem to fit
  * in any other classes.
@@ -213,34 +207,6 @@ public class CommonUtils {
       e.printStackTrace();
     }
     return image;
-  }
-
-  /**
-   * Gets the resizable icon.
-   *
-   * @param resource
-   *          the resource
-   * @return the resizable icon
-   */
-  public ResizableIcon getResizableIcon(String resource) {
-
-    return ImageWrapperResizableIcon.getIcon(Builder.class.getClassLoader().getResource(resource),
-        new Dimension(48, 48));
-  }
-
-  /**
-   * Gets the resizable icon.
-   *
-   * @param resource
-   *          the resource
-   * @param d
-   *          the dimensuion of the icon to return
-   * @return the resizable icon
-   */
-  public ResizableIcon getResizableSmallIcon(String resource, Dimension d) {
-
-    return ImageWrapperResizableIcon.getIcon(Builder.class.getClassLoader().getResource(resource),
-        d);
   }
 
   /**

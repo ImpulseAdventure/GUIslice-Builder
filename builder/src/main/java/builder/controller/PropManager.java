@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,13 +38,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
 import builder.Builder;
-import builder.common.CommonUtils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.models.WidgetModel;
 import builder.prefs.GeneralEditor;
 import builder.views.PropEditor;
+import hu.csekme.RibbonMenu.Util;
 
 /**
  * <p>
@@ -97,9 +97,8 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
     layout = new CardLayout();
     cards = new JPanel(layout);
     add(cards);
-    CommonUtils cu = CommonUtils.getInstance();
     this.setTitle("Property View");
-    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
+    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png", 24,24));
     int width = 227;
     if (GeneralEditor.getInstance().getPropWinWidth() > 0) 
       width = GeneralEditor.getInstance().getPropWinWidth();

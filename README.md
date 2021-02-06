@@ -51,6 +51,17 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### Enhancements 0.16.b007
+Replaced Ribbon with a simplier design using JRibbonBar provided by Csekme Krisztián. 
+His github project is at:
+[JRibbonBar](https://github.com/csekme/JRibbonMenu)
+
+Hopefully this will fix the crashes and burns we have been having on Apple's OSX and various odd cursor behaviors that have occurred on different Linux platforms.
+
+Also added two additional Themes: Solarized Dark and Light themes.
+
+Our User Guide has been updated with the new UI layout.
+
 ### Enhancements 0.16.b006
 Added support for TFT_eSPI smoothfonts (*.vlw). Google's Dosis Bold and NotoSans Bold is built in. 
 
