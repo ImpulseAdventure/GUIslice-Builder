@@ -58,6 +58,8 @@ His github project is at:
 
 Hopefully this will fix the crashes and burns we have been having on Apple's OSX and various odd cursor behaviors that have occurred on different Linux platforms.
 
+Also added two additional Themes: Solarized Dark and Light themes.
+
 Our User Guide has been updated with the new UI layout.
 
 ### Enhancements 0.16.b006
