@@ -403,6 +403,7 @@ public class TextInputModel extends WidgetModel {
   * 
   * @param fireUpdates indicates that we should notify JTable of changes
   */
+  @Override
   public void calcSizes(boolean fireUpdates) {
     // first does the current font exist? 
     // if we changed target plaform we might need to change font to default
@@ -429,34 +430,6 @@ public class TextInputModel extends WidgetModel {
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
-  }
-
-  /**
-   * Copy selected properties from another model.
-   * Called by the CopyPropsCommand.
-   * @param checklistData
-   *          the widget model
-   */
-  @Override
-  public void copyProperties(Object checklistData[][]) {
-    super.copyProperties(checklistData);
-    calcSizes(true);
-  }
-  
-  /**
-   * Paste properties from the PasteCommand.
-   *
-   * @param m
-   *          the widget model
-   * @param x
-   *          the x
-   * @param y
-   *          the y
-   */
-  @Override
-  public void pasteProps(WidgetModel m, int x, int y) {
-    super.pasteProps(m,x,y);
-    calcSizes(false);
   }
 
 }

@@ -172,6 +172,8 @@ public class CommonUtils {
    */
   public String encodeToString(BufferedImage image) {
     String imageString = null;
+    if (image == null) 
+      return "";
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     try {

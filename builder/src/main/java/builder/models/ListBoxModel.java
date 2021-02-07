@@ -251,7 +251,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
     if (row == PROP_ITEMS) {
-      calcSizes();
+      calcSizes(false);
       fireTableStructureChanged();
     }
     if (row == PROP_SCROLLBAR) {
@@ -540,7 +540,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
    * 
    * @param fireUpdates indicates that we should notify JTable of changes
    */
-  public void calcSizes() {
+  @Override
+  public void calcSizes(boolean fireUpdates) {
     String[] items = (String[])data[PROP_ITEMS][PROP_VAL_VALUE];
     if (items == null || items[0].isEmpty()) {
       return;
@@ -553,32 +554,4 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     data[PROP_SCROLLBAR_MAX][PROP_VAL_VALUE]=Math.min(100, items.length+5); 
   }
 
-  /**
-   * Copy selected properties from another model.
-   * Called by the CopyPropsCommand.
-   * @param checklistData
-   *          the widget model
-   */
-  @Override
-  public void copyProperties(Object checklistData[][]) {
-    super.copyProperties(checklistData);
-    calcSizes();
-  }
-  
-  /**
-   * Paste properties from the PasteCommand.
-   *
-   * @param m
-   *          the widget model
-   * @param x
-   *          the x
-   * @param y
-   *          the y
-   */
-  @Override
-  public void pasteProps(WidgetModel m, int x, int y) {
-    super.pasteProps(m,x,y);
-    calcSizes();
-  }
-  
 }

@@ -380,7 +380,7 @@ public class RibbonListener implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
 //    String command = ((AbstractButton)e.getSource()).getActionCommand();
-    String command = e.getActionCommand();
+    String command = e.getActionCommand().toLowerCase();
     File file = null;
     String title = null;
     int answer = 0;
