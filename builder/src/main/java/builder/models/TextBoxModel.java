@@ -97,7 +97,7 @@ public class TextBoxModel extends WidgetModel {
   public TextBoxModel() {
     ff = FontFactory.getInstance();
     initProperties();
-    calcSizes();
+    calcSizes(false);
   }
   
   /**
@@ -163,7 +163,7 @@ public class TextBoxModel extends WidgetModel {
         row == PROP_ROWS ||
         row == PROP_FONT ) {
       // re-calc number of text rows and columns
-      calcSizes();
+      calcSizes(false);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
@@ -317,7 +317,8 @@ public class TextBoxModel extends WidgetModel {
   /**
    * Calc sizes.
    */
-  private void calcSizes() {
+  @Override
+  public void calcSizes(boolean fireUpdates) {
     // first does the current font exist? 
     // if we changed target plaform we might need to change font to default
     int nCols = getNumTextColumns();

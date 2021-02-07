@@ -587,7 +587,7 @@ public class PagePane extends JPanel implements iSubscriber {
  *   who gets called with copyProperties() so we can overload 
  *   the function in sub classes that require extra code.
  */
-    w.getModel().pasteProps(m, x, y);
+    WidgetModel.pasteProps(m, w.getModel(), x, y);
     w.select();
     widgets.add(w);
     PropManager.getInstance().addPropEditor(w.getModel());

@@ -297,8 +297,19 @@ public class ImageModel extends WidgetModel {
   *
   * @return the image
   */
+ @Override
  public BufferedImage getImage() {
    return image;
+ }
+
+ /**
+  * Sets the image.
+  *
+  * @return the image
+  */
+ @Override
+ public void setImage(BufferedImage image) {
+   this.image = image;
  }
 
   /**

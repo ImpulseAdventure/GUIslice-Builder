@@ -26,6 +26,7 @@
 package builder.models;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -684,6 +685,42 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
+   * Gets the image.
+   *
+   * @return the image
+   */
+  public BufferedImage getImage() {
+    return null;
+  }
+
+  /**
+   * Sets the image.
+   *
+   * @return the image
+   */
+  public void setImage(BufferedImage image) {
+    
+  }
+
+  /**
+   * Gets the image selected.
+   *
+   * @return the image selected
+   */
+  public BufferedImage getImageSelected() {
+    return null;
+  }
+
+  /**
+   * Sets the image selected.
+   * used by copy/paste
+   * @param the image selected
+   */
+  public void setImageSelected(BufferedImage imageSelected) {
+
+  }
+
+  /**
    * Sets the data - Used for JUNIT testing someday.
    *
    * @param data
@@ -953,6 +990,18 @@ public class WidgetModel extends AbstractTableModel {
   
 
   /**
+   * <p>
+   * calcSizes() - This routine scans our list of items and comes up with
+   *               the buffer size required for storage.
+   * </p>
+   * 
+   * @param fireUpdates indicates that we should notify JTable of changes
+   */
+  public void calcSizes(boolean fireUpdates) {
+    
+  }
+  
+  /**
    * Copy selected properties from another model.
    * Called by the CopyPropsCommand.
    * @param checklistData
@@ -968,6 +1017,7 @@ public class WidgetModel extends AbstractTableModel {
         data[row][PROP_VAL_VALUE] = checklistData[i][1];
       }
     }
+    calcSizes(false);
     fireTableDataChanged();
   }
 
@@ -981,26 +1031,35 @@ public class WidgetModel extends AbstractTableModel {
    * @param y
    *          the y
    */
-  public void pasteProps(WidgetModel m, int x, int y) {
-    Object oldData[][] = m.getData();
+  public static void pasteProps(WidgetModel src_m, WidgetModel dest_m, int x, int y) {
+    Object oldData[][] = src_m.getData();
+    Object data[][] = dest_m.getData();
     // skip over key, enum, x and y position
-    for (int i=2; i<getPropertyCount(); i++) {
+    for (int i=2; i<src_m.getPropertyCount(); i++) {
       for (int j=0; j<5; j++) {
         if (i == PROP_X && j == PROP_VAL_VALUE) {
           data[i][j] = Integer.valueOf(x);
         } else if (i == PROP_Y && j == PROP_VAL_VALUE) {
           data[i][j] = Integer.valueOf(y);
         } else if (i == PROP_ELEMENTREF && j == PROP_VAL_VALUE) {
-          if (m.getElementRef() == null || m.getElementRef().isEmpty()) {
+          if (src_m.getElementRef() == null || src_m.getElementRef().isEmpty()) {
             data[i][j] = oldData[i][j];
           } else {
-            data[i][j] = CommonUtils.createElemName(getKey(), m.getElementRef());
+            data[i][j] = CommonUtils.createElemName(dest_m.getKey(), src_m.getElementRef());
           }
         } else {
           data[i][j] = oldData[i][j];
         }
       }
     }
+    dest_m.calcSizes(false);
+    if (src_m instanceof ImageModel) {
+      dest_m.setImage(src_m.getImage());
+    } else if (src_m instanceof ImgButtonModel) {
+      dest_m.setImage(src_m.getImage());
+      dest_m.setImageSelected(src_m.getImageSelected());
+    }
+
   }
 
 }

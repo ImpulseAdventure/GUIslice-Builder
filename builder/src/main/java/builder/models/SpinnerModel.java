@@ -98,7 +98,7 @@ public class SpinnerModel extends WidgetModel {
     cf = ColorFactory.getInstance();
     ff = FontFactory.getInstance();
     initProperties();
-    calcSizes();
+    calcSizes(false);
   }
   
   /**
@@ -147,7 +147,7 @@ public class SpinnerModel extends WidgetModel {
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
     if (row == PROP_MAX || row == PROP_BUTTONSZ) {
-      calcSizes();
+      calcSizes(false);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
@@ -166,7 +166,7 @@ public class SpinnerModel extends WidgetModel {
       }
       data[PROP_INCRBUTTON][PROP_VAL_VALUE] = txtIncr.getText();
       data[PROP_DECRBUTTON][PROP_VAL_VALUE] = txtDecr.getText();
-      calcSizes();
+      calcSizes(false);
       fireTableCellUpdated(PROP_INCRBUTTON, COLUMN_VALUE);
       fireTableCellUpdated(PROP_DECRBUTTON, COLUMN_VALUE);
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
@@ -374,7 +374,8 @@ public class SpinnerModel extends WidgetModel {
    * 
    * @param fireUpdates indicates that we should notify JTable of changes
    */
-   public void calcSizes() {
+  @Override
+   public void calcSizes(boolean fireUpdates) {
      // first does the current font exist? 
      // if we changed target plaform we might need to change font to default
      String name = getFontDisplayName();
@@ -425,34 +426,5 @@ public class SpinnerModel extends WidgetModel {
     txtDecr.setFontTFT(ff, myFont);
     rendererText.setFontTFT(ff, myFont);
   }
-
-  /**
-   * Copy selected properties from another model.
-   * Called by the CopyPropsCommand.
-   * @param checklistData
-   *          the widget model
-   */
-  @Override
-  public void copyProperties(Object checklistData[][]) {
-    super.copyProperties(checklistData);
-    calcSizes();
-  }
-  
-  /**
-   * Paste properties from the PasteCommand.
-   *
-   * @param m
-   *          the widget model
-   * @param x
-   *          the x
-   * @param y
-   *          the y
-   */
-  @Override
-  public void pasteProps(WidgetModel m, int x, int y) {
-    super.pasteProps(m,x,y);
-    calcSizes();
-  }
-  
 
 }

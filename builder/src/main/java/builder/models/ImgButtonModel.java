@@ -472,6 +472,16 @@ public class ImgButtonModel extends WidgetModel {
   /**
    * Sets the image.
    *
+   * @return the image
+   */
+  @Override
+  public void setImage(BufferedImage image) {
+    this.image = image;
+  }
+
+  /**
+   * Sets the image.
+   *
    * @param file
    *          the file
    * @param x
@@ -547,8 +557,19 @@ public class ImgButtonModel extends WidgetModel {
    *
    * @return the image selected
    */
+  @Override
   public BufferedImage getImageSelected() {
     return imageSelected;
+  }
+
+  /**
+   * Sets the image selected.
+   * used by copy/paste
+   * @param the image selected
+   */
+  @Override
+  public void setImageSelected(BufferedImage imageSelected) {
+    this.imageSelected = imageSelected;
   }
 
   /**

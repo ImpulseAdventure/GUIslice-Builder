@@ -386,6 +386,7 @@ public class RingGaugeModel extends WidgetModel {
   * 
   * @param fireUpdates indicates that we should notify JTable of changes
   */
+  @Override
   public void calcSizes(boolean fireUpdates) {
 
     // next does the current font exist? 
