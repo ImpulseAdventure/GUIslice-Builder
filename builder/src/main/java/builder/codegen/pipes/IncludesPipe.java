@@ -116,6 +116,9 @@ public class IncludesPipe extends WorkFlowPipe {
           }
           break;
         case EnumFactory.IMAGEBUTTON:
+          if (((ImgButtonModel)m).isToggle()) {
+            headerList.add("XToggleImgbtn");
+          }
           if (((ImgButtonModel)m).getMemory().equals(ImageModel.SRC_SD)) {
             bSD = true;
             bWarning = true;
