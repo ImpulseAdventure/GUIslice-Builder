@@ -337,6 +337,22 @@ gslc_tsElemRef                  m_as$<STRIP_KEY>ElemRef[MAX_ELEM_$<STRIP_ENUM>];
           $<IBTN-113>$<IBTN-109>,$<IBTN-104>),
           &CbBtnCommon);
 <STOP>
+<IMGTOGGLE_DEFINE>
+  
+  // Create $<COM-002> button with image label
+  pElemRef = gslc_ElemXToggleImgbtnCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sToggleImg$<COM-018>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
+          $<IBTN-110>$<IBTN-102>,$<IBTN-104>),
+          $<IBTN-113>$<IBTN-103>,$<IBTN-104>),
+          false,&CbBtnCommon);
+<STOP>
+<IMGTOGGLE_EXTERN>
+  
+  // Create $<COM-002> button with image label
+  pElemRef = gslc_ElemXToggleImgbtnCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sToggleImg$<COM-018>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},
+          $<IBTN-110>$<IBTN-108>,$<IBTN-104>),
+          $<IBTN-113>$<IBTN-109>,$<IBTN-104>),
+          false,&CbBtnCommon);
+<STOP>
 <IMAGETRANSPARENT>
   gslc_ElemSetFillEn(&m_gui,pElemRef,false);
 <STOP>

@@ -51,9 +51,16 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### Enhancements 0.16.b009
+Added support for Image Buttons to behave as a toggle button. Simply set Property View: Toggle? = true 
+this will then use the new GUIslice API XToggleImgbtn control.
+
+### HotFix for 0.16.b009
+ - Bug Fix Character Map causes fatal crash issue `#165` 
+
 ### HotFix for 0.16.b008
-Bug Fix for DEL button on keyboard causes crash issue `#154`
-Bug Fix for Copy paste of Image Button causes crash `#155`
+ - Bug Fix for DEL button on keyboard causes crash issue `#154`  
+ - Bug Fix for Copy paste of Image Button causes crash `#155`
 
 ### Enhancements 0.16.b007
 Replaced Ribbon with a simplier design using JRibbonBar provided by Csekme Krisztián. 

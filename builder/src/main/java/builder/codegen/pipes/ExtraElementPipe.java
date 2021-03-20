@@ -37,6 +37,7 @@ import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.models.GraphModel;
+import builder.models.ImgButtonModel;
 import builder.models.ListBoxModel;
 import builder.models.ProjectModel;
 import builder.models.TextBoxModel;
@@ -281,6 +282,13 @@ public class ExtraElementPipe extends WorkFlowPipe {
         strElement = "gslc_tsXTogglebtn";
         strCount = CodeUtils.getKeyCount(m.getKey());
         ref = "m_asXToggle" + strCount;
+        sBd.append(String.format("%-32s%s;", strElement, ref));
+        sBd.append(System.lineSeparator());
+      } 
+      if (m.getType().equals(EnumFactory.IMAGEBUTTON) && ((ImgButtonModel)m).isToggle()) {
+        strElement = "gslc_tsXToggleImgbtn";
+        strCount = CodeUtils.getKeyCount(m.getKey());
+        ref = "m_sToggleImg" + strCount;
         sBd.append(String.format("%-32s%s;", strElement, ref));
         sBd.append(System.lineSeparator());
       } 

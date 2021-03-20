@@ -91,6 +91,10 @@ public class InputTextField extends JTextField implements MouseListener, ActionL
         break;
       case "map":
         CharacterMap dialog = new CharacterMap(null, "Character Map", true);
+        if (myFont == null) {
+          FontFactory ff = FontFactory.getInstance();
+          myFont=ff.getFont(ff.getDefFontName());
+        }
         dialog.setFontTFT(myFont, nMaxCols);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         String text = dialog.showDialog();
