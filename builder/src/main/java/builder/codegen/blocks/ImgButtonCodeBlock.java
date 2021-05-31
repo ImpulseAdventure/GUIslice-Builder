@@ -54,6 +54,8 @@ public final class ImgButtonCodeBlock implements CodeBlock {
   private final static String FRAME_EN_TEMPLATE      = "<FRAME_EN>";
   private final static String COLOR_TEMPLATE         = "<COLOR_IMAGE>";
   private final static String COUNT_MACRO            = "COUNT";
+  private final static String GROUP_TEMPLATE         = "<GROUP>";
+
   /**
    * Instantiates a new check box code block.
    */
@@ -113,6 +115,13 @@ public final class ImgButtonCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
       template = tm.loadTemplate(COLOR_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    String groupId = m.getGroupId();
+
+    if (m.isToggle() && !groupId.equals("GSLC_GROUP_ID_NONE")) {
+      template = tm.loadTemplate(GROUP_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

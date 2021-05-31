@@ -31,8 +31,9 @@ import java.util.List;
 import builder.common.EnumFactory;
 import builder.mementos.GroupMemento;
 //import builder.models.CheckBoxModel;
+import builder.models.ImgButtonModel;
 import builder.models.RadioButtonModel;
-//import builder.models.ToggleButtonModel;
+import builder.models.ToggleButtonModel;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -81,8 +82,11 @@ public class GroupCommand extends Command {
         groupList.add(w.getModel());
       }
 */
-      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
-        groupList.add(w.getModel());
+      WidgetModel m = w.getModel();
+      if ((m.getType().equals(EnumFactory.RADIOBUTTON))  ||
+          (m.getType().equals(EnumFactory.IMAGEBUTTON) && m.isToggle()) ||
+          (m.getType().equals(EnumFactory.TOGGLEBUTTON))) {
+        groupList.add(m);
       }
     }
     if (groupList.size() < 2) return false;
@@ -102,15 +106,13 @@ public class GroupCommand extends Command {
     String groupKey = EnumFactory.getInstance().createKey(EnumFactory.GROUPID);
     groupID = EnumFactory.getInstance().createEnum(EnumFactory.GROUPID);
     for(WidgetModel m : groupList) {
-//      if (m.getType().equals(EnumFactory.RADIOBUTTON)) {
+      if (m.getType().equals(EnumFactory.RADIOBUTTON)) {
         m.changeValueAt(groupID, RadioButtonModel.PROP_GROUP);
-/* reserve for future use
- *      } else if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
- *       m.changeValueAt(groupID, ToggleButtonModel.PROP_GROUP);
- *      else
- *        m.changeValueAt(groupID, CheckBoxModel.PROP_GROUP);
- */
-//      }
+      } else if (m.getType().equals(EnumFactory.TOGGLEBUTTON)) {
+       m.changeValueAt(groupID, ToggleButtonModel.PROP_GROUP); 
+      } else {
+        m.changeValueAt(groupID, ImgButtonModel.PROP_GROUP);
+      }
     }
   }
 

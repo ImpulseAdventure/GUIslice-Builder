@@ -493,28 +493,20 @@ public class PagePane extends JPanel implements iSubscriber {
    * @param w the widget
    */
   public void doSelectedCount(Widget w) {
+    WidgetModel m = w.getModel();
     if (w.isSelected()) {
-/* reserve for future use
-      if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
-          w.getType().equals(EnumFactory.CHECKBOX) ||
-          w.getType().equals(EnumFactory.TOGGLEBUTTON)) {
+      if ((m.getType().equals(EnumFactory.RADIOBUTTON))  ||
+          (m.getType().equals(EnumFactory.IMAGEBUTTON) && m.isToggle()) ||
+          (m.getType().equals(EnumFactory.TOGGLEBUTTON))) {
             selectedGroupCnt++;
-      }
-*/
-      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
-        selectedGroupCnt++;
       }
       selectedCnt++;
     } else {
-/*
-      if (w.getType().equals(EnumFactory.RADIOBUTTON) ||
-        w.getType().equals(EnumFactory.CHECKBOX) ||
-          w.getType().equals(EnumFactory.TOGGLEBUTTON)) {
-            if (selectedGroupCnt > 0) selectedGroupCnt--;
-      }
-*/
-      if (w.getType().equals(EnumFactory.RADIOBUTTON)) {
-        if (selectedGroupCnt > 0) selectedGroupCnt--;
+      if ((m.getType().equals(EnumFactory.RADIOBUTTON))  ||
+          (m.getType().equals(EnumFactory.IMAGEBUTTON) && m.isToggle()) ||
+          (m.getType().equals(EnumFactory.TOGGLEBUTTON))) {
+        if (selectedGroupCnt > 0) 
+          selectedGroupCnt--;
       }
       if (selectedCnt > 0) selectedCnt--;
     }
