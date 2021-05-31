@@ -229,6 +229,15 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
+   * is Toggle?
+   *
+   * @return <code>true</code>, if successful
+   */
+  public boolean isToggle() {
+    return false;
+  }
+  
+  /**
    * getPropertyCount gives the actual number of properties while getRowCount
    * gives back the number of user visible properties allowing us to hide some at
    * the end of data[][].
