@@ -122,8 +122,25 @@ public final class CodeUtils {
     if (font instanceof FontTtf || font instanceof FontVLW) {
       for (int i=0; i<text.length(); i++) {
         char ch = text.charAt(i);
-        // we can output unicode which will be converted to utf8
-        code.append(ch);
+        // is this printable ascii?
+        int nChar = (int)ch;
+        if (nChar < 127) {
+          if (nChar < 32) {
+            // we need to create hex value of character
+            hex = String.format("\\x%02x", nChar);
+            code.append(hex);
+          } else {
+            if (nChar == 34 /*quote mark*/) {
+              hex = String.format("\\\"", nChar);
+              code.append(hex);
+            } else {
+              code.append(ch);
+            }
+          }
+        } else {
+          // we can output unicode which will be converted to utf8
+          code.append(ch);
+        }
       }
     } else {
       for (int i=0; i<text.length(); i++) {
@@ -136,7 +153,12 @@ public final class CodeUtils {
             hex = String.format("\\x%02x", nChar);
             code.append(hex);
           } else {
-            code.append(ch);
+            if (nChar == 34 /*quote mark*/) {
+              hex = String.format("\\\"", nChar);
+              code.append(hex);
+            } else {
+              code.append(ch);
+            }
           }
         } else {
           // we need to create hex value of character
