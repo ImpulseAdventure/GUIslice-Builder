@@ -28,6 +28,8 @@ package builder.models;
 import java.awt.Color;
 //import java.io.IOException;
 //import java.io.ObjectInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import builder.common.EnumFactory;
 import builder.controller.Controller;
@@ -56,9 +58,9 @@ public class ToggleButtonModel extends WidgetModel {
   static private final int PROP_USE_FLASH      = 12;
   static private final int PROP_FRAME_EN       = 13;
   static private final int PROP_FRAME_COLOR    = 14;
-//  static private final int PROP_FILL_COLOR     = 15;
-//  static private final int PROP_SELECTED_COLOR = 16;
-//  static public  final int PROP_GROUP          = 17;
+  static public  final int PROP_GROUP          = 15;
+//  static private final int PROP_FILL_COLOR     = 16;
+//  static private final int PROP_SELECTED_COLOR = 17;
 
   /** The Property Defaults */
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
@@ -71,7 +73,7 @@ public class ToggleButtonModel extends WidgetModel {
   static public  final Color   DEF_FRAME_COLOR       = Color.GRAY; 
 //  static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
 //  static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
-//  static public  final String  DEF_GROUP             = "GSLC_GROUP_ID_NONE";  
+  static public  final String  DEF_GROUP             = "GSLC_GROUP_ID_NONE";  
 
   static private final int DEF_WIDTH = 35;
   static private final int DEF_HEIGHT= 20;
@@ -89,7 +91,7 @@ public class ToggleButtonModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TOGGLEBUTTON;
-    data = new Object[15][5];
+    data = new Object[16][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
@@ -105,7 +107,7 @@ public class ToggleButtonModel extends WidgetModel {
 //    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
 //    initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
-//    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
+    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
   }
   
@@ -124,6 +126,8 @@ public class ToggleButtonModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row > PROP_HEIGHT || row == PROP_ENUM)
+      super.setModelChanged();
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
@@ -230,12 +234,12 @@ public class ToggleButtonModel extends WidgetModel {
    *
    * @return the group id
    */
-/*
+
   @Override
   public String getGroupId() {
     return ((String) data[PROP_GROUP][PROP_VAL_VALUE]);
   }
-*/
+
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.
@@ -250,7 +254,6 @@ public class ToggleButtonModel extends WidgetModel {
    *           the class not found exception
    * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream, java.lang.String)
    */
-/*
   @Override
   public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
@@ -259,5 +262,5 @@ public class ToggleButtonModel extends WidgetModel {
       data[PROP_GROUP][PROP_VAL_VALUE] = "GSLC_GROUP_ID_NONE";
     }
   }
-*/
+
 }

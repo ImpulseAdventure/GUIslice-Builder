@@ -46,7 +46,7 @@ public final class ToggleButtonCodeBlock implements CodeBlock {
   /** The Constants for TEMPLATES. */
   private final static String TOGGLE_TEMPLATE         = "<TOGGLEBUTTON>";
 //  private final static String COLOR_TEMPLATE          = "<COLOR>";
-//  private final static String GROUP_TEMPLATE         = "<GROUP>";
+  private final static String GROUP_TEMPLATE         = "<GROUP>";
 
   /**
    * Instantiates a new check box code block.
@@ -90,13 +90,12 @@ public final class ToggleButtonCodeBlock implements CodeBlock {
       tm.codeWriter(sBd, outputLines);
     }
 */
-/*
+    String groupId = m.getGroupId();
     if (!groupId.equals("GSLC_GROUP_ID_NONE")) {
       template = tm.loadTemplate(GROUP_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-*/    
     template.clear();
     outputLines.clear();
     map.clear();

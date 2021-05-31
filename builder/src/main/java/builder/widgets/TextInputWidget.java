@@ -89,7 +89,11 @@ public class TextInputWidget extends Widget {
           }
         }
       }
-      ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+      if (m.isFillEnabled()) {
+        ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getFillColor(), m.getTextMargin());
+      } else {
+        ff.drawText(g2d, m.getAlignment(), b, text, font, m.getTextColor(), m.getTextColor(), m.getTextMargin());
+      }
     } else {
       g2d.setColor(Color.RED);
       g2d.drawRect(b.x, b.y, b.width, b.height);

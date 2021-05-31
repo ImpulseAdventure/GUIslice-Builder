@@ -597,6 +597,12 @@ $<CALLBACK>
   return true;
 }
 <STOP>
+<SEEKBAR_CB_CASE>
+    case $<COM-002>:
+      // Fetch the slider position
+      nVal = gslc_ElemXSeekbarGetPos(pGui,$<COM-019>);
+      break;
+<STOP>
 <SLIDER_CB_CASE>
     case $<COM-002>:
       // Fetch the slider position
