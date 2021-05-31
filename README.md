@@ -8,7 +8,7 @@ Please refer to the wiki page for installation and usage details:
 
 ## Brief Overview
 The GUIslice Builder is a standalone desktop application that is more than a layout tool for your UI. It's designed as 
-No Code GUI Generator for User Interfaces that make use of GUIslice API. 
+Low Code GUI Generator for User Interfaces that make use of GUIslice API. 
 
 The cross-platform utility includes a WYSIWYG graphical editor that enables drag & drop placement of UI elements. Once a GUI has been laid out, the Builder can then generate a fully functional GUIslice Graphical UI complete with plug-in points for your custom application. 
 
@@ -50,6 +50,14 @@ will now require running with GUIslice API 0.16.0 and higher. For further inform
 refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIslice/wiki/Custom-KeyPads)
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
+
+### Enhancements 0.16.b010
+Added support to group toggle buttons.
+
+### Bug Fixes for 0.16.b010
+Issue 157 - Target platform linux fails to generate callback for seekbar
+Issue 167 - Fill enable , Disable not working with text input
+Issue 168 - Image Button and Toggle Button Jump page ENUM not generating code
 
 ### Enhancements 0.16.b009
 Added support for Image Buttons to behave as a toggle button. Simply set Property View: Toggle? = true 
