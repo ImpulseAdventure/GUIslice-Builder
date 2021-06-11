@@ -51,13 +51,17 @@ refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIs
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
+### Bug Fixes for 0.16.b011
+- Issue 169 - Textbox double quotes are not escaped in generated code
+- Issue 172 - Fill enable , Disable not working with text input
+
 ### Enhancements 0.16.b010
 Added support to group toggle buttons.
 
 ### Bug Fixes for 0.16.b010
-Issue 157 - Target platform linux fails to generate callback for seekbar
-Issue 167 - Fill enable , Disable not working with text input
-Issue 168 - Image Button and Toggle Button Jump page ENUM not generating code
+- Issue 157 - Target platform linux fails to generate callback for seekbar
+- Issue 167 - Fill enable , Disable not working with text input
+- Issue 168 - Image Button and Toggle Button Jump page ENUM not generating code
 
 ### Enhancements 0.16.b009
 Added support for Image Buttons to behave as a toggle button. Simply set Property View: Toggle? = true 

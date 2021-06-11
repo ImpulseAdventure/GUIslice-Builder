@@ -17,7 +17,7 @@ apply plugin: 'eclipse'
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-version = '0.16.b010' 
+version = '0.16.b011' 
  
 repositories {
     mavenCentral()
