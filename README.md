@@ -32,6 +32,14 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.0
+GUIslice 0.17 added improved support for input using rotary encoders which required minor changes to Builder where 
+some elements now require a slightly larger margin around them (ie. 1px) to accommodate a potential focus frame. 
+For example, between a slider and the listbox.
+
+### Bug Fixes for 0.17.0
+Setting a Grid positions minor or major to a width or height of zero caused crashes. 
+
 ### Enhancements for 0.16.0
 
 With this release the Builder becomes a true WYSIWYG editor for most platforms. The Builder now reads and parses 
