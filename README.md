@@ -33,7 +33,7 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 ## Release History
 
 ### Enhancements for 0.17.0
-GUIslice 0.17 added improved support for input using rotary encoders which required minor changes to Builder. 
+GUIslice 0.17 added improved support for external input using button control / encoders like with m5stack. This required minor changes to Builder. 
 Some elements now require a slightly larger margin around them (ie. 1px) to accommodate a potential focus frame. 
 For example, between a slider and the listbox.
 
