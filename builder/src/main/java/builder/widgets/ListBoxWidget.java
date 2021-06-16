@@ -66,7 +66,7 @@ public class ListBoxWidget extends Widget {
       g2d.fillRect(b.x, b.y, b.width, b.height);
       g2d.setColor(m.getFrameColor());
       g2d.drawRect(b.x, b.y, b.width, b.height);
-      g2d.drawRect(b.x+2, b.y+4, b.width-23, b.height-7);
+      g2d.drawRect(b.x+2, b.y+4, b.width-26, b.height-7);
       drawScrollBar(g2d, m, b);
     } else {
 // BUG 127 Incorrect visual width for ListBox without scrollbar
@@ -94,7 +94,7 @@ public class ListBoxWidget extends Widget {
   private void drawScrollBar(Graphics2D g2d, ListBoxModel m, Rectangle r) {
     // Most of this code was shamelessly ripped from GUIslice_ex.c->gslc_ElemXSliderDraw()
     int nX0,nY0,nX1,nY1,nXMid,width,height;
-    nX0 = r.x + r.width - 21;
+    nX0 = r.x + r.width - 22;
     nY0 = r.y + 4;
     width = 20;
     height = r.height - 8;
