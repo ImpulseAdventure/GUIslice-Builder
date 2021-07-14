@@ -177,6 +177,7 @@ public class FontGFX extends FontTFT {
     for (int i = 0; i < length; i++) {
       c = s.charAt(i);
       ch = c;
+      if (ch > 255) continue;
       // ignore newlines
       if (ch == '\n' || ch == '\r') {
         continue;
@@ -252,6 +253,7 @@ public class FontGFX extends FontTFT {
   
     for (int i = 0; i < length; i++) {
       ch = s.charAt(i);
+      if (ch > 255) continue;
       // ignore newlines
       if (ch == '\n' || ch == '\r') {
         continue;
@@ -322,6 +324,7 @@ public class FontGFX extends FontTFT {
     
     for (int i=0; i<length; i++) {
       ch = str.charAt(i);
+      if (ch > 255) continue;
       if (ch == '\n' || ch == '\r') throw new FontException("newlines are not supported");
       charBounds(ch, bClippingEn);  // modifies class variables for sizing
     }

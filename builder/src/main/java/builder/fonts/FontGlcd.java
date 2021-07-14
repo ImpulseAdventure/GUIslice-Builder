@@ -267,6 +267,7 @@ public class FontGlcd extends FontTFT {
     
     for (int i=0; i<str.length(); i++) {
       ch = str.charAt(i);
+      if (ch > 255) continue;
       if (ch == '\n' || ch == '\r') { // ignore newlines
         continue;
       }
@@ -377,6 +378,7 @@ public class FontGlcd extends FontTFT {
     }
     
     for (int i = 0; i < 5; i++) { // Char bitmap = 5 columns
+      if (ch > 255) continue;
       int line = bitmap[ch * 5 + i] & 0xFF;
       for (int j = 0; j < 8; j++, line >>= 1) {
         if ((line & 0x01) > 0) { // Bit On?
