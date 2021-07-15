@@ -39,7 +39,11 @@ Some elements now require a slightly larger margin around them (ie. 1px) to acco
 For example, between a slider and the listbox.
 
 ### Bug Fixes for 0.17.0
-Setting a Grid positions minor or major to a width or height of zero caused crashes. 
+- Issue `#174` Crash when input non-ascii chars when you first didn't change to font that supports unicode.
+Note you still must select an appropiate font before enterring characters or they will appear as blanks. 
+- Issue `#174` Crash when deleting a base page.
+- Issue `#174` Crash if you are inside color chooser and click on blank space inside recent colors box.
+- Setting a Grid positions minor or major to a width or height of zero caused crashes. 
 
 ### Enhancements for 0.16.0
 
