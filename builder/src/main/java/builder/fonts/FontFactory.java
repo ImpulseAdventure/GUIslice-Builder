@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -565,16 +565,16 @@ public class FontFactory {
     platformNames = new String[10];
     fontsByPlatform = new ArrayList[10];
     for (FontPlatform p : builderFonts.getPlatforms()) {
-//    Builder.logger.debug("Platform: " + p.getName());
+  Builder.logger.debug("Platform: " + p.getName());
       platformNames[nPlatforms] = p.getName();
       list = new ArrayList<FontItem>();
       fontsByPlatform[nPlatforms++] = list;
       for (FontCategory c : p.getCategories()) {
-//      Builder.logger.debug("Platform: " + c.getName());
+  Builder.logger.debug("Platform: " + c.getName());
         if (c.getFonts().size() == 0) {
           // handle native fonts that did not require JSON entries
           if (c.getName().equals(FontTFT.FONT_GFX)) {
-            // Builder.logger.debug(c.toString());
+            //Builder.logger.debug(c.toString());
             String fullPath = CommonUtils.getInstance().getWorkingDir();
             String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "gfx";
             Path startingDir = Paths.get(fontsPath);
@@ -591,6 +591,18 @@ public class FontFactory {
             String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "t3";
             Path startingDir = Paths.get(fontsPath);
             FontLoadT3Files fileVisitor = new FontLoadT3Files(p, c);
+            try {
+              Files.walkFileTree(startingDir, fileVisitor);
+            } catch (IOException e) {
+              nErrors++;
+              Builder.logger.error(e.toString());
+            }
+          } else if (c.getName().equals(FontTFT.FONT_UTFT)) {
+   Builder.logger.debug(c.toString());
+            String fullPath = CommonUtils.getInstance().getWorkingDir();
+            String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "utft";
+            Path startingDir = Paths.get(fontsPath);
+            FontLoadUtftFiles fileVisitor = new FontLoadUtftFiles(p, c);
             try {
               Files.walkFileTree(startingDir, fileVisitor);
             } catch (IOException e) {
@@ -619,8 +631,7 @@ public class FontFactory {
         }
       }
     }
-    // Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of
-    // fonts: " + idx);
+    Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of fonts: " + idx);
     if (nErrors > 0) {
       String fileName = CommonUtils.getInstance().getWorkingDir() + "logs" + System.getProperty("file.separator")
           + "builder.log";

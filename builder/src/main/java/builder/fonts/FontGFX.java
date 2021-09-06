@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -177,12 +177,7 @@ public class FontGFX extends FontTFT {
     for (int i = 0; i < length; i++) {
       c = s.charAt(i);
       ch = c;
-      if (ch > 255) continue;
-      // ignore newlines
-      if (ch == '\n' || ch == '\r') {
-        continue;
-      }
-      if ((ch >= first) && (ch <= last)) {
+      if (canDisplay(ch)) {
         FontGFXGlyph glyph = glyphList.get(ch - first);
         int w = glyph.width;
         int h = glyph.height;
@@ -253,12 +248,7 @@ public class FontGFX extends FontTFT {
   
     for (int i = 0; i < length; i++) {
       ch = s.charAt(i);
-      if (ch > 255) continue;
-      // ignore newlines
-      if (ch == '\n' || ch == '\r') {
-        continue;
-      }
-      if ((ch >= first) && (ch <= last)) {
+      if (canDisplay(ch)) {
         FontGFXGlyph glyph = glyphList.get(ch - first);
         int w = glyph.width;
         int h = glyph.height;
@@ -324,8 +314,7 @@ public class FontGFX extends FontTFT {
     
     for (int i=0; i<length; i++) {
       ch = str.charAt(i);
-      if (ch > 255) continue;
-      if (ch == '\n' || ch == '\r') throw new FontException("newlines are not supported");
+      if (!canDisplay(ch)) continue;
       charBounds(ch, bClippingEn);  // modifies class variables for sizing
     }
     
@@ -374,7 +363,7 @@ public class FontGFX extends FontTFT {
     maxx = -1;
     maxy = -1;
     
-    if (ch == '\n' || ch == '\r') return null;
+    if (!canDisplay(ch)) return null;
     charBounds(ch, false);  // modifies class variables for sizing
     
     if (maxy >= miny) {
@@ -514,7 +503,7 @@ public class FontGFX extends FontTFT {
     try {
       raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
     } catch(ArrayIndexOutOfBoundsException e) {
-      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", getDisplayName(), ch, x,y));
+ //     Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", getDisplayName(), ch, x,y));
     }
   }
 

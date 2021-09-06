@@ -13,7 +13,7 @@ GUIslice API
 
 **Publication date and software versions**
 
-Published November, 2020. Based on GUIslice Builder 0.16.0 and GUIslice API Library 0.16.0
+Published September, 2021. Based on GUIslice Builder 0.16.0 and GUIslice API Library 0.16.0
 
 ## Using the GUIsliceBuilder
 
@@ -113,8 +113,10 @@ Just follow the error message's guidance to reset your target platform. This all
 
 ### Can you change a Text String at runtime?
 
-Yes. You just need to first assign storage to the text string inside the property view and optionally you should assign a meaningful name to the ElementRef so you can better keep track.
-As an example say I have a global counter m_nCount and a Text UI Element called E_TXT_COUNT:
+Yes. You first need to first assign storage to the text element inside the property view otherwise the text area is write protected. Without extra storage the text string is a constant in FLASH not a variable in SRAM.
+
+Optionally you should assign a meaningful names to the ENUM and ElementRef not keep the defaults that the Builder generates so you and others can better understand your App.
+As an example say I have a global counter m_nCount. I rename the Text UI Element E_TXT_COUNT and the ElementRef as m_pElemCnt.
 
 | Key                   | Text$2               |
 |-----------------------|----------------------|

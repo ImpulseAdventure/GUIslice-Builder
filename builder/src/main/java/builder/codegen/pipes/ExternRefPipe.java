@@ -32,11 +32,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import builder.Builder;
+import builder.codegen.CodeGenException;
 import builder.codegen.CodeGenerator;
+import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
+import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
+import builder.fonts.FontFactory;
+import builder.models.KeyPadModel;
+import builder.models.KeyPadTextModel;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
+import builder.prefs.AlphaKeyPadEditor;
+import builder.prefs.NumKeyPadEditor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,7 +64,9 @@ public class ExternRefPipe extends WorkFlowPipe {
 
   /** The Constants for templates. */
   private final static String ELEMENTREF_EXTERN_TEMPLATE = "<ELEMENT_REF_EXTERN>";
-  private final static String ELEMREF_MACRO            = "ELEMREF";
+  private final static String EXTERN_UTFT_TEMPLATE       = "<EXTERN_UTFT_FONT>";
+  private final static String ELEMREF_MACRO              = "ELEMREF";
+  private final static String UTFT_MACRO                 = "UTFT_FONT";
 
   /** The template manager. */
   TemplateManager tm = null;
@@ -77,6 +90,10 @@ public class ExternRefPipe extends WorkFlowPipe {
    */
   @Override
   public void doCodeGen(StringBuilder sBd) {
+    // setup
+    ProjectModel pm = Controller.getProjectModel();
+    FontFactory ff = FontFactory.getInstance();
+
     // scan our widget models for element references and build a list of them
     List<String> refList = new ArrayList<String>();
     for (WidgetModel m : cg.getModels()) {
@@ -127,6 +144,107 @@ public class ExternRefPipe extends WorkFlowPipe {
       map.put(ELEMREF_MACRO, EnumFactory.ALPHAKEYPAD_ELEMREF);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
+    }
+    
+    // Now add any extern's for UTFT fonts, if any
+    String target = Controller.getTargetPlatform();
+    if (target.equals(ProjectModel.PLATFORM_UTFT)) {
+      // scan thru all of the projects widgets and
+      // build up a list of all font display names.
+      List<String> fontNames = new ArrayList<String>();
+      String name = null;
+      int nErrors = 0;
+      for (WidgetModel m : cg.getModels()) {
+        name = m.getFontDisplayName();
+        if (name != null) {
+          if (ff.getFont(name) == null) {
+            Builder.logger.error("widget: " +  m.getEnum() + " refers to missing font=" + name);
+            nErrors++;
+          }
+          fontNames.add(name);
+        }
+        if (m.getType().equals(EnumFactory.NUMINPUT)) {
+          bAddNumKeyPad = true;
+        }
+        if (m.getType().equals(EnumFactory.TEXTINPUT)) {
+          bAddAlphaKeyPad = true;
+        }
+      }
+      // End with keyboard fonts - bug 144 missing keyboard font #include
+      // place any keypads at end
+      if (bAddNumKeyPad) {
+        KeyPadModel m = (KeyPadModel)NumKeyPadEditor.getInstance().getModel();
+        name = m.getFontDisplayName();
+        if (name != null) {
+          if (ff.getFont(name) != null) {
+            fontNames.add(name);
+          } else {
+            name = ff.getDefFontName();
+            if (name != null) {
+              fontNames.add(name);
+            } else {
+              Builder.logger.error("NumKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+              nErrors++;
+            }
+          }
+        } else {
+          Builder.logger.error("NumKeyPad: " +  m.getEnum() + " is missing font");
+          nErrors++;
+        }
+      }
+      if (bAddAlphaKeyPad) {
+        KeyPadTextModel m = (KeyPadTextModel)AlphaKeyPadEditor.getInstance().getModel();
+        name = m.getFontDisplayName();
+        if (name != null) {
+          if (ff.getFont(name) != null) {
+            fontNames.add(name);
+          } else {
+            name = ff.getDefFontName();
+            if (name != null) {
+              fontNames.add(name);
+            } else {
+              Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+              nErrors++;
+            }
+          }
+        } else {
+          Builder.logger.error("AlphaKeyPad: " +  m.getEnum() + " refers to missing font=" + name);
+          nErrors++;
+        }
+      }
+      // add any extra fonts requested
+      for (String s : pm.getFontsList()) {
+        if (s != null && !s.isEmpty()) {
+          if (ff.getFont(s) != null) {
+            fontNames.add(s);
+          } else {
+            Builder.logger.error("Project Extra Font: " + s + " is not supported on this platform");
+            nErrors++;
+          }
+        }
+      }
+      if (nErrors > 0) {
+        String fileName = CommonUtils.getInstance().getWorkingDir()
+            + "logs" 
+            + System.getProperty("file.separator")
+            + "builder.log";
+        throw new CodeGenException(String.format("Sketch has %d missing font(s).\nExamine %s for list of fonts.",
+            nErrors,fileName));
+      }
+      if (fontNames.size() == 0)
+        return;
+      // sort the names and remove duplicates
+      CodeUtils.sortListandRemoveDups(fontNames);
+      
+      // now output our extern list
+      template = tm.loadTemplate(EXTERN_UTFT_TEMPLATE);
+      for (String s : fontNames) {
+        map.clear();
+        map.put(UTFT_MACRO, s);
+        outputLines = tm.expandMacros(template, map);
+        tm.codeWriter(sBd, outputLines);
+        
+      }
     }
   }
 }

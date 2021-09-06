@@ -250,6 +250,9 @@ bool CbDrawScanner(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
 <ELEMENT_REF_FIND_P>
   $<COM-019> = gslc_PageFindElemById(&m_gui,$<COM-000>,$<COM-002>);
 <STOP>
+<EXTERN_UTFT_FONT>
+extern uint8_t $<UTFT_FONT>[];
+<STOP>
 <ELEMENT_REF_EXTERN>
 extern gslc_tsElemRef* $<ELEMREF>;
 <STOP>

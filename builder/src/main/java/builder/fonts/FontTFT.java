@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ public abstract class FontTFT {
   static public  final String FONT_TTF               = "FONT_TTF"; 
   static public  final String FONT_T3                = "FONT_T3"; 
 //  static public  final String FONT_U8G2              = "FONT_U8G2"; 
+  static public  final String FONT_UTFT              = "FONT_UTFT"; 
   static public  final String FONT_VLW               = "FONT_VLW"; 
   
   /** Text Alignment constants */
