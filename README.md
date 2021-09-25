@@ -40,10 +40,11 @@ For example, between a slider and the listbox.
 
 Added support for UTFT library using Target Platform "utft". Full native font support for fonts downloaded from 
 [UTFT Fonts](http://www.rinkydinkelectronics.com/r_fonts.php). Simply download and drop them into GUIsliceBuilder/fonts/utft.
-The Builder ships with the UTFT DefaultFonts SmallFont, BigFont, and SevenSegNumFont installed.
+The Builder ships with the UTFT DefaultFonts (SmallFont, BigFont, and SevenSegNumFont) installed.
 See User Guide section 5.7 Adding Fonts for more details.
 
 ### Bug Fixes for 0.17.0
+- Issue `#175` Inserting a unicode character into text field caused crash
 - Issue `#174` Crash when input non-ascii chars when you first didn't change to font that supports unicode.
 Note you still must select an appropiate font before enterring characters or they will appear as blanks. 
 - Issue `#174` Crash when deleting a base page.
