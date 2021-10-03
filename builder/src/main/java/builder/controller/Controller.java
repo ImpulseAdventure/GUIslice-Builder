@@ -763,6 +763,7 @@ public class Controller extends JInternalFrame
         idx = findPageIdx(page.getKey());
         tabbedPane.remove(idx);
         tabbedPane.repaint();
+        tabPages.remove(idx);
         TreeView.getInstance().delPage(page.getKey());
         if (p.getPageType().equals(EnumFactory.BASEPAGE))
           nBasePages=0;
@@ -771,7 +772,7 @@ public class Controller extends JInternalFrame
         break;
       }
     }
-    removePageIdx(page.getKey());
+//    removePageIdx(page.getKey()); Moved to while loop above
   }
   
   /**

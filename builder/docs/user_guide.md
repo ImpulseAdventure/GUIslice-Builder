@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.16.b007
+        Ver: 0.17.0
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published February, 2021. Based on GUIslice API Library 0.16.0.14
+Published September, 2021. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -53,6 +53,7 @@ Currently we ship with these Target Platforms.
 - m5stack
 - teensy
 - tft_espi
+- utft
 - linux
 
 You switch to these using the Project Tab's property view. You can set the default value for new projects inside User Preferences General Tab.  This is available by selecting Edit menu and then Options.
@@ -165,10 +166,10 @@ Now that you have your builder setup you can start creating your UI.
 
 Before beginning lets go over over the mouse selecting rules for the TFT Simulation:
 
-- A Left-click on an object deselects any existing selection and selects the object.
-- A Control Left-click on an object toggles its selection without affecting the selection of any other objects.
-- A Shift Left-click on an object selects it without deselecting any other objects.
-- A Right-click on a "Text" or "Label" property will bring up a mini-popup that lets you choose either to clear the text field or invoke the CharacterMap Dialog.
+- Left-click on an object deselects any existing selection and selects the object.
+- Control Left-click on an object toggles its selection without affecting the selection of any other objects.
+- Shift Left-click on an object selects it without deselecting any other objects.
+- Right-click on a "Text" or "Label" property will bring up a mini-popup that lets you choose either to clear the text field or invoke the CharacterMap Dialog.
 - Using the Rectangle Selection Tool ![](images/layout/selection.png) on the Page Layout tab will allow you to create a rubber band by pressing down the left mouse button and keeping it down while you move the band over the a group of objects and will select them all. For Example:
 ![](images/multi_sel.png)
 
@@ -1546,7 +1547,7 @@ The builder uses one file inside GUIsliceBuilder/templates to define available f
 - **builder_fonts.json**
 
 The builder can now actually run the target platform fonts at the actual size as they will appear on your Target TFT Display Screen.
-For this support the actual font C Headers and C files are stored inside the Builder's fonts folder, organized by gfx, glcd, and t3.
+For this support the actual font C Headers and C files are stored inside the Builder's fonts folder, organized by driver.
 ```
   | GUIsliceBuilder
    |- fonts
@@ -1558,7 +1559,13 @@ For this support the actual font C Headers and C files are stored inside the Bui
          |- PLAIN
      |- glcd
      |- t3
+       |- Arial
+         |- BOLD
+         |- PLAIN
+       |- AwesomeF080
+         |- PLAIN
      |- ttf (Place linux true type font files here and add the names to builder_fonts.json)
+     |- utft
      |- vlw smooth fonts created by Processing IDE for TFT_eSPI driver
 ```  
 
@@ -1572,16 +1579,44 @@ Under this new folder you must create Font Style sub-folders, any combination of
 
 For Teensy fonts don't forget to copy both the Headers and C files. 
 
-You do not need to edit the builder_fonts.json file for these new Adafruit GFX or T3 fonts, just drop them into the new folders and restart the Builder.
+The Builder also supports UTFT fonts that you download from [UTFT Fonts](http://www.rinkydinkelectronics.com/r_fonts.php). 
+
+You do not need to edit the builder_fonts.json file for these new Adafruit GFX, UTFT or T3 fonts, just drop them into the correct folders and restart the Builder.
+
+Please remember usage of the fonts require you to also copy them to a folder your C++ IDE can find them in. Example: Adafruit-GFX/Fonts or to TFT_eSPI/Fonts/GFXFF or to your project folder depending upon your driver.
 
 VLW smoothfonts do need edits to the builder_fonts.json file to add them. Google's Noto Bold is already 
 supported so you can use its entries as a guide.  Note that you don't place the actual *.vlw fonts in the 
 Builders folders. You place the *.ttf file that you used as input to Processing IDE that created your *.vlw 
 fonts. The Builder can't read the *.vlw files only the TrueType fonts. You will however notice a sub folder 
 called data where the NotoBold vlw files have been placed as a convenience so you don't need to generate them, 
-just copy to your Arduino project data folder. See Appendix G for information on creating vlw fonts.
+just copy to your Arduino project data folder. 
 
-Please remember usage of the fonts require you to copy them to either Adafruit-GFX/Fonts or to TFT_eSPI/Fonts/GFXFF depending upon your driver.
+As an example, say you need to support a chinese font called "wqyMicroHei.ttf" and the size 16. You first copy this font to GUIsliceBuilder/fonts/vlw.
+
+You follow Appendix G for instructions to create your size 16 vlw font, "wqyMicroHei16.vlw". This file is the one you copy to your project's subfolder named data. This then needs to be uploaded to your MicroController.
+
+Then you edit the GUIsliceBuilder/templates/builder_fonts.json file as so:
+```
+        {
+          "categoryName": "FONT_VLW",
+          "fonts": [
+            {
+              "familyName": "wqyMicroHei.vlw",
+              "displayName": "wqyMicroHei16V",
+              "defineFile": "wqyMicroHei16",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "WQYMICROHEI16_VLW",
+              "nFontSz": "16",
+              "logicalName": "wqyMicroHei.ttf",
+              "logicalSize": "16",
+              "logicalStyle": "Bold",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "familyName": "NotoSansBold.vlw",
+              "displayName": "NotoSansBold16V",
+```
 
 If you need to use a font that doesn't fall into the above categories then you will need to tell the Builder to simulate it. 
 This is fairly easy to do but can be a bit fussy. There isn't much error handling so be careful with edits. 
@@ -1677,6 +1712,7 @@ The current list of platforms supported are:
 - m5stack
 - teensy
 - tft_espi
+- utft
 - linux
 
 Within the platformName object you may have optionally a set of warning messages to output during code generation. This can be useful if you accidently choose an incorrect GUIslice configuration file inside GUIslice_config.h.
@@ -1713,11 +1749,12 @@ The Categories supported are:
 - FONT_T3 which are Teensy's ili9341_t3 fonts
 - FONT_SIM which are any fonts that the Builder needs to simulate using Java's built-in fonts which limits you to using "logicalName": "Monospaced" or "SansSerif" or "Serif". It limits you to 255 characters in your character set maximum.
 - FONT_TTF which are TrueType fonts used by Linux
+- FONT_UTFT which are for the UTFT driver supplied by [UTFT Library](http://www.rinkydinkelectronics.com/library.php?id=51)
 - FONT_VLW which are smoothfonts supported by TFT_eSPI driver. 
 
-The FONT_GFX, FONT_GLCD, and FONT_T3 fonts are supported as native fonts. That is the BUilder 
+The FONT_GFX, FONT_GLCD, FONT_UTFT and FONT_T3 fonts are supported as native fonts. That is the BUilder 
 actually reads and parses the C headers or C files that define the font.  It uses that information 
-and bit maps to render the fonts in the TFT Simulation area.  
+and bitmaps to render the fonts in the TFT Simulation area.  
   
 Categories object supports adding extra include files for its fonts.
 
@@ -1791,7 +1828,6 @@ For example:
 * The RA8876 display driver uses FONTREF_MODE_DEFAULT to select the internal ROM fonts, whereas other modes are used to select fonts from external ROM chips.
 * The RA8875_SUMO display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas GSLC_FONTREF_MODE_1 is used to select an ILI9341_t3_font.
 * The ILI9341_t3 display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas GSLC_FONTREF_MODE_1 is used to select an ILI9341_t3_font.
-* TFT_eSPI Smooth Fonts stored in Flash must have fontRefMode defined as GSLC_FONTREF_MODE_1.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 

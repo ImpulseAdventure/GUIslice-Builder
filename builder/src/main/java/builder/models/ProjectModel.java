@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2021 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   public static final String PLATFORM_ARDUINO  = "arduino";
   public static final String PLATFORM_TFT_ESPI = "tft_espi";
   public static final String PLATFORM_LINUX    = "linux";
+  public static final String PLATFORM_UTFT     = "utft";
   
   /** The Property Index Constants. */
   public static final int PROP_TARGET               = 2;

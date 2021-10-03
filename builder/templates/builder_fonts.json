@@ -395,6 +395,17 @@
       ]
     },
     {
+      "platformName": "utft",
+      "categories": [
+        {
+          "categoryName": "FONT_UTFT",
+          "extraIncludes": [
+            "#include <UTFT.h>"
+          ]
+        }
+      ]
+    },
+    {
       "platformName": "linux",
       "dpi": "72",
       "categories": [

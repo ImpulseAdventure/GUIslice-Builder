@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2020 Paul Conti
+ * Copyright 2018-2020 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import builder.Builder;
 import builder.parser.ParserException;
@@ -42,46 +41,24 @@ import builder.parser.Token;
 //import builder.parser.Tokenizer;
 import builder.parser.TokenizerException;
 
-public class FontGlcd extends FontTFT {
+public class FontUTFT extends FontTFT {
   
   // Font variables
   private byte[] bitmap;   ///< Character bitmaps
+  private int  first;         ///< ASCII extents (first char)
+  private int  last;          ///< ASCII extents (last char)
 
-  // state variables
-  boolean     bWrap;
-  int         textsize_x;  
-  int         textsize_y;
-  
   // sizing variables
-  private int tmpX;
-  private int tmpY;
-  private int x1;
-  private int y1;
-  private int minx;
-  private int miny;
-  private int maxx;
-  private int maxy;
-  
+  private int char_width;
+  private int char_height;
+
   // text drawing variables
   WritableRaster raster;
   private int cursor_x;
   private int cursor_y;
   FontMetrics strMetrics;
   
-  public FontGlcd() {
-  }
-
-  /**
-   * setTextSize
-   * Set text 'magnification' size.
-   * Each increase in size makes 1 pixel that much bigger.
-   * @param size  Desired text size. 1 is default 6x8, 2 is 12x16, 3 is 18x24, etc
-   * @see builder.fonts.FontTFT#setTextSize(int)
-   */
-  @Override
-  public void setTextSize(int size) {
-    this.textsize_x = size;
-    this.textsize_y = size;
+  public FontUTFT() {
   }
 
   /**
@@ -92,11 +69,8 @@ public class FontGlcd extends FontTFT {
   @Override
   public boolean create(FontItem item) throws FontException {
     this.item = item;
-    this.fontType = FONT_GLCD;
-    this.bWrap = true;
-    this.textsize_x = 1;
-    this.textsize_y = 1;
-    return parseGlcdFont(item.getFileName(), item.getDisplayName());
+    this.fontType = FONT_UTFT;
+    return parseFont(item.getFileName(), item.getDisplayName());
   }
 
   /**
@@ -108,7 +82,7 @@ public class FontGlcd extends FontTFT {
     if (codePoint == (int)'\n' || codePoint == (int)'\r') { // ignore newlines
       return false;
     }
-    if ((codePoint >= 0) && (codePoint <= 255)) { // Char present in this font?
+    if ((codePoint >= first) && (codePoint <= last)) { // Char present in this font?
       return true;
     }
     return false;
@@ -141,14 +115,14 @@ public class FontGlcd extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-//    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
-//        + " w=" + strMetrics.w + " h=" + strMetrics.h);
+    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
+        + " w=" + strMetrics.w + " h=" + strMetrics.h);
     
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
     
-//    Builder.logger.debug("width=" + image.getWidth() + " height=" + image.getHeight());
+    Builder.logger.debug("width=" + image.getWidth() + " height=" + image.getHeight());
 
     // create a transparent background
     if (colTxt == colBg) {
@@ -165,14 +139,12 @@ public class FontGlcd extends FontTFT {
     for (int i = 0; i < length; i++) {
       ch = s.charAt(i);
       // ignore newlines
-      if (ch == '\n' || ch == '\r') {
-        continue;
+      if (canDisplay(ch)) {
+        copyChar(cursor_x, cursor_y, ch, colTxt, colBg, bClippingEn);
+        cursor_x += char_width; // Advance x one char
       }
-      copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y, bClippingEn);
-      cursor_x += textsize_x * 6; // Advance x one char
     }
     g2d.drawImage(image, r.x, r.y, null);
-//    Builder.logger.debug("minx=" + minx + " maxx=" + maxx + " miny=" + miny + " maxy=" + maxy);
   }
 
   /**
@@ -185,7 +157,7 @@ public class FontGlcd extends FontTFT {
     
   //  Builder.logger.debug("Enter drawTxt: [" + s + "]");
   
-    int ch;
+    char ch; // current char
     if (s == null) return null;
     int length = s.length();
     if (length == 0) return null;
@@ -222,15 +194,16 @@ public class FontGlcd extends FontTFT {
     }
     cursor_x = 0;
     cursor_y = 0;
-  
+    Dimension size;
     for (int i = 0; i < length; i++) {
       ch = s.charAt(i);
-      // ignore newlines
-      if (ch == '\n' || ch == '\r') {
-        continue;
+      if (canDisplay(ch)) {
+        size = getCharSize(ch);
+        if (size == null) continue;
+        
+        copyChar(cursor_x, cursor_y, ch, colTxt, colBg, bClippingEn);
+        cursor_x += char_width; // Advance x one char
       }
-      copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y, bClippingEn);
-      cursor_x += textsize_x * 6; // Advance x one char
     }
     return image;
   }
@@ -246,51 +219,26 @@ public class FontGlcd extends FontTFT {
     /* test for zero length string */
     if (str == null || str.isEmpty()) return new FontMetrics(0,0,0,0);
    
-    char ch; // Current character
-
-    x1 = x;
-    tmpX = x;
-    y1 = y;
-    tmpY = y;
     int w  = 0;
-    int h = 0;
-    // clipping
-    if (bClippingEn) {
-      minx = Builder.CANVAS_WIDTH;
-      miny = Builder.CANVAS_HEIGHT;
-    } else {
-      minx = 32767;
-      miny = 32767;
-    }
-    maxx = -1;
-    maxy = -1;
+    int h = char_height;
     
+    char ch; // current char
+    Dimension size;
     for (int i=0; i<str.length(); i++) {
       ch = str.charAt(i);
-      if (ch > 255) continue;
-      if (ch == '\n' || ch == '\r') { // ignore newlines
-        continue;
+      if (canDisplay(ch)) {
+        size = getCharSize(ch);
+        if (size == null) continue;
+        w += size.width;
       }
-      charBounds(ch);  // modifies class variables for sizing
     }
     
-    if (maxx >= minx) {
-      x1 = 0;
-      w = maxx - minx + 1;
-    }
-    if (maxy >= miny) {
-      y1 = 0;
-      h = maxy - miny + 1;
-    }
-
     // clipping
-    w++;
-    h++;
     if (bClippingEn) {
       if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
       if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
     }
-    return new FontMetrics(x1,y1,w,h);
+    return new FontMetrics(x,y,w,h);
   }
  
   /**
@@ -300,26 +248,9 @@ public class FontGlcd extends FontTFT {
    */
   @Override
   public Dimension getCharSize(char ch) {
-    tmpX = 0;
-    tmpY = 0;
-    int w  = 0;
-    int h = 0;
-    minx = 32767;
-    miny = 32767;
-    maxx = -1;
-    maxy = -1;
-    
+    if (ch > 255) return null;
     if (ch == '\n' || ch == '\r') return null;
-    charBounds(ch);  // modifies class variables for sizing
-
-    if (maxx >= minx) {
-      w = maxx - minx + 1;
-    }
-    if (maxy >= miny) {
-      h = maxy - miny + 1;
-    }
-    w = tmpX;
-    return new Dimension(w,h);
+    return getMaxCharSize();
   }
 
   /**
@@ -328,29 +259,7 @@ public class FontGlcd extends FontTFT {
    * @see builder.fonts.FontTFT#getMaxCharSize()
    */
   public Dimension getMaxCharSize() {
-    int w = textsize_x * 6;
-    int h = textsize_y * 8;
-    return new Dimension(w,h);
-  }
-
-  /**
-   * Helper to determine size of a character with this font/size.
-   * used by getTextBounds() function.
-   * It modifies class variables: x1,y1,minX,maxX,minY, and maxY
-   * @param    ch    The character in question
-   */
-  private void charBounds(char ch) {
-    int x2 = tmpX + textsize_x * 6 - 1; // Lower-right pixel of char
-    int y2 = tmpY + textsize_y * 8 - 1;
-    if (x2 > maxx)
-      maxx = x2; // Track max x, y
-    if (y2 > maxy)
-      maxy = y2;
-    if (tmpX < minx)
-      minx = tmpX; // Track min x, y
-    if (tmpY < miny)
-      miny = tmpY;
-    tmpX += textsize_x * 6; // Advance x one char
+    return new Dimension(char_width,char_height);
   }
 
   /**
@@ -361,122 +270,133 @@ public class FontGlcd extends FontTFT {
    * @param ch          The 8-bit font-indexed character
    * @param colTxt
    * @param colBg
-   * @param size_x
-   * @param size_y
    * @param bClippingEn
    */
-  private void copyChar(int x, int y, int ch, Color colTxt, Color colBg, int size_x, int size_y, boolean bClippingEn) {
+  private void copyChar(int x, int y, int ch, Color colTxt, Color colBg, boolean bClippingEn) {
 
 //    Builder.logger.debug("***copyChar [" + Integer.toHexString(ch) + "]");
 
     if (bClippingEn) {
       if ((x >= Builder.CANVAS_WIDTH) || // Clip right
           (y >= Builder.CANVAS_HEIGHT) || // Clip bottom
-          ((x + 6 * size_x - 1) < 0) || // Clip left
-          ((y + 8 * size_y - 1) < 0)) // Clip top
+          ((x + char_width - 1) < 0) || // Clip left
+          ((y + char_height - 1) < 0)) // Clip top
         return;
     }
     
-    for (int i = 0; i < 5; i++) { // Char bitmap = 5 columns
-      if (ch > 255) continue;
-      int line = bitmap[ch * 5 + i] & 0xFF;
-      for (int j = 0; j < 8; j++, line >>= 1) {
-        if ((line & 0x01) > 0) { // Bit On?
-          if (size_x == 1 && size_y == 1) {
-            writePixel(x + i, y + j, colTxt);
-          } else {
-            writeFillRect(x + i * size_x, y + j * size_y, size_x, size_y, colTxt);
-          }
-        } else if (colBg != colTxt) {
-          if (size_x == 1 && size_y == 1)
-            writePixel(x + i, y + j, colBg);
-          else
-            writeFillRect(x + i * size_x, y + j * size_y, size_x, size_y, colBg);
+    // Todo: Add character clipping here
+    byte bits = 0;
+    int bo = ((ch - first)*((char_width/8)*char_height));
+    for(int i=0; i<char_height; i++) {
+      for (int zz=0; zz<(char_width/8); zz++) {
+        try {
+        bits = bitmap[bo+zz]; 
+        } catch(java.lang.ArrayIndexOutOfBoundsException e) {
+          Builder.logger.error(String.format("ch: %c bo=%d zz=%d i=%d", (char)ch, bo, zz, i));
+        }
+        for(int j=0; j<8; j++) {   
+        
+          if((bits&(1<<(7-j)))!=0) {
+            writePixel((char)ch, x+j+(zz*8), y + i, colTxt);
+          } 
         }
       }
-    }
-    if (colBg != colTxt) { // If opaque, draw vertical line for last column
-      writeFillRect(x + 5 * size_x, y, size_x, 8 * size_y, colBg);
+      bo+=(char_width/8);
     }
   }
   
   /**
    * Write a pixel into destination array
    * 
+   * @param ch character we are displaying - only needed for debug
    * @param x Top left corner x coordinate
    * @param y Top left corner y coordinate
    * @param col Color to fill
    */
-  private void writePixel(int x, int y, Color col) {
+  private void writePixel(char ch, int x, int y, Color col) {
     // our gate protection against crashes
-    if (x< 0 || x > strMetrics.w-1) {
-      return;
-    }
-    if (y< 0 || y > strMetrics.h-1) {
-      return;
-    }
-    raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
-  }
-
-  /**
-   * Fill a rectangle completely with one color into destArray
-   * 
-   * @param x Top left corner x coordinate
-   * @param y Top left corner y coordinate
-   * @param w Width in pixels
-   * @param h Height in pixels
-   * @param colFill Color to fill
-   */
-  private void writeFillRect(int x, int y, int w, int h, Color colFill) {
-    for (int i = x; i < x + w; i++) {
-      for (int j = y; j < y + h; j++) {
-        writePixel(i, j, colFill);
-      }
+    try {
+      raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
+    } catch(ArrayIndexOutOfBoundsException e) {
+      Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", getDisplayName(), ch, x,y));
     }
   }
 
   /**
-   * Parse the glcdfont.c file
+   * Parse the font.c file
    * @return true if successful
    * @throws FontException
    */
-  private boolean parseGlcdFont(String fontFileName, String fontName) throws FontException {
+  private boolean parseFont(String fontFileName, String fontName) throws FontException {
     Token token = null;
     File file = new File(fontFileName);
+    int nBytes = 0;
     try {
       tokenizer.setSource(file);
-//      Builder.logger.debug("Opened file: " + fontFileName);
-      // loop until we find we find open brace '{'
+      Builder.logger.debug("Opened file: " + fontFileName);
       boolean bFound = false;
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
-        if (token.getType() == OPEN_BRACE) {
-          bFound = true;
-          break;
+      // loop until we find "fontName"
+      while ((token = tokenizer.nextToken()).getType() != 0) {
+        if (token.getType() == WORD) {
+          if (token.getToken().equals(fontName)) {
+            bFound = true;
+            break;
+          }
         }
       }
-      if (!bFound) parseError(token, "bitmap not found");
-      /* Read our giant bitmap using array list of class Short.
-       * We can't use Byte here because Java doesn't have ubyte.
-       * GLCD fonts don't list the number of bytes involved in the array 
-       * so we have to waste memory using class Short instead
-       * of something like: byte[] bytes = new byte[size];
+      if (!bFound) {
+        Builder.logger.debug(String.format("missing 'fontdatatype %s[nnnn]'",fontName));
+        return false;
+      }
+      token = tokenizer.nextToken(); // should be '['
+      // now we should have number of bytes in bitmap plus 4 for header 
+      token = tokenizer.nextToken(); 
+      if (token.getType() != INTEGER) {
+        Builder.logger.debug(String.format("missing '%s[nnnn' found %s",fontName,token.getToken()));
+        return false;
+      }
+      try{
+        nBytes = Integer.parseInt(token.getToken()) - 4; // remove 4 byte header from count
+      }
+      catch (NumberFormatException ex){
+        Builder.logger.debug(String.format("NumberFormatException %s[%s",fontName,token.getToken()));
+      }
+      
+      // find our first hex number
+      while ((token = tokenizer.nextToken()).getType() != HEX) {
+        continue;
+      }
+      /* now we should be on our 4 byte header
+       * byte 1 character width, 
+       * byte 2 character height,
+       * byte 3 first character ascii value
+       * byte 4 number of characters in font
        */
-      ArrayList<Short> byteList = new ArrayList<Short>();
-      Short  n;
-      while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
-        if (token.getType() == HEX) {
-          n = new Short(Integer.decode(token.getToken()).shortValue());
-          byteList.add(n);
+      char_width = Integer.decode(token.getToken()).intValue();
+      token = tokenizer.nextToken(); // should be comma
+      token = tokenizer.nextToken(); 
+      char_height = Integer.decode(token.getToken()).intValue();
+      token = tokenizer.nextToken(); // should be comma
+      token = tokenizer.nextToken(); 
+      first = Integer.decode(token.getToken()).intValue();
+      token = tokenizer.nextToken(); // should be comma
+      token = tokenizer.nextToken(); 
+      last = Integer.decode(token.getToken()).intValue();
+      last += first - 1;
+      
+      bitmap = new byte[nBytes];
+      Short b;
+      token = tokenizer.nextToken(); // should be comma
+      for (int i=0; i<nBytes; i++) {
+        token = tokenizer.nextToken(); 
+        if (token.getType() != HEX) {
+          Builder.logger.debug(String.format("missing hex number->found %s",fontName,token.getToken()));
+          return false;
         }
+        b = new Short(Integer.decode(token.getToken()).shortValue());
+        bitmap[i] = (byte) (b.byteValue() & 0xFF);
+        token = tokenizer.nextToken(); // should be comma
       }
-//      Builder.logger.debug("bitmap bytes: " + byteList.size());
-      bitmap = new byte[byteList.size()];
-      n = 0;
-      for (Short b : byteList) {
-        bitmap[n++] = (byte) (b.byteValue() & 0xFF);
-      }
-      byteList.clear();
-      byteList = null;
       tokenizer.close();
       return true;
     } catch (IOException | ParserException | FontException | NumberFormatException | TokenizerException e) {

@@ -122,8 +122,14 @@ public class CommonUtils {
     GridEditor ed = GridEditor.getInstance();
     // check for snap to grid
     if (ed.getGridSnapTo()) {
-      x = (x / ed.getGridMinorWidth()) * ed.getGridMinorWidth();
-      y = (y / ed.getGridMinorHeight()) * ed.getGridMinorHeight();
+      if (ed.getGridMinorWidth() > 0 && ed.getGridMinorHeight() > 0) {
+        x = (x / ed.getGridMinorWidth()) * ed.getGridMinorWidth();
+        y = (y / ed.getGridMinorHeight()) * ed.getGridMinorHeight();
+      } else if (ed.getGridMajorWidth() > 0 && ed.getGridMajorHeight() > 0) {
+        x = (x / ed.getGridMajorWidth()) * ed.getGridMajorWidth();
+        y = (y / ed.getGridMajorHeight()) * ed.getGridMajorHeight();
+      }
+
     }
     Point p = new Point(x, y);
     return p;

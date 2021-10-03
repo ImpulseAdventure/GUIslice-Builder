@@ -371,31 +371,69 @@ public class PagePane extends JPanel implements iSubscriber {
     int majorH = gridModel.getGridMajorHeight();
     Color minorCol = gridModel.getGridMinorColor();
     Color majorCol = gridModel.getGridMajorColor();
-    // draw X axis
-    dy = 0;
-    dh = h;
-    for (x=0; x<w; x+=minorW) {
-      if (x%majorW == 0) {
-        g2d.setColor(majorCol);
-      } else {
-        g2d.setColor(minorCol);
+    if (minorW > 0 && majorW > 0 && minorH > 0 && majorW > 0) {
+      // draw X axis
+      dy = 0;
+      dh = h;
+      for (x=0; x<w; x+=minorW) {
+        if (x%majorW == 0) {
+          g2d.setColor(majorCol);
+        } else {
+          g2d.setColor(minorCol);
+        }
+        dx = x;
+        g2d.drawLine(dx, dy, dx, dh);
       }
-      dx = x;
-      g2d.drawLine(dx, dy, dx, dh);
-      
-    }
-    // draw Y axis  
-    dx = 0;
-    dw = w;
-    for (y=0; y<h; y+=minorH) {
-      if (y%majorH==0) {
-        g2d.setColor(majorCol);
-      } else {
-        g2d.setColor(minorCol);
+      // draw Y axis  
+      dx = 0;
+      dw = w;
+      for (y=0; y<h; y+=minorH) {
+        if (y%majorH==0) {
+          g2d.setColor(majorCol);
+        } else {
+          g2d.setColor(minorCol);
+        }
+        dy = y;
+        g2d.drawLine(dx, dy, dw, dy);
       }
-      dy = y;
-      g2d.drawLine(dx, dy, dw, dy);
+      return;
     }
+    if ((minorW == 0 || minorH == 0) && (majorH > 0 && majorW > 0)) {
+      // draw X axis
+      dy = 0;
+      dh = h;
+      g2d.setColor(majorCol);
+      for (x=0; x<w; x+=majorW) {
+        dx = x;
+        g2d.drawLine(dx, dy, dx, dh);
+      }
+      // draw Y axis  
+      dx = 0;
+      dw = w;
+      for (y=0; y<h; y+=majorH) {
+        dy = y;
+        g2d.drawLine(dx, dy, dw, dy);
+      }
+      return;
+    } 
+    if ((majorW == 0 || majorH == 0) && (minorW > 0 && minorH > 0)) {
+      // draw X axis
+      dy = 0;
+      dh = h;
+      g2d.setColor(minorCol);
+      for (x=0; x<w; x+=minorW) {
+        dx = x;
+        g2d.drawLine(dx, dy, dx, dh);
+      }
+      // draw Y axis  
+      dx = 0;
+      dw = w;
+      for (y=0; y<h; y+=minorH) {
+        dy = y;
+        g2d.drawLine(dx, dy, dw, dy);
+      }
+      return;
+    } 
   }
   
   /**

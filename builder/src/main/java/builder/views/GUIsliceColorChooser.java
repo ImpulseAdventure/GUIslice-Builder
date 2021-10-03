@@ -544,7 +544,7 @@ public class GUIsliceColorChooser extends JDialog {
         Color color = recentColorsPanel.getColorForLocation(e.getX(), e.getY());
         recentColorsPanel.setSelectedColorFromLocation(e.getX(), e.getY());
         // ignore if setting to default color
-        if (color.getRGB() != -1118482)
+        if (color != null && color.getRGB() != -1118482)
           setSelectedColor(color);
       }
     }

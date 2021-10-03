@@ -31,10 +31,12 @@ import java.io.ObjectInputStream;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import builder.Builder;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -293,6 +295,12 @@ public class TxtButtonModel extends WidgetModel {
       fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
     
+    if (row == PROP_TEXT) {
+      data[PROP_TEXT][PROP_VAL_VALUE] = removeInvalidChars((String)value);
+      fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
+      calcSizes(true);
+    } 
+
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
@@ -507,6 +515,40 @@ public class TxtButtonModel extends WidgetModel {
      }
    }
 
+   /**
+    * Test each character to determine if its in the chosen font
+    * @param s
+    * @return a valid string
+    */
+   public String removeInvalidChars(String s) {
+     String ret = "";
+     boolean bError = false;
+     int len = s.length();
+     if (len > 0) {
+       int cp;
+       String fontName = getFontDisplayName();
+       FontTFT myFont = ff.getFont(fontName);
+       for (int i = 0; i < len; i++) {
+         cp = s.codePointAt(i);
+         if (myFont.canDisplay(cp)) {
+           ret = ret + (char)cp;
+         } else {
+           bError = true;
+         }
+       }
+       if (bError) {
+         JOptionPane.showMessageDialog(null, 
+             "<html>You have entered characters outside range supported by your chosen font.<br>"+
+             "Maybe UTF8 characters with font that only has ASCII?<br>" +
+             "You will need to pick a different font or right click to see character map.</html>", 
+             "ERROR",
+             JOptionPane.WARNING_MESSAGE);
+         Builder.logger.debug("characters outside range of font: " + s);
+       }
+     }
+     return ret;
+   }
+   
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.

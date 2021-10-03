@@ -32,6 +32,25 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.0
+GUIslice 0.17 added improved support for external inputs such as physical buttons, encoders or pins. Users can now 
+traverse and edit most widgets in the GUI using external inputs. This feature required minor changes to Builder. 
+Some elements now require a slightly larger margin around them (ie. 1px) to accommodate a potential focus frame. 
+For example, between a slider and the listbox.
+
+Added support for UTFT library using Target Platform "utft". Full native font support for fonts downloaded from 
+[UTFT Fonts](http://www.rinkydinkelectronics.com/r_fonts.php). Simply download and drop them into GUIsliceBuilder/fonts/utft.
+The Builder ships with the UTFT DefaultFonts (SmallFont, BigFont, and SevenSegNumFont) installed.
+See User Guide section 5.7 Adding Fonts for more details.
+
+### Bug Fixes for 0.17.0
+- Issue `#175` Inserting a unicode character into text field caused crash
+- Issue `#174` Crash when input non-ascii chars when you first didn't change to font that supports unicode.
+Note you still must select an appropiate font before enterring characters or they will appear as blanks. 
+- Issue `#174` Crash when deleting a base page.
+- Issue `#174` Crash if you are inside color chooser and click on blank space inside recent colors box.
+- GUIslice discussion -> xTextBox - writing to a specific character position `#392`.  Setting a Grid positions minor or major to a width or height of zero caused crashes. 
+
 ### Enhancements for 0.16.0
 
 With this release the Builder becomes a true WYSIWYG editor for most platforms. The Builder now reads and parses 
