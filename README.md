@@ -32,6 +32,9 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Hot Fix 0.17.b01
+Fix for critical Log4Shell vulnerability inside Apache Log4j. The vulnerability was publicly disclosed via GitHub on December 9, 2021. Versions 2.0 and 2.14.1 of Apache Log4j have been impacted.  
+
 ### Enhancements for 0.17.0
 GUIslice 0.17 added improved support for external inputs such as physical buttons, encoders or pins. Users can now 
 traverse and edit most widgets in the GUI using external inputs. This feature required minor changes to Builder. 
