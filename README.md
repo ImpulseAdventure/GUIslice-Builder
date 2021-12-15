@@ -32,6 +32,9 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Hot Fix 0.17.b02
+Yet another fix for critical Log4Shell vulnerability inside Apache Log4j. The vulnerability applies 2.0 to 2.15.0 of Apache Log4j.  
+
 ### Hot Fix 0.17.b01
 Fix for critical Log4Shell vulnerability inside Apache Log4j. The vulnerability was publicly disclosed via GitHub on December 9, 2021. Versions 2.0 and 2.14.1 of Apache Log4j have been impacted.  
 
