@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -521,17 +521,27 @@ public class TxtButtonModel extends WidgetModel {
     * @return a valid string
     */
    public String removeInvalidChars(String s) {
-     String ret = "";
      boolean bError = false;
      int len = s.length();
+     StringBuffer sb = new StringBuffer();
      if (len > 0) {
        int cp;
+       int ch;
        String fontName = getFontDisplayName();
        FontTFT myFont = ff.getFont(fontName);
        for (int i = 0; i < len; i++) {
+         ch = s.charAt(i);
+         // test for \n and if so place actual newline character
+         if (ch == 92 && i+1 < len) {
+           if (s.charAt(i+1) == 'n' ) {
+             sb.append((char)10);
+             i++;
+             continue;
+           }
+         }
          cp = s.codePointAt(i);
          if (myFont.canDisplay(cp)) {
-           ret = ret + (char)cp;
+           sb.append((char)cp);
          } else {
            bError = true;
          }
@@ -546,7 +556,7 @@ public class TxtButtonModel extends WidgetModel {
          Builder.logger.debug("characters outside range of font: " + s);
        }
      }
-     return ret;
+     return sb.toString();
    }
    
   /**

@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -403,15 +403,40 @@ public class FontFactory {
     
     if (font == null) return;
     
-    // Fetch the size of the text to allow for justification
-    FontMetrics metrics = font.getTextBounds(str, 0, 0, true);
-    
-    // Calculate the text alignment
-    Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
-
-    // Call the font's text rendering routine
-    font.drawString(g2d,rTxt,str, colTxt, colBg,true);
-
+    String[] lines = str.split("\\n");
+    if (lines.length > 1) {
+      FontMetrics metrics = new FontMetrics(); 
+      for (int i=0; i<lines.length; i++) {
+        // Fetch the size of the text to allow for justification
+        FontMetrics metricLine = font.getTextBounds(lines[i], 0, 0, true);
+        metrics.x1 = metricLine.x1;
+        metrics.y1 = metricLine.y1;
+        if (metricLine.w > metrics.w)
+          metrics.w = metricLine.w;
+        metrics.h += metricLine.h;
+        metrics.base_height = metricLine.base_height;
+      }
+      // Calculate the text alignment
+      Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
+  
+      for (int i=0; i<lines.length; i++) {
+        // Fetch the size of the text to allow for justification
+        FontMetrics metricLine = font.getTextBounds(lines[i], 0, 0, true);
+        
+        // Call the font's text rendering routine
+        font.drawString(g2d,rTxt,lines[i], colTxt, colBg,true);
+        rTxt.y += metricLine.h;
+      }
+    } else {
+      // Fetch the size of the text to allow for justification
+      FontMetrics metrics = font.getTextBounds(str, 0, 0, true);
+      
+      // Calculate the text alignment
+      Rectangle rTxt = alignBounds(align, r, metrics, nMargin);
+  
+      // Call the font's text rendering routine
+      font.drawString(g2d,rTxt,str, colTxt, colBg,true);
+    }
   }
   
   /**

@@ -32,6 +32,12 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.b03
+- Issue `#147` Allow multiline text for text button
+NOTE: Sizing of a Text button using multiple lines of text is the users responsiblity. You will need to set 
+the height and width manually.  Ending each line inside the Label with \n. Example, "line1\nline2\nline3".
+The Builder will remove each \n and replace with a decimal 10 (newline) when you press enter key.
+
 ### Hot Fix 0.17.b02
 Yet another fix for critical Log4Shell vulnerability inside Apache Log4j. The vulnerability applies 2.0 to 2.15.0 of Apache Log4j.  
 

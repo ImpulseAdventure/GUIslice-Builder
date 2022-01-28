@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -84,24 +84,6 @@ public class TxtButtonWidget extends Widget {
         g2d.fillRect(b.x, b.y, b.width, b.height);
     }
 
-/* 
-      g2d.setColor(m.getSelectedColor());
-      if (m.isFillEnabled()) {
-        if (m.isRoundedEn())
-          g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
-        else
-          g2d.fillRect(b.x, b.y, b.width, b.height);
-      }
-    } else {
-      if (m.isFillEnabled()) {
-        g2d.setColor(m.getFillColor());
-        if (m.isRoundedEn())
-          g2d.fillRoundRect(b.x, b.y, b.width, b.height, 15, 15);
-        else
-          g2d.fillRect(b.x, b.y, b.width, b.height);
-      }
-    }
-*/
     String text = m.getText();
     if (text.isEmpty()) {
       text = "TODO";
