@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2018-2021 Paul Conti
+ * Copyright (c) 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -115,7 +115,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.17.b03";
+  public static final String VERSION = "0.17.b04";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
