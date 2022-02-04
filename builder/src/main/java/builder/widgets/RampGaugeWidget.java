@@ -83,7 +83,7 @@ public class RampGaugeWidget extends Widget {
     int nMin      = m.getMin();
     int nRng      = nMax - nMin;
     int nVal      = m.getCurValue();
-    if (nVal == 0) nVal = nMax / 3;
+    nVal = nMax-10;  // make the gauge pretty on screen
     int nInd;
     
     if (nRng == 0) return;
@@ -102,7 +102,6 @@ public class RampGaugeWidget extends Widget {
     int nPosXEnd    = (nValEnd   - nMin)*nElemW/nRng;
 
     int nSclFX = nElemH*32767/(nElemW*nElemW);
-
     Color nCol;
     int nColInd;
 
@@ -124,11 +123,11 @@ public class RampGaugeWidget extends Widget {
         nCol = GUIslice.colorBlend3(Color.GREEN,Color.YELLOW,Color.RED,500,nColInd);
       } else {
         int  nBlockLen,nSegLen,nSegInd,nSegOffset,nSegStart;
-        nBlockLen = (nElemW-(nSteps-1)*nGap)/nSteps;
-        nSegLen = nBlockLen + nGap;
-        nSegInd = nX/nSegLen;
-        nSegOffset = nX % nSegLen;
-        nSegStart = nSegInd * nSegLen;
+        nBlockLen = ((nElemW-(nSteps-1)*nGap)/nSteps);
+        nSegLen =  (nBlockLen + nGap);
+        nSegInd =  (nX/nSegLen);
+        nSegOffset =  (nX % nSegLen);
+        nSegStart =  (nSegInd * nSegLen);
 
         if (nSegOffset <= nBlockLen) {
           // Inside block
@@ -143,7 +142,9 @@ public class RampGaugeWidget extends Widget {
       } // end nSteps
       
       g2d.setColor(nCol);
-      g2d.drawLine(nElemX0+nX,nElemY1-nHeightBot,nElemX0+nX,nElemY1-nHeight);
+//System.out.println("nX: "+nX+" nHeightBot: "+nHeightBot+" nHeight: "+nHeight);
+      if (nHeight > 0)
+        g2d.drawLine(nElemX0+nX,nElemY1-nHeightBot,nElemX0+nX,nElemY1-nHeight);
 
     } // end for
 

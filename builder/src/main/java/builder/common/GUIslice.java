@@ -268,6 +268,13 @@ public final class GUIslice {
       g = nSubBlendAmt*(colMid.getGreen() - colStart.getGreen())/1000 + colStart.getGreen();
       b = nSubBlendAmt*(colMid.getBlue() - colStart.getBlue())/1000 + colStart.getBlue();
     }
+    if (r < 0) r = 0;
+    if (r > 255) r = 255;
+    if (b < 0) b = 0;
+    if (b > 255) b = 255;
+    if (g < 0) g = 0;
+    if (g > 255) g = 255;
+    
     return new Color(r,g,b);
   }
 

@@ -32,6 +32,9 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Hot Fix 0.17.b04
+- Issue `#184` GUIslice Builder crash when changing Minimum Value at Ramp Gauge
+
 ### Enhancements for 0.17.b03
 - Issue `#147` Allow multiline text for text button
 NOTE: Sizing of a Text button using multiple lines of text is the users responsiblity. You will need to set 
