@@ -214,12 +214,14 @@ public class TextModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+/*
     if (row == PROP_X) {
       calcSizes(true);
     } 
     if (row == PROP_Y) {
       calcSizes(true);
-    } 
+    }
+*/ 
     if (row == PROP_TEXT) {
       data[PROP_TEXT][PROP_VAL_VALUE] = removeInvalidChars((String)value);
       fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);

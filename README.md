@@ -32,8 +32,11 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Hot Fix 0.17.b06
+- Issue `#190` Input Elements Height/Width reset to default when moved
+
 ### Enhancements for 0.17.b05
-Now supports saving the current project's zoom factor inside the *.prj file so it can be restored upong opening on the project file.
+Now supports saving the current project's zoom factor inside the *.prj file so it can be restored upon opening on the project file.
 
 - Issue `#188` Serialize zoom factor on save
 

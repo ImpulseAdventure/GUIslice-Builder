@@ -259,12 +259,14 @@ public class NumberInputModel extends WidgetModel {
     fireTableCellUpdated(row, COLUMN_VALUE);
     if (row > PROP_HEIGHT || row == PROP_ENUM)
       super.setModelChanged();
+/*
     if (row == PROP_X) {
       calcSizes(true);
     } 
     if (row == PROP_Y) {
       calcSizes(true);
-    } 
+    }
+*/
     if (row == PROP_FONT) {
       String fontName = getFontDisplayName();
       FontTFT myFont = ff.getFont(fontName);
@@ -274,6 +276,9 @@ public class NumberInputModel extends WidgetModel {
       fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
     if (row == PROP_TEXT_SZ) {
+      calcSizes(true);
+    }
+    if (row == PROP_TEXT) {
       calcSizes(true);
     }
     if (bSendEvents) {
@@ -450,10 +455,11 @@ public class NumberInputModel extends WidgetModel {
       }
     }
     FontTFT font = ff.getFont(item.getDisplayName());
-    // our text is input only so create a string getTextStorage() size
-    String text = "";
-    for (int i=0; i<getTextStorage(); i++) {
-      text = text + "9";
+    String text = getText();
+    if (text.isEmpty())  {
+      for (int i=0; i<getTextStorage(); i++) {
+        text = text + "9";
+      }
     }
     // do not do these calculations when reloading our model from a file
     if (fireUpdates) {
