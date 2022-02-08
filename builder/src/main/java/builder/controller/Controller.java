@@ -914,6 +914,7 @@ public class Controller extends JInternalFrame
     }
 //    System.out.println("currentPageKey: " + currentPage.getKey());
     pm.writeModel(out);
+    out.writeDouble(PagePane.zoomFactor);
     out.writeInt(pages.size());
     String pageKey = null;
     String pageEnum = null;
@@ -982,11 +983,14 @@ public class Controller extends JInternalFrame
       }
       openPage = (String)in.readObject();
 //      System.out.println("currentpage Key: " + currentPage.getKey());
-      if (strVersion.equals("13.025")) {
+      if (strVersion.equals("13.025") || strVersion.equals("17") ) {
         pm = new ProjectModel();
         pm.readModel(in);
       } else {
         createProjectModel();
+      }
+      if (strVersion.equals("17")) {
+        PagePane.setZoom(in.readDouble());
       }
       int cnt = in.readInt();
 //    System.out.println("pages: " + cnt);

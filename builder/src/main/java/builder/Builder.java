@@ -115,13 +115,13 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.17.b04";
+  public static final String VERSION = "0.17.b05";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
   
   /** The Constant FILE_VERSION_NO is for save and restore of project file. */
-  public static final String FILE_VERSION_NO = "13.025";
+  public static final String FILE_VERSION_NO = "17";
   
   /** The Constant PROGRAM_TITLE. */
   public static final String PROGRAM_TITLE = "GUIslice Builder";
