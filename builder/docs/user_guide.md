@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.0
+        Ver: 0.17.b04
     </H3>
 </center>
 
@@ -14,11 +14,11 @@
 
 **Publication date and software version**
 
-Published September, 2021. Based on GUIslice API Library 0.17.0
+Published February, 2022. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
-This document is Copyright © 2018-2021 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
+This document is Copyright © 2018-2022 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
 
 GUIslice Copyright (c) Calvin Hass 2016-2021
 
@@ -58,7 +58,7 @@ Currently we ship with these Target Platforms.
 
 You switch to these using the Project Tab's property view. You can set the default value for new projects inside User Preferences General Tab.  This is available by selecting Edit menu and then Options.
 
-It is also possible to add your own platform and fonts by editing builder_fonts.json file. See section 5.7 Fonts and Appendix B Font File Format for more details.
+It is also possible to add your own platform and fonts by editing builder_fonts.json file. See section 5.6 Fonts and Appendix B Font File Format for more details.
 
 Within the Arduino platform some UI Elements support Flash based versions that reduce RAM requirements. See section 4.0 for details.
 
@@ -1437,7 +1437,7 @@ When you first create a new project these values are filled in with values from 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.2 General Preferences
+### 5.1.1 General Preferences
 | NAME                               | VALUE                                                     |
 |------------------------------------|-----------------------------------------------------------|
 | Themes                             | FlatLaf or Java Built-In Themes like: Windows or Metal    |
@@ -1464,7 +1464,7 @@ The full Copyright is included in Appendix C.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.3 Grid Preferences
+### 5.1.2 Grid Preferences
 | NAME                  | VALUE                                          |
 |-----------------------|------------------------------------------------|
 | Grid SnapTo           | true                                           |
@@ -1479,12 +1479,61 @@ The full Copyright is included in Appendix C.
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.4 UI Element Customizing
+### 5.1.3 KeyPadAlpha
+
+You can customize your keypad's position, X and Y.  Change it's font, button sizes, use rounded corners, and modify the gap between buttons.
+
+| NAME                      | VALUE                |
+|---------------------------|----------------------|
+| Key                       | KeyPadAlpha          |
+| ENUM                      | E_POP_KEYPAD_ALPHA   |
+| X                         | 65                   |
+| Y                         | 80                   |
+| ElementRef                | m_pElemKeyPadAlpha   |
+| Font                      | BuiltIn(1x)->5x8pt7b |
+| Corners Rounded?          | false                |
+| Use Default Button Sizes? | true                 |
+| Button Width              | 12                   |
+| Button Height             | 25                   |
+| Button Gap X              | 0                    |
+| Button Gap Y              | 0                    |
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+### 5.1.4 KeyPadNum
+
+The numeric keypad besides supporting the same features as the alpabetic keypad can also support integer 
+only input by setting `Enable Floating Point? = false`, 
+and only allowing positive numbers by setting `Enable Minus Sign? = false`.
+
+| NAME                      | VALUE                |
+|---------------------------|----------------------|
+| Key                       | KeyPadNum            |
+| ENUM                      | E_POP_KEYPAD_NUM     |
+| X                         | 65                   |
+| Y                         | 80                   |
+| ElementRef                | m_pElemKeyPadNum     |
+| Font                      | BuiltIn(1x)->5x8pt7b |
+| Corners Rounded?          | false                |
+| Enable Floating Point?    | true                 |
+| Enable Minus Sign?        | true                 |
+| Use Default Button Sizes? | true                 |
+| Button Width              | 25                   |
+| Button Height             | 25                   |
+| Button Gap X              | 0                    |
+| Button Gap Y              | 0                    |
+
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+## 5.2 UI Element Customizing
 
 A few elements allow you to change their default properties on a global basis.  Going into the Options tabbed dialog there are tabs for Box, Text, TextButton, Checkbox, and RadioButton.
 If you modify any properties on these tabs when you drop the modified elements onto the TFT Simulation the values will be set according to your new settings.  The property values will also be set on any further projects you create or edit.  They will not modify any elements previously used in your projects.
 
-## 5.4 Program skeleton
+## 5.3 Program skeleton
 
 One of the directories created and populated by the builder is called templates.
 
@@ -1505,11 +1554,11 @@ The files **ino2.t**, **hdr.t** and **c.t** are the skeleton programs for the su
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.5 default_colors.cvs
+## 5.4 default_colors.cvs
 
 This file lists the mapping of colors in RGB format to the GUIslice API names.  For example, rgb (0,0,0) is GSLC_COL_BLACK.  The top 7 rows are the default values the library uses, although these are spread about in the code base.  If you don't like the default color scheme you can use the builder to override them on an individual element basis.  Inside the Properties View will be "Use Default Colors?=true". You simply click the property value to change it to false and you can then edit the Frame, Fill, and Select colors.
 
-## 5.6 Images ![](images/controls/image_32x.png)
+## 5.5 Images ![](images/controls/image_32x.png)
 
 Many UI's, if not most, will require images and icons.  You can place them inside the directories GUIsliceBuilder/arduino_res or linux_res depending upon your target platform. You can, of course, create your own folder.  The arduino_res and linux_res simply exist to provide you with some samples. Once you travel to another folder to find your images the system will remember your last accessed folder and always return to it.   
 
@@ -1538,7 +1587,7 @@ The code generator will append whatever string you include so be sure to add fol
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.7 Adding Fonts
+## 5.6 Adding Fonts
 
 The font implementation is somewhat challenging. 
  

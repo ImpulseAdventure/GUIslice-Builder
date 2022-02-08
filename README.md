@@ -32,6 +32,11 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.b05
+Now supports saving the current project's zoom factor inside the *.prj file so it can be restored upong opening on the project file.
+
+- Issue `#188` Serialize zoom factor on save
+
 ### Hot Fix 0.17.b04
 - Issue `#184` GUIslice Builder crash when changing Minimum Value at Ramp Gauge
 

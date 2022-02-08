@@ -147,7 +147,7 @@ public class PagePane extends JPanel implements iSubscriber {
   private int selectedGroupCnt = 0;
   
   /** The zoom factor. */
-  private static double zoomFactor = 1;
+  public static double zoomFactor = 1;
   
   /** The zoom AffineTransform at. */
   private static AffineTransform at = null;
@@ -294,6 +294,22 @@ public class PagePane extends JPanel implements iSubscriber {
   };
 
   /**
+   * set Zoom factor from open project
+   */
+  public static void setZoom(double zoom) {
+    if (zoom > 1.0) {
+      ribbon.enableZoom(true);
+      MenuBar.miZoomOut.setEnabled(true);
+    } else {
+      ribbon.enableZoom(false);
+      MenuBar.miZoomOut.setEnabled(false);
+    }
+    zoomFactor = zoom;
+    ZoomTransform();
+  }
+  
+  
+  /**
    * create a transform
    */
   public static void ZoomTransform() {
@@ -309,7 +325,7 @@ public class PagePane extends JPanel implements iSubscriber {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-}
+  }
   
   /**
    * Zoom in.
