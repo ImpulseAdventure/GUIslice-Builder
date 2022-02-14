@@ -66,7 +66,7 @@ public class ListBoxWidget extends Widget {
       g2d.fillRect(b.x, b.y, b.width, b.height);
       g2d.setColor(m.getFrameColor());
       g2d.drawRect(b.x, b.y, b.width, b.height);
-      g2d.drawRect(b.x+2, b.y+4, b.width-26, b.height-7);
+      g2d.drawRect(b.x+2, b.y+4, b.width-2-m.getScrollbarWidth(), b.height-7);
       drawScrollBar(g2d, m, b);
     } else {
 // BUG 127 Incorrect visual width for ListBox without scrollbar
@@ -94,23 +94,25 @@ public class ListBoxWidget extends Widget {
   private void drawScrollBar(Graphics2D g2d, ListBoxModel m, Rectangle r) {
     // Most of this code was shamelessly ripped from GUIslice_ex.c->gslc_ElemXSliderDraw()
     int nX0,nY0,nX1,nY1,nXMid,width,height;
-    nX0 = r.x + r.width - 22;
+    nX0 = r.x + r.width - 2;
     nY0 = r.y + 4;
-    width = 20;
+    width = m.getScrollbarWidth();
+    nX0 -= width;
     height = r.height - 8;
     nX1 = nX0 + width - 1;
     nY1 = nY0 + height - 1;
     nXMid = (nX0+nX1)/2;
     int nPosOffset;
     // Provide some margin so thumb doesn't exceed control bounds
-    int nThumbSz = 5;
+    int nThumbSz = m.getScrollbarThumb();
     int nMargin  = nThumbSz;
     nPosOffset = (height/2);
     int nCtrlX0,nCtrlY0;
     nCtrlX0   = nXMid-nThumbSz;
     nCtrlY0   = nY0+nPosOffset-nThumbSz;
     g2d.setColor(m.getBarFillColor());
-    g2d.fillRect(nCtrlX0-1, nY0, width-2, height-2);
+//    g2d.fillRect(nCtrlX0-1, nY0, width-2, height-2);
+    g2d.fillRect(nX0, nY0, width, height);
     // Draw the track
     g2d.setColor(m.getBarFrameColor());
     g2d.drawLine(nXMid,nY0+nMargin,nXMid,nY1-nMargin);

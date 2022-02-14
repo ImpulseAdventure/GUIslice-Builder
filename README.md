@@ -32,6 +32,9 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.b07
+- Issue `194` Request: Scroll bar set width and thumb size in textbox and listbox
+
 ### Hot Fix 0.17.b06
 - Issue `#190` Input Elements Height/Width reset to default when moved
 

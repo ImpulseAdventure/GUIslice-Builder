@@ -77,16 +77,18 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static private final int PROP_TEXT_ALIGN        = 16;
   static private final int PROP_FRAME_EN          = 17;
   static private final int PROP_SCROLLBAR         = 18;
-  static private final int PROP_SCROLLBAR_ENUM    = 19;
-  static private final int PROP_SCROLLBAR_EREF    = 20;
-  static private final int PROP_SCROLLBAR_MAX     = 21;
-  static private final int PROP_TEXT_COLOR        = 22;
-  static private final int PROP_GAP_COLOR         = 23;
-  static private final int PROP_FRAME_COLOR       = 24;
-  static private final int PROP_FILL_COLOR        = 25;
-  static private final int PROP_SELECTED_COLOR    = 26;
-  static private final int PROP_BAR_FRAME_COLOR   = 27;
-  static private final int PROP_BAR_FILL_COLOR    = 28;
+  static private final int PROP_SCROLLBAR_WIDTH   = 19;
+  static private final int PROP_SCROLLBAR_THUMB   = 20;
+  static private final int PROP_SCROLLBAR_ENUM    = 21;
+  static private final int PROP_SCROLLBAR_EREF    = 22;
+  static private final int PROP_SCROLLBAR_MAX     = 23;
+  static private final int PROP_TEXT_COLOR        = 24;
+  static private final int PROP_GAP_COLOR         = 25;
+  static private final int PROP_FRAME_COLOR       = 26;
+  static private final int PROP_FILL_COLOR        = 27;
+  static private final int PROP_SELECTED_COLOR    = 28;
+  static private final int PROP_BAR_FRAME_COLOR   = 29;
+  static private final int PROP_BAR_FILL_COLOR    = 30;
   
   /** The Property Defaults */
   static public  final String[] DEF_ITEMS             = { "" };
@@ -100,6 +102,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static public  final String   DEF_TEXT_ALIGN        = FontTFT.ALIGN_LEFT;
   static public  final Boolean  DEF_FRAME_EN          = Boolean.TRUE;
   static public  final Boolean  DEF_SCROLLBAR         = Boolean.TRUE;
+  static public  final Integer  DEF_SCROLLBAR_WIDTH   = Integer.valueOf(20);
+  static public  final Integer  DEF_SCROLLBAR_THUMB   = Integer.valueOf(5);
   static public  final String   DEF_SCROLLBAR_ENUM    = "";
   static public  final String   DEF_SCROLLBAR_EREF    = "";
   static public  final Integer  DEF_SCROLLBAR_MAX     = Integer.valueOf(100);
@@ -141,7 +145,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   protected void initProperties()
   {
     widgetType = EnumFactory.LISTBOX;
-    data = new Object[29][5];
+    data = new Object[31][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -154,6 +158,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     initProp(PROP_ROWS, Integer.class, "TXT-209", Boolean.FALSE,"Display Rows",DEF_ROWS);
 
     initProp(PROP_SCROLLBAR, Boolean.class, "BAR-112", Boolean.FALSE,"Add Scrollbar?",DEF_SCROLLBAR);
+    initProp(PROP_SCROLLBAR_WIDTH, Integer.class, "SLD-111", Boolean.FALSE,"Scrollbar Width",DEF_SCROLLBAR_WIDTH);
+    initProp(PROP_SCROLLBAR_THUMB, Integer.class, "SLD-103", Boolean.FALSE,"Scrollbar Thumb Size",DEF_SCROLLBAR_THUMB);
     initProp(PROP_SCROLLBAR_ENUM, String.class, "BAR-113", Boolean.FALSE,"Scrollbar ENUM",DEF_SCROLLBAR_ENUM);
     initProp(PROP_SCROLLBAR_EREF, String.class, "BAR-114", Boolean.FALSE,"Scrollbar EREF",DEF_SCROLLBAR_EREF);
     initProp(PROP_SCROLLBAR_MAX, Integer.class, "BAR-115", Boolean.FALSE,"Scrollbar Max Value",DEF_SCROLLBAR_MAX);
@@ -342,6 +348,22 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     return (String)data[PROP_SCROLLBAR_ENUM][PROP_VAL_VALUE];
   }
   
+  /**
+   * getScrollbarWidth
+   * @return width
+   */
+  public int getScrollbarWidth() {
+    return (((Integer) (data[PROP_SCROLLBAR_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * getScrollbarThumb
+   * @return thumb size
+   */
+  public int getScrollbarThumb() {
+    return (((Integer) (data[PROP_SCROLLBAR_THUMB][PROP_VAL_VALUE])).intValue());
+  }
+
   /**
    * Gets the scrollbar eref.
    *
