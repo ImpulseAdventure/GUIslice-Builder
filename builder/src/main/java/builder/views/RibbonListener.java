@@ -658,6 +658,11 @@ public class RibbonListener implements ActionListener {
       }
       break;
       
+    case "scale":
+      Builder.logger.debug("Toolbar: scale");
+      controller.scale();
+      break;
+  
     case "seekbar":
       Builder.logger.debug("Toolbar: seekbar");
       createWidget(EnumFactory.SEEKBAR);

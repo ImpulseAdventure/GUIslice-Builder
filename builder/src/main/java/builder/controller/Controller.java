@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -53,6 +54,7 @@ import java.util.prefs.Preferences;
 */
 
 import javax.swing.ImageIcon;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -61,6 +63,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.NumberFormatter;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
@@ -1304,6 +1307,65 @@ public class Controller extends JInternalFrame
       currentPage.rectangularSelection(false);
     }
   }
+  
+  public void scale() {
+    NumberFormat format = NumberFormat.getInstance();
+    format.setGroupingUsed(false);
+    NumberFormatter formatter = new NumberFormatter(format);
+    formatter.setValueClass(Integer.class);
+    formatter.setMaximum(65535);
+    formatter.setAllowsInvalid(false);
+    formatter.setCommitsOnValidEdit(true);
+    JFormattedTextField txtOldWidth = new JFormattedTextField(formatter);
+    JFormattedTextField txtOldHeight = new JFormattedTextField(formatter);
+
+    Object[] message = {
+        "Old Screen Width:", txtOldWidth,
+        "Old Screen Height:", txtOldHeight,
+        "\nWARNING: Requires a new screen size to have been set"
+        + "\ninside Project Options before running this command.\n"
+        + "Users may need to change fonts manually, if required.\n"
+        + "Also this command has no UNDO!"
+    };
+    
+    int option = JOptionPane.showConfirmDialog(null, message, "Scale Elements", JOptionPane.OK_CANCEL_OPTION);
+    if (option != JOptionPane.OK_OPTION) {
+      Builder.logger.debug("Scale canceled");
+    }
+    try {
+      int oldWidth = Integer.valueOf(txtOldWidth.getText());
+      int oldHeight = Integer.valueOf(txtOldHeight.getText());
+      ProjectModel pm = getProjectModel();
+      int newWidth = pm.getWidth();
+      int newHeight = pm.getHeight();
+      if (oldWidth == newWidth && oldHeight == newHeight) {
+        JOptionPane.showConfirmDialog(null, 
+            "Did you forget to first change to a\nnew screen size inside Project Options?\n",
+             "Error!",
+            JOptionPane.PLAIN_MESSAGE);
+        
+        if (option != JOptionPane.OK_OPTION) {
+          Builder.logger.debug("Scale canceled");
+          return;
+        }
+      }
+      // calcualte our scaling ratios
+      double ratioX = (double)newWidth / (double)oldWidth;
+      double ratioY = (double)newHeight / (double)oldHeight;
+      Builder.logger.debug("Scale ratioX: "+ratioX+" ratioY: "+ratioY);
+      // now we can walk the pages and resize each of the elements
+      for (PagePane p : pages) {
+        p.scale(ratioX, ratioY);
+      } 
+      refreshView();
+      Builder.logger.debug("Scale command completed");
+    } catch (NumberFormatException e) {
+      JOptionPane.showConfirmDialog(null, "Input must be number!", "Error!",
+          JOptionPane.PLAIN_MESSAGE);
+      return;
+    }
+  }
+  
   
   /**
    * cut widgets
