@@ -143,7 +143,7 @@ public class FontGlcd extends FontTFT {
     }
 //    Builder.logger.debug("Metrics x1=" + strMetrics.x1 + " y1=" + strMetrics.y1
 //        + " w=" + strMetrics.w + " h=" + strMetrics.h);
-    
+    try {
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
@@ -172,6 +172,9 @@ public class FontGlcd extends FontTFT {
       cursor_x += textsize_x * 6; // Advance x one char
     }
     g2d.drawImage(image, r.x, r.y, null);
+    } catch (IllegalArgumentException e) {
+      Builder.logger.debug("Text element exceeds screen");
+    }
 //    Builder.logger.debug("minx=" + minx + " maxx=" + maxx + " miny=" + miny + " maxy=" + maxy);
   }
 

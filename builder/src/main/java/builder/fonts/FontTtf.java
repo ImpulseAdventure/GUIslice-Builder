@@ -39,6 +39,8 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import builder.Builder;
+
 import java.awt.Font;
 
 /**
@@ -127,7 +129,11 @@ public class FontTtf extends FontTFT {
    
     g2d.setColor(colTxt);
     g2d.setFont(font);
+    try {
     g2d.drawString(str, r.x, r.y);
+    } catch (IllegalArgumentException e) {
+      Builder.logger.debug("Text element exceeds screen");
+    }
   }
 
   /**

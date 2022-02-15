@@ -106,6 +106,7 @@ public class FontUTFT extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
+    try {
     // clipping
     if (bClippingEn) {
       if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
@@ -145,6 +146,9 @@ public class FontUTFT extends FontTFT {
       }
     }
     g2d.drawImage(image, r.x, r.y, null);
+    } catch (IllegalArgumentException e) {
+      Builder.logger.debug("Text element exceeds screen");
+    }
   }
 
   /**

@@ -435,6 +435,8 @@ Scale each element acccording to the supplied ratios this will change each eleme
 
 Fonts will be ignored since there is no font scaling within GUIslice API so exact or even close matches may no be possible. Users may need to manually change fonts. Although generally Fonts will appear correctly on larger or smaller screen without doing anything.
 
+WARNING! If you are shrinking the screen size and you already have elements placed on page(s) you should not leave Project Options until you go to Tab Page Layout and use the Scale command.
+Otherwise, you may crash and burn showing pages since elements are likely to be placed beyond the screen size.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>

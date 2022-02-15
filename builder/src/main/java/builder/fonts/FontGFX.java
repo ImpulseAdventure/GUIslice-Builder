@@ -159,6 +159,7 @@ public class FontGFX extends FontTFT {
 
 //    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
     
+    try {
     // create our image
     BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
@@ -188,6 +189,9 @@ public class FontGFX extends FontTFT {
       }
     }
     g2d.drawImage(image, r.x, r.y+strMetrics.y1, null);
+    } catch (IllegalArgumentException e) {
+      Builder.logger.debug("Text element exceeds screen");
+    }
   }
 
   /**
