@@ -501,7 +501,7 @@ $<CALLBACK>
   
   // Create listbox
   pElemRef = gslc_ElemXListboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sListbox$<COM-018>,
-    (gslc_tsRect){$<COM-003>+2,$<COM-004>+4,$<COM-005>-26,$<COM-006>-7},$<TXT-211>,
+    (gslc_tsRect){$<COM-003>+2,$<COM-004>+4,$<COM-005>-4-$<SLD-111>,$<COM-006>-7},$<TXT-211>,
     (uint8_t*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
   gslc_ElemXListboxSetSize(&m_gui, pElemRef, $<TXT-209>, $<TXT-210>); // $<TXT-209> rows, $<TXT-210> columns
   gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, XLISTBOX_SIZE_AUTO, XLISTBOX_SIZE_AUTO);
@@ -514,7 +514,7 @@ $<CALLBACK>
 
   // Create vertical scrollbar for listbox
   pElemRef = gslc_ElemXSliderCreate(&m_gui,$<BAR-113>,$<COM-000>,&m_sListScroll$<COM-018>,
-          (gslc_tsRect){$<COM-003>+$<COM-005>-22,$<COM-004>+4,20,$<COM-006>-8},0,$<BAR-115>,0,5,true);
+          (gslc_tsRect){$<COM-003>+$<COM-005>-2-$<SLD-111>,$<COM-004>+4,$<SLD-111>,$<COM-006>-8},0,$<BAR-115>,0,$<SLD-103>,true);
   gslc_ElemSetCol(&m_gui,pElemRef,$<BAR-116>,$<BAR-117>,$<BAR-116>);
   gslc_ElemXSliderSetPosFunc(&m_gui,pElemRef,&CbSlidePos);
   $<BAR-114> = pElemRef;
@@ -787,7 +787,7 @@ $<CALLBACK>
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
   $<COM-019> = pElemRef;
 <STOP>
-<TEXTBOXSLIDER>
+<TEXTBOXSLIDER_1>
    
   // Create wrapping box for textbox $<COM-002> and scrollbar
   pElemRef = gslc_ElemCreateBox(&m_gui,GSLC_ID_AUTO,$<COM-000>,(gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>});
@@ -795,16 +795,18 @@ $<CALLBACK>
   
   // Create textbox
   pElemRef = gslc_ElemXTextboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_sTextbox$<COM-018>,
-    (gslc_tsRect){$<COM-003>+2,$<COM-004>+4,$<COM-005>-23,$<COM-006>-7},$<TXT-211>,
+    (gslc_tsRect){$<COM-003>+2,$<COM-004>+4,$<COM-005>-4-$<SLD-111>,$<COM-006>-7},$<TXT-211>,
     (char*)&m_acTextboxBuf$<COM-018>,$<TXT-209>,$<TXT-210>);
   gslc_ElemXTextboxWrapSet(&m_gui,pElemRef,$<TXT-208>);
   gslc_ElemSetTxtCol(&m_gui,pElemRef,$<COL-301>);
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
   $<COM-019> = pElemRef;
+<STOP>
+<TEXTBOXSLIDER_2>
 
   // Create vertical scrollbar for textbox
   pElemRef = gslc_ElemXSliderCreate(&m_gui,$<BAR-113>,$<COM-000>,&m_sTextScroll$<COM-018>,
-          (gslc_tsRect){$<COM-003>+$<COM-005>-21,$<COM-004>+4,20,$<COM-006>-8},0,$<BAR-115>,0,5,true);
+          (gslc_tsRect){$<COM-003>+$<COM-005>-2-$<SLD-111>,$<COM-004>+4,$<SLD-111>,$<COM-006>-8},0,$<BAR-115>,0,$<SLD-103>,true);
   gslc_ElemSetCol(&m_gui,pElemRef,$<BAR-116>,$<BAR-117>,$<BAR-116>);
   gslc_ElemXSliderSetPosFunc(&m_gui,pElemRef,&CbSlidePos);
   $<BAR-114> = pElemRef;

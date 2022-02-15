@@ -70,7 +70,7 @@ public class Ribbon extends JPanel {
   /** The alignment buttons. */
   private static Button btn_aligntop,btn_alignbottom, btn_aligncenter,
     btn_alignleft,btn_alignright,btn_alignhspace,
-    btn_alignvspace,btn_alignwidth, btn_alignheight;
+    btn_alignvspace,btn_alignwidth, btn_alignheight, btn_scale;
 
   static Ribbon instance;
   
@@ -395,6 +395,12 @@ public class Ribbon extends JPanel {
     btn_alignheight.setActionCommand("alignheight");
     btn_alignheight.addToolTip("Align Elements to a Uniform Element's Height");
     
+    btn_scale = band.addButton("scale");
+    btn_scale.setImage(Util.accessImageFile(
+        "resources/icons/layout/scale.png"));
+    btn_scale.setActionCommand("scale");
+    btn_scale.addToolTip("Scale elements to a new screen size");
+    
     band.addSeperator();
   }
 
@@ -497,6 +503,7 @@ public class Ribbon extends JPanel {
     btn_alignvspace.addActionListener(al);
     btn_alignwidth.addActionListener(al);
     btn_alignheight.addActionListener(al);
+    btn_scale.addActionListener(al);
 
 //    btn_selection.addActionListener(al);
 

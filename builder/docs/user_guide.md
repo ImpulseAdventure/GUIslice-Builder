@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b04
+        Ver: 0.17.b07
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published February, 2022. Based on GUIslice API Library 0.17.0
+Published February 15, 2022. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -425,6 +425,18 @@ Now click the Align Height button.
 This gives you:
 
 ![](images/height_after.png)
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+### Scale ![](images/controls/scale.png)
+
+Scale each element acccording to the supplied ratios this will change each element's width, height, x, and y positions.
+
+Fonts will be ignored since there is no font scaling within GUIslice API so exact or even close matches may no be possible. Users may need to manually change fonts. Although generally Fonts will appear correctly on larger or smaller screen without doing anything.
+
+WARNING! If you are shrinking the screen size and you already have elements placed on page(s) you should not leave Project Options until you go to Tab Page Layout and use the Scale command.
+Otherwise, you may crash and burn showing pages since elements are likely to be placed beyond the screen size.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1727,6 +1739,10 @@ The "Copy Properties" (exam) icon ![](images/layout/copy_props.png) was created 
 The "Page" (Tablet) ![](images/controls/page_32x.png) and "Image" (Camera) ![](images/controls/image_32x.png) and "Widget" (Puzzle) icons ![](images/controls/widget.png) were provided by:
 
 https://github.com/icons8/flat-color-icons
+
+The "Scale" ![](images/controls/scale.png) 
+<div><a href="https://www.flaticon.com/free-icons/photoshop" title="photoshop icons">Photoshop icons created by Freepik - Flaticon</a></div>
+
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>

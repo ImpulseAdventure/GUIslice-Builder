@@ -159,6 +159,7 @@ public class FontT3 extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
+    try {
 //    Builder.logger.debug("drawString: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
@@ -186,6 +187,10 @@ public class FontT3 extends FontTFT {
     }
 
     g2d.drawImage(image, r.x, r.y, null);
+    } catch (IllegalArgumentException e) {
+      Builder.logger.debug("Text element exceeds screen");
+    }
+
   }
 
   /**

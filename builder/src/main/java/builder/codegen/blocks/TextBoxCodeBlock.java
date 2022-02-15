@@ -45,7 +45,8 @@ public final class TextBoxCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
   private final static String TEXTBOX_TEMPLATE       = "<TEXTBOX>";
-  private final static String TEXTBOXSLIDER_TEMPLATE = "<TEXTBOXSLIDER>";
+  private final static String TEXTBOXSLIDER1_TEMPLATE = "<TEXTBOXSLIDER_1>";
+  private final static String TEXTBOXSLIDER2_TEMPLATE = "<TEXTBOXSLIDER_2>";
 
   /**
    * Instantiates a new check box code block.
@@ -78,13 +79,19 @@ public final class TextBoxCodeBlock implements CodeBlock {
 
     // now output creation API
     if (m.addScrollbar()) {
-      template = tm.loadTemplate(TEXTBOXSLIDER_TEMPLATE);
+      template = tm.loadTemplate(TEXTBOXSLIDER1_TEMPLATE);
     } else {
       template = tm.loadTemplate(TEXTBOX_TEMPLATE);
     }
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
 
+    if (m.addScrollbar()) {
+      template = tm.loadTemplate(TEXTBOXSLIDER2_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    
     map.clear();
     template.clear();
     outputLines.clear();

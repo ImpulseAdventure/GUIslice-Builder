@@ -60,21 +60,25 @@ public class TextBoxModel extends WidgetModel {
   static private final int PROP_ROWS              = 9;
   static private final int PROP_COLS              = 10;
   static private final int PROP_SCROLLBAR         = 11;
-  static private final int PROP_SCROLLBAR_ENUM    = 12;
-  static private final int PROP_SCROLLBAR_EREF    = 13;
-  static private final int PROP_SCROLLBAR_MAX     = 14;
-  static private final int PROP_TEXT_COLOR        = 15;
-  static private final int PROP_FRAME_COLOR       = 16;
-  static private final int PROP_FILL_COLOR        = 17;
-  static private final int PROP_SELECTED_COLOR    = 18;
-  static private final int PROP_BAR_FRAME_COLOR   = 19;
-  static private final int PROP_BAR_FILL_COLOR    = 20;
+  static private final int PROP_SCROLLBAR_WIDTH   = 12;
+  static private final int PROP_SCROLLBAR_THUMB   = 13;
+  static private final int PROP_SCROLLBAR_ENUM    = 14;
+  static private final int PROP_SCROLLBAR_EREF    = 15;
+  static private final int PROP_SCROLLBAR_MAX     = 16;
+  static private final int PROP_TEXT_COLOR        = 17;
+  static private final int PROP_FRAME_COLOR       = 18;
+  static private final int PROP_FILL_COLOR        = 19;
+  static private final int PROP_SELECTED_COLOR    = 20;
+  static private final int PROP_BAR_FRAME_COLOR   = 21;
+  static private final int PROP_BAR_FILL_COLOR    = 22;
   
   /** The Property Defaults */
   static public  final Boolean DEF_WRAP              = Boolean.FALSE;
   static public  final Integer DEF_ROWS              = Integer.valueOf(6);
   static public  final Integer DEF_COLS              = Integer.valueOf(28);
   static public  final Boolean DEF_SCROLLBAR         = Boolean.TRUE;
+  static public  final Integer DEF_SCROLLBAR_WIDTH   = Integer.valueOf(20);
+  static public  final Integer DEF_SCROLLBAR_THUMB   = Integer.valueOf(5);
   static public  final String  DEF_SCROLLBAR_ENUM    = "";
   static public  final String  DEF_SCROLLBAR_EREF    = "";
   static public  final Integer DEF_SCROLLBAR_MAX     = Integer.valueOf(100);
@@ -106,7 +110,7 @@ public class TextBoxModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TEXTBOX;
-    data = new Object[21][5];
+    data = new Object[23][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -115,6 +119,8 @@ public class TextBoxModel extends WidgetModel {
     initProp(PROP_ROWS, Integer.class, "TXT-209", Boolean.FALSE,"Display Rows",DEF_ROWS);
     initProp(PROP_COLS, Integer.class, "TXT-210", Boolean.FALSE,"Characters per Row",DEF_COLS);
     initProp(PROP_SCROLLBAR, Boolean.class, "BAR-112", Boolean.FALSE,"Add Scrollbar?",DEF_SCROLLBAR);
+    initProp(PROP_SCROLLBAR_WIDTH, Integer.class, "SLD-111", Boolean.FALSE,"Scrollbar Width",DEF_SCROLLBAR_WIDTH);
+    initProp(PROP_SCROLLBAR_THUMB, Integer.class, "SLD-103", Boolean.FALSE,"Scrollbar Thumb Size",DEF_SCROLLBAR_THUMB);
     initProp(PROP_SCROLLBAR_ENUM, String.class, "BAR-113", Boolean.FALSE,"Scrollbar ENUM",DEF_SCROLLBAR_ENUM);
     initProp(PROP_SCROLLBAR_EREF, String.class, "BAR-114", Boolean.FALSE,"Scrollbar EREF",DEF_SCROLLBAR_EREF);
     initProp(PROP_SCROLLBAR_MAX, Integer.class, "BAR-115", Boolean.FALSE,"Scrollbar Max Value",DEF_SCROLLBAR_MAX);
@@ -220,6 +226,22 @@ public class TextBoxModel extends WidgetModel {
   @Override
   public boolean addScrollbar() {
     return ((Boolean) data[PROP_SCROLLBAR][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * getScrollbarWidth
+   * @return width
+   */
+  public int getScrollbarWidth() {
+    return (((Integer) (data[PROP_SCROLLBAR_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * getScrollbarThumb
+   * @return thumb size
+   */
+  public int getScrollbarThumb() {
+    return (((Integer) (data[PROP_SCROLLBAR_THUMB][PROP_VAL_VALUE])).intValue());
   }
 
   /**

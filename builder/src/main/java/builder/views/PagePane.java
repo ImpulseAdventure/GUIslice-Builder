@@ -1156,5 +1156,33 @@ public class PagePane extends JPanel implements iSubscriber {
       bPaintBaseWidgets=true;
     }
   }
+  
+  /**
+   * scale
+   * scale each element acccording to the supplied ratios
+   * this will change each element's width, height, x, and y positions.
+   * Fonts will be ignored since there is no font scaling within GUIslice API
+   * so exact or even close matches may no be possible.  Users may need to
+   * manually change fonts. Although, generally fonts will simply work without
+   * any changes.
+   * 
+   * @param ratioX
+   * @param ratioY
+   */
+  public void scale(double ratioX, double ratioY) {
+    int newX, newY, newHeight, newWidth;
+    for (Widget w : widgets) {
+      WidgetModel m = w.getModel();
+      newX = (int)(((double)m.getX() * ratioX) + 0.5);
+      newY = (int)(((double)m.getY() * ratioX) + 0.5);
+      newWidth = (int)(((double)m.getWidth() * ratioX) + 0.5);
+      newHeight = (int)(((double)m.getHeight() * ratioX) + 0.5);
+      m.setX(newX);
+      m.setY(newY);
+      m.setWidth(newWidth);
+      m.setHeight(newHeight);
+    }
+  }
+  
 }
 
