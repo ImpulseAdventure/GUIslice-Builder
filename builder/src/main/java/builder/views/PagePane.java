@@ -1180,7 +1180,7 @@ public class PagePane extends JPanel implements iSubscriber {
     for (Widget w : widgets) {
       WidgetModel m = w.getModel();
       newX = (int)(((double)m.getX() * ratioX) + 0.5);
-      newY = (int)(((double)m.getY() * ratioX) + 0.5);
+      newY = (int)(((double)m.getY() * ratioY) + 0.5);
       newWidth = (int)(((double)m.getWidth() * ratioX) + 0.5);
       newHeight = (int)(((double)m.getHeight() * ratioY) + 0.5);
       m.setX(newX);
