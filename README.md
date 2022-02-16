@@ -32,6 +32,9 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Bug Fix 0.17.b09
+Scaling was using incorrect ratio for y coordinates.
+
 ### Enhancements for 0.17.b08
 Scaling now supports scaling non-builtin (glcd) fonts (The glcd fonts are too far apart to scale,8,16,24,32). The Builder will now attempt to 
 find a font that can scale to the correct ratio or the closest it can find. Nevertheless, Users may still need to manually change fonts. 
