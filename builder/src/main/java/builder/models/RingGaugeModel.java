@@ -158,6 +158,16 @@ public class RingGaugeModel extends WidgetModel {
   }
 
   /**
+   * setFont 
+   * @param fontName
+   */
+  public void setFont(String fontName) {
+    data[PROP_FONT][PROP_VAL_VALUE] = fontName;
+    fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
+  }
+  
+
+  /**
    * changeValueAt
    *
    * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)

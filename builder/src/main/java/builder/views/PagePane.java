@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -70,9 +71,12 @@ import builder.controller.PropManager;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
+import builder.fonts.FontFactory;
 import builder.models.GridModel;
+import builder.models.LineModel;
 import builder.models.PageModel;
 import builder.models.ProjectModel;
+import builder.models.SpinnerModel;
 import builder.models.WidgetModel;
 import builder.prefs.GridEditor;
 import builder.widgets.Widget;
@@ -1171,17 +1175,57 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void scale(double ratioX, double ratioY) {
     int newX, newY, newHeight, newWidth;
+    FontFactory ff = FontFactory.getInstance();
+    HashMap<String, String> fontMap = new HashMap<String, String>();
     for (Widget w : widgets) {
       WidgetModel m = w.getModel();
       newX = (int)(((double)m.getX() * ratioX) + 0.5);
       newY = (int)(((double)m.getY() * ratioX) + 0.5);
       newWidth = (int)(((double)m.getWidth() * ratioX) + 0.5);
-      newHeight = (int)(((double)m.getHeight() * ratioX) + 0.5);
+      newHeight = (int)(((double)m.getHeight() * ratioY) + 0.5);
       m.setX(newX);
       m.setY(newY);
-      m.setWidth(newWidth);
-      m.setHeight(newHeight);
-    }
+      if (m instanceof LineModel) {
+        /* LineModel.getWidth() actually returns length of line
+         * while LineModel.setWidth() changes the length
+         * use ratioY for vertical lines ratioX horizontal lines
+         */
+        if (((LineModel)m).isVertical()) {
+          m.setWidth((int)(((double)m.getWidth() * ratioY) + 0.5));
+        } else {
+          m.setWidth((int)(((double)m.getWidth() * ratioX) + 0.5));
+        }
+      } else if (!(m instanceof SpinnerModel)){
+        m.setWidth(newWidth);
+        m.setHeight(newHeight);
+      }
+      String key = m.getFontDisplayName();
+      if (key != null) {
+        /* see if we can scale the font
+         * since scanning fonts takes a while and generally we use very
+         * few different fonts I build a map of matching fonts as I scan
+         * to avoid a brute force search each time.
+         */
+        String scaledFontName = null;
+        if (fontMap.containsKey(key)) {
+          scaledFontName = fontMap.get(key);
+          m.setFont(scaledFontName);
+        } else {
+          if (ratioY < 1.0) {
+            // smaller font available?
+            scaledFontName = ff.getSmallerFont(key, ratioY);
+          } else {
+            // larger font available?
+            scaledFontName = ff.getLargerFont(key, ratioY);
+          }
+          if (scaledFontName != null) {
+            fontMap.put(key, scaledFontName);
+            m.setFont(scaledFontName);
+          }
+        } // end !fontMap.containsKey(key)
+      } // end key != null
+    } // end for (Widget w)
+    Builder.postStatusMsg("Scale operation completed!");
   }
   
 }

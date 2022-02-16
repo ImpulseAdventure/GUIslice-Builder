@@ -32,6 +32,13 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.b08
+Scaling now supports scaling non-builtin (glcd) fonts (The glcd fonts are too far apart to scale,8,16,24,32). The Builder will now attempt to 
+find a font that can scale to the correct ratio or the closest it can find. Nevertheless, Users may still need to manually change fonts. 
+
+### Bug Fix 0.17.b08
+Testing showed that the Line Element would cause crashes if scaled.  This is now fixed.
+
 ### Enhancements for 0.17.b07
 Added new scaling command in the layout tab to allow automatic updating of elements x,y,width and height due to TFT screen display change of size. 
 Also, you can now change the Scrollbar width and thumb sizes for Listboxes and Textboxes.

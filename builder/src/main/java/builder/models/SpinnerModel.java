@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -129,6 +129,33 @@ public class SpinnerModel extends WidgetModel {
     editorDecr = new DefaultCellEditor(txtDecr);
     rendererText = new TextTFTCellRenderer();
     rendererText.setFontTFT(ff, null);
+  }
+  
+  /**
+   * setFont 
+   * @param fontName
+   */
+  public void setFont(String fontName) {
+    data[PROP_FONT][PROP_VAL_VALUE] = fontName;
+    fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
+    FontTFT myFont = ff.getFont(fontName);
+    txtIncr.setFontTFT(ff, myFont);
+    txtDecr.setFontTFT(ff, myFont);
+    rendererText.setFontTFT(ff, myFont);
+    if (getFontDisplayName().startsWith("BuiltIn")) {
+      txtIncr.setText(DEF_INCRBUTTON);
+      txtDecr.setText(DEF_DECRBUTTON);
+    } else {
+      txtIncr.setText("+");
+      txtDecr.setText("-");
+    }
+    data[PROP_INCRBUTTON][PROP_VAL_VALUE] = txtIncr.getText();
+    data[PROP_DECRBUTTON][PROP_VAL_VALUE] = txtDecr.getText();
+    calcSizes(false);
+    fireTableCellUpdated(PROP_INCRBUTTON, COLUMN_VALUE);
+    fireTableCellUpdated(PROP_DECRBUTTON, COLUMN_VALUE);
+    fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
+    fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
   }
   
   /**

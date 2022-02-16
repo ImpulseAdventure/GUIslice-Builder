@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -148,6 +148,19 @@ public class TextBoxModel extends WidgetModel {
     ref = ref + count;
     data[PROP_SCROLLBAR_ENUM][PROP_VAL_VALUE] = EnumFactory.TEXTBOX_SCROLLBAR_ENUM+count;
     data[PROP_SCROLLBAR_EREF][PROP_VAL_VALUE] = EnumFactory.TEXTBOX_SCROLLBAR_EREF+count;
+  }
+  
+  /**
+   * setFont 
+   * @param fontName
+   */
+  public void setFont(String fontName) {
+    data[PROP_FONT][PROP_VAL_VALUE] = fontName;
+    fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
+    calcSizes(false);
+    fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
+    fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
+    fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
   }
   
   /**
