@@ -262,6 +262,88 @@ public class FontFactory {
   }
   
   /**
+   * getSmallerFont
+   * Find the best match for a smaller font in a family and style.
+   * @param displayName
+   * @param ratio
+   * @return
+   */
+  public String getSmallerFont(String displayName, double ratio) {
+    FontItem original = getFontItem(displayName);
+    int maxSz = original.getLogicalSizeAsInt();
+    String family = original.getFamilyName();
+    
+    if (family.equals("Builtin"))
+      return null; // we can't easily scale the GLCD fonts, since they go 8,16,32,40
+    
+    int minSz = (int) ((((double)maxSz) * ratio) + 0.5);
+    String style = original.getLogicalStyle();
+    int fontSz = 0;
+    int bestSz = maxSz;
+    String best = null;
+    for (FontItem item : getFontList()) {
+      if (item.getDisplayName().equals(displayName)) {
+        continue;
+      }
+      if (item.getFamilyName().equals(family) && item.getLogicalStyle().equals(style)) {
+        fontSz = item.getLogicalSizeAsInt();
+        if (fontSz == minSz) {
+          best = item.getDisplayName();
+          break;
+        } else if (fontSz > minSz && fontSz < maxSz) {
+          if (fontSz < bestSz) {
+            bestSz = fontSz;
+            best = item.getDisplayName();
+          }
+        }
+      }
+    }
+    
+    return best;
+  }
+  
+  /**
+   * getLargerFont
+   * Find the best match for a larger font in a family and style.
+   * @param displayName
+   * @param ratio
+   * @return
+   */
+  public String getLargerFont(String displayName, double ratio) {
+    FontItem original = getFontItem(displayName);
+    int minSz = original.getLogicalSizeAsInt();
+    String family = original.getFamilyName();
+    
+    if (family.equals("Builtin"))
+      return null; // we can't easily scale the GLCD fonts
+    
+    int maxSz = (int) ((((double)minSz) * ratio) + 0.5);
+    String style = original.getLogicalStyle();
+    int fontSz = 0;
+    int bestSz = minSz;
+    String best = null;
+    for (FontItem item : getFontList()) {
+      if (item.getDisplayName().equals(displayName)) {
+        continue;
+      }
+      if (item.getFamilyName().equals(family) && item.getLogicalStyle().equals(style)) {
+        fontSz = item.getLogicalSizeAsInt();
+        if (fontSz == minSz) {
+          best = item.getDisplayName();
+          break;
+        } else if (fontSz > minSz && fontSz < maxSz) {
+          if (fontSz > bestSz) {
+            bestSz = fontSz;
+            best = item.getDisplayName();
+          }
+        }
+      }
+    }
+    
+    return best;
+  }
+  
+  /**
    * This method gets a Font's item with a Family name using 
    * the String values displayed to users of GUIsliceBuider 
    * by our Font Chooser.
@@ -599,7 +681,7 @@ public class FontFactory {
         if (c.getFonts().size() == 0) {
           // handle native fonts that did not require JSON entries
           if (c.getName().equals(FontTFT.FONT_GFX)) {
-            //Builder.logger.debug(c.toString());
+            Builder.logger.debug(c.toString());
             String fullPath = CommonUtils.getInstance().getWorkingDir();
             String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "gfx";
             Path startingDir = Paths.get(fontsPath);
@@ -634,7 +716,7 @@ public class FontFactory {
               nErrors++;
               Builder.logger.error(e.toString());
             }
-          }
+          } 
         } else {
           for (FontItem item : c.getFonts()) {
             item.setPlatform(p);
@@ -642,7 +724,7 @@ public class FontFactory {
             item.generateEnum();
             item.generateKey();
             String key = item.getKey();
-            // Builder.logger.debug("Font: " + item.toString());
+//            Builder.logger.debug("Font: " + item.toString());
             // check for duplicates
             if (!fontMap.containsKey(key)) {
               platformFonts.add(item);

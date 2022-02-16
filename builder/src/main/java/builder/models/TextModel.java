@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -199,6 +199,20 @@ public class TextModel extends WidgetModel {
     return null;
   }
 
+  /**
+   * setFont 
+   * @param fontName
+   */
+  public void setFont(String fontName) {
+    data[PROP_FONT][PROP_VAL_VALUE] = fontName;
+    fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
+    FontTFT myFont = ff.getFont(fontName);
+    textBox.setFontTFT(ff, myFont);
+    rendererText.setFontTFT(ff, myFont);
+    calcSizes(true);
+    fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
+  }
+  
   /**
    * changeValueAt
    *

@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b07
+        Ver: 0.17.b08
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published February 15, 2022. Based on GUIslice API Library 0.17.0
+Published February 16, 2022. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -433,7 +433,9 @@ This gives you:
 
 Scale each element acccording to the supplied ratios this will change each element's width, height, x, and y positions.
 
-Fonts will be ignored since there is no font scaling within GUIslice API so exact or even close matches may no be possible. Users may need to manually change fonts. Although generally Fonts will appear correctly on larger or smaller screen without doing anything.
+GLCD Fonts (BuiltIn) will be ignored since there is too much distance between them for scaling (8,16,24,32,40).
+However for other fonts an attempt is made to find a font that can scale to about the correct ratio or sometimes 
+even an exact match. Nevertheless, Users may need to manually change fonts. 
 
 WARNING! If you are shrinking the screen size and you already have elements placed on page(s) you should not leave Project Options until you go to Tab Page Layout and use the Scale command.
 Otherwise, you may crash and burn showing pages since elements are likely to be placed beyond the screen size.
@@ -717,7 +719,6 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
 ## 4.8 Listbox ![](images/controls/listbox_32x.png)
 
 Displays a set of items (string values) and allows the user to select an item. See examples ex30_bld_listbox for a multi-column list and ex31_bld_listbox for a scrolling list of rows.
-
 | NAME                |  VALUE                                            |
 |---------------------|---------------------------------------------------|
 | Key                 | ListBox$1                                         |
@@ -737,21 +738,22 @@ Displays a set of items (string values) and allows the user to select an item. S
 | Text Margin Width   | 5                                                 |
 | Text Margin Height  | 0                                                 |
 | Text Alignment      | GSLC_ALIGN_MID_LEFT                               |
-| Add Scrollbar?      | true, false no scrollbar                          |
-| Scrollbar ENUM      | E_LISTSCROLL1                                     |
-| Scrollbar EREF      | m_pListSlider1                                    |
-| Scrollbar Max Value | 100                                               |
-| Frame Enabled?      | true                                              |
-| Text Color          | Color.WHITE                                       |
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
-
 
 | NAME                |  VALUE                                            |
 |---------------------|---------------------------------------------------|
 | Frame Color         | Color.BLUE                                        |
 | Fill Color          | Color.BLACK                                       |
 | Selected Color      | Color.BLACK                                       |
+| Add Scrollbar?      | true, false no scrollbar                          |
+| Scrollbar Width	    | 20                                                |
+| Scrollbar Thumb Size|	5                                                 |
+| Scrollbar ENUM      | E_LISTSCROLL1                                     |
+| Scrollbar EREF      | m_pListSlider1                                    |
+| Scrollbar Max Value | 100                                               |
+| Frame Enabled?      | true                                              |
+| Text Color          | Color.WHITE                                       |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1116,27 +1118,29 @@ A Textbox is a multi-line area that displays scrolling text. It can be tied to a
 Optionally, it can handle embedded color codes for text. 
 See example ex10_bld_textbox.
 
-| NAME               | VALUE                                             |
-|--------------------|---------------------------------------------------|
-| Key                | TextBox$1                                         |
-| ENUM               | E_ELEM_TEXTBOX1                                   |
-| X                  |                                                   |
-| Y                  |                                                   |
-| Width              | 201                                               |
-| Height             | 63                                                |
-| ElementRef         | m_pElemTextbox1                                   |
-| Font               | BuiltIn(1x)->5x8pt7b                              |
-| Wrap Text          | false, Set=true, if text is to wrap across lines  |                                             |
-| Display Rows       | 6                                                 |
-| Characters per Row | 28                                                |
-| Add Scrollbar?     | true                                              |
-| Scrollbar ENUM     | E_TEXTSCROLL1                                     |
-| Scrollbar EREF     | m_pTextSlider1                                    |
-| Scrollbar Max Valu | 100                                               |
-| Text Color         | Color.YELLOW                                      |
-| Frame Color        | Color.GRAY                                        |
-| Fill Color         | Color.BLACK                                       |
-| Selected Color     | Color.BLACK                                       |
+| NAME                | VALUE                                             |
+|---------------------|---------------------------------------------------|
+| Key                 | TextBox$1                                         |
+| ENUM                | E_ELEM_TEXTBOX1                                   |
+| X                   |                                                   |
+| Y                   |                                                   |
+| Width               | 201                                               |
+| Height              | 63                                                |
+| ElementRef          | m_pElemTextbox1                                   |
+| Font                | BuiltIn(1x)->5x8pt7b                              |
+| Wrap Text           | false, Set=true, if text is to wrap across lines  |                                             |
+| Display Rows        | 6                                                 |
+| Characters per Row  | 28                                                |
+| Add Scrollbar?      | true                                              |
+| Scrollbar Width	    | 20                                                |
+| Scrollbar Thumb Size|	5                                                 |
+| Scrollbar ENUM      | E_TEXTSCROLL1                                     |
+| Scrollbar EREF      | m_pTextSlider1                                    |
+| Scrollbar Max Valu  | 100                                               |
+| Text Color          | Color.YELLOW                                      |
+| Frame Color         | Color.GRAY                                        |
+| Fill Color          | Color.BLACK                                       |
+| Selected Color      | Color.BLACK                                       |
 
 NOTE: Text rows and columns are only an approximation.  Embedding colors will require extra space. See the GUIslice API for further details.
 
