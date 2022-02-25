@@ -73,6 +73,11 @@ $<CALLBACK>
       case $<COM-002>:
         break;
 <STOP>
+<BUTTON_CB_CODE>
+      case $<COM-002>:
+$<CODE_SEGMENT>
+        break;
+<STOP>
 <BUTTON_CB_CHGPAGE>
       case $<COM-002>:
         gslc_SetPageCur(&m_gui, $<TBNT-101>);

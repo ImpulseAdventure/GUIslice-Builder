@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
 import builder.commands.PropertyCommand;
@@ -45,6 +46,9 @@ import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.tables.MultiStringsCell;
+import builder.tables.MultipeLineCellListener;
+import builder.tables.MultiStringsCell.MCDialogType;
 
 /**
  * The Class ImgButtonModel implements the model for the Image Button widget.
@@ -52,7 +56,7 @@ import builder.events.MsgBoard;
  * @author Paul Conti
  * 
  */
-public class ImgButtonModel extends WidgetModel { 
+public class ImgButtonModel extends WidgetModel implements MultipeLineCellListener { 
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
@@ -70,11 +74,12 @@ public class ImgButtonModel extends WidgetModel {
   static private final int PROP_TRANSPARENCY    = 16;
   static private final int PROP_TOGGLE          = 17;
   static public  final int PROP_GROUP           = 18;
-  static private final int PROP_JUMP_PAGE       = 19;
-  static private final int PROP_POPUP_PAGE      = 20;
-  static private final int PROP_POPUP_HIDE      = 21;
-  static private final int PROP_FRAME_EN        = 22;
-  static private final int PROP_FRAME_COLOR     = 23;
+  static private final int PROP_CODE            = 19;
+  static private final int PROP_JUMP_PAGE       = 20;
+  static private final int PROP_POPUP_PAGE      = 21;
+  static private final int PROP_POPUP_HIDE      = 22;
+  static private final int PROP_FRAME_EN        = 23;
+  static private final int PROP_FRAME_COLOR     = 24;
 
   /** The Property Defaults */
   static public  final String  DEF_IMAGE             = "";
@@ -88,6 +93,7 @@ public class ImgButtonModel extends WidgetModel {
   static public  final String  DEF_FORMAT            = "";
   static public  final Boolean DEF_TRANSPARENCY      = Boolean.FALSE;
   static public  final Boolean DEF_TOGGLE            = Boolean.FALSE;
+  static public  final String[] DEF_CODE             = { "" };
   static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
   static public  final Boolean DEF_FRAME_EN          = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = Color.WHITE;
@@ -111,6 +117,9 @@ public class ImgButtonModel extends WidgetModel {
   /** The cb format. */
   JComboBox<String> cbFormat;
   
+  /** The optional code segment for our button */
+  MultiStringsCell codeCell;
+
   /** The format cell editor. */
   DefaultCellEditor formatCellEditor;
 
@@ -140,7 +149,7 @@ public class ImgButtonModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.IMAGEBUTTON;
-    data = new Object[24][5];
+    data = new Object[25][5];
     
     initCommonProps(0, 0);
     
@@ -164,6 +173,7 @@ public class ImgButtonModel extends WidgetModel {
     initProp(PROP_TRANSPARENCY, Boolean.class, "IBTN-107", Boolean.FALSE,"Transparent?",DEF_TRANSPARENCY);
     initProp(PROP_TOGGLE, Boolean.class, "IBTN-112", Boolean.FALSE,"Toggle?",DEF_TOGGLE);
 
+    initProp(PROP_CODE, String[].class, "TBTN-113", Boolean.FALSE,"Custom Code (optional)",DEF_CODE);
     initProp(PROP_JUMP_PAGE, String.class, "TBNT-101", Boolean.FALSE,"Jump Page ENUM","");
     initProp(PROP_POPUP_PAGE, String.class, "TBTN-104", Boolean.TRUE,"Popup Page Enum","");
     initProp(PROP_POPUP_HIDE, Boolean.class, "TBTN-103", Boolean.FALSE,"Hide Popup Page?",DEF_POPUP_HIDE);
@@ -191,19 +201,58 @@ public class ImgButtonModel extends WidgetModel {
     cbFormat.addItem(FORMAT_JPG);
     cbFormat.addItem(FORMAT_RAW);
     formatCellEditor = new DefaultCellEditor(cbFormat);
+
+    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.STRING_DIALOG);
+    codeCell.setData(DEF_CODE);
+    codeCell.addButtonListener(this);
   }
   
+  /**
+   * buttonClicked
+   *
+   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
+   */
+  @Override
+  public void buttonClicked(String[] strings) {
+    // commands are used to support undo and redo actions.
+    PropertyCommand c = new PropertyCommand(this, strings, PROP_CODE);
+    execute(c);
+  }
+
+  /**
+   * Gets the optional code segment, if any.
+   *
+   * @return the code segment
+   */
+  public String[] getCode() {
+    return ((String[]) (data[PROP_CODE][PROP_VAL_VALUE]));
+  }
+
   /**
    * getEditorAt
    *
    * @see builder.models.WidgetModel#getEditorAt(int)
    */
   @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_MEMORY || rowIndex == PROP_MEMORY_SEL)
+  public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_CODE)
+      return codeCell;
+    if (row == PROP_MEMORY || row == PROP_MEMORY_SEL)
       return memoryCellEditor;
-    if (rowIndex == PROP_FORMAT)
+    if (row == PROP_FORMAT)
       return formatCellEditor;
+    return null;
+  }
+
+  /**
+   * getRendererAt
+   *
+   * @see builder.models.WidgetModel#getRendererAt(int)
+   */
+  @Override
+  public TableCellRenderer getRendererAt(int row) {
+    if (row == PROP_CODE)
+      return codeCell;
     return null;
   }
 
@@ -335,20 +384,15 @@ public class ImgButtonModel extends WidgetModel {
   }
 
   /**
-   * setValueAt.
+   * setValueAt
    *
-   * @param value
-   *          the value
-   * @param row
-   *          the row
-   * @param col
-   *          the col
-   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
-   *      int)
+   * @see builder.models.WidgetModel#setValueAt(java.lang.Object, int, int)
    */
   @SuppressWarnings("unused")
   @Override
   public void setValueAt(Object value, int row, int col) {
+    // we handle code segment through a backdoor "buttonClicked"
+    if (row == PROP_CODE) return;
     if (col == COLUMN_VALUE) {
       // check for invalid data
       if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
@@ -389,6 +433,18 @@ public class ImgButtonModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, 1);
+    if (row == PROP_CODE) {
+      if (getCode() != null && !getCode()[0].isEmpty()) {
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+      } else {
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+      }
+      fireTableStructureChanged();
+    }
     if (row > PROP_HEIGHT || row == PROP_ENUM)
       super.setModelChanged();
     if (row == PROP_JUMP_PAGE) {
@@ -906,6 +962,12 @@ public class ImgButtonModel extends WidgetModel {
       data[PROP_GROUP][PROP_VAL_VALUE] = "GSLC_GROUP_ID_NONE";
     }
 
+    codeCell.setData((String[])data[PROP_CODE][PROP_VAL_VALUE]);
+    if (getCode() != null && !getCode()[0].isEmpty()) {
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    }
   }     
 
 }

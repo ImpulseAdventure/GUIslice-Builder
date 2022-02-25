@@ -19,6 +19,12 @@ import javax.swing.table.TableCellRenderer;
 import builder.views.FontListDialog;
 import builder.views.StringListDialog;
 
+/**
+ * NOTE: This class will use StringListDialog 
+ *       or FontListDialog for editing
+ * @author Paul Conti
+ *
+ */
 public class MultiStringsCell extends AbstractCellEditor 
   implements TableCellRenderer, TableCellEditor {
   private static final long serialVersionUID = 1L;

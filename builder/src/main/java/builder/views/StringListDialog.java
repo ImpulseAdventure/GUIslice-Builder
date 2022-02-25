@@ -40,6 +40,7 @@ import java.text.ParseException;
 import java.awt.Frame;
 import java.awt.Toolkit;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -64,6 +65,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
 
 import builder.Builder;
+import builder.tables.EditListAction;
+import builder.tables.ListAction;
 import hu.csekme.RibbonMenu.Util;
 
 public class StringListDialog extends JDialog implements ActionListener, ListSelectionListener {
@@ -78,6 +81,10 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
   private JButton btn_add;
   private JButton btn_up;
   private JButton btn_down;
+  
+  private Action edit;
+  @SuppressWarnings("unused")
+  private ListAction la;
   
   private static final String okString = "OK";
   private static final String cancelString = "cancel";
@@ -164,6 +171,8 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
       }
     }
     list = new JList<String>(listModel);
+    edit = new EditListAction();
+    la = new ListAction(list, edit);
     list.setDragEnabled(true);
 //    list.setDropMode(DropMode.INSERT);
     list.setDropMode(DropMode.ON_OR_INSERT );

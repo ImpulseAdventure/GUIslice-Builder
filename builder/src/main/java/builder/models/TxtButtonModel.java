@@ -37,6 +37,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
+import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -44,7 +45,10 @@ import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
 import builder.fonts.InputTextField;
+import builder.tables.MultiStringsCell;
+import builder.tables.MultipeLineCellListener;
 import builder.tables.TextTFTCellRenderer;
+import builder.tables.MultiStringsCell.MCDialogType;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -52,7 +56,7 @@ import builder.tables.TextTFTCellRenderer;
  * @author Paul Conti
  * 
  */
-public class TxtButtonModel extends WidgetModel { 
+public class TxtButtonModel extends WidgetModel implements MultipeLineCellListener { 
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
@@ -67,14 +71,15 @@ public class TxtButtonModel extends WidgetModel {
   static private final int PROP_TEXT_SZ           = 13;
   static private final int PROP_TEXT_ALIGN        = 14;
   static private final int PROP_TEXT_MARGIN       = 15;
-  static private final int PROP_JUMP_PAGE         = 16;
-  static private final int PROP_POPUP_PAGE        = 17;
-  static private final int PROP_POPUP_HIDE        = 18;
-  static private final int PROP_USE_FLASH         = 19;
-  static private final int PROP_TEXT_COLOR        = 20;
-  static private final int PROP_FRAME_COLOR       = 21;
-  static private final int PROP_FILL_COLOR        = 22;
-  static private final int PROP_SELECTED_COLOR    = 23;
+  static private final int PROP_CODE              = 16;
+  static private final int PROP_JUMP_PAGE         = 17;
+  static private final int PROP_POPUP_PAGE        = 18;
+  static private final int PROP_POPUP_HIDE        = 19;
+  static private final int PROP_USE_FLASH         = 20;
+  static private final int PROP_TEXT_COLOR        = 21;
+  static private final int PROP_FRAME_COLOR       = 22;
+  static private final int PROP_FILL_COLOR        = 23;
+  static private final int PROP_SELECTED_COLOR    = 24;
   
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
@@ -85,6 +90,7 @@ public class TxtButtonModel extends WidgetModel {
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
   static public  final String  DEF_TEXT_ALIGN        = FontTFT.ALIGN_CENTER;
   static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(0);
+  static public  final String[] DEF_CODE             = { "" };
   static public  final Boolean DEF_POPUP_HIDE        = Boolean.FALSE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_TEXT_COLOR        = Color.WHITE;
@@ -103,6 +109,9 @@ public class TxtButtonModel extends WidgetModel {
   
   /** The align cell editor. */
   DefaultCellEditor alignCellEditor;
+
+  /** The optional code segment for our button */
+  MultiStringsCell codeCell;
 
   private InputTextField textBox = new InputTextField(DEF_TEXT);
   private DefaultCellEditor editorText;
@@ -138,6 +147,10 @@ public class TxtButtonModel extends WidgetModel {
     editorText = new DefaultCellEditor(textBox);
     rendererText = new TextTFTCellRenderer();
     rendererText.setFontTFT(ff, null);
+
+    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.STRING_DIALOG);
+    codeCell.setData(DEF_CODE);
+    codeCell.addButtonListener(this);
   }
   
   /**
@@ -147,7 +160,7 @@ public class TxtButtonModel extends WidgetModel {
   {
     widgetType = EnumFactory.TEXTBUTTON;
     
-    data = new Object[24][5];
+    data = new Object[25][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -162,6 +175,7 @@ public class TxtButtonModel extends WidgetModel {
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
     initProp(PROP_TEXT_MARGIN, Integer.class, "TXT-212", Boolean.FALSE,"Text Margin",DEF_TEXT_MARGIN);
     
+    initProp(PROP_CODE, String[].class, "TBTN-113", Boolean.FALSE,"Custom Code (optional)",DEF_CODE);
     initProp(PROP_JUMP_PAGE, String.class, "TBNT-101", Boolean.FALSE,"Jump Page ENUM","");
     initProp(PROP_POPUP_PAGE, String.class, "TBTN-104", Boolean.TRUE,"Popup Page Enum","");
     initProp(PROP_POPUP_HIDE, Boolean.class, "TBTN-103", Boolean.FALSE,"Hide Popup Page?",DEF_POPUP_HIDE);
@@ -187,12 +201,51 @@ public class TxtButtonModel extends WidgetModel {
   }
 
   /**
+   * buttonClicked
+   *
+   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
+   */
+  @Override
+  public void buttonClicked(String[] strings) {
+    // commands are used to support undo and redo actions.
+    PropertyCommand c = new PropertyCommand(this, strings, PROP_CODE);
+    execute(c);
+  }
+
+  /**
+   * setValueAt
+   *
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+   */
+  @Override
+  public void setValueAt(Object value, int row, int col) {
+    // we handle code segment through a backdoor "buttonClicked"
+    if (row == PROP_CODE) return;
+    if (col == COLUMN_VALUE) {
+      // commands are used to support undo and redo actions.
+      PropertyCommand c = new PropertyCommand(this, value, row);
+      execute(c);
+    }
+  }
+
+  /**
+   * Gets the optional code segment, if any.
+   *
+   * @return the code segment
+   */
+  public String[] getCode() {
+    return ((String[]) (data[PROP_CODE][PROP_VAL_VALUE]));
+  }
+
+  /**
    * getEditorAt
    *
    * @see builder.models.WidgetModel#getEditorAt(int)
    */
   @Override
   public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_CODE)
+      return codeCell;
     if (row == PROP_TEXT)
       return editorText;
     if (row == PROP_TEXT_ALIGN)
@@ -207,6 +260,8 @@ public class TxtButtonModel extends WidgetModel {
    */
   @Override
   public TableCellRenderer getRendererAt(int row) {
+    if (row == PROP_CODE)
+      return codeCell;
     if (row == PROP_TEXT) {
       return rendererText;
     }
@@ -243,6 +298,18 @@ public class TxtButtonModel extends WidgetModel {
       data[row][PROP_VAL_VALUE] = value;
     }
     fireTableCellUpdated(row, COLUMN_VALUE);
+    if (row == PROP_CODE) {
+      if (getCode() != null && !getCode()[0].isEmpty()) {
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+      } else {
+        data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.FALSE;
+        data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.FALSE;
+      }
+      fireTableStructureChanged();
+    }
     if (row > PROP_HEIGHT || row == PROP_ENUM)
       super.setModelChanged();
     if (row == PROP_JUMP_PAGE) {
@@ -678,6 +745,12 @@ public class TxtButtonModel extends WidgetModel {
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_RIGHT;
     else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("center"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_CENTER;
+    codeCell.setData((String[])data[PROP_CODE][PROP_VAL_VALUE]);
+    if (getCode() != null && !getCode()[0].isEmpty()) {
+      data[PROP_JUMP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_PAGE][PROP_VAL_READONLY]=Boolean.TRUE;
+      data[PROP_POPUP_HIDE][PROP_VAL_READONLY]=Boolean.TRUE;
+    }
     calcSizes(false);
   }     
 }
