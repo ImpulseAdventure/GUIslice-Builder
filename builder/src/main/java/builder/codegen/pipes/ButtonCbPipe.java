@@ -221,6 +221,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
         if (codeList != null && !codeList[0].isEmpty()) {
           StringBuilder sbCode =  new StringBuilder();
           for (int i=0; i<codeList.length; i++) {
+            sbCode.append("        ");
             sbCode.append(codeList[i]);
             sbCode.append("\n");
           }
@@ -245,6 +246,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
         if (codeList != null && !codeList[0].isEmpty()) {
           StringBuilder sbCode =  new StringBuilder();
           for (int i=0; i<codeList.length; i++) {
+            sbCode.append("        ");
             sbCode.append(codeList[i]);
             sbCode.append("\n");
           }
@@ -589,6 +591,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
           String[] codeList = modelInfo.getCodeSegment();
           StringBuilder sbCode =  new StringBuilder();
           for (int i=0; i<codeList.length; i++) {
+            sbCode.append("        ");
             sbCode.append(codeList[i]);
             sbCode.append("\n");
           }
