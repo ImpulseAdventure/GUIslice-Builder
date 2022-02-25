@@ -67,6 +67,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
   /** The Constants for templates. */
   private final static String BUTTON_CB_TEMPLATE     = "<BUTTON_CB>";
   private final static String BUTTON_CASE_TEMPLATE   = "<BUTTON_CB_CASE>";
+  private final static String BUTTON_CODE_TEMPLATE   = "<BUTTON_CB_CODE>";
   private final static String BUTTON_CHGPG_TEMPLATE  = "<BUTTON_CB_CHGPAGE>";
   private final static String BUTTON_HIDE_TEMPLATE   = "<BUTTON_CB_HIDEPOPUP>";
   private final static String BUTTON_INPUT_TEMPLATE  = "<BUTTON_CB_INPUT>";
@@ -75,6 +76,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
   
   /** The Constants for macros. */
   private final static String CALLBACK_MACRO         = "CALLBACK";
+  private final static String CODE_SEGMENT_MACRO     = "CODE_SEGMENT";
   private final static String ENUM_MACRO             = "COM-002";
   private final static String ELEMREF_MACRO          = "COM-019";
   private final static String KEY_ENUM_MACRO         = "KEY-002";
@@ -100,6 +102,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
   private final static int CT_UPDINPUTNUM = 7;
   private final static int CT_UPDINPUTTXT = 8;
   private final static int CT_TOGGLEBTN   = 9;
+  private final static int CT_CUSTOM_CODE    =10;
 
   /** The case statement map. */
   HashMap<String, Integer> caseMap;
@@ -202,6 +205,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
     StringBuilder sTemp = new StringBuilder();
     // create our callback section - start by opening our templates
     List<String> templateStandard  = tm.loadTemplate(BUTTON_CASE_TEMPLATE);
+    List<String> templateCode      = tm.loadTemplate(BUTTON_CODE_TEMPLATE);
     List<String> templateChgPage   = tm.loadTemplate(BUTTON_CHGPG_TEMPLATE);
     List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
     List<String> templateInput     = tm.loadTemplate(BUTTON_INPUT_TEMPLATE);
@@ -213,7 +217,17 @@ public class ButtonCbPipe extends WorkFlowPipe {
       map.clear();
       map.put(ENUM_MACRO, m.getEnum());
       if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
-        if (((TxtButtonModel) m).getJumpPage() != null &&
+        String[] codeList = ((TxtButtonModel)m).getCode();
+        if (codeList != null && !codeList[0].isEmpty()) {
+          StringBuilder sbCode =  new StringBuilder();
+          for (int i=0; i<codeList.length; i++) {
+            sbCode.append("        ");
+            sbCode.append(codeList[i]);
+            sbCode.append("\n");
+          }
+          map.put(CODE_SEGMENT_MACRO, sbCode.toString());
+          outputLines = tm.expandMacros(templateCode, map);
+        } else if (((TxtButtonModel) m).getJumpPage() != null &&
             !((TxtButtonModel) m).getJumpPage().isEmpty()) {
           map.put(JUMPPAGE_ENUM_MACRO, ((TxtButtonModel) m).getJumpPage());
           outputLines = tm.expandMacros(templateChgPage, map);
@@ -228,7 +242,17 @@ public class ButtonCbPipe extends WorkFlowPipe {
         }
         tm.codeWriter(sTemp, outputLines);
       } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
-        if (((ImgButtonModel) m).getJumpPage() != null && 
+        String[] codeList = ((ImgButtonModel)m).getCode();
+        if (codeList != null && !codeList[0].isEmpty()) {
+          StringBuilder sbCode =  new StringBuilder();
+          for (int i=0; i<codeList.length; i++) {
+            sbCode.append("        ");
+            sbCode.append(codeList[i]);
+            sbCode.append("\n");
+          }
+          map.put(CODE_SEGMENT_MACRO, sbCode.toString());
+          outputLines = tm.expandMacros(templateCode, map);
+        } else if (((ImgButtonModel) m).getJumpPage() != null && 
             !((ImgButtonModel) m).getJumpPage().isEmpty()) {
           map.put(JUMPPAGE_ENUM_MACRO, ((ImgButtonModel) m).getJumpPage());
           outputLines = tm.expandMacros(templateChgPage, map);
@@ -298,8 +322,9 @@ public class ButtonCbPipe extends WorkFlowPipe {
     listOfCases = new ArrayList[256];
 
     // setup our templates for outputs   
-    List<String> templateStandard = tm.loadTemplate(BUTTON_CASE_TEMPLATE);
-    List<String> templateChgPage = tm.loadTemplate(BUTTON_CHGPG_TEMPLATE);
+    List<String> templateStandard  = tm.loadTemplate(BUTTON_CASE_TEMPLATE);
+    List<String> templateCode      = tm.loadTemplate(BUTTON_CODE_TEMPLATE);
+    List<String> templateChgPage   = tm.loadTemplate(BUTTON_CHGPG_TEMPLATE);
     List<String> templateHidePopup = tm.loadTemplate(BUTTON_HIDE_TEMPLATE);
     List<String> templateInput     = tm.loadTemplate(BUTTON_INPUT_TEMPLATE);
     List<String> templateShowPopup = tm.loadTemplate(BUTTON_SHOW_TEMPLATE);
@@ -362,6 +387,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
           outputLines = listOfCases[idx];
           tm.codeWriter(sBd, outputLines);
           bNeedOutput = false;
+        } else if (modelInfo.getCaseType() == CT_CUSTOM_CODE) {
+          bNeedOutput = true;
         } else {
         /*
          * we do have an existing case statement so now the fun begins need to parse it
@@ -369,23 +396,33 @@ public class ButtonCbPipe extends WorkFlowPipe {
          * matches just output the stored source code in case user has modified it. This
          * makes round trip edits possible.
          */
-        CaseInfo oldInfo = parseCaseType(e, idx);
-        switch (modelInfo.getCaseType()) {
-        case CT_UNDEFINED: 
-          break;
-        case CT_STANDARD:
-          // output what we have stored
-          outputLines = listOfCases[idx];
-          tm.codeWriter(sBd, outputLines);
-          bNeedOutput = false;
-          break;
-        case CT_CHGPAGE:
-          if (oldInfo.getCaseType() == CT_CHGPAGE) {
-            if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
-              outputLines = listOfCases[idx];
-              tm.codeWriter(sBd, outputLines);
-              bNeedOutput = false;
-            } else {
+          CaseInfo oldInfo = parseCaseType(e, idx);
+          switch (modelInfo.getCaseType()) {
+          case CT_UNDEFINED: 
+            break;
+          case CT_STANDARD:
+            // output what we have stored
+            outputLines = listOfCases[idx];
+            tm.codeWriter(sBd, outputLines);
+            bNeedOutput = false;
+            break;
+          case CT_CHGPAGE:
+            if (oldInfo.getCaseType() == CT_CHGPAGE) {
+              if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              } else {
+                if (oldInfo.getLineNo() > -1) { 
+                  // output what is stored but replace the one line that is wrong
+                  replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
+                  outputLines = listOfCases[idx];
+                  tm.codeReplaceLine(sBd, outputLines, replacement, 
+                      oldInfo.getLineNo(), oldInfo.getLineNo());
+                  bNeedOutput = false;
+                }
+              }
+            } else if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
               if (oldInfo.getLineNo() > -1) { 
                 // output what is stored but replace the one line that is wrong
                 replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
@@ -394,81 +431,81 @@ public class ButtonCbPipe extends WorkFlowPipe {
                     oldInfo.getLineNo(), oldInfo.getLineNo());
                 bNeedOutput = false;
               }
-            }
-          } else if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
-            if (oldInfo.getLineNo() > -1) { 
-              // output what is stored but replace the one line that is wrong
-              replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
-              outputLines = listOfCases[idx];
-              tm.codeReplaceLine(sBd, outputLines, replacement, 
-                  oldInfo.getLineNo(), oldInfo.getLineNo());
-              bNeedOutput = false;
-            }
-          } else if (oldInfo.getCaseType() == CT_STANDARD) {
-            if (oldInfo.getLineNo() > -1) { 
-              // output what is stored but replace the one line that is wrong
-              replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
-              outputLines = listOfCases[idx];
-              tm.codeAppendLine(sBd, outputLines, replacement);
-              bNeedOutput = false;
-            }
-          }
-          break;
-        case CT_INPUTNUM:
-          if (oldInfo.getCaseType() == CT_INPUTNUM) {
-            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
-              outputLines = listOfCases[idx];
-              tm.codeWriter(sBd, outputLines);
-              bNeedOutput = false;
-            }
-          }
-          if (oldInfo.getCaseType() == CT_UPDINPUTNUM) {
-            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
-              outputLines = listOfCases[idx];
-              // our old input template was 4 lines long, if match reduce to one line
-              if (oldInfo.getLineNo()+3 <= oldInfo.getStopNo()) {
-                replacement = String.format("        gslc_ElemXKeyPadInputAsk(&m_gui, %s, %s, %s);", 
-                  oldInfo.getKeyElementRef(),oldInfo.getPageEnum(),oldInfo.getElementRef());
-                tm.codeReplaceLine(sBd, outputLines, replacement, 
-                    oldInfo.getLineNo(), oldInfo.getStopNo());
-              } else {
-                tm.codeWriter(sBd, outputLines);
+            } else if (oldInfo.getCaseType() == CT_STANDARD) {
+              if (oldInfo.getLineNo() > -1) { 
+                // output what is stored but replace the one line that is wrong
+                replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
+                outputLines = listOfCases[idx];
+                tm.codeAppendLine(sBd, outputLines, replacement);
+                bNeedOutput = false;
               }
-              bNeedOutput = false;
             }
-          }
-          break;
-        case CT_INPUTTXT:
-          if (oldInfo.getCaseType() == CT_INPUTTXT) {
-            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
-              outputLines = listOfCases[idx];
-              tm.codeWriter(sBd, outputLines);
-              bNeedOutput = false;
-            }
-          }
-          if (oldInfo.getCaseType() == CT_UPDINPUTTXT) {
-            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
-              outputLines = listOfCases[idx];
-              // our old input template was 4 lines long, if match reduce to one line
-              if (oldInfo.getLineNo()+3 <= oldInfo.getStopNo()) {
-                replacement = String.format("        gslc_ElemXKeyPadInputAsk(&m_gui, %s, %s, %s);", 
-                  oldInfo.getKeyElementRef(),oldInfo.getPageEnum(),oldInfo.getElementRef());
-                tm.codeReplaceLine(sBd, outputLines, replacement, 
-                    oldInfo.getLineNo(), oldInfo.getStopNo());
-              } else {
+            break;
+          case CT_INPUTNUM:
+            if (oldInfo.getCaseType() == CT_INPUTNUM) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
                 tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
               }
-              bNeedOutput = false;
             }
-          }
-          break;
-        case CT_SHOWPOPUP:
-          if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
-            if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
-              outputLines = listOfCases[idx];
-              tm.codeWriter(sBd, outputLines);
-              bNeedOutput = false;
-            } else {
+            if (oldInfo.getCaseType() == CT_UPDINPUTNUM) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
+                // our old input template was 4 lines long, if match reduce to one line
+                if (oldInfo.getLineNo()+3 <= oldInfo.getStopNo()) {
+                  replacement = String.format("        gslc_ElemXKeyPadInputAsk(&m_gui, %s, %s, %s);", 
+                    oldInfo.getKeyElementRef(),oldInfo.getPageEnum(),oldInfo.getElementRef());
+                  tm.codeReplaceLine(sBd, outputLines, replacement, 
+                      oldInfo.getLineNo(), oldInfo.getStopNo());
+                } else {
+                  tm.codeWriter(sBd, outputLines);
+                }
+                bNeedOutput = false;
+              }
+            }
+            break;
+          case CT_INPUTTXT:
+            if (oldInfo.getCaseType() == CT_INPUTTXT) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              }
+            }
+            if (oldInfo.getCaseType() == CT_UPDINPUTTXT) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
+                // our old input template was 4 lines long, if match reduce to one line
+                if (oldInfo.getLineNo()+3 <= oldInfo.getStopNo()) {
+                  replacement = String.format("        gslc_ElemXKeyPadInputAsk(&m_gui, %s, %s, %s);", 
+                    oldInfo.getKeyElementRef(),oldInfo.getPageEnum(),oldInfo.getElementRef());
+                  tm.codeReplaceLine(sBd, outputLines, replacement, 
+                      oldInfo.getLineNo(), oldInfo.getStopNo());
+                } else {
+                  tm.codeWriter(sBd, outputLines);
+                }
+                bNeedOutput = false;
+              }
+            }
+            break;
+          case CT_SHOWPOPUP:
+            if (oldInfo.getCaseType() == CT_SHOWPOPUP) {
+              if (oldInfo.getPageEnum().equals(modelInfo.getPageEnum())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              } else {
+                if (oldInfo.getLineNo() > -1) { 
+                  // output what is stored but replace the one line that is wrong
+                  replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
+                  outputLines = listOfCases[idx];
+                  tm.codeReplaceLine(sBd, outputLines, replacement, 
+                      oldInfo.getLineNo(), oldInfo.getLineNo());
+                  bNeedOutput = false;
+                }
+              }
+            } else if (oldInfo.getCaseType() == CT_CHGPAGE) {
               if (oldInfo.getLineNo() > -1) { 
                 // output what is stored but replace the one line that is wrong
                 replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
@@ -477,44 +514,34 @@ public class ButtonCbPipe extends WorkFlowPipe {
                     oldInfo.getLineNo(), oldInfo.getLineNo());
                 bNeedOutput = false;
               }
+            } else if (oldInfo.getCaseType() == CT_STANDARD) {
+              if (oldInfo.getLineNo() > -1) { 
+                // output what is stored but replace the one line that is wrong
+                replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
+                outputLines = listOfCases[idx];
+                tm.codeAppendLine(sBd, outputLines, replacement);
+                bNeedOutput = false;
+              }
             }
-          } else if (oldInfo.getCaseType() == CT_CHGPAGE) {
-            if (oldInfo.getLineNo() > -1) { 
-              // output what is stored but replace the one line that is wrong
-              replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
-              outputLines = listOfCases[idx];
-              tm.codeReplaceLine(sBd, outputLines, replacement, 
-                  oldInfo.getLineNo(), oldInfo.getLineNo());
-              bNeedOutput = false;
-            }
-          } else if (oldInfo.getCaseType() == CT_STANDARD) {
-            if (oldInfo.getLineNo() > -1) { 
-              // output what is stored but replace the one line that is wrong
-              replacement = String.format("        gslc_PopupShow(&m_gui, %s);", modelInfo.getPageEnum());
-              outputLines = listOfCases[idx];
-              tm.codeAppendLine(sBd, outputLines, replacement);
-              bNeedOutput = false;
-            }
-          }
-          break;
-        case CT_HIDEPOPUP:
-          if (oldInfo.getCaseType() == CT_HIDEPOPUP) {
-            outputLines = listOfCases[idx];
-            tm.codeWriter(sBd, outputLines);
-            bNeedOutput = false;
-          }
-          break;
-        case CT_TOGGLEBTN:
-          if (oldInfo.getCaseType() == CT_TOGGLEBTN) {
-            if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+            break;
+          case CT_HIDEPOPUP:
+            if (oldInfo.getCaseType() == CT_HIDEPOPUP) {
               outputLines = listOfCases[idx];
               tm.codeWriter(sBd, outputLines);
               bNeedOutput = false;
             }
+            break;
+          case CT_TOGGLEBTN:
+            if (oldInfo.getCaseType() == CT_TOGGLEBTN) {
+              if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
+                outputLines = listOfCases[idx];
+                tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              }
+            }
+            break;
           }
-          break;
         }
-      }
       }
       if (bNeedOutput) {
         // No existing case statement or we need to regenerate it.
@@ -558,6 +585,18 @@ public class ButtonCbPipe extends WorkFlowPipe {
         case CT_TOGGLEBTN:
           map.put(ELEMREF_MACRO, modelInfo.getElementRef());
           outputLines = tm.expandMacros(templateToggleBtn, map);
+          tm.codeWriter(sBd, outputLines);
+          break;
+        case CT_CUSTOM_CODE: 
+          String[] codeList = modelInfo.getCodeSegment();
+          StringBuilder sbCode =  new StringBuilder();
+          for (int i=0; i<codeList.length; i++) {
+            sbCode.append("        ");
+            sbCode.append(codeList[i]);
+            sbCode.append("\n");
+          }
+          map.put(CODE_SEGMENT_MACRO, sbCode.toString());
+          outputLines = tm.expandMacros(templateCode, map);
           tm.codeWriter(sBd, outputLines);
           break;
         }
@@ -653,7 +692,11 @@ public class ButtonCbPipe extends WorkFlowPipe {
      */
     ci.setModelChanged(m.bModelChanged);
     if (m.getType().equals(EnumFactory.TEXTBUTTON)) {
-      if (((TxtButtonModel) m).getJumpPage() != null && 
+      String[] codeList = ((TxtButtonModel)m).getCode();
+      if (codeList != null && !codeList[0].isEmpty()) {
+        ci.setCaseType(CT_CUSTOM_CODE);
+        ci.setCodeSegment(codeList);
+      } else if (((TxtButtonModel) m).getJumpPage() != null && 
           !((TxtButtonModel) m).getJumpPage().isEmpty()) {
         ci.setCaseType(CT_CHGPAGE);
         ci.setPageEnum(((TxtButtonModel) m).getJumpPage());
@@ -665,7 +708,11 @@ public class ButtonCbPipe extends WorkFlowPipe {
         ci.setCaseType(CT_HIDEPOPUP);
       }
     } else if (m.getType().equals(EnumFactory.IMAGEBUTTON)) {
-      if (((ImgButtonModel) m).getJumpPage() != null && 
+      String[] codeList = ((ImgButtonModel)m).getCode();
+      if (codeList != null && !codeList[0].isEmpty()) {
+        ci.setCaseType(CT_CUSTOM_CODE);
+        ci.setCodeSegment(codeList);
+      } else if (((ImgButtonModel) m).getJumpPage() != null && 
           !((ImgButtonModel) m).getJumpPage().isEmpty()) {
         ci.setCaseType(CT_CHGPAGE);
         ci.setPageEnum(((ImgButtonModel) m).getJumpPage());
@@ -788,6 +835,9 @@ public class ButtonCbPipe extends WorkFlowPipe {
     /** The key. */
     String key;
     
+    /** Code Segment */
+    String[] code_segment;
+    
     /** The case type */
     int caseType;
     
@@ -822,11 +872,20 @@ public class ButtonCbPipe extends WorkFlowPipe {
       this.keyElementRef = "";
       this.line_no = -1;
       this.stop_no = -1;
+      this.code_segment = null;
       this.bModelChanged = false;
     }
  
     public boolean isModelChanged() {
       return bModelChanged;
+    }
+    
+    public void setCodeSegment(String[] code_segment) {
+      this.code_segment = code_segment;
+    }
+    
+    public String[] getCodeSegment() {
+      return code_segment;
     }
     
     public void setModelChanged(boolean bModelChanged) {

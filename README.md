@@ -32,6 +32,14 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
+### Enhancements for 0.17.b10
+Users can now avoid auto-generated code within Text and Image Button callbacks and add their own code that will be inserted 
+during each code generation. The new property is called `Custom Code` and is optional. This property, if used, will then make 
+the properties `Jump Page ENUM`, `Popup Page Enum`, and `Hide Popup Page?` read-only.  See the new User Guide 4.19 Text Button 
+for example.
+
+- Issue `198` Request: Add a feature for BTN to execute a custom code.
+
 ### Bug Fix 0.17.b09
 Scaling was using incorrect ratio for y coordinates.
 

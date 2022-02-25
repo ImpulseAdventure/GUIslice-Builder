@@ -40,6 +40,11 @@ $<CALLBACK>
         //TODO- Replace with button handling code
         break;
 <STOP>
+<BUTTON_CB_CODE>
+      case $<COM-002>:
+$<CODE_SEGMENT>
+        break;
+<STOP>
 <BUTTON_CB_CHGPAGE>
       case $<COM-002>:
         //TODO- Check the code to see what else you may need to add

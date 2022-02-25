@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b08
+        Ver: 0.17.b10
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published February 16, 2022. Based on GUIslice API Library 0.17.0
+Published February 25, 2022. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -699,19 +699,21 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-| NAME                | VALUE                                             |
-|---------------------|---------------------------------------------------|
-| Image When Selected | (ex: exit_g24.bmp)                                |
-| Image Select defines| (ex: IMG_BTN_EXIT_G24_SEL)                        |
-| Image Select Extern |                                                   |
-| Image Select Memory |                                                   |
-| Image Format        | GSLC_IMGREF_FMT_BMP24                             |
-| Transparent?        | false                                             |
-| Jump Page Enum      | PAGE ENUM used for gslc_SetPageCur  call          |
-| Popup Page ENUM     | PAGE ENUM used for gslc_PopupShow call            |
-| Hide Popup Page?    | false, set=true->gslc_PopupHide() current page    |
-| Frame Enabled?      | false                                             |
-| Frame Color         | Frame color with this color                       |
+| NAME                  | VALUE                                             |
+|-----------------------|---------------------------------------------------|
+| Image When Selected   | (ex: exit_g24.bmp)                                |
+| Image Select defines  | (ex: IMG_BTN_EXIT_G24_SEL)                        |
+| Image Select Extern   |                                                   |
+| Image Select Memory   |                                                   |
+| Image Format          | GSLC_IMGREF_FMT_BMP24                             |
+| Transparent?          | false                                             |
+| Custom Code (optional)| Press button [...] to enter code (See section     |
+|                       |   4.19 Text Button for Custom Code details)       |
+| Jump Page Enum        | PAGE ENUM used for gslc_SetPageCur  call          |
+| Popup Page ENUM       | PAGE ENUM used for gslc_PopupShow call            |
+| Hide Popup Page?      | false, set=true->gslc_PopupHide() current page    |
+| Frame Enabled?        | false                                             |
+| Frame Color           | Frame color with this color                       |
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -1159,6 +1161,7 @@ The Builder will generate most of the code for some of the more simple cases.
 
 Options available
 
+ - Add your own custom code
  - If you just want the button to jump to a new page set the 'Jump Page ENUM' equal to the target Page ENUM, eex05_bld_pages.
  - To start a Popup Dialog Page set 'Popup Page ENUM' to the Page ENUM that you desire, ex25_bld_popup.
  - To return from a Popup Dialog set 'Hide Popup Page?' = true.
@@ -1181,7 +1184,43 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
         break;
 ```
 
-While the Jump to Page callback will look like:
+You can add your own cusom code. Say, you want to backtrack page jumps easily.
+Create a subroutine inside your *.ino file called setNewPage.
+```
+// ------------------------------------------------
+// Program Globals
+// ------------------------------------------------
+int m_lastPage;
+
+void setNewPage(int pageId)
+{
+  m_lastPage = gslc_GetPageCur(&m_gui);
+  gslc_SetPageCur(&m_gui,pageId);
+}
+```
+Then inside any button callback that you create that is a jump to another page (say E_PG_EXTRA) 
+instead of using `Jump Page ENUM` property you use the `Custom Code` property and insert: 
+```
+setNewPage(E_PG_EXTRA);
+```
+The generated code will be:
+```
+//<Button Enums !Start!>
+      case E_ELEM_BTN1:
+        setNewPage(E_PG_EXTRA); 
+        
+        break;
+```
+Now for any button that wants to return from whence it came use the custom code option by adding:
+```
+setNewPage(m_lastPage);
+```
+Note that when entering code inside the dialog box you can drag code lines up or down or use 
+the arrow buttons on the bottom of the dialog.  You can also double click on any line to edit it.
+The code lines will automatically have 8 spaces added to the beginning of them during code generation 
+to avoid you needing to deal with indentation inside the case statement.
+
+While using the `Jump Page ENUM` callback instead; The Auto-Generated code will look like:
 ```
 //<Button Enums !Start!>
       case E_ELEM_BTN1:
@@ -1189,7 +1228,7 @@ While the Jump to Page callback will look like:
         gslc_SetPageCur(&m_gui,E_PG_EXTRA);
         break;
 ```
- The Popup Dialog:
+Using `Popup Page Enum` property generates:
 ```
 //<Button Enums !Start!>
       case E_ELEM_BTN1:
@@ -1198,11 +1237,7 @@ While the Jump to Page callback will look like:
         break;
 ```
 
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-
-And the return from a Popup
+And the return from a Popup uses `Hide Popup Page?`:
 ```
 //<Button Enums !Start!>
       case E_ELEM_BTN1:
@@ -1211,6 +1246,9 @@ And the return from a Popup
         break;
 ```
 A fuller explanation of when the Builder will create, delete or modify a case statement will be found in Appendix E.
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
 
 
 | NAME                  | VALUE                                          |
@@ -1238,6 +1276,7 @@ A fuller explanation of when the Builder will create, delete or modify a case st
 
 | NAME                  | VALUE                                          |
 |-----------------------|------------------------------------------------|
+| Custom Code (optional)| Press button [...] to enter code               |
 | Jump Page ENUM        | PAGE ENUM used for gslc_SetPageCur  call       |
 | Popup Page ENUM       | PAGE ENUM used for gslc_PopupShow call         |
 | Hide Popup Page?      | false, set=true->gslc_PopupHide() current page |
