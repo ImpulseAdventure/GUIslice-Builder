@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -306,6 +306,15 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     return (String) data[PROP_TARGET][PROP_VAL_VALUE];
   }
 
+  /**
+   * Sets the target platform
+   *
+   * @param the target platform
+   */
+  public void  setTargetPlatform(String target) {
+    changeValueAt(target, PROP_TARGET);
+  }
+
  /**
   * getWidth
   *
@@ -324,7 +333,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    */
   @Override
   public void setWidth(int w) {
-    shortcutValue(Integer.valueOf(w), DISPLAY_WIDTH);
+    changeValueAt(Integer.valueOf(w), DISPLAY_WIDTH);
   }
 
   /**
@@ -345,7 +354,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    */
   @Override
   public void setHeight(int h) {
-    shortcutValue(Integer.valueOf(h), DISPLAY_HEIGHT);
+    changeValueAt(Integer.valueOf(h), DISPLAY_HEIGHT);
   }
 
   /**
@@ -737,7 +746,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       out.writeObject((String) CommonUtils.getInstance().encodeToString(image));
     }
   }
-  
+
   /**
    * readModel() will de-serialize our model's data from a string object for backup
    * and recovery.
@@ -752,7 +761,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    *           the class not found exception
    * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream, java.lang.String)
    */
-  public void readModel(ObjectInputStream in) 
+  @Override
+  public void readModel(ObjectInputStream in, String widgetType) 
       throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
     if (useBackgroundImage()) {
@@ -779,6 +789,5 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     Builder.CANVAS_HEIGHT = getHeight();
     fontsListCell.setData((String[])data[PROP_FONT_LIST][PROP_VAL_VALUE]);
   }
-
 
 }

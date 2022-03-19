@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,10 @@
  */
 package builder.common;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferUShort;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -43,9 +45,15 @@ import builder.parser.Tokenizer;
  * The Class HexToImgConv reads in a C File containing an extern storage[] 
  * of Image Data and converts it to a BufferedImage.
  * Only supports one image per file and it should have been created
- * using the UTFT tool ImgConv.exe or ImageConverter565.exe
- * While other tools can create C Image files the parser may not
- * handle them correctly.
+ * using my GUIslice_Image2C tool or UTFT tools ImgConv.exe, 
+ * ImageConverter565.exe.  While other tools can create C Image files
+ * the parser may not handle them correctly.
+ * 
+ * GUIslice_Image2C is available at:
+ * https://github.com/Pconti31/GUIslice_Image2C
+ * 
+ * NOTE: Only GUIslice_Image2C version 2.00 or higher
+ * converts Monographic bitmaps of 1 bit per pixel.
  * 
  * @author Paul Conti
  * 
@@ -77,7 +85,7 @@ public class HexToImgConv {
 
   /** The Tokenizer. */
   private Tokenizer tokenizer;
-
+  
   /** the extern name of C structure. */
   String externName;
   
@@ -86,6 +94,11 @@ public class HexToImgConv {
   
   /** the nWidth of image. */
   int nWidth;
+  
+  /** flag to indicate Monochrome bitmap */
+  private boolean bbMonochrome;
+
+  private Color colForeground;
   
   /**
    * Instantiates a new HexToImgConv.
@@ -113,7 +126,8 @@ public class HexToImgConv {
    * @return the <code>buffered image</code> object
    */
   public BufferedImage doConvert(File file) {
-
+    bbMonochrome = false;
+    
     if (!file.getName().endsWith(".c")) {
       return null;
     }
@@ -133,13 +147,22 @@ public class HexToImgConv {
             token.getToken().equals("const"))
           break;
       }
-      // pull out unsigned short
+      
+      // pull out unsigned
       token = tokenizer.nextToken();
       if (token.getType() != HexToImgConv.WORD || 
           !token.getToken().equals("unsigned") ) parseError(token, "unsigned");
       token = tokenizer.nextToken();
+      
+      // now we get either short for 16 bit pixels or char for 1 bit pixels
       if (token.getType() != HexToImgConv.WORD || 
-          !token.getToken().equals("short") ) parseError(token, "short");
+          !token.getToken().equals("short") ) {
+        if (token.getToken().equals("char"))
+          bbMonochrome = true;
+        else
+          parseError(token, "short");
+      }
+      
       // hopefully Token is our extern storage name
       token = tokenizer.nextToken();
       if (token.getType() != HexToImgConv.WORD) parseError(token, "storage_name[]");
@@ -161,53 +184,173 @@ public class HexToImgConv {
       } else {
         parseError(token, "[size of array]");
       }
+      
       // skip pass until we get '{'
       while ((token = tokenizer.nextToken()).getType() != HexToImgConv.OPEN_BRACE) { }
-      // grab nHeight and nWidth next
-      token = tokenizer.nextToken();
-      if (token.getType() != HexToImgConv.INTEGER) parseError(token, "image nHeight");
-      nHeight = Integer.valueOf(token.getToken());
-      token = tokenizer.nextToken();
-      if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
-      token = tokenizer.nextToken();
-      if (token.getType() != HexToImgConv.INTEGER) parseError(token, "image nWidth");
-      nWidth = Integer.valueOf(token.getToken());
+      if (bbMonochrome) {
+        int r= 0,g= 0,b= 0;
+        // grab nHeight and nWidth next but each is in two bytes big endian format
+        token = tokenizer.nextToken();
+        // process height which may be in hex or decimal format
+        if (token.getType() == HexToImgConv.HEX) {
+          nHeight = Integer.decode(token.getToken()) << 8;
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          nHeight = Integer.valueOf(token.getToken()) << 8;
+        } else parseError(token, "image nHeight");
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        if (token.getType() == HexToImgConv.HEX) {
+          nHeight |= Integer.decode(token.getToken());
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          nHeight |= Integer.valueOf(token.getToken());
+        } else parseError(token, "image nHeight");
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        // process width which may be in hex or decimal format
+        if (token.getType() == HexToImgConv.HEX) {
+          nWidth = Integer.decode(token.getToken()) << 8;
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          nWidth = Integer.valueOf(token.getToken()) << 8;
+        } else parseError(token, "image nWidth");
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        if (token.getType() == HexToImgConv.HEX) {
+          nWidth |= Integer.decode(token.getToken());
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          nWidth |= Integer.valueOf(token.getToken());
+        } else parseError(token, "image nWidth");
+        // next set of values is the color of our foreground, red,green, and blue settings
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        if (token.getType() == HexToImgConv.HEX) {
+          r = Integer.decode(token.getToken());
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          r = Integer.valueOf(token.getToken());
+        } else parseError(token, "foreground red color");
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        if (token.getType() == HexToImgConv.HEX) {
+          g = Integer.decode(token.getToken());
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          g = Integer.valueOf(token.getToken());
+        } else  parseError(token, "foreground green color");
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        if (token.getType() == HexToImgConv.HEX) {
+          b = Integer.decode(token.getToken());
+        } else if(token.getType() == HexToImgConv.INTEGER) {
+          b = Integer.valueOf(token.getToken());
+        } else  parseError(token, "foreground blue color");
+        colForeground = new Color(r,g,b);
+      } else {
+        // grab nHeight and nWidth next
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.INTEGER) parseError(token, "image nHeight");
+        nHeight = Integer.valueOf(token.getToken());
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.COMMA) parseError(token, ",");
+        token = tokenizer.nextToken();
+        if (token.getType() != HexToImgConv.INTEGER) parseError(token, "image nWidth");
+        nWidth = Integer.valueOf(token.getToken());
+      }
+      
       // now build up our image inside a byte array
       int i = 0;
       int nRGB;
       byte[] bytes = new byte[(size-1)*2];
-      byte hiByte, lowByte;
-      while ((token = tokenizer.nextToken()).getType() != HexToImgConv.SEMICOLON) {
-        if (token.getType() == HexToImgConv.HEX) {
-          nRGB = Integer.decode(token.getToken());
-          hiByte = (byte) ((nRGB & 0xFF00) >> 8);
-          bytes[i++] = hiByte;
-          lowByte = (byte)(nRGB & 0xFF);
-          bytes[i++] = lowByte;
+      if (!bbMonochrome) {
+        byte hiByte, lowByte;
+        while ((token = tokenizer.nextToken()).getType() != HexToImgConv.SEMICOLON) {
+          if (token.getType() == HexToImgConv.HEX) {
+            nRGB = Integer.decode(token.getToken());
+            hiByte = (byte) ((nRGB & 0xFF00) >> 8);
+            bytes[i++] = hiByte;
+            lowByte = (byte)(nRGB & 0xFF);
+            bytes[i++] = lowByte;
+          }
         }
+       tokenizer.close();
+       ShortBuffer byteBuffer = ByteBuffer.wrap(bytes)
+            .order(ByteOrder.BIG_ENDIAN) // Or LITTLE_ENDIAN depending on the spec of the card
+            .asShortBuffer();            // Our data will be 16 bit unsigned shorts
+        // Create a buffered image 
+        image = new BufferedImage(nWidth, nHeight, BufferedImage.TYPE_USHORT_565_RGB);
+        // Cast our input data to unsigned short, of course, Java doesn't make this easy
+        // so we use the class (DataBufferUShort) which we don't even use except for the cast. 
+        short[] data = ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
+        byteBuffer.get(data);
+      } else {
+        // for 1 bit pixels we only use unsigned char not short
+        while ((token = tokenizer.nextToken()).getType() != HexToImgConv.SEMICOLON) {
+          if (token.getType() == HexToImgConv.HEX) {
+            nRGB = Integer.decode(token.getToken());
+            bytes[i++] = (byte)(nRGB & 0xFF);;
+          }
+        }
+        tokenizer.close();
+        /* Here I would normally create a new indexed color map for a 1 bit pixel BMP
+         * and set the background as transparent pixels so it will match what users 
+         * will see on their TFT displays. I then load our bytes[] array into the raster 
+         * of a new BufferedImage with type BufferedImage.TYPE_BYTE_BINARY.  
+         * I did that and it works great with one major exception.
+         * When we save the project we need to encode and decode the BMP file to
+         * serialize it. This drops the fact we had a 1 bit pixel image with
+         * transparent pixels and it gets converted to just a filled in square. Oops!
+         * 
+         * So now I create a BufferedImage.TYPE_INT_ARGB and set the background as
+         * transparent by hand. This would be very slow for large files but the
+         * monographic 1 bit files are all so small it won't nbe noticed.
+         */
+        // Create a buffered image 
+        image = new BufferedImage(nWidth, nHeight, BufferedImage.TYPE_INT_ARGB);
+        WritableRaster raster = image.getRaster();
+        
+        /* now to the dirty work of pixel settings
+         * each pixel is a single bit in our bytes[] array
+         * and if a bit is 1 its foreground, 0 its background
+         * so it needs to be transparent.
+         */
+        int bits = 0;
+        /* We need to take padding into consideration
+         * so calculate number of 8 bit bytes per row 
+         */
+        int byteWidth = (nWidth + 7) / 8; 
+        int x;
+        for (int y = 0; y < nHeight ; y++) {
+          for (x = 0; x < nWidth; x++) {
+            if((x & 7) > 0) {
+              bits <<= 1;
+            } else {
+              bits = bytes[y * byteWidth + x / 8] & 0xFF;
+            }
+            if ((bits & 0x80) > 0) {
+              raster.setPixel(x, y, new int[] { colForeground.getRed(), 
+                                                colForeground.getGreen(), 
+                                                colForeground.getBlue(), 
+                                                0xFF});
+            } else {
+              raster.setPixel(x, y, new int[] { 0, 0, 0, 0 });
+            }
+          } // end x < nWidth
+          
+        } // end y < nHeight
+
+        return image;
       }
-      tokenizer.close();
-      // now we need to convert our byte array to unsigned shorts
-      // NOTE: Why not simply use the decoded nRGB which is really a 16-bit value? 
-      //       Because Java doesn't support unsigned ints, or shorts.
-      //       short nRGB would give a number size exception on the decode() on
-      //       finding the first number larger than 32767. (don't ask how I know).
-      ShortBuffer byteBuffer = ByteBuffer.wrap(bytes)
-          .order(ByteOrder.BIG_ENDIAN) // Or LITTLE_ENDIAN depending on the spec of the card
-          .asShortBuffer();            // Our data will be 16 bit unsigned shorts
-      // Create a buffered image 
-      image = new BufferedImage(nWidth, nHeight, BufferedImage.TYPE_USHORT_565_RGB);
-      // Cast our input data to unsigned short, of course, Java doesn't make this easy
-      // so we use the class (DataBufferUShort) which we don't even use except for the cast. 
-      short[] data = ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
-      byteBuffer.get(data);
-    } catch (IOException | ParserException | NumberFormatException e) {
-      tokenizer.close();
-      String msg = String.format("File '%s'\n'%s'\n", 
-          file.getName(), e.toString());
-      JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-    return image;
+      return image;
+      } catch (IOException | ParserException | NumberFormatException e) {
+        tokenizer.close();
+        String msg = String.format("File '%s'\n'%s'\n", 
+            file.getName(), e.toString());
+        JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        return null;
+      }
   }
  
   /**

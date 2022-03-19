@@ -27,17 +27,29 @@ package builder.common;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
 
+import builder.Builder;
 import builder.controller.Controller;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
@@ -183,7 +195,7 @@ public class CommonUtils {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     try {
-      ImageIO.write(image, "bmp", bos);
+      ImageIO.write(image, "png", bos);
       byte[] imageBytes = bos.toByteArray();
 
       imageString = Base64.getEncoder().encodeToString(imageBytes);
@@ -308,4 +320,40 @@ public class CommonUtils {
     }
   }
   
+  public static void copyDirectory(String src, String dest) 
+      throws IOException {
+        Files.walk(Paths.get(src))
+          .forEach(a -> {
+              Path b = Paths.get(dest, a.toString().substring(src.length()));
+              try {
+                if (!b.toString().contains("gui_backup") &&
+                    !b.toString().endsWith(".bak")) {
+                  Files.copy(a, b,new CopyOption[]{StandardCopyOption.REPLACE_EXISTING,
+                      StandardCopyOption.COPY_ATTRIBUTES});
+                }                
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+          });
+  }
+  
+  public static void fileReplaceStr(File oldFile, File newFile,String stringToReplace, String replaceWith) {
+    try {
+      BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(oldFile), "UTF8"));
+      BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
+      String line;
+
+      while ((line = br.readLine()) != null) {
+        if (line.contains(stringToReplace))
+          line = line.replace(stringToReplace, replaceWith);
+        bw.write(line);
+        bw.newLine();
+      }
+      br.close();
+      bw.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
 }
