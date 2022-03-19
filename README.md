@@ -55,14 +55,13 @@ The Builder will now support Monochrome 1 bit images that are stored inside a C 
 Note: you need version 2.00 or higher of GUIslice_Image2C for this feature.
 
 <p>Added enhancement to SaveAs project. Previously the Builder simply created a new 'project name' folder and inside that
-a 'new project name'.prj. Now the Builder will copy all files (not *.bak or the gui_backup folder) in the original
-folder and scan the <old project name>.<ino,_GSLC.h> files and replace the string 'old project name' with 'new project name'
+a `new project name`.prj file. Now the Builder will copy all files (not *.bak or the gui_backup folder) in the original
+folder and scan the `old project name`.{ino,_GSLC.h} files and replace the string `old project name` with `new project name`
 while also renaming these files to the new project name.
 </p>
 
-<p>
-New Themes have been added to the Builder.
-/p>
+New Themes have been added to the Builder. For a full list go to:
+(flatlaf-intellij-themes)[https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes]
 
 #### Fix for Issue 200
 <p>
