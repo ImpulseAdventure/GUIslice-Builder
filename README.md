@@ -61,7 +61,7 @@ while also renaming these files to the new project name.
 </p>
 
 New Themes have been added to the Builder. For a full list go to:
-(flatlaf-intellij-themes)[https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes]
+[flatlaf-intellij-themes](https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes)
 
 #### Fix for Issue 200
 <p>
