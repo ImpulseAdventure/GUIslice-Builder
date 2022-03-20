@@ -66,7 +66,7 @@ New Themes have been added to the Builder. For a full list go to:
 #### Fix for Issue 200
 <p>
 When the Buider is opened for the very first time a new empty project is created with a target platform of arduino. 
-Previously if a User then went to edit->options->General tab just as the User Guide recomends and changes display
+Previously if a User then went to edit->options->General tab just as the User Guide recommends and changes display
 screen size and platform target this new information wasn't being copied to the open project's Project Options Tab.
 Causing issue 200 where users would get compile errors due to generated code for Arduino not the actual target platform 
 the user requested. 

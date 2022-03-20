@@ -36,7 +36,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DateFormat;
@@ -77,9 +76,10 @@ import builder.views.TreeView;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.IntelliJTheme;
+
+import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
+import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes.FlatIJLookAndFeelInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -429,7 +429,7 @@ public class Builder  extends JDesktopPane {
     timer.start(); // Go go go!
   }
   
-  @SuppressWarnings("resource")
+//  @SuppressWarnings("resource")
   public static void setLookAndFeel(String selectedLaf) {
     try {
       // scan themes for a match
@@ -442,10 +442,6 @@ public class Builder  extends JDesktopPane {
       if (themeInfo != null) {
         if( themeInfo.lafClassName != null ) {
           UIManager.setLookAndFeel( themeInfo.lafClassName );
-          ribbon.setRibbonColors();
-          return;
-        } else if( themeInfo.themeFile != null ) {
-          FlatLaf.install(IntelliJTheme.createLaf(new FileInputStream(themeInfo.themeFile)));
           ribbon.setRibbonColors();
           return;
         }
@@ -493,21 +489,12 @@ public class Builder  extends JDesktopPane {
     themes.add( new ThemeInfo( "Flat IntelliJ", null, FlatIntelliJLaf.class.getName() ) );
     themes.add( new ThemeInfo( "Flat Darcula" , null, FlatDarculaLaf.class.getName() ) );
 
-    // now add Intellij Themes
-    String themesPath = CommonUtils.getInstance().getWorkingDir() +
-        "templates" + System.getProperty("file.separator") + "intellijthemes";
-    File directory = new File(themesPath);
-    File[] themeFiles = directory.listFiles( (dir, name) -> name.endsWith( ".theme.json" ) );
-    if( themeFiles == null )
-      return;
-    for( File f : themeFiles ) {
-      String name = f.getName();
-      int n = name.indexOf(".theme.json");
-      name = name.substring(0, n);
-      themes.add(new ThemeInfo( name, f, null));
+    // add intellij themes next
+    for (FlatIJLookAndFeelInfo info : FlatAllIJThemes.INFOS) {
+      themes.add( new ThemeInfo( info.getName() , null, info.getClassName()) );
     }
-    
   }
+  
   /**
    * The Class FrameListen traps the resize frame event so we can
    * reset our point mapping function to the new settings.
