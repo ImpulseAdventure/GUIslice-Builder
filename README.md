@@ -137,12 +137,14 @@ traverse and edit most widgets in the GUI using external inputs. This feature re
 Some elements now require a slightly larger margin around them (ie. 1px) to accommodate a potential focus frame. 
 For example, between a slider and the listbox.
 </p>
+
 <p>
 Added support for UTFT library using Target Platform "utft". Full native font support for fonts downloaded from 
 [UTFT Fonts](http://www.rinkydinkelectronics.com/r_fonts.php). Simply download and drop them into GUIsliceBuilder/fonts/utft.
 The Builder ships with the UTFT DefaultFonts (SmallFont, BigFont, and SevenSegNumFont) installed.
 See User Guide section 5.7 Adding Fonts for more details.
 </p>
+
 ### Bug Fixes for 0.17.0
 - Issue `#175` Inserting a unicode character into text field caused crash
 - Issue `#174` Crash when input non-ascii chars when you first didn't change to font that supports unicode.
