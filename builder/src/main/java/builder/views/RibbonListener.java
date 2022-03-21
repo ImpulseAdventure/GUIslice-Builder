@@ -648,7 +648,7 @@ public class RibbonListener implements ActionListener {
       file = createFolderDialog();
       if (file != null) {
         try {
-          controller.saveProject(file);
+          controller.saveAsProject(file);
         } catch (IOException e2) {
           Builder.logger.debug("Project SaveAs Failed " + e2.toString());
           JOptionPane.showMessageDialog(null, "Project SaveAs Failed", e2.toString(), JOptionPane.ERROR_MESSAGE);

@@ -946,6 +946,59 @@ public class Controller extends JInternalFrame
   }
 
   /**
+   * Save as project.
+   *
+   * @param file
+   *          the output file
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
+  public void saveAsProject(File file) throws IOException {
+    /* first copy our previous project folder 
+     * contents to our new project folder.
+     * 
+     * Our folder names are simply the name minus the ending ".prj"
+     */
+    String sOldName = projectFile.getName();
+    String sNewName = file.getName();
+    String sNewFolder = file.getPath();
+    int n = sNewFolder.indexOf(sNewName);
+    sNewFolder = sNewFolder.substring(0,n-1);
+    String sOldFolder = projectFile.getPath();
+    n = sOldFolder.indexOf(sOldName);
+    sOldFolder = sOldFolder.substring(0,n-1);
+    CommonUtils.copyDirectory(sOldFolder, sNewFolder);
+    /* now since we have copied any existing
+     * <old project name>.ino and <old project name>.h
+     * we need to rename them to our new name.
+     * Of course, we are done if they don't exist.
+     */
+    n = sOldName.indexOf(".prj");
+    sOldName = sOldName.substring(0,n);
+    n = sNewName.indexOf(".prj");
+    sNewName = sNewName.substring(0,n);
+    File header = new File(sNewFolder + System.getProperty("file.separator") + sOldName+"_GSLC.h");
+    File ino = new File(sNewFolder + System.getProperty("file.separator") + sOldName +".ino");
+    File prj = new File(sNewFolder + System.getProperty("file.separator") + sOldName + ".prj");
+    if (header.exists()) {
+      File new_header = new File(sNewFolder + System.getProperty("file.separator") + sNewName+"_GSLC.h");
+      CommonUtils.fileReplaceStr(header, new_header, sOldName,sNewName);
+      header.delete();
+    }
+    if (ino.exists()) { 
+      File new_ino = new File(sNewFolder + System.getProperty("file.separator") + sNewName+".ino");
+      CommonUtils.fileReplaceStr(ino, new_ino, sOldName,sNewName);
+      ino.delete();
+    }
+    if (prj.exists()) {
+      prj.delete();
+    }
+    saveProject(file);
+    closeProject();
+    openProject(file);
+  }
+  
+  /**
    * Open project.
    *
    * @param file
@@ -988,7 +1041,7 @@ public class Controller extends JInternalFrame
 //      System.out.println("currentpage Key: " + currentPage.getKey());
       if (strVersion.equals("13.025") || strVersion.equals("17") ) {
         pm = new ProjectModel();
-        pm.readModel(in);
+        pm.readModel(in,EnumFactory.PROJECT + "$1");
       } else {
         createProjectModel();
       }
@@ -1461,6 +1514,18 @@ public class Controller extends JInternalFrame
   @Override public void update(Observable o, Object arg) {
 
     if (o == generalEditor) {
+      if (!generalEditor.getTarget().equals(getTargetPlatform())) {
+        // we need to update our current project
+        pm.setTargetPlatform(generalEditor.getTarget());
+      }
+      if (generalEditor.getWidth() != pm.getWidth()) {
+        pm.setWidth(generalEditor.getWidth());
+        refreshView();
+      }
+      if (generalEditor.getHeight() != pm.getHeight()) {
+        pm.setHeight(generalEditor.getHeight());
+        refreshView();
+      }
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();
         try { // change look and feel
@@ -1480,6 +1545,12 @@ public class Controller extends JInternalFrame
     String key = evt.getKey();
     String val = evt.getNewValue();
 
+    if (key.equals("Target Platform")) {
+      if (!generalEditor.getTarget().equals(getTargetPlatform())) {
+        // we need to update our current project
+        pm.setTargetPlatform(generalEditor.getTarget());
+      }
+    }
     if (key.equals("Theme")) {
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();

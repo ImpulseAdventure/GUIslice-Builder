@@ -134,7 +134,8 @@ public class GeneralEditor extends ModelEditor {
    */
   public void setRecentFilesList(String s) { 
     ((GeneralModel) model).setRecentFilesList(s);
-    savePreferences();
+    fPrefs.put("Recent Files", (String)s);
+    super.setChanged();
   }
 
   /**

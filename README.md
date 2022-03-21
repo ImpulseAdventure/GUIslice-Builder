@@ -7,36 +7,81 @@ Please refer to the wiki page for installation and usage details:
 ![image](https://user-images.githubusercontent.com/8510097/90728338-9a8be100-e279-11ea-969e-cbd8bb0ac6c6.png)
 
 ## Brief Overview
+<p>
 The GUIslice Builder is a standalone desktop application that is more than a layout tool for your UI. It's designed as 
 Low Code GUI Generator for User Interfaces that make use of GUIslice API. 
+</p>
 
+<p>
 The cross-platform utility includes a WYSIWYG graphical editor that enables drag & drop placement of UI elements. Once a GUI has been laid out, the Builder can then generate a fully functional GUIslice Graphical UI complete with plug-in points for your custom application. 
+</p>
 
+<p>
 The GUIslice API framework code can handle hardware like Arduino, ESP8266, ESP32 and more. It supports Graphic libraries like 
 Adafruit's GFX, M5Stack, TFT_eSPI and LINUX with a wide variety of TFT Display Drivers and combinations of Touch support chips.
+</p>
 
+<p>
 The generated output code (*.c, *.ino, *_GSLC.h) includes all of the necessary defines, UI storage elements and initialization 
 in addition to the placement of the UI elements. This will greatly improve the ease in creating a new Graphical Application.
+</p>
 
 You can find Example project files inside GUIslice/examples/builder
 
 ## Disclaimer ##
-The Software is not designed for use in devices or situations where there may be physical injury if the Software has errors.
+<p>The Software is not designed for use in devices or situations where there may be physical injury 
+if the Software has errors.</p>
 
 ## Builder Contents
-Note that the Builder executables and User Guide are attached to the latest GUIslice Builder Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/releases):
+
+Note that the Builder executables and User Guide are attached to the latest GUIslice Builder
+Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/releases)
+
 
 ## Builder Source Code
+
 The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder](https://github.com/ImpulseAdventure/GUIslice-Builder)
 - Build instructions can be found in `BUILD.txt`
 
 ## Release History
 
+### Enhancements for 0.17.b11
+
+
+The Builder will now support Monochrome 1 bit images that are stored inside a C Array file created by my 
+
+[GUIslice_Image2C utility](https://github.com/Pconti31/GUIslice_Image2C) 
+
+Note: you need version 2.00 or higher of GUIslice_Image2C for this feature.
+
+<p>Added enhancement to SaveAs project. Previously the Builder simply created a new 'project name' folder and inside that
+a `new project name`.prj file. Now the Builder will copy all files (not *.bak or the gui_backup folder) in the original
+folder and scan the `old project name`.{ino,_GSLC.h} files and replace the string `old project name` with `new project name`
+while also renaming these files to the new project name.
+</p>
+
+New Themes have been added to the Builder. For a full list go to:
+[flatlaf-intellij-themes](https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes)
+
+#### Fix for Issue 200
+<p>
+When the Buider is opened for the very first time a new empty project is created with a target platform of arduino. 
+Previously if a User then went to edit->options->General tab just as the User Guide recommends and changes display
+screen size and platform target this new information wasn't being copied to the open project's Project Options Tab.
+Causing issue 200 where users would get compile errors due to generated code for Arduino not the actual target platform 
+the user requested. 
+</p>
+
+- Issue `200` ESP32 with TFT_eSPI Compile Errors 200
+- Issue `158` How to copy a .prj file to a new sketch folder 
+
 ### Enhancements for 0.17.b10
+<p>
 Users can now avoid auto-generated code within Text and Image Button callbacks and add their own code that will be inserted 
 during each code generation. The new property is called `Custom Code` and is optional. This property, if used, will then make 
 the properties `Jump Page ENUM`, `Popup Page Enum`, and `Hide Popup Page?` read-only.  See the new User Guide 4.19 Text Button 
 for example.
+</p>
 
 - Issue `198` Request: Add a feature for BTN to execute a custom code.
 
@@ -51,9 +96,11 @@ find a font that can scale to the correct ratio or the closest it can find. Neve
 Testing showed that the Line Element would cause crashes if scaled.  This is now fixed.
 
 ### Enhancements for 0.17.b07
+<p>
 Added new scaling command in the layout tab to allow automatic updating of elements x,y,width and height due to TFT screen display change of size. 
 Also, you can now change the Scrollbar width and thumb sizes for Listboxes and Textboxes.
 Our User Guide has been updated accordingly.
+</p>
 
 - Issue `194` Request: Scroll bar set width and thumb size in textbox and listbox
 - Issue `192` Request: Project Screen Size change with change of all existed elements
@@ -71,9 +118,11 @@ Now supports saving the current project's zoom factor inside the *.prj file so i
 
 ### Enhancements for 0.17.b03
 - Issue `#147` Allow multiline text for text button
+<p>
 NOTE: Sizing of a Text button using multiple lines of text is the users responsiblity. You will need to set 
 the height and width manually.  Ending each line inside the Label with "\n". Example, "line1\nline2\nline3".
 The Builder will remove each \n and replace with a decimal 10 (newline) when you press enter key.
+</p>
 
 ### Hot Fix 0.17.b02
 Yet another fix for critical Log4Shell vulnerability inside Apache Log4j. The vulnerability applies 2.0 to 2.15.0 of Apache Log4j.  
@@ -82,15 +131,19 @@ Yet another fix for critical Log4Shell vulnerability inside Apache Log4j. The vu
 Fix for critical Log4Shell vulnerability inside Apache Log4j. The vulnerability was publicly disclosed via GitHub on December 9, 2021. Versions 2.0 and 2.14.1 of Apache Log4j have been impacted.  
 
 ### Enhancements for 0.17.0
+<p>
 GUIslice 0.17 added improved support for external inputs such as physical buttons, encoders or pins. Users can now 
 traverse and edit most widgets in the GUI using external inputs. This feature required minor changes to Builder. 
 Some elements now require a slightly larger margin around them (ie. 1px) to accommodate a potential focus frame. 
 For example, between a slider and the listbox.
+</p>
 
+<p>
 Added support for UTFT library using Target Platform "utft". Full native font support for fonts downloaded from 
 [UTFT Fonts](http://www.rinkydinkelectronics.com/r_fonts.php). Simply download and drop them into GUIsliceBuilder/fonts/utft.
 The Builder ships with the UTFT DefaultFonts (SmallFont, BigFont, and SevenSegNumFont) installed.
 See User Guide section 5.7 Adding Fonts for more details.
+</p>
 
 ### Bug Fixes for 0.17.0
 - Issue `#175` Inserting a unicode character into text field caused crash
@@ -101,21 +154,28 @@ Note you still must select an appropiate font before enterring characters or the
 - GUIslice discussion -> xTextBox - writing to a specific character position `#392`.  Setting a Grid positions minor or major to a width or height of zero caused crashes. 
 
 ### Enhancements for 0.16.0
-
+<p>
 With this release the Builder becomes a true WYSIWYG editor for most platforms. The Builder now reads and parses 
 your actual Platform Font header and c files and renders them inside the Builder. This native font support will now 
 be able to give you accurate sizing and positioning information for supported fonts. Plus your text will be now 
 displayed exactly as it will appear on your target TFT display. 
+</p>
 
+<p>
 The Native Font support includes, Adafruit's Builtin GLCD fonts, and Adafruit's GFX compatable fonts, and 
 Teensy ILI9341_t3 fonts. This Native Font support includes the ability to add your own fonts to the Builder 
 simply by dropping them into the proper folders. You may also tell the Builder to simulate fonts it doesn't directly support. 
+</p>
 
+<p>
 See the User Guide for more information about font handling and how to add your custom fonts.
+</p>
 
+<p>
 GUIslice API 0.16.0 has upgraded the Keypad support. This is a breaking change for the API so the Builder 
 will now require running with GUIslice API 0.16.0 and higher. For further information on keypads 
 refer to the wiki page [Custom KeyPads](https://github.com/ImpulseAdventure/GUIslice/wiki/Custom-KeyPads)
+</p>
 
 The Builder has added support for ctrl-Z for Undo and ctrl-Y for Redo.
 
@@ -167,18 +227,26 @@ You may add your own vlw fonts by following the updated User Guide chapter 5.7 A
  - Bug No. 202 Draw function selected for Box frame the rounded property should be disabled API issue `#326`
 
 ### Enhancements for 0.16.b004
+<p>
 Added CharacterMap dialog to "Text" propery fields for UIElements Text, Text Button, Text Input, Spinner, and Number Input.
+</p>
 
+<p>
 This feature will allow you access to graphics characters previousily hidden in Adafruit's classic (Builtin) fonts and other fonts. 
 You can also access ISO8859 international characters using a newly added NotoLatin1 font.
+</p>
 
+<p>
 First set your desired font then invoke CharacterMap by right clicking on the "Text" property and selecting CharacterMap. 
 Select your characters one at a time and then press copy to append them to your text field.
+</p>
 
 The User Guide has been updated documenting this new feature.  
 
-The UI Element Spinner has been upgraded to support changing the Increment and Decrement Arrow characters using the API call gslc_ElemXSpinnerSetChars().
-
+<p>
+The UI Element Spinner has been upgraded to support changing the Increment and Decrement Arrow characters 
+using the API call gslc_ElemXSpinnerSetChars().
+</p>
 
 ### Bug Fixes 0.16.b004
  - Bug No. 201 Text button frame cannot be disabled issue `#139`

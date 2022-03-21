@@ -28,7 +28,6 @@ package builder.views;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import builder.Builder;
 import builder.common.HexToImgConv;
 
 import java.awt.*;
@@ -121,6 +120,7 @@ public class ImagePreviewPanel extends JPanel implements PropertyChangeListener 
                 } 
               } else if (imageName.toLowerCase().endsWith(".c")) {
                 image = convert.doConvert(new File(imageName));
+                if (image == null) return;
                 scaleImage();
                 repaint();
               }
