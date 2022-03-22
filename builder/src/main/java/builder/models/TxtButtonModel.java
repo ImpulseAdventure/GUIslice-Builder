@@ -148,7 +148,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
     rendererText = new TextTFTCellRenderer();
     rendererText.setFontTFT(ff, null);
 
-    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.STRING_DIALOG);
+    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.CODE_DIALOG);
     codeCell.setData(DEF_CODE);
     codeCell.addButtonListener(this);
   }

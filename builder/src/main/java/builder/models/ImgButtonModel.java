@@ -202,7 +202,7 @@ public class ImgButtonModel extends WidgetModel implements MultipeLineCellListen
     cbFormat.addItem(FORMAT_RAW);
     formatCellEditor = new DefaultCellEditor(cbFormat);
 
-    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.STRING_DIALOG);
+    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.CODE_DIALOG);
     codeCell.setData(DEF_CODE);
     codeCell.addButtonListener(this);
   }

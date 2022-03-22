@@ -591,8 +591,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
           String[] codeList = modelInfo.getCodeSegment();
           StringBuilder sbCode =  new StringBuilder();
           for (int i=0; i<codeList.length; i++) {
-            sbCode.append("        ");
-            sbCode.append(codeList[i]);
+            String codeLine = codeList[i].replace("\t","  ");
+            sbCode.append(codeLine);
             sbCode.append("\n");
           }
           map.put(CODE_SEGMENT_MACRO, sbCode.toString());

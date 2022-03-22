@@ -16,12 +16,14 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import builder.views.CodeDialog;
 import builder.views.FontListDialog;
 import builder.views.StringListDialog;
 
 /**
- * NOTE: This class will use StringListDialog 
- *       or FontListDialog for editing
+ * NOTE: This class will use CodeDialog, 
+ *     StringListDialog or
+ *     FontListDialog for editing
  * @author Paul Conti
  *
  */
@@ -33,7 +35,7 @@ public class MultiStringsCell extends AbstractCellEditor
   private String title;
   private String[] lines = null;
   MultipeLineCellListener listener;
-  public static enum MCDialogType { STRING_DIALOG, FONT_DIALOG }
+  public static enum MCDialogType { CODE_DIALOG, STRING_DIALOG, FONT_DIALOG }
   
   JButton b;
 
@@ -48,6 +50,20 @@ public class MultiStringsCell extends AbstractCellEditor
     label.setVerticalAlignment(JLabel.CENTER);
     panel.add(label, BorderLayout.CENTER);
     b = new JButton("...");
+    if (dt.equals(MCDialogType.FONT_DIALOG)) {
+      b.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          lines = FontListDialog.showDialog(
+              new JFrame(),
+              null,
+              title,
+              "List",
+              lines);
+          listener.buttonClicked(lines);
+        }
+      }); 
+    }
     if (dt.equals(MCDialogType.STRING_DIALOG)) {
       b.addActionListener(new ActionListener() {
         @Override
@@ -62,15 +78,15 @@ public class MultiStringsCell extends AbstractCellEditor
         }
       }); 
     }
-    if (dt.equals(MCDialogType.FONT_DIALOG)) {
+    if (dt.equals(MCDialogType.CODE_DIALOG)) {
       b.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
-          lines = FontListDialog.showDialog(
+          lines = CodeDialog.showDialog(
               new JFrame(),
               null,
               title,
-              "List",
+              "Code Editor",
               lines);
           listener.buttonClicked(lines);
         }
