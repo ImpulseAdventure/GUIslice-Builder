@@ -1738,6 +1738,8 @@ If you edit this file you must restart the Builder it will then use the new font
 
 # Appendix A - Acknowledgements
 
+All Copyright Notices are included in Appendix C
+
 ## JRibbonBar Project
 
 The GUIsliceBuilder's Ribbon code is provided by the JRibbonBar project written by Csekme Krisztián, Software Engineer at CalTec.
@@ -1768,6 +1770,9 @@ Tracing of our runtime is provided by the apache library.
 
 - **log4j-api-2.8.jar**
 - **log4j-core-2.8.jar** 
+
+## bobbylight/RSyntaxTextArea provides Code editing support
+<https://github.com/bobbylight/RSyntaxTextArea>
 
 ## Icon Attribution
 
@@ -2156,6 +2161,40 @@ For example:
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
+
+## bobbylight/RSyntaxTextArea Copyright
+
+Licensed under the BSD 3-Clause "New" or "Revised" License
+
+Copyright (c) 2021, Robert Futrell
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+* Neither the name of the author nor the names of its contributors may
+  be used to endorse or promote products derived from this software
+  without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
 
 # Appendix D - Theme Support
 
