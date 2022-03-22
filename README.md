@@ -45,8 +45,11 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 
 ## Release History
 
-### Enhancements for 0.17.b11
+### Enhancements for 0.17.b12
+Improved Code Editing for those who add custom code to Button Callbacks.  The code editing is provided by  
+[RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea)
 
+### Enhancements for 0.17.b11
 
 The Builder will now support Monochrome 1 bit images that are stored inside a C Array file created by my 
 
