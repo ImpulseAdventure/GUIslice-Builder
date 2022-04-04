@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,62 +23,59 @@
  * THE SOFTWARE.
  *
  */
-package builder.fonts;
-
-import java.util.ArrayList;
-import java.util.List;
+package builder.common;
 
 /**
- * The Class BuilderFonts.
- * Top level container for all fonts and grapfic platforms.
+ * The Class Pair.
  * 
- * Filled in by JSON deserialization inside FontFactory
+ * Simple class to allow storing two string values
+ * side by side
  * 
  * @author Paul Conti
+ * 
  */
-public class BuilderFonts {
-  
-  /** The all fonts. */
-  private List<FontGraphics> allFonts = new ArrayList<FontGraphics>();
-  
-  /**
-   * Instantiates a new builder fonts.
-   */
-  public BuilderFonts() {
-    
-  }
+public class Pair {
+
+  private String value1;
+  private String value2;
   
   /**
-   * Adds a platform.
-   *
-   * @param platform
-   *          the platform
+   * Instantiates a new pair.
    */
-  public void addPlatform(FontGraphics platform) {
-    allFonts.add(platform);
+  public Pair(String value1, String value2) {
+    this.value1 = value1;
+    this.value2 = value2;
+  }
+
+  public String getValue1() {
+    return value1;
+  }
+
+  public String getValue2() {
+    return value2;
   }
   
-  /**
-   * Gets the list of platforms.
-   *
-   * @return the platforms
-   */
-  public List<FontGraphics> getPlatforms() {
-    return allFonts;
-  }
-  
-  /**
-   * Gets a platform object by name.
-   *
-   * @param platformName
-   *          the platform name
-   * @return the platform
-   */
-  public FontGraphics getPlatform(String platformName) {
-    for (FontGraphics p : allFonts) {
-      if (p.getName().equals(platformName))
-        return p;
-    }
-    return null;
-  }
+  @Override
+  public boolean equals(Object o) { 
+
+    // If the object is compared with itself then return true   
+    if (o == this) { 
+        return true; 
+    } 
+
+    /* Check if o is an instance of Pair or not 
+      "null instanceof [type]" also returns false */
+    if (!(o instanceof Pair)) { 
+        return false; 
+    } 
+      
+    // typecast o to TreeItem so that we can compare data members  
+    Pair c = (Pair) o; 
+      
+    // Compare the data members and return accordingly  
+    return (c.getValue1().equals(this.getValue1()) &&
+            c.getValue2().equals(this.getValue2()));
+  } 
+   
+
 }

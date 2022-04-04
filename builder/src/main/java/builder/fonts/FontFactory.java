@@ -48,6 +48,7 @@ import javax.swing.JOptionPane;
 import builder.Builder;
 import builder.common.CommonUtils;
 import builder.controller.Controller;
+import builder.models.ProjectModel;
 
 /**
  * A factory for creating and managing GUIslice Library Font objects
@@ -77,8 +78,11 @@ public class FontFactory {
   public static int nErrors = 0;
 
   /** The font map used as index into font item list. */
-  public static HashMap<String, Integer> fontMap = new HashMap<String, Integer>(128);
+  static HashMap<String, Integer> fontMap = new HashMap<String, Integer>(128);
   
+  /** The font map used as indicator of font file names we may need to delete. */
+  static HashMap<String, Integer> fontCleanupMap = new HashMap<String, Integer>(128);
+
   /** The number of platforms */
   private int nPlatforms;
   
@@ -87,6 +91,9 @@ public class FontFactory {
   
   /** The list of templates. */
   List<FontItem>[] fontsByPlatform = null;
+  
+  /** m_sFileSep */
+  private static String m_sFileSep = null;
 
   /**
    * Gets the single instance of FontFactory.
@@ -96,6 +103,7 @@ public class FontFactory {
   public static synchronized FontFactory getInstance() {
     if (instance == null) {
       instance = new FontFactory();
+      FontFactory.m_sFileSep = System.getProperty("file.separator");
     }
     return instance;
   }
@@ -112,11 +120,22 @@ public class FontFactory {
    */
   public void init() {
     
-    String fullPath = CommonUtils.getInstance().getWorkingDir();
-    String jsonFile = fullPath + "templates" + System.getProperty("file.separator") 
+    String fullPath = CommonUtils.getWorkingDir();
+    String jsonFile = fullPath + "templates" + m_sFileSep 
         + FONT_TEMPLATE;
     readFonts(jsonFile);
     Builder.logger.debug("FontFactory Initialized");
+  }
+  
+  /**
+   * getFontCleanupMap
+   * Used by CodeGeneration pipe->FontsPipe to delete
+   * font headers from a project sketchbook before
+   * we copy any new font headers.
+   * @return HashMap of header file names
+   */
+  public static HashMap<String, Integer> getFontCleanupMap() {
+    return fontCleanupMap;
   }
   
   /**
@@ -522,7 +541,7 @@ public class FontFactory {
   }
   
   /**
-   * drawTextImage
+   * drawPreviewImage
    * 
    * @param r        Rectangle region to contain the text
    * @param align    Text alignment / justification mode
@@ -533,7 +552,7 @@ public class FontFactory {
    * @param colBg    Color for background, transparent if color matches colTxt
    * @param nMargin  Number of pixels gap to leave surrounding text
    */
-  public BufferedImage drawTextImage(String align, Rectangle r, String str, FontTFT font, 
+  public BufferedImage drawPreviewImage(String align, Rectangle r, String str, FontTFT font, 
     Color colTxt, Color colBg, int nMargin) {
     
     // Fetch the size of the text to allow for justification
@@ -544,6 +563,24 @@ public class FontFactory {
 
     // Call the font's text rendering routine
     return font.drawImage(rTxt,str, colTxt, colBg,false);
+
+  }
+  
+  /**
+   * drawTextImage
+   * Used by JTable so Alignment is hard-coded to "GSLC_ALIGN_MID_LEFT"
+   * @param r        Rectangle region to contain the text
+   * @param font     The TFT font to use for this text string
+   * @param colTxt   Color for text
+   * @param colBg    Color for background, transparent if color matches colTxt
+   * @param nMargin  Number of pixels gap to leave surrounding text
+   */
+  public BufferedImage drawTextImage(Rectangle r, String str, FontTFT font, 
+    Color colTxt, Color colBg, int nMargin) {
+    
+    // Call the font's text rendering routine
+    r.x += nMargin;
+    return font.drawImage(r,str, colTxt, colBg,false);
 
   }
   
@@ -671,76 +708,104 @@ public class FontFactory {
     nErrors = 0;
     platformNames = new String[10];
     fontsByPlatform = new ArrayList[10];
-    for (FontPlatform p : builderFonts.getPlatforms()) {
+
+    for (FontGraphics p : builderFonts.getPlatforms()) {
   Builder.logger.debug("Platform: " + p.getName());
       platformNames[nPlatforms] = p.getName();
       list = new ArrayList<FontItem>();
       fontsByPlatform[nPlatforms++] = list;
       for (FontCategory c : p.getCategories()) {
-  Builder.logger.debug("Platform: " + c.getName());
-        if (c.getFonts().size() == 0) {
-          // handle native fonts that did not require JSON entries
-          if (c.getName().equals(FontTFT.FONT_GFX)) {
-            Builder.logger.debug(c.toString());
-            String fullPath = CommonUtils.getInstance().getWorkingDir();
-            String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "gfx";
-            Path startingDir = Paths.get(fontsPath);
-            FontLoadGFXFiles fileVisitor = new FontLoadGFXFiles(p, c);
-            try {
-              Files.walkFileTree(startingDir, fileVisitor);
-            } catch (IOException e) {
-              nErrors++;
-              Builder.logger.error(e.toString());
-            }
-          } else if (c.getName().equals(FontTFT.FONT_T3)) {
-            // Builder.logger.debug(c.toString());
-            String fullPath = CommonUtils.getInstance().getWorkingDir();
-            String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "t3";
-            Path startingDir = Paths.get(fontsPath);
-            FontLoadT3Files fileVisitor = new FontLoadT3Files(p, c);
-            try {
-              Files.walkFileTree(startingDir, fileVisitor);
-            } catch (IOException e) {
-              nErrors++;
-              Builder.logger.error(e.toString());
-            }
-          } else if (c.getName().equals(FontTFT.FONT_UTFT)) {
-   Builder.logger.debug(c.toString());
-            String fullPath = CommonUtils.getInstance().getWorkingDir();
-            String fontsPath = fullPath + "fonts" + System.getProperty("file.separator") + "utft";
-            Path startingDir = Paths.get(fontsPath);
-            FontLoadUtftFiles fileVisitor = new FontLoadUtftFiles(p, c);
-            try {
-              Files.walkFileTree(startingDir, fileVisitor);
-            } catch (IOException e) {
-              nErrors++;
-              Builder.logger.error(e.toString());
-            }
-          } 
-        } else {
-          for (FontItem item : c.getFonts()) {
-            item.setPlatform(p);
-            item.setCategory(c);
-            item.generateEnum();
-            item.generateKey();
-            String key = item.getKey();
-//            Builder.logger.debug("Font: " + item.toString());
-            // check for duplicates
-            if (!fontMap.containsKey(key)) {
-              platformFonts.add(item);
-              list.add(item);
-              fontMap.put(key, Integer.valueOf(idx++));
-            } else {
-              Builder.logger.error("duplicate font: " + key);
-              nErrors++;
-            }
+        /* identify fonts installed by json inside
+         * the category fontMap so that when we
+         * scan our Font folders we know not to add
+         * the headers twice.
+         */
+        c.buildMap();
+        // handle native fonts that did not require JSON entries
+        if (c.getName().equals(FontTFT.FONT_GFX)) {
+          String fullPath = CommonUtils.getWorkingDir();
+          String fontsPath = fullPath + c.getFontFolderPath();
+          Path startingDir = Paths.get(fontsPath);
+          FontLoadGFXFiles fileVisitor = new FontLoadGFXFiles(p, c);
+          try {
+            Files.walkFileTree(startingDir, fileVisitor);
+          } catch (IOException e) {
+            nErrors++;
+            Builder.logger.error(e.toString());
           }
+        } else if (c.getName().equals(FontTFT.FONT_T3)) {
+          // Builder.logger.debug(c.toString());
+          String fullPath = CommonUtils.getWorkingDir();
+          String fontsPath = fullPath + c.getFontFolderPath();
+          Path startingDir = Paths.get(fontsPath);
+          FontLoadT3Files fileVisitor = new FontLoadT3Files(p, c);
+          try {
+            Files.walkFileTree(startingDir, fileVisitor);
+          } catch (IOException e) {
+            nErrors++;
+            Builder.logger.error(e.toString());
+          }
+        } else if (c.getName().equals(FontTFT.FONT_UTFT)) {
+          // Builder.logger.debug(c.toString());
+          String fullPath = CommonUtils.getWorkingDir();
+          String fontsPath = fullPath + c.getFontFolderPath();
+          Path startingDir = Paths.get(fontsPath);
+          FontLoadUtftFiles fileVisitor = new FontLoadUtftFiles(p, c);
+          try {
+            Files.walkFileTree(startingDir, fileVisitor);
+          } catch (IOException e) {
+            nErrors++;
+            Builder.logger.error(e.toString());
+          }
+        }
+        for (FontItem item : c.getFonts()) {
+          String fileName = new String(CommonUtils.getWorkingDir() + c.getFontFolderPath()+item.getFileName());
+          item.setFileName(fileName);
+          item.setPlatform(p);
+          item.setCategory(c);
+          item.generateEnum();
+          item.generateKey();
+        }
+        c.sortFonts();
+        for (FontItem item : c.getFonts()) {
+          // check to be sure font file exists
+          String key = item.getKey();
+          //  Builder.logger.debug(item.toString());
+          // add to our master map of fonts and check for duplicates
+          if (!fontMap.containsKey(key)) {
+            platformFonts.add(item);
+            list.add(item);
+            fontMap.put(key, Integer.valueOf(idx++));
+            /* now check to see if we need to track header 
+             * and/or C source file names for any cleanup during code generation.
+             * Currently we only move un-installed font headers.
+             */
+            if (!item.isInstalledFont() &&
+                !p.getName().equals(ProjectModel.PLATFORM_LINUX) ) {
+              key = item.getIncludeFile();
+              if (!key.equals("NULL")) {
+                if (!fontCleanupMap.containsKey(key)) {
+                  fontCleanupMap.put(key,1);
+                }
+              }
+              key = item.getSrcFilename();
+              if (!key.equals("NULL")) {
+                if (!fontCleanupMap.containsKey(key)) {
+                  fontCleanupMap.put(key,2);
+                }
+              }
+            }
+          } else {
+            Builder.logger.error("duplicate font: " + key);
+            nErrors++;
+          }
+          
         }
       }
     }
     Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of fonts: " + idx);
     if (nErrors > 0) {
-      String fileName = CommonUtils.getInstance().getWorkingDir() + "logs" + System.getProperty("file.separator")
+      String fileName = CommonUtils.getWorkingDir() + "logs" + m_sFileSep
           + "builder.log";
       String msg = String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.", nErrors,
           fileName);

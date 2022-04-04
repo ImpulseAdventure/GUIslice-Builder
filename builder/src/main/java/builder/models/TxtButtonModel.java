@@ -589,6 +589,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
      if (name == null || name.isEmpty()) return;
      FontItem item = ff.getFontItem(name);
      if (item == null) return;
+     FontTFT font = ff.getFont(item.getDisplayName());
+     textBox.setFontTFT(ff, font);
      if (!item.getDisplayName().equals(name)) {
        data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
        if (fireUpdates) {
@@ -611,6 +613,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
        int ch;
        String fontName = getFontDisplayName();
        FontTFT myFont = ff.getFont(fontName);
+       if (myFont == null)
+         return s;
        for (int i = 0; i < len; i++) {
          ch = s.charAt(i);
          // test for \n and if so place actual newline character

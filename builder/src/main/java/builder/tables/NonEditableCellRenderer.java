@@ -58,7 +58,8 @@ public class NonEditableCellRenderer extends DefaultTableCellRenderer {
           value, isSelected, hasFocus, row, col);
       if (col == 1) {
         if (!table.getModel().isCellEditable(row, col)){
-          c.setBackground(new Color(255,228,225));  // misty rose
+          c.setBackground(Color.DARK_GRAY);  
+//          c.setBackground(new Color(255,228,225));  // misty rose
           // c.setBackground(new Color(232,232,232)); // very light gray
         } else {
           c.setBackground(Color.WHITE);

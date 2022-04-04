@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -218,10 +218,18 @@ public class FontGFX extends FontTFT {
     if (strMetrics.h <= 0) {
       strMetrics.h = char_maxheight * length;
     }
-    // clipping
     strMetrics.w = strMetrics.w + (strMetrics.x1 * 2);
 //    strMetrics.h = char_maxheight;
-    
+
+    int img_w = strMetrics.w;
+    int img_h = strMetrics.h;
+    if (r.width > img_w)
+      img_w = r.width;
+    if (r.height > img_h)
+      img_h = r.height;
+      
+    // no clipping is needed since JTable will do that for us.
+/*
     if (bClippingEn) {
       if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
         strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
@@ -230,36 +238,42 @@ public class FontGFX extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
-
-//    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
+*/
+    //    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
     
     // create our image
-    BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
+    BufferedImage image = new BufferedImage(img_w, img_h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
     
 //    Builder.logger.debug("width=" + image.getWidth() + " height=" + image.getHeight());
   
-    // create a transparent background
+    // create a background
     for (int i = 0; i < image.getWidth(); i++) {
       for (int j = 0; j < image.getHeight(); j++) {
-        raster.setPixel(i, j, new int[] { 0, 0, 0, 0 });
+        raster.setPixel(i, j, new int[] { 255, 
+                                          colBg.getRed(), 
+                                          colBg.getGreen(),
+                                          colBg.getBlue() });
       }
     }
-    cursor_x = strMetrics.x1;
-    cursor_y = strMetrics.base_height;
-  
-    for (int i = 0; i < length; i++) {
-      ch = s.charAt(i);
-      if (canDisplay(ch)) {
-        FontGFXGlyph glyph = glyphList.get(ch - first);
-        int w = glyph.width;
-        int h = glyph.height;
-        if ((w > 0) && (h > 0)) { // Skip if char not printable
-          copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y);
+
+    // draw our text, if any
+    if (strMetrics.w > 0 || strMetrics.h > 0) {
+
+      cursor_x = r.x+strMetrics.x1;
+      cursor_y = r.y+strMetrics.base_height;
+    
+      for (int i = 0; i < length; i++) {
+        ch = s.charAt(i);
+        if (canDisplay(ch)) {
+          FontGFXGlyph glyph = glyphList.get(ch - first);
+          int w = glyph.width;
+          int h = glyph.height;
+          if ((w > 0) && (h > 0)) { // Skip if char not printable
+            copyChar(cursor_x, cursor_y, ch, colTxt, colBg, textsize_x, textsize_y);
+          }
+          cursor_x += glyph.xAdvance * textsize_x;
         }
-        cursor_x += glyph.xAdvance * textsize_x;
       }
     }
     return image;

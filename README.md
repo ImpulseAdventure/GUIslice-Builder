@@ -46,6 +46,21 @@ The Builder source code is located in this repository [ImpulseAdventure/GUIslice
 ## Release History
 
 ### Enhancements for 0.17.b12
+<P>
+Added support for PlatformIO IDE issue `#117`.  Users now select either Arduino IDE or PlatformIO IDE.
+The platformio.ini file will be populated with all settings needed for common configurations. 
+The resulting project folder will be structured with a src, include, lib, and test subfolders. Instead of code named
+projectname.ino it will be named main.cpp. The projectname_GSLC.h file will be inside the project folder/includes.
+Further details on customizing the Builder for PlatformIO is available in the 
+`User Guide Chapter 6 - Configuring PlatformIO Support`.
+</p>
+
+<p>
+Improved Font handling. The Builder will now identify fonts that come standard with a particular graphics package 
+like Adafruit_GFX and if you request one that isn't provided the Builder will copy the font to your project folder.
+It will also cleanup during a new code generation any font files moved previously that are no longer in use.
+</p>
+
 Improved Code Editing for those who add custom code to Button Callbacks.  The code editing is provided by  
 [RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea)
 

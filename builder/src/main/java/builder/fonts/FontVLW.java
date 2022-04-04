@@ -229,7 +229,9 @@ public class FontVLW extends FontTFT {
      * of the final image
      */
     BufferedImage image = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d = image.createGraphics();    
+    Graphics2D g2d = image.createGraphics();
+    g2d.setColor(colBg);
+    g2d.fillRect(r.x, r.y, r.width, r.height);
     g2d.setColor(colTxt);
     g2d.setFont(font);
     g2d.drawString(s, r.x, r.y);

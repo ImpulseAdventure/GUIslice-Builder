@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+
+import builder.Builder;
 
 @SuppressWarnings("unused")
 public class FontChooser extends JDialog {
@@ -285,10 +287,16 @@ public class FontChooser extends JDialog {
     String sStyle = cbFontStyle.getItemAt(i);
     FontItem item = ff.getFontItem(h.getFontName(),sSize, sStyle);
     if (item == null) return;
+//    Builder.logger.debug("item: "+item.toString());
     Dimension ppDim = previewPanel.getSize();
     Rectangle r = new Rectangle(ppDim);
     FontTFT font = item.getFont();
-    BufferedImage img = ff.drawTextImage(FontTFT.ALIGN_LEFT, r, "Preview Font", font, textColor, fillColor, 0);
+    if (font == null) {
+      Builder.logger.error("font failure: "+item.toString());
+      return;
+    }
+    BufferedImage img = ff.drawPreviewImage(FontTFT.ALIGN_TOP_CENTER, r, "Preview Font", 
+        font, textColor, fillColor, 5);
     if (img != null) {
       previewLabel.setEnabled(true);
       previewLabel.setIcon(new ImageIcon(img));

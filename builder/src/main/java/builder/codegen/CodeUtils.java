@@ -33,11 +33,13 @@ import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import builder.common.Pair;
 import builder.fonts.FontTFT;
 import builder.fonts.FontTtf;
 import builder.fonts.FontVLW;
@@ -336,6 +338,33 @@ public final class CodeUtils {
         litr.remove();
         else 
         prev = s;
+      }
+    }
+  }
+
+  /**
+  * Sort list and remove duplicates.
+  *
+  * @param list
+  *          the list
+  */
+  static public void sortPairsRemoveDups(List<Pair> list) {
+    
+    if (list.size() > 1) {
+      Collections.sort(list, new Comparator<Pair>() {
+        public int compare(Pair one, Pair other) {
+          return one.getValue2().compareTo(other.getValue2());
+        }
+      }); 
+      Pair s = null;
+      Pair prev = null;
+      ListIterator<Pair> litr = list.listIterator();
+      while(litr.hasNext()) {
+        s = litr.next();
+        if (s.equals(prev))
+          litr.remove();
+        else 
+          prev = s;
       }
     }
   }

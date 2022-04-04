@@ -86,10 +86,27 @@ public class PropertyCommand extends Command {
    */
   @Override
   public String toString() {
-    return new String("model: " + model.getKey() + " Property: '"  
+    if (curValue == null && newValue == null) {
+      return new String("model: " + model.getKey() + " Property: '"  
+          +  model.getPropertyName(row) + "' Changed from->" 
+          + "null to->null"
+          + " row=" + row);
+    } else if (curValue != null && newValue == null) {
+      return new String("model: " + model.getKey() + " Property: '"  
+          +  model.getPropertyName(row) + "' Changed from->" 
+          + curValue.toString() + " to->NULL"
+          + " row=" + row);
+    } else if (curValue == null && newValue != null) {
+        return new String("model: " + model.getKey() + " Property: '"  
+            +  model.getPropertyName(row) + "' Changed from->" 
+            + "null" + " to->"
+            + newValue.toString() + " row=" + row);
+    } else {
+        return new String("model: " + model.getKey() + " Property: '"  
         +  model.getPropertyName(row) + "' Changed from->" 
         + curValue.toString() + " to->"
         + newValue.toString() + " row=" + row);
+    }
   }
 
 }

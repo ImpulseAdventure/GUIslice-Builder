@@ -1518,11 +1518,11 @@ public class Controller extends JInternalFrame
         // we need to update our current project
         pm.setTargetPlatform(generalEditor.getTarget());
       }
-      if (generalEditor.getWidth() != pm.getWidth()) {
+      if (pm != null && generalEditor.getWidth() != pm.getWidth()) {
         pm.setWidth(generalEditor.getWidth());
         refreshView();
       }
-      if (generalEditor.getHeight() != pm.getHeight()) {
+      if (pm != null && generalEditor.getHeight() != pm.getHeight()) {
         pm.setHeight(generalEditor.getHeight());
         refreshView();
       }

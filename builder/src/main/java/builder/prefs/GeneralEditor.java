@@ -163,7 +163,7 @@ public class GeneralEditor extends ModelEditor {
    * @return the target
    */
   public String getTarget() {
-    return ((GeneralModel) model).getTarget();
+    return ((GeneralModel) model).getTargetPlatform();
   }
   
   /**

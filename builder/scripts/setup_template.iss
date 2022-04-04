@@ -118,7 +118,7 @@ begin
   JavaDirPage.Values[0] := javaPath;
 
   ProjectDirPage := CreateInputDirPage(wpLicense, 'Set your Project Folder to where all projects will be kept.', 
-    'Project Folder should be your Arduino Sketchbook Folder or another writeable Folder',
+    'Project Folder should be your Arduino Sketchbook Folder or PlatformIO Projects Folder',
     'Note that this folder can be changed later in the Builder Preferences.'#13#10 +
     'If the default is acceptable, then click Next.', False, '');
   ProjectDirPage.Add('Project Folder:');

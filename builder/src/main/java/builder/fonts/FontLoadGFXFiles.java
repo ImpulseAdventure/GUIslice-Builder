@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2020 Paul Conti
+ * Copyright 2020-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,12 +56,12 @@ public class FontLoadGFXFiles extends SimpleFileVisitor<Path> {
   
   static private Pattern numPattern = Pattern.compile("\\d+");
   
-  private FontPlatform p;
+  private FontGraphics p;
   private FontCategory c;
   private String familyName;
   private String logicalStyle;
   
-  public FontLoadGFXFiles(FontPlatform p, FontCategory c) {
+  public FontLoadGFXFiles(FontGraphics p, FontCategory c) {
     this.p = p;
     this.c = c;
     familyName = null;
@@ -74,29 +74,30 @@ public class FontLoadGFXFiles extends SimpleFileVisitor<Path> {
                                  BasicFileAttributes attr) {
       if (attr.isRegularFile()) {
         Path path = file.getFileName();
-        String name = path.toString();
-        int n = name.indexOf(".h");
+        String hdrName = path.toString();
+//        Builder.logger.debug("hdrName: " + hdrName);
+        int n = hdrName.indexOf(".h");
         if (n == -1) {
-//          Builder.logger.error("unable to parse font: " + file);
+          Builder.logger.error("unable to parse font: " + file);
           return CONTINUE;
         }
         FontItem item = new FontItem();
         item.setFamilyName(familyName);
-        String displayName = name.substring(0,n);
+        String displayName = hdrName.substring(0,n);
         item.setDisplayName(displayName);
-        String fileName = String.format("fonts/gfx/%s/%s/%s",familyName,logicalStyle,name);
-        item.setFileName(fileName);
-        if (!displayName.startsWith(c.getIgnoreIncludesStartingWith())){
-          if (!c.getIncludePath().equals("NULL")) {
-            String includeFile = c.getIncludePath() + name;
-            item.setIncludeFile(includeFile);
-          }
+        // make sure we didn't already read font in from our json file
+        if (c.findFontItem(displayName) != null) {
+//          Builder.logger.debug("font: " + displayName + " from json file");
+          return CONTINUE;
         }
+        String fileName = String.format("%s/%s/%s",familyName,logicalStyle,hdrName);
+        item.setFileName(fileName);
+        item.setIncludeFile(hdrName);
         String fontRef = "&" + displayName;
         item.setFontRef(fontRef);
         // find size of font
         String size = null;
-        String testSize =name;
+        String testSize =hdrName;
         n = testSize.indexOf("pt7b");
         if (n == -1) {
           n = testSize.indexOf("pt8b");
@@ -109,27 +110,12 @@ public class FontLoadGFXFiles extends SimpleFileVisitor<Path> {
           size = m.group(); // we want the last number
         } 
         if (size == null) {
-          Builder.logger.error("unable to parse font: " + file);
+          Builder.logger.error(p.getName() + ": unable to parse font: " + file);
           return CONTINUE;
         }
         item.setLogicalSize(size);
         item.setLogicalStyle(logicalStyle);
-        item.setPlatform(p);
-        item.setCategory(c);
-        item.generateEnum();
-        item.generateKey();
-        String key = item.getKey();
-        if (!FontFactory.fontMap.containsKey(key)) {
-          c.addFont(item);
-          FontFactory.platformFonts.add(item);
-          FontFactory.list.add(item);
-          FontFactory.fontMap.put(key, Integer.valueOf(FontFactory.idx++));
-//          Builder.logger.debug(item.toString());
-        } else {
-          FontFactory.nErrors++;
-          Builder.logger.error("duplicate font: " + key);
-        }
-
+        c.addFont(item);
       }
       return CONTINUE;
   }

@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.CopyOption;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,11 +48,15 @@ import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
 
+import builder.Builder;
 import builder.controller.Controller;
+import builder.fonts.FontFactory;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * The Class CommonUtils is a catch all for useful routines that don't seem to fit
@@ -232,7 +237,7 @@ public class CommonUtils {
    *
    * @return workingDir - our working directory
    */
-  public String getWorkingDir() {
+  static public String getWorkingDir() {
     // The code checking for "lib" is to take care of the case 
     // where we are running not inside eclipse IDE
     String workingDir;
@@ -246,46 +251,49 @@ public class CommonUtils {
   }
   
   /**
-   * Backup file.
-   *
+   * Backup projects *.prj, programs *.ino or main.cpp
+   * and header *_GSLC.h files.  
+   * 
+   * The exact paths will be determined by the current
+   * IDE in use, Either Arduino IDE or PlatformIO with
+   * another IDE like VSCODE.
+   * 
    * @param file
    *          the file
    */
   static public void backupFile(File file)
   {
-    String newTemplate = null;
-    String backupName = null;
-    File backupFile = null;
-    File newFile = null;
-    if(file.exists()) {
-      // first check to see if we have a backup folder
-      String strBackupDir = file.getParent() + System.getProperty("file.separator") 
-          + BACKUP_FOLDER;
-      File backupDir = new File(strBackupDir);
-      if (!backupDir.exists()) {
-        backupDir.mkdir();
-      }
-      // Make a backup copy of file and overwrite backup file if it exists.
-      backupName = new String(file.getAbsolutePath() + ".bak");
-      backupFile = new File(backupName);
-      if (backupFile.exists()) {
-        // rename previous backup files so we don't lose them
-        newTemplate = new String(strBackupDir +
-            System.getProperty("file.separator") +
-            file.getName() +
-            ".##");
-        int idx = 0;
-        String newName = newTemplate + String.valueOf(++idx);
-        newFile = new File(newName);
-        while (newFile.exists()) {
-          newName = newTemplate + String.valueOf(++idx);
-          newFile = new File(newName);
-        }
-        backupFile.renameTo(newFile);
-      }
-      copyFile(file, backupFile);
+    int n;
+    String strFSep = System.getProperty("file.separator"); 
+    // start with backup folder itself
+    String strParent = file.getParent();
+    if (strParent.endsWith("src")) {
+      n = strParent.lastIndexOf("src");
+      strParent = strParent.substring(0,n-1);
+    }
+    if (strParent.endsWith("include")) {
+      n = strParent.lastIndexOf("include");
+      strParent = strParent.substring(0,n-1);
+    }
+    String strBackupDir = strParent + strFSep + BACKUP_FOLDER;
+    File backupDir = new File(strBackupDir);
+    if (!backupDir.exists()) {
+      backupDir.mkdir();
     }
     
+    String FName = file.getName();
+    String newTemplate = new String(strBackupDir + strFSep + FName + ".##");
+    File newFile = null;
+    /* search for a backup name that doesn't yet exist
+     * if we go over a 100 just overwrite last version
+     */
+    for (int idx=0; idx<101; idx++) {
+      String newName = newTemplate + String.valueOf(idx);
+      newFile = new File(newName);
+      if (!newFile.exists())
+        break;
+    }
+    copyFile(file, newFile);
   }
 
   /**
@@ -334,6 +342,31 @@ public class CommonUtils {
           });
   }
   
+  public static void cleanFolderOfFontHeaders(String folder) {
+      List<File> fileList = new ArrayList<>();
+
+      try (DirectoryStream<Path> stream = Files
+        .newDirectoryStream(Paths.get(folder))) {
+        for (Path path : stream) {
+          if (!Files.isDirectory(path)) {
+            fileList.add(path.toFile());
+          }
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        return;
+      }
+      String fileName = null;
+      for (File f : fileList) {
+        fileName = f.getName();
+        Builder.logger.debug("found: "+f.toString());
+        if (FontFactory.getFontCleanupMap().containsKey(fileName)) {
+          Builder.logger.debug("deleted font header: "+f.toString());
+          f.delete();
+        }
+      }
+  }
+  
   public static void fileReplaceStr(File oldFile, File newFile,String stringToReplace, String replaceWith) {
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(oldFile), "UTF8"));
@@ -351,6 +384,32 @@ public class CommonUtils {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public static List<String> fileFindStringValues(File file, String stringToFind, String stringTerminal) {
+    List<String> list = new ArrayList<String>();
+    try {
+      BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+      String line;
+      int n;
+      String strValue;
+      while ((line = br.readLine()) != null) {
+        if (line.contains(stringToFind)) {
+          n = line.indexOf(stringToFind);
+          n += stringToFind.length();
+          strValue = new String(line.substring(n));
+          n = strValue.indexOf(stringTerminal);
+          if (n > 0) {
+            strValue = strValue.substring(0,n);
+            list.add(strValue);
+          }
+        }
+      }
+      br.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return list;
   }
 
 }

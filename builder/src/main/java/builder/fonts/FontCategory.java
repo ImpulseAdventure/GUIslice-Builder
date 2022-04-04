@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@
 package builder.fonts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,18 +47,16 @@ public class FontCategory {
   /** The includes path. */
   private String includePath;
   
-  /** The ignoreIncludes starting with */
-  String ignoreIncludesStartingWith;
-  
-  /** The extra includes. */
-  private List<String> extraIncludes = new ArrayList<String>();
-  
+  /** where to find the font data */
+  private String fontFolderPath;
+
   /** The fonts. */
   private List<FontItem> fonts = new ArrayList<FontItem>();
   
+  private transient static HashMap<String, Integer> fontMap = null;
+
   public FontCategory() {
     includePath = "NULL";
-    ignoreIncludesStartingWith = "NULL";
   }
   
   /**
@@ -76,20 +76,6 @@ public class FontCategory {
    */
   public String getName() {
     return categoryName;
-  }
-
-  /**
-   * getIngnoreIncludesStartingWith()
-   * Gets the template for fonts that need to ignore adding
-   * an include header for these fonts.
-   * Example: m5stack has the GNU Free fonts with includes
-   * its top level M5Stack.h file so no includes are needed
-   * generally for any Free Font.
-   *
-   * @return the name
-   */
-  public String getIgnoreIncludesStartingWith() {
-    return ignoreIncludesStartingWith;
   }
 
   /**
@@ -114,25 +100,6 @@ public class FontCategory {
   }
 
   /**
-   * Adds the extra include string to be output during code generation.
-   *
-   * @param extra
-   *          the extra
-   */
-  public void addExtra(String extra) {
-    extraIncludes.add(extra);
-  }
-  
-  /**
-   * Gets the list of extra includes.
-   *
-   * @return the includes
-   */
-  public List<String> getIncludes() {
-    return extraIncludes;
-  }
-  
-  /**
    * Gets the list of fonts for this category.
    *
    * @return the fonts
@@ -145,6 +112,43 @@ public class FontCategory {
     fonts.add(item);
   }
   
+  public void buildMap() {
+    fontMap = new HashMap<String, Integer>();
+    for(int i=0; i<fonts.size(); i++) {
+      FontItem item = fonts.get(i);
+      fontMap.put(item.getDisplayName(), i);
+    }
+  }
+  
+  public FontItem findFontItem(String displayName) {
+    FontItem item = null;
+    int n = 0;
+    if (fontMap.containsKey(displayName)) {
+      n = fontMap.get(displayName);
+      item = fonts.get(n);
+    }
+    return item;
+  }
+  
+  public boolean isInstalledFont(String displayName) {
+     boolean bResult = false;
+     
+     FontItem item = findFontItem(displayName);
+     if (item != null) {
+       return item.isInstalledFont();
+     }
+     return bResult;
+  }
+  
+  /**
+   *  
+   */
+  public void sortFonts() {
+    if (fonts.size() > 2) {
+      Collections.sort(fonts);
+    }
+  }
+  
   /**
    * toString
    *
@@ -154,4 +158,9 @@ public class FontCategory {
   public String toString() {
     return String.format("FontCategory: %s includePath: %s Fonts: ", categoryName, includePath, fonts.size());
   }
+
+  public String getFontFolderPath() {
+    return fontFolderPath;
+  }
+
 }

@@ -435,6 +435,7 @@ public class TextInputModel extends WidgetModel {
       }
     }
     FontTFT font = ff.getFont(item.getDisplayName());
+    textBox.setFontTFT(ff, font);
     String text = getText();
     if (text.isEmpty())  {
       for (int i=0; i<getTextStorage(); i++) {

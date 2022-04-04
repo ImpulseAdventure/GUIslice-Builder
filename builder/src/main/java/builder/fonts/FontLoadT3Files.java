@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,10 +33,9 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import builder.Builder;
+import builder.common.CommonUtils;
 import builder.parser.ParserException;
 import builder.parser.Token;
 import builder.parser.Tokenizer;
@@ -60,8 +59,6 @@ import builder.parser.TokenizerException;
  */
 public class FontLoadT3Files extends SimpleFileVisitor<Path> {
   
-  static private Pattern numPattern = Pattern.compile("\\d+");
-  
   /** Tokens for parsing */
   public static final int INTEGER                 = 1;
   public static final int HEX                     = 2;
@@ -79,12 +76,12 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
   protected static Tokenizer tokenizer = null;
 
   
-  private FontPlatform p;
+  private FontGraphics p;
   private FontCategory c;
   private String familyName;
   private String logicalStyle;
   
-  public FontLoadT3Files(FontPlatform p, FontCategory c) {
+  public FontLoadT3Files(FontGraphics p, FontCategory c) {
     this.p = p;
     this.c = c;
     familyName = null;
@@ -114,81 +111,96 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
                                  BasicFileAttributes attr) {
       if (attr.isRegularFile()) {
         Path path = file.getFileName();
-        String name = path.toString();
-        int n = name.indexOf(".h");
+        String hdrName = path.toString();
+//      Builder.logger.debug("hdrName: " + hdrName);
+        int n = hdrName.indexOf(".h");
         if (n == -1) {
           return CONTINUE;
         }
+        String cName = hdrName.substring(0,n) + ".c";
         String displayName;
-        String includeFile = name;
-        String parseName = String.format("fonts/t3/%s/%s/%s",familyName,logicalStyle,name);
-        name = name.substring(0,n) + ".c";
-        String fileName = String.format("fonts/t3/%s/%s/%s",familyName,logicalStyle,name);
+        String includeFile = hdrName;
+        String parseName = String.format(c.getFontFolderPath()+"%s/%s/%s",familyName,logicalStyle,hdrName);
+        parseName = CommonUtils.getWorkingDir()+parseName;
+        String fileName = String.format("%s/%s/%s",familyName,logicalStyle,cName);
         Token token = null;
         File hfile = new File(parseName);
         try {
           tokenizer.setSource(hfile);
-//          Builder.logger.debug("Opened file: " + fileName);
+          //Builder.logger.debug(p.getName()+" Opened file: " + parseName);
+          // find open brace
+          boolean bFound = false;
+          /* 
+           * scan for open brace
+           */
+          while ((token = tokenizer.nextToken()).getType() != 0) {
+            if (token.getType() == OPEN_BRACE) {
+              bFound = true;
+              break;
+            }
+          }
+          if (!bFound) {
+            Builder.logger.debug(fileName + " missing " +"{");
+            return CONTINUE;
+          }
+        
           //----------------------------------------------------------------------------------------
           // Find our font name 
           //----------------------------------------------------------------------------------------
           while ((token = tokenizer.nextToken()).getType() != 0) {
             if (token.getType() == WORD) {
               if (!token.getToken().equals("extern")) {
+                Builder.logger.error("missing extern");
                 continue;
               }
               token = tokenizer.nextToken();
               if (token.getType() == WORD) {
                 if (!token.getToken().equals("const")) {
+                  Builder.logger.error(parseName+ " missing const");
                   continue;
                 }
               } else {
+                Builder.logger.error(parseName+" missing WORD const");
                 continue;
               }
               // found extern const so next should be ILI9341_t3_font_t
               token = tokenizer.nextToken();
-              if (!token.getToken().equals("ILI9341_t3_font_t")) {
+              if (!( (token.getToken().equals("ILI9341_t3_font_t")) ||
+                     (token.getToken().equals("ILI9488_t3_font_t")) ) ) {
+                Builder.logger.error("missing ILI9341_t3_font_t or ILI9488_t3_font_t");
                 continue;
               }
               token = tokenizer.nextToken();
               if (token.getType() == WORD) {
                 displayName = token.getToken();
+                // make sure we didn't already read font in from our json file
+                if (c.findFontItem(displayName) == null) {
+                  FontItem item = new FontItem();
+                  item.setFamilyName(familyName);
+                  item.setDisplayName(displayName);
+                  if (c.isInstalledFont(displayName)) {
+                    //Builder.logger.debug(parseName+" Installed font: " + displayName + " from json file");
+                    continue;
+                  }
   
-                FontItem item = new FontItem();
-                item.setFamilyName(familyName);
-                item.setDisplayName(displayName);
-                item.setFileName(fileName);
-                item.setIncludeFile(includeFile);
-                String fontRef = "&" + displayName;
-                item.setFontRef(fontRef);
-                item.setFontRefMode("GSLC_FONTREF_MODE_1");
-
-                n = name.indexOf("_");
-                Matcher m = numPattern.matcher(displayName.substring(n));
-                String size = null;
-                while (m.find()) {
-                  size = m.group(); // we want the last number
-                } 
-                if (size == null) {
-                  Builder.logger.error("unable to parse font: " + file);
-                  return CONTINUE;
-                }
-                item.setLogicalSize(size);
-                item.setLogicalStyle(logicalStyle);
-                item.setPlatform(p);
-                item.setCategory(c);
-                item.generateEnum();
-                item.generateKey();
-                String key = item.getKey();
-                if (!FontFactory.fontMap.containsKey(key)) {
+                  item.setFileName(fileName);
+                  item.setIncludeFile(includeFile);
+                  String fontRef = "&" + displayName;
+                  item.setFontRef(fontRef);
+                  item.setFontRefMode("GSLC_FONTREF_MODE_1");
+  
+                  n = displayName.indexOf("_");
+                  String temp = displayName.substring(n+1);
+                  String size = "";
+                  for (int k=0; k<temp.length(); k++) {
+                    char ch = temp.charAt(k);
+                    if (!Character.isDigit(ch))
+                      break;
+                    size += ch;
+                  }
+                  item.setLogicalSize(size);
+                  item.setLogicalStyle(logicalStyle);
                   c.addFont(item);
-                  FontFactory.platformFonts.add(item);
-                  FontFactory.list.add(item);
-                  FontFactory.fontMap.put(key, Integer.valueOf(FontFactory.idx++));
-//                  Builder.logger.debug(item.toString());
-                } else {
-                  FontFactory.nErrors++;
-                  Builder.logger.error("duplicate font: " + key);
                 }
               }
             }
@@ -197,8 +209,8 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
           tokenizer.close();
           return CONTINUE;
         } catch (IOException | ParserException | FontException | NumberFormatException | TokenizerException e) {
-          String msg = String.format("File [%s]: %s", 
-              fileName, e.toString());
+          String msg = String.format("Platform: %s File [%s]: %s", 
+              p.getName(), fileName, e.toString());
           tokenizer.close();
           Builder.logger.error(msg);
           return CONTINUE;
@@ -230,7 +242,7 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
         familyName = dirName;
         break;
     }
-//    Builder.logger.debug("Directory: " + dir);
+    // Builder.logger.debug("Directory: " + dir);
     return CONTINUE;
   }
 

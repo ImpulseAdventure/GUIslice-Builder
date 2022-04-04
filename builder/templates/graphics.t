@@ -283,6 +283,9 @@ gslc_tsElemRef* $<18>$<ELEMREF>= NULL;
 <FONT_DEFINE>
 #define $<FONT_REF> "$<DEFINE_FILE>"
 <STOP>
+<FONT_EXTERN>
+extern uint8_t $<EXTERN_STORAGE>[];
+<STOP>
 <FONT_INCLUDE>
 #include "$<INCLUDE_FILE>"
 <STOP>

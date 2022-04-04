@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2020 Paul Conti
+ * Copyright 2020-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -217,7 +217,15 @@ public class FontT3 extends FontTFT {
       strMetrics.h = char_maxheight * length;
     }
   
-    // clipping
+    int img_w = strMetrics.w;
+    int img_h = strMetrics.h;
+    if (r.width > img_w)
+      img_w = r.width;
+    if (r.height > img_h)
+      img_h = r.height;
+      
+    // no clipping is needed since JTable will do that for us.
+/*
     if (bClippingEn) {
       if (strMetrics.w+r.x > Builder.CANVAS_WIDTH) {
         strMetrics.w = strMetrics.w - (strMetrics.w + r.x - Builder.CANVAS_WIDTH);
@@ -226,34 +234,40 @@ public class FontT3 extends FontTFT {
         strMetrics.h = strMetrics.h - (strMetrics.h - r.y - Builder.CANVAS_HEIGHT);
       }
     }
-
-    if (strMetrics.w <=0 || strMetrics.h <= 0) return null;
+*/
 
 //    Builder.logger.debug("drawImage: " + s + " font: " + fontName + " " + strMetrics.toString());
     
     // create our image
-    BufferedImage image = new BufferedImage(strMetrics.w, strMetrics.h, BufferedImage.TYPE_INT_ARGB );
+    BufferedImage image = new BufferedImage(img_w, img_h, BufferedImage.TYPE_INT_ARGB );
     raster = image.getRaster();
     
 //    Builder.logger.debug("width=" + image.getWidth() + " height=" + image.getHeight());
   
-    // create a transparent background
+    // create a background
     for (int i = 0; i < image.getWidth(); i++) {
       for (int j = 0; j < image.getHeight(); j++) {
-        raster.setPixel(i, j, new int[] { 0, 0, 0, 0 });
+        raster.setPixel(i, j, new int[] { 255, 
+                                          colBg.getRed(), 
+                                          colBg.getGreen(),
+                                          colBg.getBlue() });
       }
     }
   
-    cursor_x = 0;
-    cursor_y = 0;
-  
-    for (int i = 0; i < length; i++) {
-      ch = s.charAt(i);
-      // ignore newlines
-      if (ch == '\n' || ch == '\r') {
-        continue;
+    // draw our text, if any
+    if (strMetrics.w > 0 || strMetrics.h > 0) {
+
+      cursor_x = 0;
+      cursor_y = 0;
+    
+      for (int i = 0; i < length; i++) {
+        ch = s.charAt(i);
+        // ignore newlines
+        if (ch == '\n' || ch == '\r') {
+          continue;
+        }
+        if (!copyChar(ch, colTxt, colBg, bClippingEn)) break;
       }
-      if (!copyChar(ch, colTxt, colBg, bClippingEn)) break;
     }
     return image;
   }

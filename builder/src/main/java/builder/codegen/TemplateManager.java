@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import builder.Builder;
 import builder.common.CommonUtils;
 
 /**
@@ -50,6 +51,7 @@ import builder.common.CommonUtils;
  * @author Paul Conti
  * 
  */
+@SuppressWarnings("unused")
 public class TemplateManager {
 
   /** The Constant RESOURCES_PATH. */
@@ -99,7 +101,7 @@ public class TemplateManager {
   public void storeTemplates(String templateFileName) throws CodeGenException {
     templateMap = new HashMap<String, Integer>(64);
 //    String pathName = RESOURCES_PATH + templateFileName;
-    String pathName = CommonUtils.getInstance().getWorkingDir() +
+    String pathName = CommonUtils.getWorkingDir() +
         "templates" + System.getProperty("file.separator") 
         + templateFileName;
     File file = new File(pathName);
@@ -112,6 +114,7 @@ public class TemplateManager {
     try {
       tbr = new BufferedReader(new InputStreamReader(
           new FileInputStream(file), "UTF8"));
+//      Builder.logger.debug("Open Template File: " + pathName);
       while((templateName = tbr.readLine()) != null) {
         if (templateName.equals(END_TEMPLATE))
           break;
@@ -121,7 +124,7 @@ public class TemplateManager {
         }
         templateMap.put(templateName, i);
         listOfTemplates[i] = lines;
-//        System.out.println("Stored Template: " + templateName + " idx=" + i);
+//        Builder.logger.debug("Stored Template: " + templateName + " idx=" + i);
         i++;
       }
       

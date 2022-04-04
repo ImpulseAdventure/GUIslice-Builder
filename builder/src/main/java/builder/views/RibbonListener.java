@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,7 @@ public class RibbonListener implements ActionListener {
     if (path.isAbsolute()) {
       currentDirectory = new File(folderPath);
     } else {
-      String workingDir = CommonUtils.getInstance().getWorkingDir();
+      String workingDir = CommonUtils.getWorkingDir();
       folderPath = workingDir + folderPath;
       currentDirectory = new File(folderPath);
     }
@@ -257,7 +257,7 @@ public class RibbonListener implements ActionListener {
       if (path.isAbsolute()) {
         currentDirectory = new File(sProjectDir);
       } else {
-        String sWorkingDir = CommonUtils.getInstance().getWorkingDir();
+        String sWorkingDir = CommonUtils.getWorkingDir();
         currentDirectory = new File(sWorkingDir + sProjectDir);
       }
     } else {
@@ -327,7 +327,7 @@ public class RibbonListener implements ActionListener {
       } else {
         resDir = CodeGenerator.ARDUINO_RES;
       }
-      String workingDir = CommonUtils.getInstance().getWorkingDir();
+      String workingDir = CommonUtils.getWorkingDir();
       currentDirectory = new File(workingDir + resDir);
     } else {
       currentDirectory = new File(resDir);

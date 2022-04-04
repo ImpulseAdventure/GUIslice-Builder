@@ -117,8 +117,8 @@ public class TextModel extends WidgetModel {
    */
   public TextModel() {
     ff = FontFactory.getInstance();
-    initProperties();
     initEditors();
+    initProperties();
     calcSizes(false);
   }
   
@@ -138,10 +138,11 @@ public class TextModel extends WidgetModel {
     cbAlign.addItem(FontTFT.ALIGN_BOT_CENTER);
     cbAlign.addItem(FontTFT.ALIGN_BOT_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
-    textBox.setFontTFT(ff, null);
+    FontTFT tmpfont = ff.getFont(ff.getDefFontName());
+    textBox.setFontTFT(ff, tmpfont);
     editorText = new DefaultCellEditor(textBox);
     rendererText = new TextTFTCellRenderer();
-    rendererText.setFontTFT(ff, null);
+    rendererText.setFontTFT(ff, tmpfont);
   }
   
   /**
@@ -489,6 +490,8 @@ public class TextModel extends WidgetModel {
       int cp;
       String fontName = getFontDisplayName();
       FontTFT myFont = ff.getFont(fontName);
+      if (myFont == null)
+        return s;
       for (int i = 0; i < len; i++) {
         cp = s.codePointAt(i);
         if (myFont.canDisplay(cp)) {
@@ -563,6 +566,7 @@ public class TextModel extends WidgetModel {
       }
     }
     FontTFT font = ff.getFont(item.getDisplayName());
+    textBox.setFontTFT(ff, font);
     String text = getText();
     if (getTextStorage() > 0) {
       text = "";

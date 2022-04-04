@@ -29,18 +29,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Class FontPlatform.
+ * The Class FontGraphics.
  * Holds the set of categories with their font definitions
- * for one platform, like arduino..linux
+ * for one package, like Adafruit_GFX..Linux
  * 
  * Filled in by JSON deserialization inside FontFactory
  * 
  * @author Paul Conti
  */
-public class FontPlatform {
+public class FontGraphics {
   
-  /** The platform name. */
-  private String platformName;
+  /** The graphic package name. */
+  private String graphicPackage;
   
   /** The dpi for displays on this platform */
   private String dpi;
@@ -51,14 +51,17 @@ public class FontPlatform {
   /** The categories. */
   private List<FontCategory> categories = new ArrayList<FontCategory>();
   
-  /**
+  /** The extra includes. */
+  private List<String> extraIncludes = new ArrayList<String>();
+  
+ /**
    * Sets the name of a platform.
    *
    * @param name
    *          the new name
    */
   public void setName(String name) {
-    platformName = name;
+    graphicPackage = name;
   }
   
   /**
@@ -67,7 +70,7 @@ public class FontPlatform {
    * @return the name
    */
   public String getName() {
-    return platformName;
+    return graphicPackage;
   }
 
   /**
@@ -131,4 +134,13 @@ public class FontPlatform {
     return null;
   }
 
+  /**
+   * Gets the list of extra includes.
+   *
+   * @return the includes
+   */
+  public List<String> getIncludes() {
+    return extraIncludes;
+  }
+  
 }

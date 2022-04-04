@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018, 2021 Paul Conti
+ * Copyright 2018, 2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
  */
 package builder.tables;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -34,20 +35,22 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
 import builder.fonts.FontTtf;
 import builder.fonts.FontVLW;
+import builder.models.WidgetModel;
 
 public class TextTFTCellRenderer extends JLabel implements TableCellRenderer {
 
   private static final long serialVersionUID = 1L;
 
-  private FontTFT myFont;
+  private FontTFT myFont = null;
   private FontFactory ff;
+  private String myFontName = "";
   private boolean bValidFont = false;
   
   public TextTFTCellRenderer() {
@@ -56,17 +59,24 @@ public class TextTFTCellRenderer extends JLabel implements TableCellRenderer {
 
   public void setFontTFT(FontFactory ff, FontTFT myFont) {
     this.ff = ff;
-        
+    updateFont(myFont);
+  }
+  
+  private void updateFont(FontTFT myFont) {
+    
     if (myFont == null) {
       bValidFont = false;
       return;
     }
-    int fontSz = 10;
+    int fontSz = 12;
+    int fontInc = 2;
     if (myFont instanceof FontTtf || myFont instanceof FontVLW) {
-      fontSz = 18;
+      fontSz = 20;
+      fontInc = 4;
     }
-    if (myFont.getLogicalSizeAsInt() == fontSz) {
+    if (myFont.getLogicalSizeAsInt()+fontInc <= fontSz) {
       this.myFont = myFont;
+      this.myFontName = myFont.getDisplayName();
       bValidFont = true;
     } else {
       FontItem item = ff.getFontItem(myFont.getDisplayName());
@@ -75,6 +85,7 @@ public class TextTFTCellRenderer extends JLabel implements TableCellRenderer {
             fontSz, item.getLogicalStyle());
         if (testFont != null) {
           this.myFont = testFont;
+          this.myFontName = myFont.getDisplayName();
           bValidFont = true;
         } else {
           bValidFont = false;
@@ -84,30 +95,41 @@ public class TextTFTCellRenderer extends JLabel implements TableCellRenderer {
   }
   
   @Override
-  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-      int row, int col) {
-    if (value != null) {
-      String content = value.toString();
-      TableColumn col_model = table.getColumnModel().getColumn(col);
-      if (bValidFont) {
-        int width = col_model.getWidth();
-//        int height = table.getTableHeader().getSize().height;
-        int height = 30;
-        Dimension ppDim = new Dimension(width,height);
-        Rectangle r = new Rectangle(ppDim);
-        if (content != null && !content.isEmpty()) {
-          BufferedImage img = ff.drawTextImage(FontTFT.ALIGN_LEFT, r, content, myFont, getForeground(), getForeground(), 0);
-          this.setIcon(new ImageIcon(img));
-          setText(null);
-        } else {
-          BufferedImage img = ff.drawTextImage(FontTFT.ALIGN_LEFT, r, " ", myFont, getForeground(), getForeground(), 0);
-          this.setIcon(new ImageIcon(img));
-          setText(null);
-        }
-      } else {
-        this.setIcon(null);
-        setText(content);
-      }
+  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
+      boolean hasFocus, int row, int col) {
+    Color fg = Color.BLACK;
+    Color bg = Color.WHITE;
+    TableColumnModel col_Model = table.getColumnModel();
+    int w = col_Model.getColumn(col).getWidth();
+    int h = table.getRowHeight(row);
+    Dimension ppDim = new Dimension(w,h);
+    Rectangle r = new Rectangle(ppDim);
+    String content = "";
+    if (value == null) {
+      super.setBackground(Color.WHITE);
+      setText(null);
+      return this;
+    }
+    content = value.toString();
+    WidgetModel model = (WidgetModel)table.getModel();
+    String fontName = model.getFontDisplayName();
+    /* we must always check our model for font
+     * because we are not always notified of changes
+     */
+    if (myFont == null || !myFontName.equals(fontName)) {
+      FontTFT font = ff.getFont(fontName);
+      updateFont(font);
+    }
+    if (bValidFont &&
+        content != null &&
+        !content.isEmpty() ) {
+        BufferedImage img = ff.drawTextImage(r, content, myFont, fg, bg, 5);
+        this.setIcon(new ImageIcon(img));
+        setText(null);
+    } else {
+      // here just use the java dialog font
+      super.setBackground(Color.WHITE);
+      setText(content);
     }
     return this;
   }

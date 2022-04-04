@@ -1,233 +1,1971 @@
 {
   "allFonts": [
     {
-      "platformName": "arduino",
+      "graphicPackage": "Adafruit_GFX",
       "warnings": [
          "#if defined(DRV_DISP_TFT_ESPI)",
          "  #error Project tab->Target Platform should be tft_espi",
          "#endif" 
       ],
+			"extraIncludes": [
+				"#include <Adafruit_GFX.h>"
+			],
       "categories": [
         {
           "categoryName": "FONT_GLCD",
+					"fontFolderPath": "fonts/glcd/",
           "fonts": [
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(1x)->5x8pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "logicalSize": "5",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(2x)->10x16pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "2",
               "logicalSize": "10",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(3x)->15x24pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "3",
               "logicalSize": "15",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(4x)->20x32pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "4",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(5x)->25x40pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "5",
               "logicalSize": "25",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             }
           ]
         },
         {
           "categoryName": "FONT_GFX",
-          "extraIncludes": [
-            "#include <Adafruit_GFX.h>"
-          ],
-          "includePath": "Fonts/"
+          "includePath": "Fonts/",
+					"fontFolderPath": "fonts/gfx/",
+          "fonts": [
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono9pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono9pt7b.h",
+              "includeFile": "FreeMono9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono12pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono12pt7b.h",
+              "includeFile": "FreeMono12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono18pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono18pt7b.h",
+              "includeFile": "FreeMono18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono24pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono24pt7b.h",
+              "includeFile": "FreeMono24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold9pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold9pt7b.h",
+              "includeFile": "FreeMonoBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold12pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold12pt7b.h",
+              "includeFile": "FreeMonoBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold18pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold18pt7b.h",
+              "includeFile": "FreeMonoBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold24pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold24pt7b.h",
+              "includeFile": "FreeMonoBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique9pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique9pt7b.h",
+              "includeFile": "FreeMonoOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique12pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique12pt7b.h",
+              "includeFile": "FreeMonoOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique18pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique18pt7b.h",
+              "includeFile": "FreeMonoOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique24pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique24pt7b.h",
+              "includeFile": "FreeMonoOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique9pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique9pt7b.h",
+              "includeFile": "FreeMonoBoldOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique12pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique12pt7b.h",
+              "includeFile": "FreeMonoBoldOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique18pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique18pt7b.h",
+              "includeFile": "FreeMonoBoldOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique24pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique24pt7b.h",
+              "includeFile": "FreeMonoBoldOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans9pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans9pt7b.h",
+              "includeFile": "FreeSans9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans12pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans12pt7b.h",
+              "includeFile": "FreeSans12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans18pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans18pt7b.h",
+              "includeFile": "FreeSans18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans24pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans24pt7b.h",
+              "includeFile": "FreeSans24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold9pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold9pt7b.h",
+              "includeFile": "FreeSansBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold12pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold12pt7b.h",
+              "includeFile": "FreeSansBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold18pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold18pt7b.h",
+              "includeFile": "FreeSansBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold24pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold24pt7b.h",
+              "includeFile": "FreeSansBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique9pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique9pt7b.h",
+              "includeFile": "FreeSansOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique12pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique12pt7b.h",
+              "includeFile": "FreeSansOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique18pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique18pt7b.h",
+              "includeFile": "FreeSansOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique24pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique24pt7b.h",
+              "includeFile": "FreeSansOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBoldOblique9pt7b",
+              "fileName": "FreeSans/BOLD_ITALIC/FreeSansBoldOblique9pt7b.h",
+              "includeFile": "FreeSansBoldOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBoldOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBoldOblique12pt7b",
+              "fileName": "FreeSans/BOLD_ITALIC/FreeSansBoldOblique12pt7b.h",
+              "includeFile": "FreeSansBoldOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBoldOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBoldOblique18pt7b",
+              "fileName": "FreeSans/BOLD_ITALIC/FreeSansBoldOblique18pt7b.h",
+              "includeFile": "FreeSansBoldOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBoldOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBoldOblique24pt7b",
+              "fileName": "FreeSans/BOLD_ITALIC/FreeSansBoldOblique24pt7b.h",
+              "includeFile": "FreeSansBoldOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBoldOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif9pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif9pt7b.h",
+              "includeFile": "FreeSerif9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif12pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif12pt7b.h",
+              "includeFile": "FreeSerif12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif18pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif18pt7b.h",
+              "includeFile": "FreeSerif18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif24pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif24pt7b.h",
+              "includeFile": "FreeSerif24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold9pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold9pt7b.h",
+              "includeFile": "FreeSerifBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold12pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold12pt7b.h",
+              "includeFile": "FreeSerifBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold18pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold18pt7b.h",
+              "includeFile": "FreeSerifBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold24pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold24pt7b.h",
+              "includeFile": "FreeSerifBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic9pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic9pt7b.h",
+              "includeFile": "FreeSerifItalic9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic12pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic12pt7b.h",
+              "includeFile": "FreeSerifItalic12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic18pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic18pt7b.h",
+              "includeFile": "FreeSerifItalic18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic24pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic24pt7b.h",
+              "includeFile": "FreeSerifItalic24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic9pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic9pt7b.h",
+              "includeFile": "FreeSerifBoldItalic9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic12pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic12pt7b.h",
+              "includeFile": "FreeSerifBoldItalic12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic18pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic18pt7b.h",
+              "includeFile": "FreeSerifBoldItalic18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic24pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic24pt7b.h",
+              "includeFile": "FreeSerifBoldItalic24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD_ITALIC"
+            }
+          ]
         }
       ]
     },
     {
-      "platformName": "m5stack",
+      "graphicPackage": "M5Stack",
+			"extraIncludes": [
+				"#include <M5Stack.h>"
+			],
       "categories": [
         {
           "categoryName": "FONT_GLCD",
+					"fontFolderPath": "fonts/glcd/",
           "fonts": [
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(1x)->5x8pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "logicalSize": "5",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(2x)->10x16pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "2",
               "logicalSize": "10",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(3x)->15x24pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "3",
               "logicalSize": "15",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+ 						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(4x)->20x32pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "4",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(5x)->25x40pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "5",
               "logicalSize": "25",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             }
           ]
         },
-        {
+				{
           "categoryName": "FONT_GFX",
-          "ignoreIncludesStartingWith": "Free",
-          "extraIncludes": [
-            "#include <M5Stack.h>"
+          "includePath": "Fonts/GFXFF/",
+					"fontFolderPath": "fonts/m5stack/gfx/",
+          "fonts": [
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono9pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono9pt7b.h",
+              "includeFile": "FreeMono9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono12pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono12pt7b.h",
+              "includeFile": "FreeMono12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono18pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono18pt7b.h",
+              "includeFile": "FreeMono18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono24pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono24pt7b.h",
+              "includeFile": "FreeMono24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold9pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold9pt7b.h",
+              "includeFile": "FreeMonoBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold12pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold12pt7b.h",
+              "includeFile": "FreeMonoBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold18pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold18pt7b.h",
+              "includeFile": "FreeMonoBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold24pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold24pt7b.h",
+              "includeFile": "FreeMonoBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique9pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique9pt7b.h",
+              "includeFile": "FreeMonoOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique12pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique12pt7b.h",
+              "includeFile": "FreeMonoOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique18pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique18pt7b.h",
+              "includeFile": "FreeMonoOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique24pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique24pt7b.h",
+              "includeFile": "FreeMonoOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique9pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique9pt7b.h",
+              "includeFile": "FreeMonoBoldOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique12pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique12pt7b.h",
+              "includeFile": "FreeMonoBoldOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique18pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique18pt7b.h",
+              "includeFile": "FreeMonoBoldOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBoldOblique24pt7b",
+              "fileName": "FreeMono/BOLD_ITALIC/FreeMonoBoldOblique24pt7b.h",
+              "includeFile": "FreeMonoBoldOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBoldOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans9pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans9pt7b.h",
+              "includeFile": "FreeSans9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans12pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans12pt7b.h",
+              "includeFile": "FreeSans12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans18pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans18pt7b.h",
+              "includeFile": "FreeSans18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans24pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans24pt7b.h",
+              "includeFile": "FreeSans24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold9pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold9pt7b.h",
+              "includeFile": "FreeSansBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold12pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold12pt7b.h",
+              "includeFile": "FreeSansBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold18pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold18pt7b.h",
+              "includeFile": "FreeSansBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold24pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold24pt7b.h",
+              "includeFile": "FreeSansBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique9pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique9pt7b.h",
+              "includeFile": "FreeSansOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique12pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique12pt7b.h",
+              "includeFile": "FreeSansOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique18pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique18pt7b.h",
+              "includeFile": "FreeSansOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique24pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique24pt7b.h",
+              "includeFile": "FreeSansOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif9pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif9pt7b.h",
+              "includeFile": "FreeSerif9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif12pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif12pt7b.h",
+              "includeFile": "FreeSerif12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif18pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif18pt7b.h",
+              "includeFile": "FreeSerif18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif24pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif24pt7b.h",
+              "includeFile": "FreeSerif24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold9pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold9pt7b.h",
+              "includeFile": "FreeSerifBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold12pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold12pt7b.h",
+              "includeFile": "FreeSerifBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold18pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold18pt7b.h",
+              "includeFile": "FreeSerifBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold24pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold24pt7b.h",
+              "includeFile": "FreeSerifBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic9pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic9pt7b.h",
+              "includeFile": "FreeSerifItalic9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic12pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic12pt7b.h",
+              "includeFile": "FreeSerifItalic12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic18pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic18pt7b.h",
+              "includeFile": "FreeSerifItalic18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic24pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic24pt7b.h",
+              "includeFile": "FreeSerifItalic24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic9pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic9pt7b.h",
+              "includeFile": "FreeSerifBoldItalic9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic12pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic12pt7b.h",
+              "includeFile": "FreeSerifBoldItalic12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic18pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic18pt7b.h",
+              "includeFile": "FreeSerifBoldItalic18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD_ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBoldItalic24pt7b",
+              "fileName": "FreeSerif/BOLD_ITALIC/FreeSerifBoldItalic24pt7b.h",
+              "includeFile": "FreeSerifBoldItalic24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBoldItalic24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD_ITALIC"
+            }
           ]
         }
       ]
     },
     {
-      "platformName": "teensy",
+      "graphicPackage": "ILI9341_t3",
+			"extraIncludes": [
+				"#include <SPI.h>",
+			],
       "categories": [
         {
           "categoryName": "FONT_GLCD",
+					"fontFolderPath": "fonts/glcd/",
           "fonts": [
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(1x)->5x8pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "logicalSize": "5",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(2x)->10x16pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "2",
               "logicalSize": "10",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(3x)->15x24pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "3",
               "logicalSize": "15",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(4x)->20x32pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "4",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(5x)->25x40pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "5",
               "logicalSize": "25",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             }
           ]
         },
         {
           "categoryName": "FONT_T3",
-          "extraIncludes": [
-            "#include <SPI.h>",
+					"fontFolderPath": "fonts/ILI9341_t3/",
+          "fonts": [
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_8",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_8",
+              "logicalSize": "8",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_9",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_9",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_10",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_10",
+              "logicalSize": "10",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_11",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_11",
+              "logicalSize": "11",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_12",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_12",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_13",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_13",
+              "logicalSize": "13",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_14",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_14",
+              "logicalSize": "14",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_16",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_16",
+              "logicalSize": "16",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_18",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_18",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_20",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_20",
+              "logicalSize": "20",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_24",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_24",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_28",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_28",
+              "logicalSize": "28",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_32",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_32",
+              "logicalSize": "32",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_40",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_40",
+              "logicalSize": "40",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_48",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_48",
+              "logicalSize": "48",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_60",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_60",
+              "logicalSize": "60",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_72",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_72",
+              "logicalSize": "72",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_96",
+              "fileName": "Arial/PLAIN/font_Arial.c",
+              "includeFile": "font_Arial.h",
+							"headerName": "font_Arial.h",
+							"srcName": "font_Arial.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_96",
+              "logicalSize": "96",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_8_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_8_Bold",
+              "logicalSize": "8",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_9_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_9_Bold",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_10_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_10_Bold",
+              "logicalSize": "10",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_11_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_11_Bold",
+              "logicalSize": "11",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_12_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_12_Bold",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_13_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_13_Bold",
+              "logicalSize": "13",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_14_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_14_Bold",
+              "logicalSize": "14",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_16_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_16_Bold",
+              "logicalSize": "16",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_18_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_18_Bold",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_20_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_20_Bold",
+              "logicalSize": "20",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_24_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_24_Bold",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_28_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_28_Bold",
+              "logicalSize": "28",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_32_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_32_Bold",
+              "logicalSize": "32",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_40_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_40_Bold",
+              "logicalSize": "40",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_48_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_48_Bold",
+              "logicalSize": "48",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_60_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_60_Bold",
+              "logicalSize": "60",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_72_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_72_Bold",
+              "logicalSize": "72",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "Arial",
+              "displayName": "Arial_96_Bold",
+              "fileName": "Arial/BOLD/font_ArialBold.c",
+              "includeFile": "font_ArialBold.h",
+							"headerName": "font_ArialBold.h",
+							"srcName": "font_ArialBold.c",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&Arial_96_Bold",
+              "logicalSize": "96",
+              "logicalStyle": "BOLD",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            }
           ]
         }
       ]
     },
     {
-      "platformName": "tft_espi",
+      "graphicPackage": "TFT_eSPI",
       "warnings": [
          "#if !defined(DRV_DISP_TFT_ESPI)",
          "  #error Project tab->Target Platform should be arduino",
          "#endif"
       ],
+			"extraIncludes": [
+				"#include <TFT_eSPI.h>"
+			],
       "categories": [
         {
           "categoryName": "FONT_GLCD",
+					"fontFolderPath": "fonts/glcd/",
           "fonts": [
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(1x)->5x8pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "logicalSize": "5",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(2x)->10x16pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "2",
               "logicalSize": "10",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+ 						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(3x)->15x24pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "3",
               "logicalSize": "15",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(4x)->20x32pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "4",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+ 						  "bInstalledFont": true,
               "familyName": "Builtin",
               "displayName": "BuiltIn(5x)->25x40pt7b",
-              "fileName": "fonts/glcd/glcdfont.c",
+              "fileName": "glcdfont.c",
               "nFontSz": "5",
               "logicalSize": "25",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             }
           ]
         },
         {
           "categoryName": "FONT_VLW",
+ 					"fontFolderPath": "fonts/vlw",
           "fonts": [
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold16V",
               "defineFile": "DosisBold16",
@@ -236,10 +1974,11 @@
               "nFontSz": "16",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "16",
-              "logicalStyle": "Bold",
+              "logicalStyle": "BOLD",
               "fontRefMode": "GSLC_FONTREF_MODE_1"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold20V",
               "defineFile": "DosisBold20",
@@ -248,9 +1987,10 @@
               "nFontSz": "20",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold24V",
               "defineFile": "DosisBold24",
@@ -259,9 +1999,10 @@
               "nFontSz": "24",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold28V",
               "defineFile": "DosisBold28",
@@ -270,9 +2011,10 @@
               "nFontSz": "28",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold30V",
               "defineFile": "DosisBold30",
@@ -281,9 +2023,10 @@
               "nFontSz": "30",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "30",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold36V",
               "defineFile": "DosisBold36",
@@ -292,9 +2035,10 @@
               "nFontSz": "36",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "DosisBold.vlw",
               "displayName": "DosisBold48V",
               "defineFile": "DosisBold48",
@@ -303,9 +2047,10 @@
               "nFontSz": "48",
               "logicalName": "dosis_bold.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold16V",
               "defineFile": "NotoSansBold16",
@@ -314,9 +2059,10 @@
               "nFontSz": "16",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "16",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold20V",
               "defineFile": "NotoSansBold20",
@@ -325,9 +2071,10 @@
               "nFontSz": "20",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold24V",
               "defineFile": "NotoSansBold24",
@@ -336,9 +2083,10 @@
               "nFontSz": "24",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold28V",
               "defineFile": "NotoSansBold28",
@@ -347,9 +2095,10 @@
               "nFontSz": "28",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold30V",
               "defineFile": "NotoSansBold30",
@@ -358,9 +2107,10 @@
               "nFontSz": "30",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "30",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold36V",
               "defineFile": "NotoSansBold36",
@@ -369,9 +2119,10 @@
               "nFontSz": "36",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "NotoSansBold.vlw",
               "displayName": "NotoSansBold48V",
               "defineFile": "NotoSansBold48",
@@ -380,39 +2131,547 @@
               "nFontSz": "48",
               "logicalName": "NotoSans-Bold.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             }
           ]
         },
-        {
+				{
           "categoryName": "FONT_GFX",
-          "ignoreIncludesStartingWith": "Free",
-          "extraIncludes": [
-            "#include <TFT_eSPI.h>"
-          ],
-          "includePath": "Fonts/GFXFF/"
-        }
-      ]
-    },
-    {
-      "platformName": "utft",
-      "categories": [
-        {
-          "categoryName": "FONT_UTFT",
-          "extraIncludes": [
-            "#include <UTFT.h>"
+          "includePath": "Fonts/GFXFF/",
+					"fontFolderPath": "fonts/gfx/",
+          "fonts": [
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono9pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono9pt7b.h",
+              "includeFile": "FreeMono9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono12pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono12pt7b.h",
+              "includeFile": "FreeMono12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono18pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono18pt7b.h",
+              "includeFile": "FreeMono18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMono24pt7b",
+              "fileName": "FreeMono/PLAIN/FreeMono24pt7b.h",
+              "includeFile": "FreeMono24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMono24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold9pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold9pt7b.h",
+              "includeFile": "FreeMonoBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold12pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold12pt7b.h",
+              "includeFile": "FreeMonoBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold18pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold18pt7b.h",
+              "includeFile": "FreeMonoBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoBold24pt7b",
+              "fileName": "FreeMono/BOLD/FreeMonoBold24pt7b.h",
+              "includeFile": "FreeMonoBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique9pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique9pt7b.h",
+              "includeFile": "FreeMonoOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique12pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique12pt7b.h",
+              "includeFile": "FreeMonoOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique18pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique18pt7b.h",
+              "includeFile": "FreeMonoOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeMono",
+              "displayName": "FreeMonoOblique24pt7b",
+              "fileName": "FreeMono/ITALIC/FreeMonoOblique24pt7b.h",
+              "includeFile": "FreeMonoOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeMonoOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Monospaced",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans9pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans9pt7b.h",
+              "includeFile": "FreeSans9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans12pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans12pt7b.h",
+              "includeFile": "FreeSans12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans18pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans18pt7b.h",
+              "includeFile": "FreeSans18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSans24pt7b",
+              "fileName": "FreeSans/PLAIN/FreeSans24pt7b.h",
+              "includeFile": "FreeSans24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSans24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold9pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold9pt7b.h",
+              "includeFile": "FreeSansBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold12pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold12pt7b.h",
+              "includeFile": "FreeSansBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold18pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold18pt7b.h",
+              "includeFile": "FreeSansBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansBold24pt7b",
+              "fileName": "FreeSans/BOLD/FreeSansBold24pt7b.h",
+              "includeFile": "FreeSansBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique9pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique9pt7b.h",
+              "includeFile": "FreeSansOblique9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique9pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique12pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique12pt7b.h",
+              "includeFile": "FreeSansOblique12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique12pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique18pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique18pt7b.h",
+              "includeFile": "FreeSansOblique18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique18pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSans",
+              "displayName": "FreeSansOblique24pt7b",
+              "fileName": "FreeSans/ITALIC/FreeSansOblique24pt7b.h",
+              "includeFile": "FreeSansOblique24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSansOblique24pt7b",
+              "nFontSz": "1",
+              "logicalName": "SansSerif",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif9pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif9pt7b.h",
+              "includeFile": "FreeSerif9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif12pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif12pt7b.h",
+              "includeFile": "FreeSerif12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif18pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif18pt7b.h",
+              "includeFile": "FreeSerif18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerif24pt7b",
+              "fileName": "FreeSerif/PLAIN/FreeSerif24pt7b.h",
+              "includeFile": "FreeSerif24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerif24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold9pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold9pt7b.h",
+              "includeFile": "FreeSerifBold9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold12pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold12pt7b.h",
+              "includeFile": "FreeSerifBold12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold12pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold18pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold18pt7b.h",
+              "includeFile": "FreeSerifBold18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold18pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifBold24pt7b",
+              "fileName": "FreeSerif/BOLD/FreeSerifBold24pt7b.h",
+              "includeFile": "FreeSerifBold24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifBold24pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "BOLD"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic9pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic9pt7b.h",
+              "includeFile": "FreeSerifItalic9pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "9",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic12pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic12pt7b.h",
+              "includeFile": "FreeSerifItalic12pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "12",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic18pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic18pt7b.h",
+              "includeFile": "FreeSerifItalic18pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "18",
+              "logicalStyle": "ITALIC"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "FreeSerif",
+              "displayName": "FreeSerifItalic24pt7b",
+              "fileName": "FreeSerif/ITALIC/FreeSerifItalic24pt7b.h",
+              "includeFile": "FreeSerifItalic24pt7b.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&FreeSerifItalic9pt7b",
+              "nFontSz": "1",
+              "logicalName": "Serif",
+              "logicalSize": "24",
+              "logicalStyle": "ITALIC"
+            }
           ]
         }
       ]
     },
     {
-      "platformName": "linux",
+      "graphicPackage": "UTFT",
+			 "extraIncludes": [
+					"#include <UTFT.h>"
+				],
+	      "categories": [
+        {
+          "categoryName": "FONT_UTFT",
+  				"fontFolderPath": "fonts/utft/",
+          "fonts": [
+            {
+              "bInstalledFont":true,
+              "familyName": "SmallFont",
+              "displayName": "SmallFont",
+              "fileName": "SmallFont.c",
+							"srcName": "DefaultFonts.c",
+              "externName": "SmallFont",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&SmallFont",
+              "logicalSize": "8",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "BigFont",
+              "displayName": "BigFont",
+              "fileName": "BigFont.c",
+							"srcName": "DefaultFonts.c",
+              "externName": "BigFont",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&BigFont",
+              "logicalSize": "16",
+              "logicalStyle": "PLAIN"
+            },
+            {
+              "bInstalledFont":true,
+              "familyName": "SevenSegNumFont",
+              "displayName": "SevenSegNumFont",
+              "fileName": "SevenSegNumFont.c",
+							"srcName": "DefaultFonts.c",
+              "externName": "SevenSegNumFont",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&SevenSegNumFont",
+              "logicalSize": "32",
+              "logicalStyle": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "graphicPackage": "Linux",
       "dpi": "72",
       "categories": [
         {
           "categoryName": "FONT_TTF",
+ 					"fontFolderPath": "fonts/ttf",
           "fonts": [
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -421,9 +2680,10 @@
               "nFontSz": "9",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -432,9 +2692,10 @@
               "nFontSz": "12",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -443,9 +2704,10 @@
               "nFontSz": "18",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -454,9 +2716,10 @@
               "nFontSz": "20",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -465,9 +2728,10 @@
               "nFontSz": "22",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -476,9 +2740,10 @@
               "nFontSz": "24",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -487,9 +2752,10 @@
               "nFontSz": "26",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -498,9 +2764,10 @@
               "nFontSz": "28",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -509,9 +2776,10 @@
               "nFontSz": "36",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMono48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
@@ -520,9 +2788,10 @@
               "nFontSz": "48",
               "logicalName": "FreeMono.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -531,9 +2800,10 @@
               "nFontSz": "9",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -542,9 +2812,10 @@
               "nFontSz": "12",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -553,9 +2824,10 @@
               "nFontSz": "18",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -564,9 +2836,10 @@
               "nFontSz": "20",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -575,9 +2848,10 @@
               "nFontSz": "22",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -586,9 +2860,10 @@
               "nFontSz": "24",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -597,9 +2872,10 @@
               "nFontSz": "26",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -608,9 +2884,10 @@
               "nFontSz": "28",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -619,9 +2896,10 @@
               "nFontSz": "36",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoBold48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
@@ -630,9 +2908,10 @@
               "nFontSz": "48",
               "logicalName": "FreeMonoBold.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+ 						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -641,9 +2920,10 @@
               "nFontSz": "9",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -652,9 +2932,10 @@
               "nFontSz": "12",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -663,9 +2944,10 @@
               "nFontSz": "18",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -674,9 +2956,10 @@
               "nFontSz": "20",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -685,9 +2968,10 @@
               "nFontSz": "22",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -696,9 +2980,10 @@
               "nFontSz": "24",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -707,9 +2992,10 @@
               "nFontSz": "26",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -718,9 +3004,10 @@
               "nFontSz": "28",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -729,9 +3016,10 @@
               "nFontSz": "36",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeMono",
               "displayName": "FreeMonoOblique48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf",
@@ -740,9 +3028,10 @@
               "nFontSz": "48",
               "logicalName": "FreeMonoOblique.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -751,9 +3040,10 @@
               "nFontSz": "9",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -762,9 +3052,10 @@
               "nFontSz": "12",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -773,9 +3064,10 @@
               "nFontSz": "18",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -784,9 +3076,10 @@
               "nFontSz": "20",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -795,9 +3088,10 @@
               "nFontSz": "22",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -806,9 +3100,10 @@
               "nFontSz": "24",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -817,9 +3112,10 @@
               "nFontSz": "26",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -828,9 +3124,10 @@
               "nFontSz": "28",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -839,9 +3136,10 @@
               "nFontSz": "36",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSans48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
@@ -850,9 +3148,10 @@
               "nFontSz": "48",
               "logicalName": "FreeSans.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -861,9 +3160,10 @@
               "nFontSz": "9",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -872,9 +3172,10 @@
               "nFontSz": "12",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -883,9 +3184,10 @@
               "nFontSz": "18",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -894,9 +3196,10 @@
               "nFontSz": "20",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -905,9 +3208,10 @@
               "nFontSz": "22",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -916,9 +3220,10 @@
               "nFontSz": "24",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -927,9 +3232,10 @@
               "nFontSz": "26",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -938,9 +3244,10 @@
               "nFontSz": "28",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -949,9 +3256,10 @@
               "nFontSz": "36",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansBold48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
@@ -960,9 +3268,10 @@
               "nFontSz": "48",
               "logicalName": "FreeSansBold.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -971,9 +3280,10 @@
               "nFontSz": "9",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+						  "bInstalledFont": true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -982,9 +3292,10 @@
               "nFontSz": "12",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+               "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -993,9 +3304,10 @@
               "nFontSz": "18",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1004,9 +3316,10 @@
               "nFontSz": "20",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1015,9 +3328,10 @@
               "nFontSz": "22",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1026,9 +3340,10 @@
               "nFontSz": "24",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1037,9 +3352,10 @@
               "nFontSz": "26",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1048,9 +3364,10 @@
               "nFontSz": "28",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1059,9 +3376,10 @@
               "nFontSz": "36",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSans",
               "displayName": "FreeSansOblique48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSansOblique.ttf",
@@ -1070,9 +3388,10 @@
               "nFontSz": "48",
               "logicalName": "FreeSansOblique.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1081,9 +3400,10 @@
               "nFontSz": "9",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1092,9 +3412,10 @@
               "nFontSz": "12",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1103,9 +3424,10 @@
               "nFontSz": "18",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1114,9 +3436,10 @@
               "nFontSz": "20",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1125,9 +3448,10 @@
               "nFontSz": "22",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1136,9 +3460,10 @@
               "nFontSz": "24",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1147,9 +3472,10 @@
               "nFontSz": "26",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1158,9 +3484,10 @@
               "nFontSz": "28",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1169,9 +3496,10 @@
               "nFontSz": "36",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerif48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
@@ -1180,9 +3508,10 @@
               "nFontSz": "48",
               "logicalName": "FreeSerif.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1191,9 +3520,10 @@
               "nFontSz": "9",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1202,9 +3532,10 @@
               "nFontSz": "12",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1213,9 +3544,10 @@
               "nFontSz": "18",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1224,9 +3556,10 @@
               "nFontSz": "20",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1235,9 +3568,10 @@
               "nFontSz": "22",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1246,9 +3580,10 @@
               "nFontSz": "24",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1257,9 +3592,10 @@
               "nFontSz": "26",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1268,9 +3604,10 @@
               "nFontSz": "28",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1279,9 +3616,10 @@
               "nFontSz": "36",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifBold48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
@@ -1290,9 +3628,10 @@
               "nFontSz": "48",
               "logicalName": "FreeSerifBold.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Bold"
+              "logicalStyle": "BOLD"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic9pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1301,9 +3640,10 @@
               "nFontSz": "9",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "9",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic12pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1312,9 +3652,10 @@
               "nFontSz": "12",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic18pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1323,9 +3664,10 @@
               "nFontSz": "18",
               "logicalName": "Serif",
               "logicalSize": "18",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic20pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1334,9 +3676,10 @@
               "nFontSz": "20",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic22pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1345,9 +3688,10 @@
               "nFontSz": "22",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic24pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1356,9 +3700,10 @@
               "nFontSz": "24",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic26pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1367,9 +3712,10 @@
               "nFontSz": "26",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic28pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1378,9 +3724,10 @@
               "nFontSz": "28",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic36pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1389,9 +3736,10 @@
               "nFontSz": "36",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "FreeSerif",
               "displayName": "FreeSerifItalic48pt",
               "defineFile": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf",
@@ -1400,9 +3748,10 @@
               "nFontSz": "48",
               "logicalName": "FreeSerifItalic.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Italic"
+              "logicalStyle": "ITALIC"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular8pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1411,9 +3760,10 @@
               "nFontSz": "8",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "8",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular10pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1422,9 +3772,10 @@
               "nFontSz": "10",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "10",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular12pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1433,9 +3784,10 @@
               "nFontSz": "12",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "12",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular14pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1444,9 +3796,10 @@
               "nFontSz": "14",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "14",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular16pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1455,9 +3808,10 @@
               "nFontSz": "16",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "16",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular18pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1466,9 +3820,10 @@
               "nFontSz": "18",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "18",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular20pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1477,9 +3832,10 @@
               "nFontSz": "20",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "20",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular22pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1488,9 +3844,10 @@
               "nFontSz": "22",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "22",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular24pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1499,9 +3856,10 @@
               "nFontSz": "24",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "24",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular26pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1510,9 +3868,10 @@
               "nFontSz": "26",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "26",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular28pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1521,9 +3880,10 @@
               "nFontSz": "28",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "28",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular36pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1532,9 +3892,10 @@
               "nFontSz": "36",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "36",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             },
             {
+              "bInstalledFont":true,
               "familyName": "Noto Mono",
               "displayName": "NotoMono-Regular48pt",
               "defineFile": "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf",
@@ -1543,7 +3904,7 @@
               "nFontSz": "48",
               "logicalName": "NotoMono-Regular.ttf",
               "logicalSize": "48",
-              "logicalStyle": "Regular"
+              "logicalStyle": "PLAIN"
             }
           ]
         }

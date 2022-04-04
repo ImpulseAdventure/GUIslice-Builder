@@ -24,7 +24,6 @@ import org.fife.ui.rtextarea.Gutter;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import hu.csekme.RibbonMenu.Util;
 import javax.swing.ScrollPaneConstants;
 
 public class CodeDialog extends JDialog implements ActionListener {
