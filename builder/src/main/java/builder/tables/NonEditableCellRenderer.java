@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,9 +58,7 @@ public class NonEditableCellRenderer extends DefaultTableCellRenderer {
           value, isSelected, hasFocus, row, col);
       if (col == 1) {
         if (!table.getModel().isCellEditable(row, col)){
-          c.setBackground(Color.DARK_GRAY);  
-//          c.setBackground(new Color(255,228,225));  // misty rose
-          // c.setBackground(new Color(232,232,232)); // very light gray
+          c.setBackground(new Color(255,228,225));  // misty rose
         } else {
           c.setBackground(Color.WHITE);
         }

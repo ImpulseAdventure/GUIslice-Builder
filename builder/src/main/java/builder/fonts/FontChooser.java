@@ -209,7 +209,6 @@ public class FontChooser extends JDialog {
           return new Dimension(500, 100);
       };
     };    
-    previewPanel.setBorder(new TitledBorder(new EtchedBorder(), "Preview"));
     previewLabel = new JLabel();
 
     previewPanel.add(previewLabel);

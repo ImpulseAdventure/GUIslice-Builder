@@ -766,11 +766,12 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   }
 
   /**
-   * Sets the read only properties and any other items 
-   * needed at startup.
-   * 
+   * setReadOnlyProperties
    * Called by Controller on creating a new project file. 
+   *
+   * @see builder.models.WidgetModel#setReadOnlyProperties()
    */
+  @Override
   public void setReadOnlyProperties() {
     if (!getBackgroundImageName().isEmpty()) {
       File file = new File(getBackgroundImageName());

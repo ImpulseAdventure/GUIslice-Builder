@@ -207,8 +207,8 @@ public class FontUTFT extends FontTFT {
 
     // draw our text, if any
     if (strMetrics.w > 0 || strMetrics.h > 0) {
-      cursor_x = 0;
-      cursor_y = 0;
+      cursor_x = r.x;
+      cursor_y = r.y;
       Dimension size;
       for (int i = 0; i < length; i++) {
         ch = s.charAt(i);

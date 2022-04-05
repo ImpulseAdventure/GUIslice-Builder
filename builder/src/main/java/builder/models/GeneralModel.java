@@ -677,14 +677,11 @@ public class GeneralModel extends WidgetModel {
   }
 
   /**
-   * Sets the read only properties and any other items 
-   * needed at startup.
-   * 
-   * Called by GeneralEditor on startup Basically this 
-   * replaces a subclassed readModel() since we don't 
-   * serialize GeneralModel for save and restores.
-   * It's saved wherever java stores UserPrefences (registry for windows).
+   * setReadOnlyProperties
+   *
+   * @see builder.models.WidgetModel#setReadOnlyProperties()
    */
+  @Override
   public void setReadOnlyProperties() {
     if (getTargetPlatform().equals("arduino")) {
       data[PROP_TARGET][PROP_VAL_VALUE] = "Adafruit_GFX";

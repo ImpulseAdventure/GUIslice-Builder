@@ -76,8 +76,8 @@ public class TextEditor extends ModelEditor {
     fPrefs = Preferences.userRoot().node(prefNode);
     model = new TextModel();
     model.TurnOffEvents();
-    updateModel();
     model.setFontReadOnly();
+    updateModel();
     System.setErr(System.err);  
   }
 

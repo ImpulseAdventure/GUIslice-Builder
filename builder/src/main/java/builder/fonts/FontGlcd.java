@@ -233,8 +233,10 @@ public class FontGlcd extends FontTFT {
     // draw our text, if any
     if (strMetrics.w > 0 || strMetrics.h > 0) {
   
-      cursor_x = 0;
-      cursor_y = 0;
+//      cursor_x = 0;
+//      cursor_y = 0;
+      cursor_x = r.x;
+      cursor_y = r.y;
     
       for (int i = 0; i < length; i++) {
         ch = s.charAt(i);
@@ -423,13 +425,11 @@ public class FontGlcd extends FontTFT {
    */
   private void writePixel(int x, int y, Color col) {
     // our gate protection against crashes
-    if (x< 0 || x > strMetrics.w-1) {
-      return;
+    try {
+      raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
+    } catch(ArrayIndexOutOfBoundsException e) {
+ //     Builder.logger.debug(String.format("%s writePixel ch: %c exceeded: %d,%d", getDisplayName(), ch, x,y));
     }
-    if (y< 0 || y > strMetrics.h-1) {
-      return;
-    }
-    raster.setPixel(x, y, new int[] { col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha() });
   }
 
   /**

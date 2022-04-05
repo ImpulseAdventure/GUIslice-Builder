@@ -280,7 +280,13 @@ public class TextModel extends WidgetModel {
   @Override
   public void setFontReadOnly() {
     data[PROP_FONT][PROP_VAL_READONLY] = true;
+    data[PROP_TEXT][PROP_VAL_READONLY] = true;
+    data[PROP_ELEMENTREF][PROP_VAL_READONLY] = true;
+    data[PROP_ENUM][PROP_VAL_READONLY] = true;
     data[PROP_FONT][PROP_VAL_VALUE] = "";
+    data[PROP_TEXT][PROP_VAL_VALUE] = "";
+    data[PROP_ELEMENTREF][PROP_VAL_VALUE] = "";
+    data[PROP_ENUM][PROP_VAL_VALUE] = "";
   }
   
   /**
