@@ -409,7 +409,7 @@ public class CodeGenerator {
     try {
       // if we are using PlatformIO IDE we may need to create some directory structure
       if (m_nState >= 10) {
-        makePIOFileStruct(folder);
+        PlatformIO.makePIOFileStruct(folder);
         PlatformIO.createIniFile(folder);
       }
       
@@ -520,22 +520,6 @@ public class CodeGenerator {
     } catch (IOException e) {
       throw new CodeGenException(e.toString());
     } 
-  }
-  
-  private void makePIOFileStruct(String folder) {
-    // check for src folder
-    File src = new File(folder+m_sFileSep+"src");
-    if (!src.exists())
-      src.mkdir();
-    File include = new File(folder+m_sFileSep+"include");
-    if (!include.exists())
-      include.mkdir();
-    File lib = new File(folder+m_sFileSep+"lib");
-    if (!lib.exists())
-      lib.mkdir();
-    File test = new File(folder+m_sFileSep+"test");
-    if (!test.exists())
-      test.mkdir();
   }
   
   private String createAppName(String m_sProjectName) {

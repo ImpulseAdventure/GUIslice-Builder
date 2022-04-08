@@ -55,7 +55,7 @@ import builder.models.ProjectModel;
  */
 public class PlatformIO {
 
-  private final static String PLATFORMIO_INI       = "platformio.ini";
+  public  final static String PLATFORMIO_INI       = "platformio.ini";
   private final static String PLATFORMIO_TEMPLATE  = "platformio.t";
   private final static String PLATFORMIO_CUSTOM    = "platformio_custom_env.t";
   private final static String PLATFORMIO_DEFAULT   = "platformio_default_env.t";
@@ -225,6 +225,23 @@ public class PlatformIO {
       bResult = true;
     }
     return bResult;
+  }
+  
+  public static void makePIOFileStruct(String folder) {
+    String m_sFileSep = System.getProperty("file.separator");
+    // check for src folder
+    File src = new File(folder+m_sFileSep+"src");
+    if (!src.exists())
+      src.mkdir();
+    File include = new File(folder+m_sFileSep+"include");
+    if (!include.exists())
+      include.mkdir();
+    File lib = new File(folder+m_sFileSep+"lib");
+    if (!lib.exists())
+      lib.mkdir();
+    File test = new File(folder+m_sFileSep+"test");
+    if (!test.exists())
+      test.mkdir();
   }
   
   private static void copyMacroToOutput(BufferedWriter bw, List<String> outputLines) 

@@ -67,6 +67,7 @@ import javax.swing.text.NumberFormatter;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
+import builder.codegen.PlatformIO;
 import builder.commands.AddWidgetCommand;
 import builder.commands.AlignBottomCommand;
 import builder.commands.AlignCenterCommand;
@@ -208,8 +209,10 @@ public class Controller extends JInternalFrame
     this.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
-        GeneralEditor.getInstance().setTFTWinWidth(getWidth());
-        GeneralEditor.getInstance().setTFTWinHeight(getHeight());
+//          Builder.logger.debug("CHANGED WIDTH: "+getWidth()+" to "+Builder.CANVAS_WIDTH);
+          GeneralEditor.getInstance().setTFTWinWidth(getWidth());
+//            Builder.logger.debug("CHANGED HEIGHT: "+getHeight()+" to "+Builder.CANVAS_HEIGHT);
+            GeneralEditor.getInstance().setTFTWinHeight(getHeight());
       }
     });
 
@@ -349,7 +352,7 @@ public class Controller extends JInternalFrame
   /**
    * Refresh view.
    */
-  public void refreshView() {
+  public static void refreshView() {
     currentPage.refreshView();
   }
   
@@ -959,45 +962,99 @@ public class Controller extends JInternalFrame
      * 
      * Our folder names are simply the name minus the ending ".prj"
      */
-    String sOldName = projectFile.getName();
-    String sNewName = file.getName();
-    String sNewFolder = file.getPath();
-    int n = sNewFolder.indexOf(sNewName);
-    sNewFolder = sNewFolder.substring(0,n-1);
-    String sOldFolder = projectFile.getPath();
-    n = sOldFolder.indexOf(sOldName);
-    sOldFolder = sOldFolder.substring(0,n-1);
-    CommonUtils.copyDirectory(sOldFolder, sNewFolder);
-    /* now since we have copied any existing
-     * <old project name>.ino and <old project name>.h
-     * we need to rename them to our new name.
-     * Of course, we are done if they don't exist.
-     */
-    n = sOldName.indexOf(".prj");
-    sOldName = sOldName.substring(0,n);
-    n = sNewName.indexOf(".prj");
-    sNewName = sNewName.substring(0,n);
-    File header = new File(sNewFolder + System.getProperty("file.separator") + sOldName+"_GSLC.h");
-    File ino = new File(sNewFolder + System.getProperty("file.separator") + sOldName +".ino");
-    File prj = new File(sNewFolder + System.getProperty("file.separator") + sOldName + ".prj");
-    if (header.exists()) {
-      File new_header = new File(sNewFolder + System.getProperty("file.separator") + sNewName+"_GSLC.h");
-      CommonUtils.fileReplaceStr(header, new_header, sOldName,sNewName);
-      header.delete();
-    }
-    if (ino.exists()) { 
-      File new_ino = new File(sNewFolder + System.getProperty("file.separator") + sNewName+".ino");
-      CommonUtils.fileReplaceStr(ino, new_ino, sOldName,sNewName);
-      ino.delete();
-    }
-    if (prj.exists()) {
-      prj.delete();
+    String fileSep = System.getProperty("file.separator");
+    String srcName = projectFile.getName();
+    int n = srcName.indexOf(".prj");
+    srcName = srcName.substring(0,n);
+    String destName = file.getName();
+    n = destName.indexOf(".prj");
+    destName = destName.substring(0,n);
+    
+    String destFolder = file.getPath();
+    n = destFolder.lastIndexOf(destName);
+    destFolder = destFolder.substring(0,n-1);
+    String srcFolder = projectFile.getPath();
+    n = srcFolder.lastIndexOf(srcName);
+    srcFolder = srcFolder.substring(0,n-1);
+    
+    int destIDE = getProjectModel().getIDE_ID();
+    int srcIDE = ProjectModel.ARDUINO_IDE_ID;
+    
+    if (destIDE == ProjectModel.ARDUINO_IDE_ID && srcIDE == ProjectModel.ARDUINO_IDE_ID) {
+      CommonUtils.copyDirectory(srcFolder, destFolder, null);
+
+      File header = new File(destFolder + fileSep + srcName+"_GSLC.h");
+      if (header.exists() && !srcName.equals(destName)) {
+        File new_header = new File(destFolder + fileSep + destName+"_GSLC.h");
+        CommonUtils.fileReplaceStr(header, new_header, srcName,destName);
+        header.delete();
+      }
+      File ino = new File(destFolder + System.getProperty("file.separator") + srcName +".ino");
+      if (ino.exists() && !srcName.equals(destName)) { 
+        File new_ino = new File(destFolder + System.getProperty("file.separator") + destName+".ino");
+        CommonUtils.fileReplaceStr(ino, new_ino, srcName,destName);
+        ino.delete();
+      }
+    } else if (destIDE == ProjectModel.PIO_IDE_ID && srcIDE == ProjectModel.PIO_IDE_ID) {
+      CommonUtils.copyDirectory(srcFolder, destFolder, null);
+      File header = new File(destFolder + fileSep + "include" + fileSep + srcName+"_GSLC.h");
+      if (header.exists() && !srcName.equals(destName)) {
+        File new_header = new File(destFolder + fileSep + destName+"_GSLC.h");
+        CommonUtils.fileReplaceStr(header, new_header, srcName,destName);
+        header.delete();
+      }
+      File app = new File(srcFolder + fileSep + "src" + fileSep + "main.cpp");
+      if (app.exists() && !srcName.equals(destName)) { 
+        File new_cpp = new File(destFolder + fileSep + "src" + fileSep + "main.cpp");
+        CommonUtils.fileReplaceStr(app, new_cpp, srcName,destName);
+        app.delete();
+      }
+    } else if (destIDE == ProjectModel.PIO_IDE_ID && srcIDE == ProjectModel.ARDUINO_IDE_ID) {
+      PlatformIO.makePIOFileStruct(destFolder);
+      String destHeaderFolder = destFolder + fileSep + "include";
+      List<String> hList= new ArrayList<String>();
+      hList.add(".h");
+      CommonUtils.copyDirectory(srcFolder, destHeaderFolder, hList);
+      File srcHeader = new File(destFolder + fileSep + "include" + fileSep + srcName+"_GSLC.h");
+      if (srcHeader.exists() && !srcName.equals(destName)) {
+        File destHeader = new File(destFolder + fileSep + "include" + fileSep + destName+"_GSLC.h");
+        CommonUtils.fileReplaceStr(srcHeader, destHeader, srcName,destName);
+        srcHeader.delete();
+      }
+      String destSrcFolder = destFolder + fileSep + "src";
+      List<String> cList= new ArrayList<String>();
+      cList.add(".c");
+      cList.add(".cpp");
+      cList.add(".ino");
+      CommonUtils.copyDirectory(srcFolder, destSrcFolder, cList);
+      File ino = new File(destFolder + fileSep + "src" + fileSep + srcName + ".ino");
+      if (ino.exists()) { 
+        File new_cpp = new File(destFolder + fileSep + "src" + fileSep + "main.cpp");
+        CommonUtils.fileReplaceStr(ino, new_cpp, srcName,destName);
+        ino.delete();
+      }
+      PlatformIO.createIniFile(destFolder);
+    } else if (destIDE == ProjectModel.ARDUINO_IDE_ID && srcIDE == ProjectModel.PIO_IDE_ID) {
+      String oldFolder = srcFolder + fileSep + "src";
+      CommonUtils.copyDirectory(oldFolder, destFolder, null);
+      oldFolder = srcFolder + fileSep + "include";
+      CommonUtils.copyDirectory(oldFolder, destFolder, null);
+      File app = new File(destFolder + fileSep + "main.cpp");
+      if (app.exists()) { 
+        File new_ino = new File(destFolder + fileSep + destName+".ino");
+        CommonUtils.fileReplaceStr(app, new_ino, srcName,destName);
+        app.delete();
+      }
+      File ini = new File(destFolder+fileSep+PlatformIO.PLATFORMIO_INI);
+      if (ini.exists()) {
+        ini.delete();
+      }
     }
     saveProject(file);
     closeProject();
     openProject(file);
   }
-  
+ 
   /**
    * Open project.
    *
@@ -1388,19 +1445,14 @@ public class Controller extends JInternalFrame
     try {
       int oldWidth = Integer.valueOf(txtOldWidth.getText());
       int oldHeight = Integer.valueOf(txtOldHeight.getText());
-      ProjectModel pm = getProjectModel();
-      int newWidth = pm.getWidth();
-      int newHeight = pm.getHeight();
+      int newWidth = Builder.CANVAS_WIDTH;
+      int newHeight = Builder.CANVAS_HEIGHT;
       if (oldWidth == newWidth && oldHeight == newHeight) {
         JOptionPane.showConfirmDialog(null, 
             "Did you forget to first change to a\nnew screen size inside Project Options?\n",
              "Error!",
             JOptionPane.PLAIN_MESSAGE);
-        
-        if (option != JOptionPane.OK_OPTION) {
-          Builder.logger.debug("Scale canceled");
           return;
-        }
       }
       // calcualte our scaling ratios
       double ratioX = (double)newWidth / (double)oldWidth;
@@ -1517,14 +1569,6 @@ public class Controller extends JInternalFrame
       if (!generalEditor.getTarget().equals(getTargetPlatform())) {
         // we need to update our current project
         pm.setTargetPlatform(generalEditor.getTarget());
-      }
-      if (pm != null && generalEditor.getWidth() != pm.getWidth()) {
-        pm.setWidth(generalEditor.getWidth());
-        refreshView();
-      }
-      if (pm != null && generalEditor.getHeight() != pm.getHeight()) {
-        pm.setHeight(generalEditor.getHeight());
-        refreshView();
       }
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();

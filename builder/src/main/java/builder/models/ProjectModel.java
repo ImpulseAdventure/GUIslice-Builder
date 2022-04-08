@@ -46,6 +46,7 @@ import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontGraphics;
 import builder.tables.ImageCellEditor;
@@ -67,6 +68,9 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   /** Target IDE */
   public static final String IDE_ARDUINO       = "Arduino IDE";
   public static final String IDE_PIO           = "PlatformIO IDE";
+  public static final int    ARDUINO_IDE_ID    = 1;
+  public static final int    PIO_IDE_ID        = 2;
+  
 
   /** Target Platforms */
   public static final String PLATFORM_ARDUINO  = "Adafruit_GFX";
@@ -343,6 +347,13 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
 
   public String getIDE() {
     return (String) data[PROP_IDE][PROP_VAL_VALUE];
+  }
+  
+  public int getIDE_ID() {
+    if(((String) data[PROP_IDE][PROP_VAL_VALUE]).equals(IDE_ARDUINO)) {
+      return ARDUINO_IDE_ID;
+    }
+    return PIO_IDE_ID;
   }
   
   public String getPioEnv() {
@@ -730,6 +741,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       Builder.CANVAS_WIDTH = getWidth();
     }
     if (row == DISPLAY_HEIGHT) {
+      int nSize = (((Integer) (data[DISPLAY_HEIGHT][PROP_VAL_VALUE])).intValue());
+      int xSize = getHeight();
       Builder.CANVAS_HEIGHT = getHeight();
     }
     if (row == PROP_IDE) {

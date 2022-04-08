@@ -49,6 +49,7 @@ import java.nio.file.StandardCopyOption;
 import javax.imageio.ImageIO;
 
 import builder.Builder;
+import builder.codegen.PlatformIO;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.prefs.GeneralEditor;
@@ -325,21 +326,44 @@ public class CommonUtils {
     }
   }
   
-  public static void copyDirectory(String src, String dest) 
+  public static void copyDirectory(String src, String dest, List<String>filterList) 
       throws IOException {
         Files.walk(Paths.get(src))
           .forEach(a -> {
               Path b = Paths.get(dest, a.toString().substring(src.length()));
               try {
-                if (!b.toString().contains("gui_backup") &&
-                    !b.toString().endsWith(".bak")) {
+                boolean bMatch = false;
+                String name = b.toString();
+                if (filterList != null) {
+                  for(String include : filterList) {
+                    if (name.endsWith(include))
+                      bMatch=true;
+                  }
+                } else {
+                  bMatch=true;
+                }
+                if (bMatch &&
+                    !name.contains("gui_backup") &&
+                    !name.startsWith(".") &&
+                    !name.endsWith(".prj") &&
+                    !name.endsWith(".bak")) {
                   Files.copy(a, b,new CopyOption[]{StandardCopyOption.REPLACE_EXISTING,
                       StandardCopyOption.COPY_ATTRIBUTES});
-                }                
+                }
               } catch (IOException e) {
                   e.printStackTrace();
               }
           });
+  }
+  
+  public static boolean isPlatformIO_INI_Present(String folder) {
+    boolean bResult = false;
+    String m_sFileSep = System.getProperty("file.separator");
+    File iniFile = new File(folder + m_sFileSep + PlatformIO.PLATFORMIO_INI);
+    if (iniFile.exists()) {
+      bResult = true;
+    }
+    return bResult;
   }
   
   public static void cleanFolderOfFontHeaders(String folder) {
