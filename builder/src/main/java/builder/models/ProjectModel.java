@@ -46,7 +46,6 @@ import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
-import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontGraphics;
 import builder.tables.ImageCellEditor;
@@ -741,16 +740,16 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       Builder.CANVAS_WIDTH = getWidth();
     }
     if (row == DISPLAY_HEIGHT) {
-      int nSize = (((Integer) (data[DISPLAY_HEIGHT][PROP_VAL_VALUE])).intValue());
-      int xSize = getHeight();
       Builder.CANVAS_HEIGHT = getHeight();
     }
     if (row == PROP_IDE) {
       if (getIDE().equals(ProjectModel.IDE_PIO)) {
         if (PlatformIO.isPlatformIO_INI_Present())
           data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
-        else
+        else {
+          data[PROP_PIO_ENV][PROP_VAL_VALUE] = (String)cbPioEnv.getItemAt(0);
           data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+        }
       } else {
         data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
       }

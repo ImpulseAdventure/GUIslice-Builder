@@ -353,14 +353,14 @@ public class CodeGenerator {
       if(target.equals(ProjectModel.PLATFORM_LINUX)) {
         // do not use header version with linux C files
         m_nState = ST_LINUX;
-        tm.storeTemplates("linux.t");
+        tm.storeTemplatesFromFileName("linux.t");
       } else {
         if (bCompat) {
           m_nState = ST_ARDUINO_COMPAT;
         } else {
           m_nState = ST_ARDUINO_HDR;
         }
-        tm.storeTemplates("graphics.t");
+        tm.storeTemplatesFromFileName("graphics.t");
       }
       if (m_nState == 0) {
         Builder.logger.debug("Code Generation Failed: Graphics Library not defined");

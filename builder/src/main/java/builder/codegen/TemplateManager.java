@@ -91,14 +91,14 @@ public class TemplateManager {
   }
 
   /**
-   * Store templates.
+   * Store templates from filename.
    *
    * @param templateFileName
    *          the template file name
    * @throws CodeGenException
    *           the code gen exception
    */
-  public void storeTemplates(String templateFileName) throws CodeGenException {
+  public void storeTemplatesFromFileName(String templateFileName) throws CodeGenException {
     templateMap = new HashMap<String, Integer>(64);
 //    String pathName = RESOURCES_PATH + templateFileName;
     String pathName = CommonUtils.getWorkingDir() +
@@ -128,6 +128,46 @@ public class TemplateManager {
         i++;
       }
       
+    } catch (IOException e) {
+      throw new CodeGenException(e.toString());
+    } finally {
+      try {
+        if (tbr != null) tbr.close();
+      } catch (IOException e) {
+        throw new CodeGenException(e.toString());
+      }
+    }
+  }
+    
+  /**
+   * Store single template from pathname.
+   *
+   * @param templateName
+   *          the simple name of the template
+   * @param templatePathName
+   *          the template path name
+   * @throws CodeGenException
+   *           the code gen exception
+   */
+  public void storeTemplateFromPathName(String templateName, String templatePathName) throws CodeGenException {
+    templateMap = new HashMap<String, Integer>(64);
+    File file = new File(templatePathName);
+    BufferedReader tbr=null;
+    try {
+      tbr = new BufferedReader(new InputStreamReader(
+          new FileInputStream(file), "UTF8"));
+//      Builder.logger.debug("Open Template File: " + templatePathName);
+      List<String> lines = new ArrayList<String>();
+      String line;
+      while(true) {
+        if((line = tbr.readLine()) == null) {
+          templateMap.put(templateName, 0);
+          listOfTemplates[0] = lines;
+          break;
+        }
+        lines.add(line);
+      }
+//    Builder.logger.debug("Stored Template: " + templateName);
     } catch (IOException e) {
       throw new CodeGenException(e.toString());
     } finally {

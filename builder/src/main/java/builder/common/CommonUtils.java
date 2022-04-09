@@ -328,32 +328,58 @@ public class CommonUtils {
   
   public static void copyDirectory(String src, String dest, List<String>filterList) 
       throws IOException {
-        Files.walk(Paths.get(src))
-          .forEach(a -> {
-              Path b = Paths.get(dest, a.toString().substring(src.length()));
-              try {
-                boolean bMatch = false;
-                String name = b.toString();
-                if (filterList != null) {
-                  for(String include : filterList) {
-                    if (name.endsWith(include))
-                      bMatch=true;
-                  }
-                } else {
+    Files.walk(Paths.get(src))
+      .forEach(a -> {
+          Path b = Paths.get(dest, a.toString().substring(src.length()));
+          try {
+            boolean bMatch = false;
+            String name = b.toString();
+            if (filterList != null) {
+              for(String include : filterList) {
+                if (name.endsWith(include))
                   bMatch=true;
-                }
-                if (bMatch &&
-                    !name.contains("gui_backup") &&
-                    !name.startsWith(".") &&
-                    !name.endsWith(".prj") &&
-                    !name.endsWith(".bak")) {
-                  Files.copy(a, b,new CopyOption[]{StandardCopyOption.REPLACE_EXISTING,
-                      StandardCopyOption.COPY_ATTRIBUTES});
-                }
-              } catch (IOException e) {
-                  e.printStackTrace();
               }
-          });
+            } else {
+              bMatch=true;
+            }
+            if (bMatch &&
+                !name.contains("gui_backup") &&
+                !name.startsWith(".") &&
+                !name.endsWith(".prj") &&
+                !name.endsWith(".bak")) {
+              Files.copy(a, b,new CopyOption[]{StandardCopyOption.REPLACE_EXISTING,
+                  StandardCopyOption.COPY_ATTRIBUTES});
+            }
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+      });
+  }
+  
+  public static List<String> listDirectory(String src, List<String>filterList) {
+    List<String> list = new ArrayList<String>();
+    try {
+      Files.walk(Paths.get(src))
+        .forEach(a -> {
+          boolean bMatch = false;
+          String name = a.toString();
+          if (filterList != null) {
+            for(String include : filterList) {
+              if (name.endsWith(include))
+                bMatch=true;
+            }
+          } else {
+            bMatch=true;
+          }
+          if (bMatch) {
+            list.add(a.getFileName().toString());
+          }
+       });
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+     return list;
   }
   
   public static boolean isPlatformIO_INI_Present(String folder) {

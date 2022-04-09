@@ -667,8 +667,10 @@ public class GeneralModel extends WidgetModel {
       if (getIDE().equals(ProjectModel.IDE_PIO)) {
         if (PlatformIO.isPlatformIO_INI_Present())
           data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
-        else
+        else {
+          data[PROP_PIO_ENV][PROP_VAL_VALUE] = (String)cbPioEnv.getItemAt(0);
           data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+        }
       } else {
         data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
       }

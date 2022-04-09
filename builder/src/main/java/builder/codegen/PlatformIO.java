@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -57,8 +58,8 @@ public class PlatformIO {
 
   public  final static String PLATFORMIO_INI       = "platformio.ini";
   private final static String PLATFORMIO_TEMPLATE  = "platformio.t";
-  private final static String PLATFORMIO_CUSTOM    = "platformio_custom_env.t";
-  private final static String PLATFORMIO_DEFAULT   = "platformio_default_env.t";
+  private final static String PLATFORMIO_CUSTOM    = "PlatformIO_Custom";
+  private final static String PLATFORMIO_DEFAULT   = "PlatformIO_Config";
   private final static String PLATFORMIO_INI_MACRO = "$<PLATFORMIO_INI>";
   private final static String DEFAULT_ENV_MACRO    = "$<DEFAULT_ENV>";
   private final static String GUIslice_ENV         = "$<GUIslice_ENV>";
@@ -82,14 +83,39 @@ public class PlatformIO {
     // user selected an env so we need to create a platformio.ini
     TemplateManager tm = new TemplateManager();
     // check for a custom env file
-    File tmFile = new File(home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_CUSTOM);
-    if (tmFile.exists()) {
-      tm.storeTemplates(PLATFORMIO_CUSTOM);
-    } else {
-      tm.storeTemplates(PLATFORMIO_DEFAULT);
+    String tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_CUSTOM;
+    List<String> filter = new ArrayList<String>();
+    filter.add(".txt");
+    List<String> list = CommonUtils.listDirectory(tmPathName,filter);
+    boolean bFound = false;
+    for(String str: list) {
+      if (str.equals(myEnv+".txt")) {
+        tmPathName = tmPathName + m_sFileSep + myEnv+".txt";
+        bFound = true;
+        break;
+      }
     }
+    if (!bFound) {
+      tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_DEFAULT;
+      list = CommonUtils.listDirectory(tmPathName,filter);
+      for(String str: list) {
+        if (str.equals(myEnv+".txt")) {
+          tmPathName = tmPathName + m_sFileSep + myEnv+".txt";
+          bFound = true;
+          break;
+        }
+      }
+    }
+    if (!bFound) {
+      JOptionPane.showMessageDialog(null, 
+          "missing "+myEnv+".txt", 
+        "Error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    tm.storeTemplateFromPathName(myEnv, tmPathName);
+      
     // load our environments from the template file
-    List<String>templateLines = tm.loadTemplate("<" + myEnv + ">");
+    List<String>templateLines = tm.loadTemplate(myEnv);
     // open source (platflorm.t) and destination (platform.ini) file
     String srcName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_TEMPLATE;
     srcFile = new File(srcName);
@@ -117,29 +143,40 @@ public class PlatformIO {
           srcName+"\nmissing "+PLATFORMIO_INI_MACRO;
         JOptionPane.showMessageDialog(null, errMsg, 
             "Error", JOptionPane.ERROR_MESSAGE);
+        br.close();
+        bw.close();
+        return;
       }
       /* here we simple need to output
        * default_envs = XXXXX
        * where XXXXX is myEnv string from Project Options model.
-       * NOTE: that a user may have hard-coded this environment
-       * so no error is generated if we don't find it.
        */
+      bFound = false;
       while ((line = br.readLine()) != null) {
         if (line.equals(DEFAULT_ENV_MACRO)) {
           bw.write(myEnv);
           bw.newLine();
+          bFound = true;
           break;
         } else {
           bw.write(line);
           bw.newLine();
         }
        }
+      if (!bFound) {
+        Builder.logger.debug(srcName+" missing $<DEFAULT_ENV> macro");
+        JOptionPane.showMessageDialog(null, 
+            srcName+" missing $<DEFAULT_ENV> macro", 
+          "Error", JOptionPane.ERROR_MESSAGE);
+        br.close();
+        bw.close();
+      }
       /*
        * here we generate an error if the guislice_env isn't found
        * since the user could have simply created their own ini file
        * and avoided this complication.
        */
-      boolean bFound = false;
+      bFound = false;
       while ((line = br.readLine()) != null) {
         if (line.startsWith(GUIslice_ENV)) {
           bFound = true;
@@ -152,9 +189,9 @@ public class PlatformIO {
         }
       }
       if (!bFound) {
-        Builder.logger.debug(tmFile.getName()+" missing [env:"+myEnv+"]");
+        Builder.logger.debug(srcName+" missing $<GUIslice_ENV> macro");
         JOptionPane.showMessageDialog(null, 
-            tmFile.getName()+" missing [env:"+myEnv+"]", 
+            srcName+" missing $<GUIslice_ENV> macro", 
           "Error", JOptionPane.ERROR_MESSAGE);
       }
       br.close();
@@ -174,44 +211,37 @@ public class PlatformIO {
         "Error", JOptionPane.ERROR_MESSAGE);
     } catch (CodeGenException e) {
       JOptionPane.showMessageDialog(null, 
-          tmFile.getName()+" "+e.toString(), 
+          srcName+" "+e.toString(), 
         "Error", JOptionPane.ERROR_MESSAGE);
     }
   }
   
   public static List<String> getListEnv() {
+    List<String> result = new ArrayList<String>();
     String home = CommonUtils.getWorkingDir();
     String m_sFileSep = System.getProperty("file.separator");
-    List<String> result = new ArrayList<String>();
-    String tmName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_CUSTOM;
-    File tmFile = new File(tmName);
-    if (!tmFile.exists()) {
-      tmName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_DEFAULT;
-      tmFile = new File(tmName);
-      if (!tmFile.exists()) {
-        Builder.logger.debug(tmName+" is missing");
-        JOptionPane.showMessageDialog(null, 
-            tmName+" is missing", 
-          "Error", JOptionPane.ERROR_MESSAGE);
-      }
+    int n = 0;
+    HashMap<String, Integer> map = new HashMap<String, Integer>();;
+    // check for a custom env file
+    String tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_CUSTOM;
+    List<String> filter = new ArrayList<String>();
+    filter.add(".txt");
+    List<String> list = CommonUtils.listDirectory(tmPathName,filter);
+    for (String str : list) {
+      n = str.indexOf(".txt");
+      String name = str.substring(0,n);
+      map.put(name, 1);
+      result.add(name);
     }
-    BufferedReader br;
-    String line = null;
-    String sEnv = null;
-    int n;
-    try {
-      br = new BufferedReader(new InputStreamReader(new FileInputStream(tmFile), "UTF8"));
-      while ((line = br.readLine()) != null) {
-        if (line.startsWith("<") && !line.equals("<STOP>")) {
-          n = line.indexOf(">");
-          if (n > 0) {
-            sEnv = new String(line.substring(1, n));
-            result.add(sEnv);
-          }
-        }
+    tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_DEFAULT;
+    list = CommonUtils.listDirectory(tmPathName,filter);
+    for (String str : list) {
+      n = str.indexOf(".txt");
+      String name = str.substring(0,n);
+      if (map.containsKey(name)) {
+        continue;
       }
-    } catch (IOException e) {
-      Builder.logger.debug(tmFile.getName() + " " + e.toString());
+      result.add(name);
     }
     return result;
   }
