@@ -60,11 +60,11 @@ Users can now choose a color theme for their Applications written using GUIslice
 GUIslice, Arc Dark, Cyan Light, Material Dark, or Solarized.  You may modify these themes or add new ones. 
 </p>
 
-![](docs/images/guislice_theme.png)
-![](docs/images/arc_theme.png)
-![](docs/images/cyan_theme.png)
-![](docs/images/material_theme.png)
-![](docs/images/solarized_theme.png)
+![](builder/docs/imagesimages/guislice_theme.png)
+![](builder/docs/imagesimages/arc_theme.png)
+![](builder/docs/imagesimages/cyan_theme.png)
+![](builder/docs/imagesimages/material_theme.png)
+![](builder/docs/imagesimages/solarized_theme.png)
 
 <p>
 Improved Font handling. The Builder will now identify fonts that come standard with a particular graphics package 
