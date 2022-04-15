@@ -56,6 +56,17 @@ Further details on customizing the Builder for PlatformIO is available in the
 </p>
 
 <p>
+Users can now choose a color theme for their Applications written using GUIslice API. You can choose from the original 
+GUIslice, Arc Dark, Cyan Light, Material Dark, or Solarized.  You may modify these themes or add new ones. 
+</p>
+
+![](docs/images/guislice_theme.png)
+![](docs/images/arc_theme.png)
+![](docs/images/cyan_theme.png)
+![](docs/images/material_theme.png)
+![](docs/images/solarized_theme.png)
+
+<p>
 Improved Font handling. The Builder will now identify fonts that come standard with a particular graphics package 
 like Adafruit_GFX and if you request one that isn't provided the Builder will copy the font to your project folder.
 It will also cleanup during a new code generation any font files moved previously that are no longer in use.
