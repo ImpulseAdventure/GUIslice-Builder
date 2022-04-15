@@ -1,12 +1,4 @@
 #define,red,green,blue,property
-GSLC_COL_GRAY,128,128,128,default_frame_color
-GSLC_COL_BLACK,0,0,0,default_fill_color
-GSLC_COL_BLACK,0,0,0,default_glow_color
-GSLC_COL_YELLOW,255,255,0,default_text_color
-GSLC_COL_BLUE_DK2,0,0,192,button_frame_color
-GSLC_COL_BLUE_DK4,0,0,128,button_fill_color
-GSLC_COL_BLUE_DK1,0,0,224,button_glow_color
-GSLC_COL_WHITE,255,255,255,button_text_color
 GSLC_COL_BLACK,0,0,0,Black
 GSLC_COL_BLUE,0,0,255,Blue
 GSLC_COL_BLUE_DK1,0,0,224,Blue(dark1)

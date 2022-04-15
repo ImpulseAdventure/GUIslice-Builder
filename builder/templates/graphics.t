@@ -27,25 +27,25 @@
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
-    $<COL-302>,$<COL-303>,true,true,NULL,NULL);
+    $<COL-302>,$<COL-303>,$<COL-010>,true,NULL,NULL);
 <STOP>
 <BOX_ALL_FUNCT_P>
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
-    $<COL-302>,$<COL-303>,true,true,&CbDrawScanner,&CbTickScanner);
+    $<COL-302>,$<COL-303>,$<COL-010>,true,&CbDrawScanner,&CbTickScanner);
 <STOP>
 <BOX_DRAW_FUNCT_P>
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
-    $<COL-302>,$<COL-303>,true,true,&CbDrawScanner,NULL);
+    $<COL-302>,$<COL-303>,$<COL-010>,true,&CbDrawScanner,NULL);
 <STOP>
 <BOX_TICK_FUNCT_P>
    
   // Create $<COM-002> box in flash
   gslc_ElemCreateBox_P(&m_gui,$<COM-002>,$<COM-000>,$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>,
-    $<COL-302>,$<COL-303>,true,true,NULL,&CbTickScanner);
+    $<COL-302>,$<COL-303>,$<COL-010>,true,NULL,&CbTickScanner);
 <STOP>
 <BUTTON_CB>
 // Common Button callback
@@ -300,6 +300,9 @@ extern uint8_t $<EXTERN_STORAGE>[];
 <STOP>
 <FRAME_EN_P>
   // gslc_ElemSetFrameEn(); currently not supported by the FLASH _P calls.
+<STOP>
+<GLOW_EN>
+  gslc_ElemSetGlowEn(&m_gui,pElemRef,true);
 <STOP>
 <GUI_ELEMENT>
 gslc_tsElem                     m_as$<STRIP_KEY>Elem[MAX_ELEM_$<STRIP_ENUM>_RAM];

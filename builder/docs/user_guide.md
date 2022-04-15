@@ -65,8 +65,8 @@ For more details about PlatformIO support see Chapter 6 - PlatformIO Configurati
 </p>
 
 <P>
-Both the User Preference General Tab and E_PROJECT_OPTIONS Tab support Users selecting a Color Scheme for your projects. 
-See Chapter 7 for your choices.
+Both the User Preference General Tab and E_PROJECT_OPTIONS Tab allow Users to select a Color Scheme for their projects. 
+See 5.4 GUIslice API Themes for your choices.
 </p>
 
 <p>
@@ -1614,7 +1614,7 @@ Files are created here:
 - **c.t** Linux Template
 - **graphics.t** Non Linux code blocks
 - **linux.t** linux code blocks
-- **default_colors.csv**
+- **guislice_colors.csv** mapping of GUIslice color names to RGB colors, like GSLC_COL_BLUE to (0,0,255)
 - **builder_fonts.json**
 - **ino.t** Template used when in General preferences a user has set `Backward Compatibility Mode? = true`
 to avoid a `*_GSLC.h` being created.
@@ -1626,9 +1626,52 @@ The files **ino2.t**, **hdr.t**, **ino.t** and **c.t** are the skeleton programs
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.4 default_colors.cvs
+## 5.4 GUIslice API Themes
 
-This file lists the mapping of colors in RGB format to the GUIslice API names.  For example, rgb (0,0,0) is GSLC_COL_BLACK.  The top 7 rows are the default values the library uses, although these are spread about in the code base.  If you don't like the default color scheme you can use the builder to override them on an individual element basis.  Inside the Properties View will be "Use Default Colors?=true". You simply click the property value to change it to false and you can then edit the Frame, Fill, and Select colors.
+Users can now select a Color Scheme for their GUIslice API UI Elements.
+
+<p>
+The Color Theme is selected inside User Preference General Tab for all new projects and E_PROJECT_OPTIONS Tab for a particular project
+Use the `GUIslice API Theme` property combobox pull-down to make your selection.
+
+You may choose between GUIslice, Arc Dark, Cyan Light, Material Dark, or Solarized themes.
+</p>
+
+![](images/guislice_theme.png)
+![](images/arc_theme.png)
+![](images/cyan_theme.png)
+![](images/material_theme.png)
+![](images/solarized_theme.png)
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+<p>
+The Themes are defined in the file templates/guislice_themes.json which you may edit using a text editor. You can make
+changes or add new themes to this file. An example below for Cyan Light **Box **element is:
+</p>
+```
+		{
+		"themeName": "Cyan Light",
+		"uiElements": 
+		[{
+				"uiElemName": "Page",
+				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+			},
+			{
+				"uiElemName": "Box",
+				"corners_rounded": true,
+				"frame_en": true,
+				"fill_en": true,
+				"glow_en": false,
+				"frame_col": "0x000000", // black (0,0,0)
+				"glow_col": "0xeef0f4",  // light gray (238,240,244)
+				"fill_col": "0xeef0f4"   // light gray (238,240,244)
+			},
+```
+
+
+
 
 ## 5.5 Images ![](images/controls/image_32x.png)
 
@@ -1798,49 +1841,6 @@ In this way when you later update GUIsliceBuilder to a newer version your config
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
-
-# 7.0 GUIslice API Themes
-
-<p>
-The User Preference General Tab for setting defaults for all new projects and E_PROJECT_OPTIONS Tab for a particular project
-support Users selecting a Color Scheme for your GUIslice API UI Elements. Use the `GUIslice API Theme` property combobox 
-pull-down to make your selection.
-
-You may choose between GUIslice, Arc Dark, Cyan Light, Material Dark, or Solarized themes.
-</p>
-
-![](images/guislice_theme.png)
-![](images/arc_theme.png)
-![](images/cyan_theme.png)
-![](images/material_theme.png)
-![](images/solarized_theme.png)
-
------------------------------------------------
-<div style="page-break-after: always;"></div>
-
-<p>
-The Themes are defined in the file templates/guislice_themes.json which you may edit using a text editor. You can make
-changes or add new themes to this file. An example below for Cyan Light **Box **element is:
-</p>
-```
-		{
-		"themeName": "Cyan Light",
-		"uiElements": 
-		[{
-				"uiElemName": "Page",
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
-			},
-			{
-				"uiElemName": "Box",
-				"corners_rounded": true,
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xeef0f4",  // light gray (238,240,244)
-				"fill_col": "0xeef0f4"   // light gray (238,240,244)
-			},
-```
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>

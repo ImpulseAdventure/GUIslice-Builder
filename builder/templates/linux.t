@@ -223,6 +223,9 @@ gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
 <FRAME_EN>
   gslc_ElemSetFrameEn(&m_gui,pElemRef,$<COM-010>);
 <STOP>
+<GLOW_EN>
+  gslc_ElemSetGlowEn(&m_gui,pElemRef,true);
+<STOP>
 <GUI_ELEMENT>
 gslc_tsElem                     m_as$<STRIP_KEY>Elem[MAX_ELEM_$<STRIP_ENUM>_RAM];
 gslc_tsElemRef                  m_as$<STRIP_KEY>ElemRef[MAX_ELEM_$<STRIP_ENUM>];
