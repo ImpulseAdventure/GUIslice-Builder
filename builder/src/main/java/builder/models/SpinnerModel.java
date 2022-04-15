@@ -35,7 +35,6 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -44,6 +43,7 @@ import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
 import builder.fonts.TextTFT;
 import builder.tables.TextTFTCellRenderer;
+import builder.themes.GUIsliceThemeFactory;
 
 /**
  * The Class SpinnerModel implements the model for the Spinner widget.
@@ -95,7 +95,7 @@ public class SpinnerModel extends WidgetModel {
    * Instantiates a new spinner model.
    */
   public SpinnerModel() {
-    cf = ColorFactory.getInstance();
+    cf = GUIsliceThemeFactory.getInstance();
     ff = FontFactory.getInstance();
     initProperties();
     calcSizes(false);

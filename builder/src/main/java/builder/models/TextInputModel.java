@@ -45,6 +45,8 @@ import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
 import builder.fonts.InputTextField;
 import builder.tables.TextTFTCellRenderer;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class TextInputModel implements the model for the TextInput widget.
@@ -391,6 +393,24 @@ public class TextInputModel extends WidgetModel {
    return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
  }
 
+ /**
+  * 
+  * changeThemeColors
+  *
+  * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+  */
+ @Override
+ public void changeThemeColors(GUIsliceTheme theme) {
+   GUIsliceThemeElement element = theme.getElement("TextInput");
+   if (element != null) {
+     data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();
+     if (element.getFrameCol() != null)
+       data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+     if (element.getFillCol() != null)
+       data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+   }
+ }
+ 
  /**
   * readModel() will deserialize our model's data from a string object for backup
   * and recovery.

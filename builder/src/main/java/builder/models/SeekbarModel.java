@@ -27,10 +27,12 @@ package builder.models;
 
 import java.awt.Color;
 
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
+import builder.themes.GUIsliceThemeFactory;
 
 /**
  * The Class SeekbarModel implements the model for the SeekbarModel widget.
@@ -99,7 +101,7 @@ public class SeekbarModel extends WidgetModel {
    * Instantiates a new slider model.
    */
   public SeekbarModel() {
-    cf = ColorFactory.getInstance();
+    cf = GUIsliceThemeFactory.getInstance();
     initProperties();
   }
   
@@ -362,6 +364,39 @@ public class SeekbarModel extends WidgetModel {
    */
   public Color getSelectedColor() {
     return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
+  }
+
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("SeekBar");
+    if (element != null) {
+      data[PROP_THUMB_HASTRIM][PROP_VAL_VALUE] = element.isTrimEnabled();
+      data[PROP_THUMB_HASFRAME][PROP_VAL_VALUE] = element.isThumbFrameEnabled();
+      if (element.getThumbCol() != null)
+        data[PROP_THUMB_COLOR][PROP_VAL_VALUE] = element.getThumbCol();
+      if (element.getTrimCol() != null)
+        data[PROP_THUMBTRIM_COLOR][PROP_VAL_VALUE] = element.getTrimCol();
+      if (element.getThumbFrameCol() != null)
+        data[PROP_THUMBFRAME_COLOR][PROP_VAL_VALUE] = element.getThumbFrameCol();
+      if (element.getGaugeCol() != null)
+        data[PROP_PROGRESS_COLOR][PROP_VAL_VALUE] = element.getGaugeCol();
+      if (element.getRemainCol() != null)
+        data[PROP_REMAIN_COLOR][PROP_VAL_VALUE] = element.getRemainCol();
+      if (element.getTickCol() != null)
+        data[PROP_TICK_COLOR][PROP_VAL_VALUE] = element.getTickCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+    }
   }
 
 }

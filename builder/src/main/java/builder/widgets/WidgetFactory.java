@@ -27,6 +27,7 @@ package builder.widgets;
 
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.models.BoxModel;
 import builder.models.CheckBoxModel;
 //import builder.models.CircleModel;
@@ -50,6 +51,8 @@ import builder.models.TextModel;
 import builder.models.ToggleButtonModel;
 import builder.models.TxtButtonModel;
 import builder.models.WidgetModel;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeFactory;
 import builder.widgets.Widget;
 
 /**
@@ -71,7 +74,7 @@ public class WidgetFactory  {
    */
   public static synchronized WidgetFactory getInstance()  {
       if (instance == null) {
-          instance = new WidgetFactory();
+         instance = new WidgetFactory();
       }
       return instance;
   }  
@@ -330,6 +333,9 @@ public class WidgetFactory  {
         break;
     }
     if (widget != null) {
+      String ThemeName = Controller.getProjectModel().getGUIsliceThemeName();
+      GUIsliceTheme theme = GUIsliceThemeFactory.getInstance().findThemeByName(ThemeName);
+      model.changeThemeColors(theme);
       model.TurnOnEvents();
     }
     return widget;

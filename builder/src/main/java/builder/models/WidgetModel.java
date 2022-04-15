@@ -45,12 +45,13 @@ import builder.Builder;
 import builder.commands.Command;
 import builder.commands.History;
 import builder.commands.PropertyCommand;
-import builder.common.ColorFactory;
 import builder.common.CommonUtils;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.fonts.FontFactory;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -123,7 +124,7 @@ public class WidgetModel extends AbstractTableModel {
   String widgetType; // type is always hidden from user so keep it out of data array
   
   /** The color factory. */
-  ColorFactory cf = null;
+  GUIsliceThemeFactory cf = null;
   
   /** The event. */
   MsgEvent event;
@@ -133,6 +134,10 @@ public class WidgetModel extends AbstractTableModel {
   
   /** Did the model change during this session */
   public boolean bModelChanged = false;
+  
+  public WidgetModel() {
+    cf = GUIsliceThemeFactory.getInstance();
+  }
   
   /**
    * initProp - helper method for loading a set of property attributes.
@@ -786,7 +791,7 @@ public class WidgetModel extends AbstractTableModel {
    */
   public Map<String, String> getMappedProperties(String pageEnum) {
     int def=0;
-    ColorFactory cf = ColorFactory.getInstance();
+    GUIsliceThemeFactory cf = GUIsliceThemeFactory.getInstance();
     FontFactory  ff = FontFactory.getInstance();
     Map<String, String> map = new HashMap<>();
     // start with our page enum
@@ -1057,6 +1062,15 @@ public class WidgetModel extends AbstractTableModel {
    * @param fireUpdates indicates that we should notify JTable of changes
    */
   public void calcSizes(boolean fireUpdates) {
+    
+  }
+  
+  
+  /**
+   * changeThemeColors
+   * @param theme
+   */
+  public void changeThemeColors(GUIsliceTheme theme) {
     
   }
   

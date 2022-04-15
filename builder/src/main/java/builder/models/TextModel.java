@@ -47,6 +47,8 @@ import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
 import builder.fonts.InputTextField;
 import builder.tables.TextTFTCellRenderer;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class TextModel implements the model for the Text widget.
@@ -517,6 +519,29 @@ public class TextModel extends WidgetModel {
       }
     }
     return ret;
+  }
+  
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("Text");
+    if (element != null) {
+      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isCornersRounded();
+      data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+      if (element.getTextCol() != null)
+        data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+    }
   }
   
  /**

@@ -64,6 +64,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
+import javax.swing.SwingWorker;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
@@ -105,6 +106,8 @@ import builder.prefs.ModelEditor;
 import builder.prefs.NumKeyPadEditor;
 import builder.prefs.TextEditor;
 import builder.prefs.TxtButtonEditor;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeFactory;
 import builder.views.PagePane;
 import builder.views.TreeView;
 import builder.widgets.Widget;
@@ -165,7 +168,7 @@ public class Controller extends JInternalFrame
   static ProjectModel pm;
   
   /** The pages. */
-  List<PagePane> pages = new ArrayList<PagePane>();
+  static List<PagePane> pages = new ArrayList<PagePane>();
   
   /** The tabs to pages keys mapping */
   List<String> tabPages = new ArrayList<String>();
@@ -1534,6 +1537,42 @@ public class Controller extends JInternalFrame
     currentPage.refreshView();
   }
   
+  public static void changeGUIsliceTheme(String newTheme) {
+    WidgetModel m = null;
+    GUIsliceTheme theme = GUIsliceThemeFactory.getInstance().findThemeByName(newTheme);
+    if (theme != null) {
+      pm.changeThemeColors(theme);
+      for (PagePane p : pages) {
+        for (Widget w : p.getWidgets()) {
+          m = w.getModel();
+          m.changeThemeColors(theme);
+        }
+      }
+    }
+  }
+  
+  public static void startGUIsliceTheme(String newTheme) {
+    @SuppressWarnings("rawtypes")
+    SwingWorker sw1 = new SwingWorker() {
+
+      @Override
+      protected String doInBackground() throws Exception {
+        changeGUIsliceTheme(newTheme);
+        String res = "Finished";
+        return res;
+      }
+
+      @Override
+      protected void done() {
+        // this method is called when the background
+        // thread finishes execution
+      }
+    };
+
+    // executes the swing worker on worker thread
+    sw1.execute();
+  }
+
   /**
    * updateEvent
    *

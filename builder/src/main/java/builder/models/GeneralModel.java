@@ -39,6 +39,7 @@ import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
 import builder.common.ThemeInfo;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontGraphics;
 
@@ -55,26 +56,30 @@ public class GeneralModel extends WidgetModel {
   
   /** The Property Index Constants. */
   public static final int PROP_THEME                = 1;
-  public static final int PROP_IDE                  = 2;
-  public static final int PROP_PIO_ENV              = 3;
-  public static final int PROP_TARGET               = 4;
-  public static final int DISPLAY_WIDTH             = 5;
-  public static final int DISPLAY_HEIGHT            = 6;
-  public static final int PROP_PROJECT_DIR          = 7;
-  public static final int PROP_TARGET_IMAGE_DIR     = 8;
-  public static final int PROP_BACKGROUND           = 9;
-  public static final int PROP_TRANSPARENCY_COLOR   = 10;
-  public static final int PROP_MARGINS              = 11;
-  public static final int PROP_HSPACING             = 12;
-  public static final int PROP_VSPACING             = 13;
-  public static final int PROP_MAX_STRING           = 14;
-  public static final int PROP_ROTATION             = 15;
-  public static final int PROP_BACKWARD_COMPAT      = 16;
-  public static final int PROP_PRESERVE_BTN_CALLBACKS = 17;
+  public static final int PROP_GUISLICE_THEME       = 2;
+  public static final int PROP_IDE                  = 3;
+  public static final int PROP_PIO_ENV              = 4;
+  public static final int PROP_TARGET               = 5;
+  public static final int DISPLAY_WIDTH             = 6;
+  public static final int DISPLAY_HEIGHT            = 7;
+  public static final int PROP_PROJECT_DIR          = 8;
+  public static final int PROP_TARGET_IMAGE_DIR     = 9;
+  public static final int PROP_BACKGROUND           = 10;
+  public static final int PROP_TRANSPARENCY_COLOR   = 11;
+  public static final int PROP_MARGINS              = 12;
+  public static final int PROP_HSPACING             = 13;
+  public static final int PROP_VSPACING             = 14;
+  public static final int PROP_MAX_STRING           = 15;
+  public static final int PROP_ROTATION             = 16;
+  public static final int PROP_BACKWARD_COMPAT      = 17;
+  public static final int PROP_PRESERVE_BTN_CALLBACKS = 18;
+
   // The following properties are hidden from users
-  public static final int PROP_IMAGE_DIR            = 18; // last folder used to load image
-  public static final int PROP_RECENT_COLORS        = 19; // LRU of recent colors chosen
+  public static final int PROP_NUM_HIDDEN           = 8;  // must be set to number hidden props
+  
+  public static final int PROP_IMAGE_DIR            = 19; // last folder used to load image
   public static final int PROP_RECENT_FILES         = 20; // LRU of recent files chosen
+
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
@@ -89,6 +94,7 @@ public class GeneralModel extends WidgetModel {
   /** The Property Defaults */
   static public  final String  DEF_IDE                 = "Arduino IDE";
   static public  final String  DEF_TARGET              = "Adafruit_GFX";
+  private static final String  DEF_GUISLICE_DEFAULT_THEME = "GUIslice";
   static public  final Integer DEF_WIDTH               = Integer.valueOf(320);
   static public  final Integer DEF_HEIGHT              = Integer.valueOf(240);
   static public  final Integer DEF_DPI                 = Integer.valueOf(144);
@@ -108,6 +114,12 @@ public class GeneralModel extends WidgetModel {
   
   /** The theme cell editor. */
   DefaultCellEditor  themeCellEditor;
+
+  /** The cb GUIslice themes. */
+  public static JComboBox<String> cbGUIsliceThemes;
+  
+  /** The GUIslice theme cell editor. */
+  DefaultCellEditor  guisliceThemeCellEditor;
 
   /** The cb ide. */
   JComboBox<String> cbIDE;
@@ -147,10 +159,12 @@ public class GeneralModel extends WidgetModel {
     data = new Object[27][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Themes","");
+    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
 //    if (Builder.isMAC) {
 //      data[PROP_THEME][PROP_VAL_READONLY]= Boolean.TRUE;
 //    }
+    initProp(PROP_GUISLICE_THEME, String.class, "GEN-097", Boolean.FALSE,"GUIslice API Theme",
+        DEF_GUISLICE_DEFAULT_THEME);
     initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);
     initProp(PROP_PIO_ENV, String.class, "GEN-099", Boolean.TRUE,"PlatformIO default_envs",cbPioEnv.getItemAt(0));
     initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Font Library",DEF_TARGET);
@@ -180,7 +194,6 @@ public class GeneralModel extends WidgetModel {
     initProp(PROP_PRESERVE_BTN_CALLBACKS, Boolean.class, "GEN-136", Boolean.FALSE,
         "Preserve Button Callbacks?",Boolean.TRUE);
     initProp(PROP_IMAGE_DIR, String.class, "GEN-113", Boolean.FALSE,"Last Image Directory Accessed","");
-    initProp(PROP_RECENT_COLORS, String.class, "GEN-111", Boolean.TRUE,"Recent Colors","");
     initProp(PROP_RECENT_FILES, String.class, "GEN-121", Boolean.TRUE,"Recent Files","");
     initProp(PROP_SIZE_APP_WIDTH, Integer.class,  "GEN-130", Boolean.FALSE,"App Win Width",Integer.valueOf(0));
     initProp(PROP_SIZE_APP_HEIGHT, Integer.class, "GEN-131", Boolean.FALSE,"App Win Height",Integer.valueOf(0));
@@ -207,6 +220,12 @@ public class GeneralModel extends WidgetModel {
     if (Builder.isMAC) {
       defThemeName = UIManager.getSystemLookAndFeelClassName();
     }
+    
+    cbGUIsliceThemes = new JComboBox<String>();
+    for (String s : cf.getListofThemes()) {
+      cbGUIsliceThemes.addItem(s);
+    }
+    guisliceThemeCellEditor = new DefaultCellEditor(cbGUIsliceThemes);
     
     cbIDE = new JComboBox<String>();
     cbIDE.addItem(ProjectModel.IDE_ARDUINO);
@@ -238,7 +257,7 @@ public class GeneralModel extends WidgetModel {
    */
   @Override
   public int getRowCount() {
-    return data.length-9;  
+    return data.length-PROP_NUM_HIDDEN;  
   }
 
   /**
@@ -301,30 +320,20 @@ public class GeneralModel extends WidgetModel {
   }
   
   /**
+   * getGUIsliceThemeName
+   * @return
+   */
+  public String getGUIsliceThemeName() {
+    return (String) data[PROP_GUISLICE_THEME][PROP_VAL_VALUE];
+  }
+  
+  /**
    * Gets the target platform
    *
    * @return the target platform
    */
   public String getTargetPlatform() {
     return (String) data[PROP_TARGET][PROP_VAL_VALUE];
-  }
-
-  /**
-   * Gets the recent colors.
-   *
-   * @return the recent colors
-   */
-  public String getRecentColors() {
-    return (String) data[PROP_RECENT_COLORS][PROP_VAL_VALUE];
-  }
-
-  /**
-   * setRecentColors sets the recent colors
-   * called by our color chooser.
-   * @param s
-   */
-  public void setRecentColors(String s) { 
-    shortcutValue(s, PROP_RECENT_COLORS);
   }
 
   /**
@@ -640,6 +649,8 @@ public class GeneralModel extends WidgetModel {
   public TableCellEditor getEditorAt(int row) {
     if (row == PROP_THEME)
       return themeCellEditor;
+    else if (row == PROP_GUISLICE_THEME)
+      return guisliceThemeCellEditor;
     else if (row == PROP_IDE)
       return ideCellEditor;
     else if (row == PROP_TARGET)
@@ -675,6 +686,9 @@ public class GeneralModel extends WidgetModel {
         data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
       }
     }
+    if (row == PROP_GUISLICE_THEME) {
+      Controller.startGUIsliceTheme(getGUIsliceThemeName());
+    }    
     fireTableCellUpdated(row, COLUMN_VALUE);
   }
 

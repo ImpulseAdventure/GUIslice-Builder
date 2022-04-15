@@ -98,25 +98,6 @@ public class GeneralEditor extends ModelEditor {
   }
   
   /**
-   * Gets the recent colors.
-   *
-   * @return the recent colors
-   */
-  public String getRecentColors() {
-    return ((GeneralModel) model).getRecentColors();
-  }
-
-  /**
-   * setRecentColors sets the recent colors
-   * called by our color chooser.
-   * @param s
-   */
-  public void setRecentColors(String s) { 
-    ((GeneralModel) model).setRecentColors(s);
-    savePreferences();
-  }
-
-  /**
    * Gets the recent file list.
    *
    * @return the recent file list
@@ -131,6 +112,8 @@ public class GeneralEditor extends ModelEditor {
    * @param s
    */
   public void setRecentFilesList(String s) { 
+    if (s == null || s.isEmpty())
+      return;
     ((GeneralModel) model).setRecentFilesList(s);
     fPrefs.put("Recent Files", (String)s);
     super.setChanged();

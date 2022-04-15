@@ -39,6 +39,8 @@ import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class TextBoxModel implements the model for the Text Box widget.
@@ -129,8 +131,8 @@ public class TextBoxModel extends WidgetModel {
     initProp(PROP_FRAME_COLOR, Color.class, "COL-302", Boolean.FALSE,"Frame Color",DEF_FRAME_COLOR);
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
     initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
-    initProp(PROP_BAR_FRAME_COLOR, Color.class, "BAR-116", Boolean.FALSE,"Frame Color",DEF_BAR_FRAME_COLOR);
-    initProp(PROP_BAR_FILL_COLOR, Color.class, "BAR-117", Boolean.FALSE,"Fill Color",DEF_BAR_FILL_COLOR);
+    initProp(PROP_BAR_FRAME_COLOR, Color.class, "BAR-116", Boolean.FALSE,"Scrollbar Frame Color",DEF_BAR_FRAME_COLOR);
+    initProp(PROP_BAR_FILL_COLOR, Color.class, "BAR-117", Boolean.FALSE,"Scrollbar Fill Color",DEF_BAR_FILL_COLOR);
 
   }
 
@@ -373,6 +375,31 @@ public class TextBoxModel extends WidgetModel {
     data[PROP_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(nBoxHeight);
   }
 
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("TextBox");
+    if (element != null) {
+      if (element.getTextCol() != null)
+        data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      if (element.getBarFrameCol() != null)
+        data[PROP_BAR_FRAME_COLOR][PROP_VAL_VALUE] = element.getBarFrameCol();
+      if (element.getBarFillCol() != null)
+        data[PROP_BAR_FILL_COLOR][PROP_VAL_VALUE] = element.getBarFillCol();
+    }
+  }
+  
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.

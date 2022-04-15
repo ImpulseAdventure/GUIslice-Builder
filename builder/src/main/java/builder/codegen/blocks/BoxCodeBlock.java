@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ public class BoxCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
   private final static String BOX_TEMPLATE           = "<BOX>";
+  private final static String FRAME_EN_TEMPLATE      = "<FRAME_EN>";
   private final static String COLOR_TEMPLATE         = "<COLOR>";
   private final static String CORNERS_ROUNDED_TEMPLATE = "<CORNERS_ROUNDED>";
   private final static String DRAWFUNC_TEMPLATE      = "<DRAWFUNC>";
@@ -109,6 +110,12 @@ public class BoxCodeBlock implements CodeBlock {
         (!m.getFillColor().equals(BoxModel.DEF_FILL_COLOR))  || 
         (!m.getSelectedColor().equals(BoxModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
+      outputLines = tm.expandMacros(template, map);
+      tm.codeWriter(sBd, outputLines);
+    }
+    
+    if (!m.isFrameEnabled()) {
+      template = tm.loadTemplate(FRAME_EN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

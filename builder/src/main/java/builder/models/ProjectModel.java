@@ -46,12 +46,15 @@ import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
 import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontGraphics;
 import builder.tables.ImageCellEditor;
 import builder.tables.MultiStringsCell;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.MultiStringsCell.MCDialogType;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class ProjectModel implements the model for the builder.
@@ -81,22 +84,24 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   /** The Property Index Constants. */
   public static final int PROP_IDE                  = 2;
   public static final int PROP_PIO_ENV              = 3;
+  private static final String  DEF_GUISLICE_DEFAULT_THEME = "GUIslice";
   public static final int PROP_TARGET               = 4;
-  public static final int PROP_FONT_LIST            = 5;
-  public static final int DISPLAY_WIDTH             = 6;
-  public static final int DISPLAY_HEIGHT            = 7;
-  public static final int PROP_BACKGROUND           = 8;
-  public static final int PROP_USE_IMAGE_BACKGROUND = 9;
-  public static final int PROP_TARGET_IMAGE_DIR     = 10;
-  public static final int PROP_IMAGE_BACKGROUND_FILE      = 11; 
-  public static final int PROP_IMAGE_BACKGROUND_DEFINE    = 12;
-  public static final int PROP_IMAGE_BACKGROUND_MEMORY    = 13;
-  public static final int PROP_IMAGE_BACKGROUND_FORMAT    = 14;
-  public static final int PROP_MARGINS              = 15;
-  public static final int PROP_HSPACING             = 16;
-  public static final int PROP_VSPACING             = 17;
-  public static final int PROP_MAX_STRING           = 18;
-  public static final int PROP_ROTATION             = 19;
+  public static final int PROP_GUISLICE_THEME       = 5;
+  public static final int PROP_FONT_LIST            = 6;
+  public static final int DISPLAY_WIDTH             = 7;
+  public static final int DISPLAY_HEIGHT            = 8;
+  public static final int PROP_BACKGROUND           = 9;
+  public static final int PROP_USE_IMAGE_BACKGROUND = 10;
+  public static final int PROP_TARGET_IMAGE_DIR     = 11;
+  public static final int PROP_IMAGE_BACKGROUND_FILE      = 12; 
+  public static final int PROP_IMAGE_BACKGROUND_DEFINE    = 13;
+  public static final int PROP_IMAGE_BACKGROUND_MEMORY    = 14;
+  public static final int PROP_IMAGE_BACKGROUND_FORMAT    = 15;
+  public static final int PROP_MARGINS              = 16;
+  public static final int PROP_HSPACING             = 17;
+  public static final int PROP_VSPACING             = 18;
+  public static final int PROP_MAX_STRING           = 19;
+  public static final int PROP_ROTATION             = 20;
   
   /** The Property Defaults */
   static public  final String  DEF_IDE                 = "Arduino IDE";
@@ -143,8 +148,11 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   /** The target cell editor. */
   DefaultCellEditor pioenvCellEditor;
   
-  /** The default theme name */
-  public static String defThemeName;
+  /** The cb GUIslice themes. */
+  public static JComboBox<String> cbGUIsliceThemes;
+  
+  /** The GUIslice theme cell editor. */
+  DefaultCellEditor  guisliceThemeCellEditor;
 
   /** The background image. */
   private BufferedImage image = null;
@@ -195,13 +203,15 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   protected void initProperties()
   {
     widgetType = EnumFactory.PROJECT + "$1";
-    data = new Object[20][5];
+    data = new Object[21][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM","E_PROJECT_OPTIONS");
     initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);
     initProp(PROP_PIO_ENV, String.class, "GEN-099", Boolean.TRUE,"PlatformIO default_envs","");
     initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Graphics Library",DEF_TARGET);
+    initProp(PROP_GUISLICE_THEME, String.class, "GEN-097", Boolean.FALSE,"GUIslice API Theme",
+        DEF_GUISLICE_DEFAULT_THEME);
 
     initProp(PROP_FONT_LIST, String[].class, "LIST-108", Boolean.FALSE,
         "Project's Extra Fonts",DEF_INCLUDES);
@@ -247,6 +257,12 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       cbTarget.addItem(p.getName());
     }
     targetCellEditor = new DefaultCellEditor(cbTarget);
+    
+    cbGUIsliceThemes = new JComboBox<String>();
+    for (String s : cf.getListofThemes()) {
+      cbGUIsliceThemes.addItem(s);
+    }
+    guisliceThemeCellEditor = new DefaultCellEditor(cbGUIsliceThemes);
     
     List<String> envOptions = PlatformIO.getListEnv();
     cbPioEnv = new JComboBox<String>();
@@ -344,6 +360,14 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     }
   }
 
+  /**
+   * getGUIsliceThemeName
+   * @return
+   */
+  public String getGUIsliceThemeName() {
+    return (String) data[PROP_GUISLICE_THEME][PROP_VAL_VALUE];
+  }
+  
   public String getIDE() {
     return (String) data[PROP_IDE][PROP_VAL_VALUE];
   }
@@ -601,6 +625,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       return fontsListCell;
     else if (row == PROP_IDE)
       return ideCellEditor;
+    else if (row == PROP_GUISLICE_THEME)
+      return guisliceThemeCellEditor;
     else if (row == PROP_TARGET)
       return targetCellEditor;
     else if (row == PROP_IMAGE_BACKGROUND_MEMORY)
@@ -772,8 +798,19 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       }
       fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FILE, COLUMN_VALUE);
     }
+    if (row == PROP_GUISLICE_THEME) {
+      Controller.startGUIsliceTheme(getGUIsliceThemeName());
+    }    
     if (row == PROP_FONT_LIST) {
       fireTableStructureChanged();
+    }
+  }
+
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("Page");
+    if (element != null) {
+      data[PROP_BACKGROUND][PROP_VAL_VALUE] = element.getFillCol();
     }
   }
 

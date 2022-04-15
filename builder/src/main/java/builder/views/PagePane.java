@@ -813,7 +813,7 @@ public class PagePane extends JPanel implements iSubscriber {
   ev.message = w.getModel().getKey();
   ev.xdata = getKey();
   ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-  MsgBoard.publish(ev, getKey());
+  MsgBoard.publish(ev,getKey());
   repaint();
 }
 

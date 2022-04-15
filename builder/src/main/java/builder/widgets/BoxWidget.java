@@ -41,6 +41,8 @@ import builder.prefs.BoxEditor;
  */
 public class BoxWidget extends Widget {
 
+  BoxModel m;
+  
   /**
    * Instantiates a new box widget.
    *
@@ -51,7 +53,8 @@ public class BoxWidget extends Widget {
    */
   public BoxWidget(int x, int y) {
     u = CommonUtils.getInstance();
-    model = new BoxModel();
+    m = new BoxModel();
+    model = m;
     super.setXY(model, x, y);
     setUserPrefs(BoxEditor.getInstance().getModel());
   }
@@ -71,12 +74,17 @@ public class BoxWidget extends Widget {
     g2d.setColor(c);
     if (((BoxModel) model).isRoundedEn()) {
       g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
-      g2d.setColor(((BoxModel) model).getFrameColor());
-      g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
     } else {
       g2d.fillRect(b.x, b.y, b.width, b.height);
-      g2d.setColor(((BoxModel) model).getFrameColor());
-      g2d.drawRect(b.x, b.y, b.width, b.height);
+    }
+    if (m.isFrameEnabled()) {
+      if (((BoxModel) model).isRoundedEn()) {
+        g2d.setColor(m.getFrameColor());
+        g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
+      } else {
+        g2d.setColor(m.getFrameColor());
+        g2d.drawRect(b.x, b.y, b.width, b.height);
+      }
     }
     super.drawSelRect(g2d, b);
   }

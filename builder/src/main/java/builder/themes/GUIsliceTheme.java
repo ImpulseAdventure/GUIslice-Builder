@@ -1,8 +1,9 @@
 /**
  *
+
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,62 +24,44 @@
  * THE SOFTWARE.
  *
  */
-package builder.fonts;
+package builder.themes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Class BuilderFonts.
- * Top level container for all fonts and graphic platforms.
+ * The Class GUIsliceTheme.
+ * Holds the set of style definitions for one theme. 
+ * Example: Material Dark, ..Material Light
  * 
- * Filled in by JSON deserialization inside FontFactory
+ * Filled in by JSON deserialization inside GUIsliceThemeFactory
  * 
  * @author Paul Conti
  */
-public class BuilderFonts {
+public class GUIsliceTheme {
+
+  private String themeName;
   
-  /** The all fonts. */
-  private List<FontGraphics> allFonts = new ArrayList<FontGraphics>();
-  
-  /**
-   * Instantiates a new builder fonts.
-   */
-  public BuilderFonts() {
-    
+  private List<GUIsliceThemeElement> uiElements = new ArrayList<GUIsliceThemeElement>();
+
+  public GUIsliceTheme() {
+
+  }
+
+  public String getThemeName() {
+    return themeName;
+  }
+
+  public List<GUIsliceThemeElement> getUiElements() {
+    return uiElements;
   }
   
-  /**
-   * Adds a platform.
-   *
-   * @param platform
-   *          the platform
-   */
-  public void addPlatform(FontGraphics platform) {
-    allFonts.add(platform);
-  }
-  
-  /**
-   * Gets the list of platforms.
-   *
-   * @return the platforms
-   */
-  public List<FontGraphics> getPlatforms() {
-    return allFonts;
-  }
-  
-  /**
-   * Gets a platform object by name.
-   *
-   * @param platformName
-   *          the platform name
-   * @return the platform
-   */
-  public FontGraphics getPlatform(String platformName) {
-    for (FontGraphics p : allFonts) {
-      if (p.getName().equals(platformName))
-        return p;
+  public GUIsliceThemeElement getElement(String name) {
+    for (GUIsliceThemeElement element : uiElements) {
+      if (element.getUiElemName().equals(name))
+        return element;
     }
     return null;
   }
+
 }

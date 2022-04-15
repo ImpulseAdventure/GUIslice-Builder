@@ -37,6 +37,8 @@ import builder.common.CommonUtils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class CheckBoxModel implements the model for the Checkbox widget.
@@ -269,6 +271,36 @@ public class CheckBoxModel extends WidgetModel {
     return ((String) data[PROP_GROUP][PROP_VAL_VALUE]);
   }
 */
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("CheckBox");
+    if (element != null) {
+      if (element.getStyle() != null) {
+        String style = element.getStyle();
+        if (style.equals("0"))
+          data[PROP_STYLE][PROP_VAL_VALUE] = CHECKBOX_STYLE_BOX;
+        else if (style.equals("1"))
+          data[PROP_STYLE][PROP_VAL_VALUE] = CHECKBOX_STYLE_X;
+        else if (style.equals("2"))
+          data[PROP_STYLE][PROP_VAL_VALUE] = CHECKBOX_STYLE_ROUND;
+      }
+      if (element.getFrameCol() != null)
+        data[PROP_MARK_COLOR][PROP_VAL_VALUE] = element.getCheckmarkCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+    }
+  }
+  
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.

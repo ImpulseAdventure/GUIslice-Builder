@@ -44,6 +44,8 @@ import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.MultiStringsCell.MCDialogType;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 import builder.tables.MultiStringsCell;
 
 /**
@@ -529,6 +531,34 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     return (((Color) data[PROP_BAR_FRAME_COLOR][PROP_VAL_VALUE]));
   }
 
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("ListBox");
+    if (element != null) {
+      data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+      if (element.getTextCol() != null)
+        data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+      if (element.getGapCol() != null)
+        data[PROP_GAP_COLOR][PROP_VAL_VALUE] = element.getGapCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      if (element.getBarFrameCol() != null)
+        data[PROP_BAR_FRAME_COLOR][PROP_VAL_VALUE] = element.getBarFrameCol();
+      if (element.getBarFillCol() != null)
+        data[PROP_BAR_FILL_COLOR][PROP_VAL_VALUE] = element.getBarFillCol();
+    }
+  }
+  
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.

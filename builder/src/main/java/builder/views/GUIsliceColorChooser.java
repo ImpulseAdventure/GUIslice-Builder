@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,11 +47,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import builder.Builder;
-import builder.common.ColorFactory;
 import builder.common.ColorIcon;
-import builder.common.ColorItem;
 import builder.tables.ColoredThumbSliderUI;
 import builder.tables.GUIsliceColorRenderer;
+import builder.themes.ColorItem;
+import builder.themes.GUIsliceThemeFactory;
 
 import java.awt.Dimension;
 
@@ -177,7 +177,7 @@ public class GUIsliceColorChooser extends JDialog {
   Robot robot;
   
   /** The cf. */
-  ColorFactory cf;
+  GUIsliceThemeFactory cf;
   
   /** The b save dialog. */
   boolean bSaveDialog;
@@ -196,7 +196,7 @@ public class GUIsliceColorChooser extends JDialog {
    */
   public GUIsliceColorChooser(JFrame owner) {
     super(owner, "GUIslice Color Chooser", true);
-    cf = ColorFactory.getInstance();
+    cf = GUIsliceThemeFactory.getInstance();
     try {
       this.robot = new Robot();
     } catch (AWTException e) {
@@ -542,10 +542,10 @@ public class GUIsliceColorChooser extends JDialog {
     public void mousePressed(MouseEvent e) {
       if (isEnabled()) {
         Color color = recentColorsPanel.getColorForLocation(e.getX(), e.getY());
+        if (color == null)
+          return;
         recentColorsPanel.setSelectedColorFromLocation(e.getX(), e.getY());
-        // ignore if setting to default color
-        if (color != null && color.getRGB() != -1118482)
-          setSelectedColor(color);
+        setSelectedColor(color);
       }
     }
   }

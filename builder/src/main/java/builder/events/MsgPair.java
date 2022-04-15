@@ -4,7 +4,7 @@ package builder.events;
  * The Class Pair used to store name and ISubscripter relationship.
  *   Useful for debugging event messaging.
  */
-public class Pair {
+public class MsgPair {
   
   /** The name. */
   String name;
@@ -20,7 +20,7 @@ public class Pair {
    * @param subscriber
    *          the child
    */
-  public Pair(String name, iSubscriber subscriber) {
+  public MsgPair(String name, iSubscriber subscriber) {
     this.name = name;
     this.subscriber = subscriber;
   }
@@ -53,12 +53,12 @@ public class Pair {
 
     /* Check if o is an instance of Pair or not 
       "null instanceof [type]" also returns false */
-    if (!(o instanceof Pair)) { 
+    if (!(o instanceof MsgPair)) { 
         return false; 
     } 
       
     // typecast o to TreeItem so that we can compare data members  
-    Pair c = (Pair) o; 
+    MsgPair c = (MsgPair) o; 
       
     // Compare the data members and return accordingly  
     return c.getName().equals(this.getName());

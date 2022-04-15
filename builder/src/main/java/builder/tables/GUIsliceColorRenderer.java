@@ -31,7 +31,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import builder.common.ColorIcon;
-import builder.common.ColorItem;
+import builder.themes.ColorItem;
 
 /**
  * <p>

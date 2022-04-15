@@ -47,7 +47,7 @@ public class MsgBoard {
   
   /** The subscribers. */
 //  private static List<Pair> subscribers = new CopyOnWriteArrayList <Pair>();
-  static private List<Pair> subscribers = new ArrayList<Pair>();
+  static private List<MsgPair> subscribers = new ArrayList<MsgPair>();
 
   /**
    * Publish.
@@ -66,7 +66,7 @@ public class MsgBoard {
    */
   static public void subscribe(iSubscriber subscriber, String name) {
 //    System.out.println("Register Observer: " + name);
-    subscribers.add(new Pair(name, subscriber));
+    subscribers.add(new MsgPair(name, subscriber));
   }
 
   /**
@@ -75,7 +75,7 @@ public class MsgBoard {
    * @see builder.events.iSubject#remove(builder.events.iSubscriber)
    */
   static public void remove(String name) {
-    Pair c = new Pair(name, null);
+    MsgPair c = new MsgPair(name, null);
     subscribers.removeIf(p -> p.equals(c));
 //    System.out.println("Removed Observer: " + c.getName());
   }
@@ -87,7 +87,7 @@ public class MsgBoard {
   static public void notifySubscribers(MsgEvent e, String name) {
 //    System.out.println("Notifying Observers on event: " + e.toString());
     for (int i=0; i<subscribers.size(); i++) {
-      Pair p = subscribers.get(i);
+      MsgPair p = subscribers.get(i);
       // avoid loops by not sending the message to the originator
       if (!p.getName().equals(name)) {
         p.getSubscriber().updateEvent(e);

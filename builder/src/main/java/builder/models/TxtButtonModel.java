@@ -49,6 +49,8 @@ import builder.tables.MultiStringsCell;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.TextTFTCellRenderer;
 import builder.tables.MultiStringsCell.MCDialogType;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -649,6 +651,30 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
        }
      }
      return sb.toString();
+   }
+   
+   /**
+    * 
+    * changeThemeColors
+    *
+    * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+    */
+   @Override
+   public void changeThemeColors(GUIsliceTheme theme) {
+     GUIsliceThemeElement element = theme.getElement("TextButton");
+     if (element != null) {
+       data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();
+       data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+       data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();
+       if (element.getTextCol() != null)
+         data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+       if (element.getFrameCol() != null)
+         data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+       if (element.getFillCol() != null)
+         data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+       if (element.getGlowCol() != null)
+         data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+     }
    }
    
   /**
