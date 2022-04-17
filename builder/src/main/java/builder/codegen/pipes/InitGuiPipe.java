@@ -68,7 +68,6 @@ import builder.codegen.flash.TextInput_P_CodeBlock;
 import builder.codegen.flash.Text_P_CodeBlock;
 import builder.codegen.flash.ToggleButton_P_CodeBlock;
 import builder.codegen.flash.TxtButton_P_CodeBlock;
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
@@ -78,6 +77,7 @@ import builder.models.KeyPadModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
+import builder.themes.GUIsliceThemeFactory;
 import builder.views.PagePane;
 import builder.widgets.Widget;
 
@@ -245,7 +245,7 @@ public class InitGuiPipe extends WorkFlowPipe {
       tm.codeWriter(sBd, outputLines);
     } else {
       Color bCol = (Color) pm.getBackgroundColor();
-      String color = ColorFactory.getInstance().colorAsString(bCol);
+      String color = GUIsliceThemeFactory.getInstance().colorAsString(bCol);
       map.clear();
       map.put(BACKGROUND_COLOR_MACRO, color);
       templateLines = tm.loadTemplate(BACKGROUND_TEMPLATE);

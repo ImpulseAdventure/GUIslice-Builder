@@ -248,6 +248,7 @@ public class ProgressBarModel extends WidgetModel {
         data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
       if (element.getFillCol() != null)
         data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      fireTableStructureChanged();
     }
   }
 

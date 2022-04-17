@@ -541,6 +541,7 @@ public class TextModel extends WidgetModel {
         data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
       if (element.getGlowCol() != null)
         data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      fireTableStructureChanged();
     }
   }
   

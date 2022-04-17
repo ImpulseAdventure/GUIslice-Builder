@@ -81,13 +81,13 @@ $<CODE_SEGMENT>
    
   // create checkbox $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXCheck$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},false,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-005>},false,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <CHECKBOX_GROUP>
    
   // create checkbox $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXCheck$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},true,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-005>},true,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <CHECKBOXSETSTATE>
   gslc_ElemXCheckboxSetStateFunc(&m_gui, pElemRef, &CbCheckbox);
@@ -378,7 +378,7 @@ gslc_tsElemRef                  $<STORAGE>Ref[1];
     (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},$<TXT-211>,
     (uint8_t*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
   gslc_ElemXListboxSetSize(&m_gui, pElemRef, $<TXT-209>, $<TXT-210>); // $<TXT-209> rows, $<TXT-210> columns
-  gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, XLISTBOX_SIZE_AUTO, XLISTBOX_SIZE_AUTO);
+  gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, $<LIST-110>, $<LIST-111>);
   gslc_ElemSetTxtMarginXY(&m_gui, pElemRef, $<LIST-100>, $<LIST-101>);
   gslc_ElemSetTxtCol(&m_gui,pElemRef,$<COL-301>);
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
@@ -432,7 +432,7 @@ $<CALLBACK>
     (gslc_tsRect){$<COM-003>+2,$<COM-004>+4,$<COM-005>-4-$<SLD-111>,$<COM-006>-7},$<TXT-211>,
     (uint8_t*)&m_acListboxBuf$<COM-018>,sizeof(m_acListboxBuf$<COM-018>),$<LIST-102>);
   gslc_ElemXListboxSetSize(&m_gui, pElemRef, $<TXT-209>, $<TXT-210>); // $<TXT-209> rows, $<TXT-210> columns
-  gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, XLISTBOX_SIZE_AUTO, XLISTBOX_SIZE_AUTO);
+  gslc_ElemXListboxItemsSetSize(&m_gui, pElemRef, $<LIST-110>, $<LIST-111>);
   gslc_ElemSetTxtMarginXY(&m_gui, pElemRef, $<LIST-100>, $<LIST-101>);
   gslc_ElemSetTxtCol(&m_gui,pElemRef,$<COL-301>);
   gslc_ElemSetCol(&m_gui,pElemRef,$<COL-302>,$<COL-303>,$<COL-304>);
@@ -519,7 +519,7 @@ $<CALLBACK>
   
   // Create radio button $<COM-002>
   pElemRef = gslc_ElemXCheckboxCreate(&m_gui,$<COM-002>,$<COM-000>,&m_asXRadio$<COM-018>,
-    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-006>},true,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
+    (gslc_tsRect){$<COM-003>,$<COM-004>,$<COM-005>,$<COM-005>},true,$<RBTN-102>,$<COL-305>,$<CBOX-100>);
 <STOP>
 <RESOURCE_DEFINE>
 #define $<25>$<DEFINE> "$<IMAGE_NAME>"

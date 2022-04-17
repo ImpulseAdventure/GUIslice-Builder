@@ -318,7 +318,10 @@ public class FontsPipe extends WorkFlowPipe {
      * delete any font files we may 
      * have previously copied
      */
-    CommonUtils.cleanFolderOfFontHeaders(cg.getHdrPath());
+		String sHdrPath = cg.getHdrPath();
+		if (sHdrPath == null)
+			sHdrPath = cg.getAppPath();
+    CommonUtils.cleanFolderOfFontHeaders(sHdrPath);
     /* copy font sources for any fonts 
      * not included with the chosen graphics package, 
      * Adafruit_GFX using Google's Noto fonts.
@@ -331,7 +334,7 @@ public class FontsPipe extends WorkFlowPipe {
         String sOut = px.getValue2();
         if (sIn.endsWith(".h")) {
           inFile = new File(sIn);
-          outFile = new File(cg.getHdrPath()+sOut); 
+          outFile = new File(sHdrPath+sOut); 
         } else {
           inFile = new File(sIn);
           outFile = new File(cg.getAppPath()+sOut); 

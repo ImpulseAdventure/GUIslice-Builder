@@ -356,6 +356,7 @@ public class Controller extends JInternalFrame
    * Refresh view.
    */
   public static void refreshView() {
+    if (currentPage == null) return;
     currentPage.refreshView();
   }
   

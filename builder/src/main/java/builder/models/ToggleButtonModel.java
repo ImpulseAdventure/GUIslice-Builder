@@ -262,6 +262,7 @@ public class ToggleButtonModel extends WidgetModel {
         data[PROP_OFF_COLOR][PROP_VAL_VALUE] = element.getOffCol();
       if (element.getFrameCol() != null)
         data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      fireTableStructureChanged();
     }
   }
   

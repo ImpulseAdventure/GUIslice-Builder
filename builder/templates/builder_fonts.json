@@ -4,7 +4,7 @@
       "graphicPackage": "Adafruit_GFX",
       "warnings": [
          "#if defined(DRV_DISP_TFT_ESPI)",
-         "  #error Project tab->Target Platform should be tft_espi",
+         "  #error E_PROJECT_OPTIONS tab->Graphics Library should be TFT_eSPI",
          "#endif" 
       ],
 			"extraIncludes": [
@@ -1903,7 +1903,7 @@
       "graphicPackage": "TFT_eSPI",
       "warnings": [
          "#if !defined(DRV_DISP_TFT_ESPI)",
-         "  #error Project tab->Target Platform should be arduino",
+         "  #error E_PROJECT_OPTIONS tab->Graphics Library should be Adafruit_GFX",
          "#endif"
       ],
 			"extraIncludes": [

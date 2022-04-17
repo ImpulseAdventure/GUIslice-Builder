@@ -397,6 +397,7 @@ public class TextBoxModel extends WidgetModel {
         data[PROP_BAR_FRAME_COLOR][PROP_VAL_VALUE] = element.getBarFrameCol();
       if (element.getBarFillCol() != null)
         data[PROP_BAR_FILL_COLOR][PROP_VAL_VALUE] = element.getBarFillCol();
+      fireTableStructureChanged();
     }
   }
   

@@ -26,6 +26,7 @@
 package builder.models;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -74,23 +75,25 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static private final int PROP_COLS              = 11;
   static private final int PROP_ROWS              = 12;
   static private final int PROP_ITEM_GAP          = 13;
-  static private final int PROP_TXT_MARGIN_WIDTH  = 14;
-  static private final int PROP_TXT_MARGIN_HEIGHT = 15;
-  static private final int PROP_TEXT_ALIGN        = 16;
-  static private final int PROP_FRAME_EN          = 17;
-  static private final int PROP_SCROLLBAR         = 18;
-  static private final int PROP_SCROLLBAR_WIDTH   = 19;
-  static private final int PROP_SCROLLBAR_THUMB   = 20;
-  static private final int PROP_SCROLLBAR_ENUM    = 21;
-  static private final int PROP_SCROLLBAR_EREF    = 22;
-  static private final int PROP_SCROLLBAR_MAX     = 23;
-  static private final int PROP_TEXT_COLOR        = 24;
-  static private final int PROP_GAP_COLOR         = 25;
-  static private final int PROP_FRAME_COLOR       = 26;
-  static private final int PROP_FILL_COLOR        = 27;
-  static private final int PROP_SELECTED_COLOR    = 28;
-  static private final int PROP_BAR_FRAME_COLOR   = 29;
-  static private final int PROP_BAR_FILL_COLOR    = 30;
+  static private final int PROP_TXT_WIDTH         = 14;
+  static private final int PROP_TXT_HEIGHT        = 15;
+  static private final int PROP_TXT_MARGIN_WIDTH  = 16;
+  static private final int PROP_TXT_MARGIN_HEIGHT = 17;
+  static private final int PROP_TEXT_ALIGN        = 18;
+  static private final int PROP_FRAME_EN          = 19;
+  static private final int PROP_SCROLLBAR         = 20;
+  static private final int PROP_SCROLLBAR_WIDTH   = 21;
+  static private final int PROP_SCROLLBAR_THUMB   = 22;
+  static private final int PROP_SCROLLBAR_ENUM    = 23;
+  static private final int PROP_SCROLLBAR_EREF    = 24;
+  static private final int PROP_SCROLLBAR_MAX     = 25;
+  static private final int PROP_TEXT_COLOR        = 26;
+  static private final int PROP_GAP_COLOR         = 27;
+  static private final int PROP_FRAME_COLOR       = 28;
+  static private final int PROP_FILL_COLOR        = 29;
+  static private final int PROP_SELECTED_COLOR    = 30;
+  static private final int PROP_BAR_FRAME_COLOR   = 31;
+  static private final int PROP_BAR_FILL_COLOR    = 32;
   
   /** The Property Defaults */
   static public  final String[] DEF_ITEMS             = { "" };
@@ -98,9 +101,11 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   static public  final Integer  DEF_SELECTED          = Integer.valueOf(0);
   static public  final Integer  DEF_COLS              = Integer.valueOf(1);
   static public  final Integer  DEF_ROWS              = Integer.valueOf(5);
-  static public  final Integer  DEF_ITEM_GAP          = Integer.valueOf(0);
+  static public  final Integer  DEF_ITEM_GAP          = Integer.valueOf(5);
+  static public  final Integer  DEF_TXT_WIDTH         = Integer.valueOf(-1);
+  static public  final Integer  DEF_TXT_HEIGHT        = Integer.valueOf(-1);
   static public  final Integer  DEF_TXT_MARGIN_WIDTH  = Integer.valueOf(5);
-  static public  final Integer  DEF_TXT_MARGIN_HEIGHT = Integer.valueOf(0);
+  static public  final Integer  DEF_TXT_MARGIN_HEIGHT = Integer.valueOf(5);
   static public  final String   DEF_TEXT_ALIGN        = FontTFT.ALIGN_LEFT;
   static public  final Boolean  DEF_FRAME_EN          = Boolean.TRUE;
   static public  final Boolean  DEF_SCROLLBAR         = Boolean.TRUE;
@@ -147,7 +152,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   protected void initProperties()
   {
     widgetType = EnumFactory.LISTBOX;
-    data = new Object[31][5];
+    data = new Object[33][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
@@ -167,6 +172,8 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     initProp(PROP_SCROLLBAR_MAX, Integer.class, "BAR-115", Boolean.FALSE,"Scrollbar Max Value",DEF_SCROLLBAR_MAX);
 
     initProp(PROP_ITEM_GAP, Integer.class, "LIST-106", Boolean.FALSE,"Item Gap",DEF_ITEM_GAP);
+    initProp(PROP_TXT_WIDTH, Integer.class, "LIST-110", Boolean.FALSE,"Text Width",DEF_TXT_WIDTH);
+    initProp(PROP_TXT_HEIGHT, Integer.class, "LIST-111", Boolean.FALSE,"Text Height",DEF_TXT_HEIGHT);
     initProp(PROP_TXT_MARGIN_WIDTH, Integer.class, "LIST-100", Boolean.FALSE,"Text Margin Width",DEF_TXT_MARGIN_WIDTH);
     initProp(PROP_TXT_MARGIN_HEIGHT, Integer.class, "LIST-101", Boolean.FALSE,"Text Margin Height",DEF_TXT_MARGIN_HEIGHT);
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
@@ -271,6 +278,13 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
       calcSizes(false);
       fireTableStructureChanged();
     }
+    if (row == PROP_FONT) {
+      // re-calc number of text rows and columns
+      calcSizes(false);
+      fireTableCellUpdated(PROP_TXT_HEIGHT, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_STORAGESZ, COLUMN_VALUE);
+      fireTableCellUpdated(PROP_SCROLLBAR_MAX, COLUMN_VALUE); 
+    }
     if (row == PROP_SCROLLBAR) {
       if (addScrollbar()) {
         data[PROP_SCROLLBAR_ENUM][PROP_VAL_READONLY]=Boolean.FALSE; 
@@ -365,6 +379,10 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
    */
   public int getScrollbarWidth() {
     return (((Integer) (data[PROP_SCROLLBAR_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  public int getScrollbarMaxValue() {
+    return (((Integer) (data[PROP_SCROLLBAR_MAX][PROP_VAL_VALUE])).intValue());
   }
 
   /**
@@ -468,6 +486,24 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     return (((Integer) (data[PROP_COLS][PROP_VAL_VALUE])).intValue());
   }
 
+  public int getTextWidth() {
+    return (((Integer) (data[PROP_TXT_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+  
+
+  public int getTextHeight() {
+    return (((Integer) (data[PROP_TXT_HEIGHT][PROP_VAL_VALUE])).intValue());
+  }
+  
+  public int getMarginWidth() {
+    return (((Integer) (data[PROP_TXT_MARGIN_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+  
+
+  public int getMarginHeight() {
+    return (((Integer) (data[PROP_TXT_MARGIN_HEIGHT][PROP_VAL_VALUE])).intValue());
+  }
+  
   /**
    * Gets the text color.
    *
@@ -556,6 +592,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
         data[PROP_BAR_FRAME_COLOR][PROP_VAL_VALUE] = element.getBarFrameCol();
       if (element.getBarFillCol() != null)
         data[PROP_BAR_FILL_COLOR][PROP_VAL_VALUE] = element.getBarFillCol();
+      fireTableStructureChanged();
     }
   }
   
@@ -613,6 +650,9 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
     }
     data[PROP_STORAGESZ][PROP_VAL_VALUE] = Integer.valueOf(nChars);
     data[PROP_SCROLLBAR_MAX][PROP_VAL_VALUE]=Math.min(100, items.length+5); 
+    FontTFT font = ff.getFont(getFontDisplayName());
+    Dimension nChSz = ff.getMaxTextBounds(0,0,font,2);
+    data[PROP_TXT_HEIGHT][PROP_VAL_VALUE]=Integer.valueOf(nChSz.height);
   }
 
 }

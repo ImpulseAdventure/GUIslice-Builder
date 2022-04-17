@@ -167,7 +167,7 @@ public class GeneralModel extends WidgetModel {
         DEF_GUISLICE_DEFAULT_THEME);
     initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);
     initProp(PROP_PIO_ENV, String.class, "GEN-099", Boolean.TRUE,"PlatformIO default_envs",cbPioEnv.getItemAt(0));
-    initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Font Library",DEF_TARGET);
+    initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Graphics Library",DEF_TARGET);
 
     initProp(DISPLAY_WIDTH, Integer.class, "GEN-102", Boolean.FALSE,"TFT Screen Width",DEF_WIDTH);
     initProp(DISPLAY_HEIGHT, Integer.class, "GEN-103", Boolean.FALSE,"TFT Screen Height",DEF_HEIGHT);

@@ -37,6 +37,8 @@ import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class RingGaugeModel implements the model for the RingGauge widget.
@@ -133,7 +135,7 @@ public class RingGaugeModel extends WidgetModel {
     initProp(PROP_GRADIENT_END_COLOR, Color.class, "RING-111", Boolean.TRUE,"Gradient End Color",DEF_GRADIENT_END_COLOR);
     initProp(PROP_INACTIVE_COLOR, Color.class, "RING-112", Boolean.FALSE,"Inactive Color",DEF_INACTIVE_COLOR);
     initProp(PROP_TEXT_COLOR, Color.class, "COL-301", Boolean.FALSE,"Text Color",DEF_TEXT_COLOR);
-    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.TRUE,"Fill Color",DEF_FILL_COLOR);
+    initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
 
   }
 
@@ -409,6 +411,24 @@ public class RingGaugeModel extends WidgetModel {
       if (fireUpdates) {
         fireTableCellUpdated(PROP_FONT, COLUMN_VALUE);
       }
+    }
+  }
+
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    GUIsliceThemeElement element = theme.getElement("TextBox");
+    if (element != null) {
+      if (element.getTextCol() != null)
+        data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      fireTableStructureChanged();
     }
   }
 

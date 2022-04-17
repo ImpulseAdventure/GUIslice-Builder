@@ -112,11 +112,10 @@ public class GeneralEditor extends ModelEditor {
    * @param s
    */
   public void setRecentFilesList(String s) { 
-    if (s == null || s.isEmpty())
+    if (s == null || s.length() == 0)
       return;
     ((GeneralModel) model).setRecentFilesList(s);
     fPrefs.put("Recent Files", (String)s);
-    super.setChanged();
   }
 
   /**
