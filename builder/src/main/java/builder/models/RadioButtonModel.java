@@ -74,7 +74,7 @@ public class RadioButtonModel extends WidgetModel {
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
   static public  final String  DEF_STYLE             = CHECKBOX_STYLE_ROUND;
   static public  final Color   DEF_MARK_COLOR        = new Color(255,165,0); // // GSLC_COL_ORANGE
-  static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
+  static public  final Boolean DEF_CALLBACK_EN       = Boolean.TRUE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
