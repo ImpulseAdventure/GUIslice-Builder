@@ -33,6 +33,7 @@ import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
 import builder.codegen.blocks.CodeBlock;
 import builder.models.CheckBoxModel;
+import builder.models.ToggleButtonModel;
 import builder.models.WidgetModel;
 
 /**
@@ -72,7 +73,7 @@ public final class ToggleButton_P_CodeBlock implements CodeBlock {
    * @return the <code>string builder</code> object
    */
   static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum, WidgetModel wm) {
-    CheckBoxModel m = (CheckBoxModel)wm;
+    ToggleButtonModel m = (ToggleButtonModel)wm;
     List<String> template = null;
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);

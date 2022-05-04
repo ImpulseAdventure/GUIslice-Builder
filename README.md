@@ -75,6 +75,10 @@ It will also cleanup during a new code generation any font files moved previousl
 Improved Code Editing for those who add custom code to Button Callbacks.  The code editing is provided by  
 [RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea)
 
+### Bug Fixes 0.17.b12
+
+- Issue `203` Fatal Crash on Generate Code using Flash API version of Toggle Button
+
 ### Enhancements for 0.17.b11
 
 The Builder will now support Monochrome 1 bit images that are stored inside a C Array file created by my 
