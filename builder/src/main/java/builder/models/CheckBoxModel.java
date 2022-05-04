@@ -134,6 +134,7 @@ public class CheckBoxModel extends WidgetModel {
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
     initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
+    setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
 //    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
   }
