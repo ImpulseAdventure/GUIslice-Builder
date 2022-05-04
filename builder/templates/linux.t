@@ -218,7 +218,7 @@ gslc_tsElemRef*  $<18>$<ELEMREF>= NULL;
   if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed: %s\n",$<FONT_REF>); exit(1); }
 <STOP>
 <FONT_MODE>
-    gslc_FontSetMode(&m_gui, $<FONT_ID>, $<FONT_MODE>);	
+    gslc_FontSetMode(&m_gui, $<FONT_ID>, $<FONT_MODE>);
 <STOP>
 <FRAME_EN>
   gslc_ElemSetFrameEn(&m_gui,pElemRef,$<COM-010>);

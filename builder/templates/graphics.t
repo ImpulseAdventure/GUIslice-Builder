@@ -293,7 +293,7 @@ extern uint8_t $<EXTERN_STORAGE>[];
     if (!gslc_FontSet(&m_gui,$<FONT_ID>,$<FONT_REFTYPE>,$<FONT_REF>,$<FONT_SZ>)) { return; }
 <STOP>
 <FONT_MODE>
-    gslc_FontSetMode(&m_gui, $<FONT_ID>, $<FONT_MODE>);	
+    gslc_FontSetMode(&m_gui, $<FONT_ID>, $<FONT_MODE>);
 <STOP>
 <FRAME_EN>
   gslc_ElemSetFrameEn(&m_gui,pElemRef,$<COM-010>);
