@@ -136,6 +136,8 @@ public class RadioButtonModel extends WidgetModel {
 
     initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
+    setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+
   }
   
   /**
