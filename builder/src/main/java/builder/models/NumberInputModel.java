@@ -437,6 +437,8 @@ public class NumberInputModel extends WidgetModel {
    GUIsliceThemeElement element = theme.getElement("NumberInput");
    if (element != null) {
      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();
+     if (element.getTextCol() != null)
+       data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
      if (element.getFrameCol() != null)
        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
      if (element.getFillCol() != null)
