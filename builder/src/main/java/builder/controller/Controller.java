@@ -144,7 +144,7 @@ public class Controller extends JInternalFrame
   private GridEditor gridEditor;
   
   /** The general editor. */
-  private GeneralEditor generalEditor;
+  public static GeneralEditor generalEditor;
   
   /** The str theme. */
   private String strTheme;
@@ -205,7 +205,7 @@ public class Controller extends JInternalFrame
    */
   public void initUI() {
     title = "Simulated TFT Panel";
-    this.generalEditor = GeneralEditor.getInstance();
+    generalEditor = GeneralEditor.getInstance();
     MsgBoard.subscribe(this, "Controller");
 
     // trap frame resizing

@@ -138,8 +138,7 @@ public class SwatchPanel extends JPanel {
     }
     if (colorList == null) {
       colorList = new ArrayList<Color>();
-    } else {
-      // initialize lru with default colors
+      // initialize lru with nulls
       for (int i = 0; i < NUMCOLORS; i++) {
         colorList.add(null);
       }
@@ -278,32 +277,34 @@ public class SwatchPanel extends JPanel {
     if (c == null)
       return;
     if (colorList.size() == 0) {
+      // defensive programming, can't or should never get here
       colorList.add(c);
       return;
     } 
     ListIterator<Color> litr = colorList.listIterator();
     Color swatch=null;
     int n = 0;
+    // find first free location
     while(litr.hasNext()){
       swatch = litr.next();
       if (swatch == null) {
-        Builder.logger.debug("==null");
+//        Builder.logger.debug("==null");
         break;
       }
-      Builder.logger.debug("n="+n+" swatch: "+swatch.toString()+" c: "+c.toString());
+//      Builder.logger.debug("n="+n+" swatch: "+swatch.toString()+" c: "+c.toString());
       if (swatch.getRGB() == c.getRGB()) {
-        Builder.logger.debug("==c.getRGB()");
+//        Builder.logger.debug("==c.getRGB()");
         return;
       }
       n++;
     }
     if (n >= NUMCOLORS) {
-      // just add to end of list
+      // just replace end of list
       // TODO - create a hole and push everyone down by one position
       Builder.logger.debug("add to end");
-      colorList.add(NUMCOLORS-1,c);
+      colorList.set(NUMCOLORS-1,c); // can't use add
     }
-    colorList.add(n,c);
+    colorList.set(n,c);
     Builder.logger.debug("add next");
     repaint();
   }

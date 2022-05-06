@@ -75,21 +75,22 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_PRESERVE_BTN_CALLBACKS = 18;
 
   // The following properties are hidden from users
-  public static final int PROP_NUM_HIDDEN           = 8;  // must be set to number hidden props
+  // TODO - remove hidden props and create a new model RuntimeModel
+  //        to hold these values
+  public static final int PROP_NUM_HIDDEN           = 7;  // must be set to number hidden props
   
   public static final int PROP_IMAGE_DIR            = 19; // last folder used to load image
-  public static final int PROP_RECENT_FILES         = 20; // LRU of recent files chosen
 
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_SIZE_APP_WIDTH       = 21; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 22; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 23; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 24; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 25; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 26; 
+  public static final int PROP_SIZE_APP_WIDTH       = 20; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 21; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 22; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 23; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 24; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 25; 
   
   /** The Property Defaults */
   static public  final String  DEF_IDE                 = "Arduino IDE";
@@ -156,7 +157,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[27][5];
+    data = new Object[26][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
@@ -193,8 +194,9 @@ public class GeneralModel extends WidgetModel {
         "Backward Compatibility Mode?",DEF_BACKWARD_COMPAT);
     initProp(PROP_PRESERVE_BTN_CALLBACKS, Boolean.class, "GEN-136", Boolean.FALSE,
         "Preserve Button Callbacks?",Boolean.TRUE);
+
+    // hidden - runtime only properties
     initProp(PROP_IMAGE_DIR, String.class, "GEN-113", Boolean.FALSE,"Last Image Directory Accessed","");
-    initProp(PROP_RECENT_FILES, String.class, "GEN-121", Boolean.TRUE,"Recent Files","");
     initProp(PROP_SIZE_APP_WIDTH, Integer.class,  "GEN-130", Boolean.FALSE,"App Win Width",Integer.valueOf(0));
     initProp(PROP_SIZE_APP_HEIGHT, Integer.class, "GEN-131", Boolean.FALSE,"App Win Height",Integer.valueOf(0));
     initProp(PROP_SIZE_TFT_WIDTH, Integer.class,  "GEN-132", Boolean.FALSE,"TFT Pane Width",Integer.valueOf(0));
@@ -334,24 +336,6 @@ public class GeneralModel extends WidgetModel {
    */
   public String getTargetPlatform() {
     return (String) data[PROP_TARGET][PROP_VAL_VALUE];
-  }
-
-  /**
-   * Gets the recent file list.
-   *
-   * @return the recent file list
-   */
-  public String getRecentFilesList() {
-    return (String) data[PROP_RECENT_FILES][PROP_VAL_VALUE];
-  }
-
-  /**
-   * setRecentFilesList sets the recent colors
-   * called by our file chooser.
-   * @param s
-   */
-  public void setRecentFilesList(String s) { 
-    shortcutValue(s, PROP_RECENT_FILES);
   }
 
   public String getIDE() {

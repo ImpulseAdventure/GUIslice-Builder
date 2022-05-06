@@ -19,7 +19,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileSystemView;
 
-import builder.prefs.GeneralEditor;
+import builder.prefs.RecentFiles;
 
 public class RecentFilePanel extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -27,6 +27,8 @@ public class RecentFilePanel extends JPanel {
   private JList<File> list;
   private FileListModel listModel = null;
   private JFileChooser fileChooser;
+  protected RecentFiles recentStorage;
+  static final int MAXFILES = 5;
 
   public RecentFilePanel() {
     if (listModel == null) {
@@ -76,27 +78,23 @@ public class RecentFilePanel extends JPanel {
   
   public class FileListModel extends AbstractListModel<File> {
     private static final long serialVersionUID = 1L;
-    private static final int MAXFILES = 5;
     /** lru cache of recent file names */
-    public  ArrayList<String> lruList;
+    public  List<String> lruList;
     public  List<File> files;
 
     public FileListModel() {
       files = new ArrayList<>();
-      lruList = new ArrayList<String>();
-      String listOfFiles = GeneralEditor.getInstance().getRecentFilesList();
-      if (listOfFiles != null) {
-        String[] fileList = listOfFiles.split(File.pathSeparator);
-        for (String fileRef : fileList) {
-            File file = new File(fileRef);
-            if (file.exists()) {
-                files.add(file);
-                lruList.add(fileRef);
-            }
+      if (recentStorage == null)
+        recentStorage = new RecentFiles(MAXFILES);
+      lruList = recentStorage.load();
+      for (String fileRef : lruList) {
+        File file = new File(fileRef);
+        if (file.exists()) {
+          files.add(file);
         }
       }
     }
-    
+
     public void add(File file) {
         setMostRecentFile(file);
         fireContentsChanged(this, 0, getSize());
@@ -191,20 +189,7 @@ public class RecentFilePanel extends JPanel {
         // empty list so just add file name
         lruList.add(fileName);
       }
-//      files.clear();
-      StringBuilder sb = new StringBuilder();
-      for (int index = 0; index < lruList.size(); index++) {
-        fileName = lruList.get(index);
-        file = new File(fileName);
-//  No point in adding file to files list since it won't ever be used again.
-//        files.add(file);
-        if (sb.length() > 0) {
-          sb.append(File.pathSeparator);
-        }
-        sb.append(file.getPath());
-      }
-//    Builder.logger.debug(sb.toString());
-      GeneralEditor.getInstance().setRecentFilesList(sb.toString());
+      recentStorage.store(lruList);
     }
   }
 

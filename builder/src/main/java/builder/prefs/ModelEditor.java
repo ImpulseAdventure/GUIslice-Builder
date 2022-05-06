@@ -166,15 +166,11 @@ public class ModelEditor extends Observable {
         fPrefs.putInt(key, def);
       }
     }
-    fixChanges();
-  }
-
-  protected void fixChanges() {
     /* remove setChanged() and notifyObservers() for Java 9 and above */
     setChanged();
     notifyObservers();
   }
-  
+
   /**
    * Save data.
    */
