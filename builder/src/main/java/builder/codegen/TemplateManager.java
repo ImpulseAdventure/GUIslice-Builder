@@ -324,7 +324,33 @@ public class TemplateManager {
       }
     }
   }
- 
+
+  /**
+   * codeReplaceWord
+   *    Writes out code block replacing lines with a new one.
+   * 
+   * @param sBd
+   * @param lines
+   * @param oldWord
+   * @param newWord
+   * @param line_no
+   * @param stop_no
+   */
+  public void codeReplaceWord(StringBuilder sBd, List<String> lines, 
+      String oldWord, String newWord, int line_no) {
+    int n = -1;
+    for (String l : lines) {
+      n++;
+      if (n == line_no) {
+        sBd.append(l.replace(oldWord, newWord));
+        sBd.append(System.lineSeparator());
+      } else {
+        sBd.append(l);
+        sBd.append(System.lineSeparator());
+      }
+    }
+  }
+
   public void codeAppendLine(StringBuilder sBd, List<String> lines, 
       String replacement) {
     int n = -1;

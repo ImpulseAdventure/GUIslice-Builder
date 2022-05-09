@@ -396,7 +396,8 @@ public class ButtonCbPipe extends WorkFlowPipe {
          * matches just output the stored source code in case user has modified it. This
          * makes round trip edits possible.
          */
-          CaseInfo oldInfo = parseCaseType(e, idx);
+          
+          CaseInfo oldInfo = parseCaseType(e, idx, modelInfo.getCaseType());
           switch (modelInfo.getCaseType()) {
           case CT_UNDEFINED: 
             break;
@@ -414,11 +415,11 @@ public class ButtonCbPipe extends WorkFlowPipe {
                 bNeedOutput = false;
               } else {
                 if (oldInfo.getLineNo() > -1) { 
-                  // output what is stored but replace the one line that is wrong
-                  replacement = String.format("        gslc_SetPageCur(&m_gui, %s);", modelInfo.getPageEnum());
+                  // output what is stored but replace page enum
                   outputLines = listOfCases[idx];
-                  tm.codeReplaceLine(sBd, outputLines, replacement, 
-                      oldInfo.getLineNo(), oldInfo.getLineNo());
+                  tm.codeReplaceWord(sBd, outputLines, 
+                      oldInfo.getPageEnum(), modelInfo.getPageEnum(), 
+                      oldInfo.getLineNo());
                   bNeedOutput = false;
                 }
               }
@@ -447,6 +448,12 @@ public class ButtonCbPipe extends WorkFlowPipe {
                 outputLines = listOfCases[idx];
                 tm.codeWriter(sBd, outputLines);
                 bNeedOutput = false;
+              } else {
+                outputLines = listOfCases[idx];
+                tm.codeReplaceWord(sBd, outputLines, 
+                    oldInfo.getElementRef(), modelInfo.getElementRef(), 
+                    oldInfo.getLineNo());
+                bNeedOutput = false;
               }
             }
             if (oldInfo.getCaseType() == CT_UPDINPUTNUM) {
@@ -470,6 +477,12 @@ public class ButtonCbPipe extends WorkFlowPipe {
               if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
                 outputLines = listOfCases[idx];
                 tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              } else {
+                outputLines = listOfCases[idx];
+                tm.codeReplaceWord(sBd, outputLines, 
+                    oldInfo.getElementRef(), modelInfo.getElementRef(), 
+                    oldInfo.getLineNo());
                 bNeedOutput = false;
               }
             }
@@ -536,6 +549,13 @@ public class ButtonCbPipe extends WorkFlowPipe {
               if (oldInfo.getElementRef().equals(modelInfo.getElementRef())) {
                 outputLines = listOfCases[idx];
                 tm.codeWriter(sBd, outputLines);
+                bNeedOutput = false;
+              } else {
+                // output what is stored but replace ElementRef
+                outputLines = listOfCases[idx];
+                tm.codeReplaceWord(sBd, outputLines, 
+                    oldInfo.getElementRef(), modelInfo.getElementRef(), 
+                    oldInfo.getLineNo());
                 bNeedOutput = false;
               }
             }
@@ -736,7 +756,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
     return ci;
   }
 
-  public CaseInfo parseCaseType(String e, int idx) {
+  public CaseInfo parseCaseType(String e, int idx, int type) {
     CaseInfo ci = new CaseInfo(e);      
     ci.setCaseType(CT_STANDARD);
     List<String> caseList = listOfCases[idx];
@@ -746,6 +766,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
       if (line.isEmpty()) continue;
       String split[] = CodeUtils.splitWords(line);
       if (split.length == 0) continue;
+      
       if (split[0].equals("case")) continue;
       if (split[0].equals("break")) break;
       if (split[0].equals("gslc_SetPageCur")) {
@@ -809,14 +830,17 @@ public class ButtonCbPipe extends WorkFlowPipe {
         ci.setCaseType(CT_HIDEPOPUP);
         ci.setLineNo(n);
         continue;
-      }      
-      if (split[0].equals("if")) {
-        if (split[1].equals("gslc_ElemXTogglebtnGetState")) {
-          ci.setCaseType(CT_TOGGLEBTN);
-          ci.setElementRef(split[2]);
-          ci.setLineNo(n);
+      } 
+      if (type == CT_TOGGLEBTN) {
+        for (int j=0; j<split.length; j++) {
+          if (split[j].equals("gslc_ElemXTogglebtnGetState")) {
+            ci.setCaseType(CT_TOGGLEBTN);
+            ci.setElementRef(split[j+2]);
+            ci.setLineNo(n);
+          }
         }
       }
+
     }
     return ci;  
   }
