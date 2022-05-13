@@ -628,6 +628,10 @@ public class CodeGenerator {
     if (!appFile.exists()) {
       return false; // nothing to do here
     }
+    File hdrFile = new File(hdrName);
+    if (hdrFile.exists()) {
+      return false; // nothing to do here
+    }
     /*
      * It exists so we need to read the first line. It will tell us if we need to
      * upgrade or not.
