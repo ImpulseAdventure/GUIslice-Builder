@@ -1,0 +1,19 @@
+; ---------------------------------------------------------
+; Display: M5stack/m5stack
+; ---------------------------------------------------------
+[disp-M5Stack]
+lib_deps =
+	m5stack/M5Stack
+build_flags =
+
+[env:M5Stack-M5Stack-NoTouch]
+extends = mcu-M5Stack
+lib_deps =
+	${disp-M5Stack.lib_deps}
+	GUIslice
+build_flags =
+	${common.build_flags}
+	${disp-M5Stack.build_flags}
+	-DUSER_CONFIG_LOADED=1
+	-DUSER_CONFIG_INC_FILE=1
+	-DUSER_CONFIG_INC_FNAME=\"../configs/esp-shld-m5stack.h\"

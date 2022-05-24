@@ -1,0 +1,44 @@
+
+
+fonts
+  gfx
+    Dosis
+      PLAIN
+        dosis_book8pt7b.h
+        ...
+        dosis_book24pt7b
+      BOLD
+        dosis_bold8pt7b.h
+        ...
+        dosis_bold24pt7b.h
+    Noto_Sans
+      PLAIN
+        NotoSans8pt7b.h
+        ...
+        NotoSans24pt7b.h
+      BOLD
+        NotoSansBold8pt7b.h
+        ...
+        NotoSansBold24pt7b.h
+      ITALIC
+      ITALIC_BOLD
+  glcd
+    glcdfont.c
+  t3
+    Arial
+      PLAIN
+        font_Arial.c
+      BOLD
+        font_ArialBold.c
+    Droid_Serif
+      PLAIN
+        font_DroidSerif_Regular.c
+      BOLD
+        font_DroidSerif_Bold.c
+      ITALIC
+        font_DroidSerif_Italic.c
+      ITALIC_BOLD
+        font_DroidSerif_BoldItalic.c
+      
+        
+        

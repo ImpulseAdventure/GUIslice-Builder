@@ -1,0 +1,99 @@
+; ---------------------------------------------------------
+; Display: prenticedavid/MCUFRIEND_kbv
+; ---------------------------------------------------------
+[disp-mcufriend]
+lib_deps =
+	Wire
+	adafruit/Adafruit BusIO
+	adafruit/Adafruit GFX Library
+	prenticedavid/MCUFRIEND_kbv
+build_flags =
+
+; ---------------------------------------------------------
+; Touch: Adafruit/Adafruit_Touchscreen (4wire)
+; ---------------------------------------------------------
+[touch-4wire]
+lib_deps =
+	adafruit/Adafruit TouchScreen
+build_flags =
+
+; ---------------------------------------------------------
+; MCU: "Arduino"
+; - Includes:
+;   - Atmel AVR
+;     - Arduino UNO (board=uno)
+;   - Atmel megaAVR
+;     - ATmega2560 (board=ATmega2560)
+;   - Atmel SAM
+;     - Adafruit Grand Central M4 (board=adafruit_grandcentral_m4)
+;     - Arduino Due (board=due)
+;     - Arduino Zero (board=zero
+;   - etc.
+; ---------------------------------------------------------
+[mcu-Arduino]
+platform = atmelavr
+board = ATmega2560
+framework = arduino
+; Board default is:
+; - upload_protocol = arduino
+; try custom if you get Error: Please specify `upload_port` for environment 
+;upload_port = custom
+upload_protocol = stk500v2
+upload_flags = 
+	-Pusb
+
+[env:Arduino-mcufriend-4wire]
+extends = mcu-Arduino
+lib_deps =
+	${disp-mcufriend.lib_deps}
+	${touch-4wire.lib_deps}
+	GUIslice
+build_flags =
+	${common.build_flags}
+	${disp-mcufriend.build_flags}
+	${touch-4wire.build_flags}
+	-DUSER_CONFIG_LOADED
+	-DDRV_DISP_ADAGFX
+	-DDRV_DISP_ADAGFX_MCUFRIEND
+;MCUFRIEND write-only displays may need to force an ID value
+	-DDRV_DISP_ADAGFX_MCUFRIEND_FORCE=0x9481
+	-DDRV_TOUCH_ADA_SIMPLE
+	-DADAGFX_PIN_SDCS=10
+	-DGSLC_ROTATE=1
+;	-DINIT_MSG_DISABLE	
+	-DDEBUG_ERR=1
+	-DGSLC_FEATURE_COMPOUND=0
+	-DGSLC_FEATURE_XTEXTBOX_EMBED=0
+	-DGSLC_FEATURE_INPUT=0
+	-DGSLC_SD_EN=0
+	-DGSLC_TOUCH_MAX_EVT=1
+	-DGSLC_SD_BUFFPIXEL=50
+	-DGSLC_CLIP_EN=1
+	-DGSLC_BMP_TRANS_EN=1
+	-DGSLC_BMP_TRANS_RGB=0xFF,0x00,0xFF
+	-DGSLC_USE_FLOAT=0
+	-DGSLC_DEV_TOUCH=\"\"
+	-DGSLC_USE_PROGMEM=1
+	-DGSLC_LOCAL_STR=0
+	-DGSLC_LOCAL_STR_LEN=30
+; - Definition of the pinout configuration options:
+;   ADATOUCH_PIN_YP      // "Y+": Must be an analog pin
+;   ADATOUCH_PIN_XM      // "X-": Must be an analog pin
+;   ADATOUCH_PIN_YM      // "Y-": Can be a digital pin
+;   ADATOUCH_PIN_XP      // "X+": Can be a digital pin
+; NOTE: you can either use a config file or override defines but not both!
+; Provide new pinout & calibration
+	-DADATOUCH_PIN_YP = A1
+	-DADATOUCH_PIN_XM = A2
+	-DADATOUCH_PIN_YM = 7 
+	-DADATOUCH_PIN_XP = 6 
+	-DADATOUCH_X_MIN = 905
+	-DADATOUCH_X_MAX = 187
+	-DADATOUCH_Y_MIN = 950
+	-DADATOUCH_Y_MAX = 202
+;Some touch controllers may swap X & Y coords
+	-DADATOUCH_REMAP_YX=0 
+;Touch overlay resistance value - In most cases, this value can be left as-is
+	-DADATOUCH_RX=300
+;	-DUSER_CONFIG_INC_FILE
+;	-DUSER_CONFIG_INC_FNAME=\"../configs/ard-shld-mcufriend_4wire.h\"
