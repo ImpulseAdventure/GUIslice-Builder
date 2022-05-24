@@ -41,7 +41,45 @@ Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/
 ## Builder Source Code
 
 The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder](https://github.com/ImpulseAdventure/GUIslice-Builder)
-- Build instructions can be found in `BUILD.txt`
+- Build instructions can be found in `BUILD.txt` file.
+
+## Installation instructions
+
+The needed version of Java is now custom built and distributed with 
+GUIsliceBuilder so you no longer need to deal with its installation.
+
+### Windows GUIsliceBuilder Install
+
+Download the builder-win-x64.{release}.{build}.zip from github
+GUIslice-Builder Releases:
+https://github.com/ImpulseAdventure/GUIslice-Builder/releases
+
+Then unzip and run the resulting executable builder-win-x64.{release}.{build}.exe
+
+This will optionally create a desktop icon you can click on to run.
+
+### LINUX and MACOS install
+
+Download the builder-{opsys}-{arch}.{release}.{build}.tar.gz using 
+operating system and cpu architecture (ie., linux-x64) from github
+GUIslice-Builder Releases:
+https://github.com/ImpulseAdventure/GUIslice-Builder/releases
+
+untar builder-win64-1.0.tar.gz into your home directory.
+
+Open a terminal
+```
+cd $HOME
+tar xvzf builder-linux64-1.0.tar.gz
+```
+Then enter the new GUIsliceBuilder folder
+```
+cd GUIsliceBuilder
+```
+To run:
+```
+./GUIslice.sh
+```
 
 ## Release History
 
@@ -77,6 +115,7 @@ Improved Code Editing for those who add custom code to Button Callbacks.  The co
 
 ### Bug Fixes 0.17.b12
 
+- Issue `207` Save As causes fatal error
 - Issue `205` Toggle Button switch/case user code deleted when re-generate from builder
 - Issue `204` Resolution changes to 240*320 without request 
 - Issue `203` Fatal Crash on Generate Code using Flash API version of Toggle Button
