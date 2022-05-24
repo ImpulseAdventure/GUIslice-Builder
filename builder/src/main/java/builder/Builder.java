@@ -59,9 +59,10 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.ThemeInfo;
 import builder.controller.Controller;
+import builder.controller.LogManager;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
 import builder.fonts.FontFactory;
@@ -80,9 +81,6 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes.FlatIJLookAndFeelInfo;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * GUIsliceBuilder is the main class of the application.
@@ -170,8 +168,10 @@ public class Builder  extends JDesktopPane {
   
   public static Ribbon ribbon;
   
+  private static boolean bInsideIDE = false;
+  
   /** our logger */
-  public static Logger logger = null;
+  public static LogManager logger = null;
   
   /**
    * The main method.
@@ -183,33 +183,28 @@ public class Builder  extends JDesktopPane {
     // On Windows 10 move menubar to Title pane
     JFrame.setDefaultLookAndFeelDecorated( true );
     JDialog.setDefaultLookAndFeelDecorated( true );
+    // Check how many arguments were passed in
+    if(args.length > 0)
+    {
+       /* only one supported -> insideIDE so we can adjust our 
+        * working directory path when testing inside an IDE like Eclipse.
+        */
+       if (args[0].equals("insideIDE")) {
+         bInsideIDE = true;
+       }
+    }    
     
     Builder builder = new Builder();
     version = Double.parseDouble(System.getProperty("java.specification.version"));
-    if (version < 1.8) {
-      String msg = String.format("Java 8 is needed to run correctly. Yours is %.2f", version);
-      JOptionPane.showMessageDialog(null, 
-        msg, "Warning", JOptionPane.ERROR_MESSAGE);
-    }
-    if (version >= 14) {
-      String msg = String.format("Java 14 and above are known to cause crashes and stability issues. Yours is %.2f", version);
-      JOptionPane.showMessageDialog(null, 
-        msg, "Warning", JOptionPane.ERROR_MESSAGE);
-    }
     osName = System.getProperty("os.name").toLowerCase();
     isMAC = osName.startsWith("mac os x");
     // start our logger
-    System.setProperty("log4j.configurationFile","resources/log4j2.xml");
-    logger = LogManager.getLogger(Builder.class);
+    logger = LogManager.getLogger();
+    // do not use Utils.getWorkingDir() or you will write to package/logs and screw up releases
+    String logFile = "./logs/builder.log";
+    logger.openLogger(logFile);
     logger.debug("Builder ver: " + VERSION + " started java ver: " + version + " osys: " + osName);
     loadThemes();
-/*  Use this code for Java 9 and above
-    if (version < 9) {
-      String msg = String.format("Java 9 or higher is needed to run. Yours is %.2f", version);
-      JOptionPane.showMessageDialog(null, 
-        msg, "Failure", JOptionPane.ERROR_MESSAGE);
-    }
-*/
     builder.startUp();
   }
 
@@ -234,7 +229,7 @@ public class Builder  extends JDesktopPane {
             {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } else{
-                setLookAndFeel(GeneralEditor.getInstance().getThemeClassName());
+                setLookAndFeel(Controller.generalEditor.getThemeClassName());
             }            
             SwingUtilities.updateComponentTreeUI(frame);
           } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -261,7 +256,7 @@ public class Builder  extends JDesktopPane {
       public void uncaughtException(Thread t, Throwable e) {
           Calendar cal = Calendar.getInstance();
           SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-          String workingDir = CommonUtils.getWorkingDir();
+          String workingDir = Utils.getWorkingDir();
           File directory = new File(workingDir + "logs");
           if(!directory.exists()){
             directory.mkdir();
@@ -493,6 +488,16 @@ public class Builder  extends JDesktopPane {
     for (FlatIJLookAndFeelInfo info : FlatAllIJThemes.INFOS) {
       themes.add( new ThemeInfo( info.getName() , null, info.getClassName()) );
     }
+  }
+  
+  /**
+   * isInsideIDE allows us to adjust our working directory to find
+   * folders like templates, fonts, etc... when using something like Eclipse IDE
+   * 
+   * @return true if using IDE
+   */
+  public static boolean isInsideIDE() {
+    return bInsideIDE;
   }
   
   /**
