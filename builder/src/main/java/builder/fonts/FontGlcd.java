@@ -479,7 +479,7 @@ public class FontGlcd extends FontTFT {
       Short  n;
       while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
         if (token.getType() == HEX) {
-          n = new Short(Integer.decode(token.getToken()).shortValue());
+          n = Short.valueOf(Integer.decode(token.getToken()).shortValue());
           byteList.add(n);
         }
       }

@@ -38,7 +38,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -259,7 +259,7 @@ public class TextModel extends WidgetModel {
     if (row == PROP_TEXT_SZ) {
       if (getTextStorage() > 0) {
         if (getElementRef().isEmpty()) {
-          setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+          setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
           fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
         }
         calcSizes(true);

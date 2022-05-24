@@ -29,7 +29,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.GUIslice;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
@@ -56,7 +56,7 @@ public class TxtButtonWidget extends Widget {
    *          the y coordinate position
    */
   public TxtButtonWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     ff = FontFactory.getInstance();
     m = new TxtButtonModel();
     model = m;

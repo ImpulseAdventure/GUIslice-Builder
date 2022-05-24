@@ -67,7 +67,7 @@ import builder.codegen.pipes.SliderCbPipe;
 import builder.codegen.pipes.SpinnerCbPipe;
 import builder.codegen.pipes.StartupPipe;
 import builder.codegen.pipes.TickCbPipe;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.models.ProjectModel;
 import builder.models.WidgetModel;
@@ -444,7 +444,7 @@ public class CodeGenerator {
           /*
            * No upgrade needed so just backup our existing App File
            */
-          CommonUtils.backupFile(appFile);
+          Utils.backupFile(appFile);
         }
       } else {
         /*
@@ -453,7 +453,7 @@ public class CodeGenerator {
          */
         m_sTemplateFileName = createTemplateName();
         tmFile = new File(m_sTemplateFileName);
-        CommonUtils.copyFile(tmFile, appFile);
+        Utils.copyFile(tmFile, appFile);
       }
       /* now dump our app starting code into a string buffer
        * so our pipes can process it for code generation
@@ -495,14 +495,14 @@ public class CodeGenerator {
             /* since it doesn't exist we create a fresh copy
              * from our template HDR_TEMPLATE
              */
-            String name = CommonUtils.getWorkingDir() +
+            String name = Utils.getWorkingDir() +
                 TEMPLATE_FOLDER + m_sFileSep + HDR_TEMPLATE;
             tmFile = new File(name);
-            CommonUtils.copyFile(tmFile, hdrFile);
+            Utils.copyFile(tmFile, hdrFile);
             hdrTemplate = name;
           } else {
             // Make a backup copy of project's header file
-            CommonUtils.backupFile(hdrFile);
+            Utils.backupFile(hdrFile);
           }
           sBd = CodeUtils.copyFileToBuffer(hdrFile);
           // run our pipe line
@@ -560,7 +560,7 @@ public class CodeGenerator {
   
   private String createTemplateName() {
     String fullPath = null;
-    String wdPath = CommonUtils.getWorkingDir() + TEMPLATE_FOLDER + m_sFileSep;
+    String wdPath = Utils.getWorkingDir() + TEMPLATE_FOLDER + m_sFileSep;
     switch (m_nState) {
       case ST_LINUX:
       case ST_PIO_LINUX:

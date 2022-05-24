@@ -33,7 +33,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -134,7 +134,7 @@ public class CheckBoxModel extends WidgetModel {
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
     initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
-    setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+    setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
 //    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
   }
@@ -184,7 +184,7 @@ public class CheckBoxModel extends WidgetModel {
     }
     if (row == PROP_CALLBACK_EN) {
       if (isCallbackEn() && getElementRef().isEmpty()) {
-        setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+        setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
         fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
       }
     }

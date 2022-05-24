@@ -38,7 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.controller.Controller;
@@ -424,7 +424,7 @@ public class ImageModel extends WidgetModel {
   @Override
   public void writeModel(ObjectOutputStream out) throws IOException {
     super.writeModel(out);
-    out.writeObject((String) CommonUtils.getInstance().encodeToString(image));
+    out.writeObject((String) Utils.getInstance().encodeToString(image));
   }
   
   /**
@@ -445,7 +445,7 @@ public class ImageModel extends WidgetModel {
   public void readModel(ObjectInputStream in, String widgetType) throws IOException, ClassNotFoundException {
     super.readModel(in,  widgetType);
     String imageString = (String) in.readObject();
-    image = CommonUtils.getInstance().decodeToImage(imageString);
+    image = Utils.getInstance().decodeToImage(imageString);
     if (image == null) {
       throw new IOException("image: " + getImageName() + " is unsupported and has been deleted");
     }

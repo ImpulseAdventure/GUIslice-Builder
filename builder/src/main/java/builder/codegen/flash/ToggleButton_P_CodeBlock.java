@@ -32,7 +32,6 @@ import java.util.Map;
 import builder.codegen.CodeGenerator;
 import builder.codegen.TemplateManager;
 import builder.codegen.blocks.CodeBlock;
-import builder.models.CheckBoxModel;
 import builder.models.ToggleButtonModel;
 import builder.models.WidgetModel;
 

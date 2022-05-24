@@ -765,7 +765,7 @@ public class FontT3 extends FontTFT {
           } while (token.getType() != COMMENT_END);
         }
         if (token.getType() == HEX) {
-          n = new Short(Integer.decode(token.getToken()).shortValue());
+          n = Short.valueOf(Integer.decode(token.getToken()).shortValue());
           byteList.add(n);
         }
       }
@@ -802,7 +802,7 @@ public class FontT3 extends FontTFT {
       byteList.clear();
       while ((token = tokenizer.nextToken()).getType() != CLOSE_BRACE) {
         if (token.getType() == HEX) {
-          n = new Short(Integer.decode(token.getToken()).shortValue());
+          n = Short.valueOf(Integer.decode(token.getToken()).shortValue());
           byteList.add(n);
         }
       }

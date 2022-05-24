@@ -35,7 +35,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.parser.ParserException;
 import builder.parser.Token;
 import builder.parser.Tokenizer;
@@ -121,7 +121,7 @@ public class FontLoadT3Files extends SimpleFileVisitor<Path> {
         String displayName;
         String includeFile = hdrName;
         String parseName = String.format(c.getFontFolderPath()+"%s/%s/%s",familyName,logicalStyle,hdrName);
-        parseName = CommonUtils.getWorkingDir()+parseName;
+        parseName = Utils.getWorkingDir()+parseName;
         String fileName = String.format("%s/%s/%s",familyName,logicalStyle,cName);
         Token token = null;
         File hfile = new File(parseName);

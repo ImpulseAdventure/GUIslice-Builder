@@ -44,7 +44,7 @@ import javax.swing.table.TableCellRenderer;
 import builder.Builder;
 import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
@@ -890,7 +890,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   public void writeModel(ObjectOutputStream out) throws IOException {
     super.writeModel(out);
     if (useBackgroundImage()) {
-      out.writeObject((String) CommonUtils.getInstance().encodeToString(image));
+      out.writeObject((String) Utils.getInstance().encodeToString(image));
     }
   }
 
@@ -914,7 +914,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     super.readModel(in,  widgetType);
     if (useBackgroundImage()) {
       String imageString = (String) in.readObject();
-      image = CommonUtils.getInstance().decodeToImage(imageString);
+      image = Utils.getInstance().decodeToImage(imageString);
       data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;

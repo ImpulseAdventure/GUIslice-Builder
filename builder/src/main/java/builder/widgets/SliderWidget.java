@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.GUIslice;
 import builder.models.SliderModel;
 
@@ -53,7 +53,7 @@ public class SliderWidget extends Widget {
    *          the y coordinate position
    */
   public SliderWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new SliderModel();
     model = m;
     super.setXY(model, x, y);

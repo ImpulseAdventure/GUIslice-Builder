@@ -38,7 +38,7 @@ import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
@@ -224,7 +224,7 @@ public class ExternRefPipe extends WorkFlowPipe {
         }
       }
       if (nErrors > 0) {
-        String fileName = CommonUtils.getWorkingDir()
+        String fileName = Utils.getWorkingDir()
             + "logs" 
             + System.getProperty("file.separator")
             + "builder.log";

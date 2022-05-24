@@ -33,7 +33,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -136,7 +136,7 @@ public class RadioButtonModel extends WidgetModel {
 
     initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
-    setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+    setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
 
   }
   
@@ -185,7 +185,7 @@ public class RadioButtonModel extends WidgetModel {
     }
     if (row == PROP_CALLBACK_EN) {
       if (isCallbackEn() && getElementRef().isEmpty()) {
-        setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+        setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
         fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
       }
     }

@@ -5,12 +5,13 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
+//import java.util.Observable;
 import java.util.prefs.Preferences;
 
 import builder.Builder;
 
-public class RecentFiles extends Observable {
+//public class RecentFiles extends Observable {
+public class RecentFiles {
 
   private static final String MY_NODE = "com/impulseadventure/builder/recentfiles";
   private final static String RECENT_ITEM_STRING = "recent.item."; 
@@ -49,8 +50,8 @@ public class RecentFiles extends Observable {
       }
     }
     /* remove setChanged() and notifyObservers() for Java 9 and above */
-    setChanged();
-    notifyObservers();
+//    setChanged();
+//    notifyObservers();
   }
 
 }

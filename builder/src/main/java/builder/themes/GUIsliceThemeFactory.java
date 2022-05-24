@@ -39,7 +39,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 
 /**
  * A factory for creating and Managing GUIslice Library Themes
@@ -79,7 +79,7 @@ public class GUIsliceThemeFactory {
       if (n > 0) {
         strUserDir = strUserDir.substring(0,n-1);  // remove "/bin"
       }
-      fullPath = CommonUtils.getWorkingDir() + "templates" + fileSep;
+      fullPath = Utils.getWorkingDir() + "templates" + fileSep;
       String csvFile = fullPath + GUISLICE_COLORS_FILE;
       readGUIsliceColors(csvFile);
       String jsonFile = fullPath + GUISLICE_THEMES_FILE;

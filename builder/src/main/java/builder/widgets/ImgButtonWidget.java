@@ -30,7 +30,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.ImageTransparency;
 import builder.models.ImgButtonModel;
 
@@ -48,7 +48,7 @@ public class ImgButtonWidget extends Widget {
    * Instantiates a new img button widget.
    */
   public ImgButtonWidget() {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new ImgButtonModel();
     model = m;
   }

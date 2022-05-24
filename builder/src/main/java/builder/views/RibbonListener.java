@@ -42,7 +42,7 @@ import javax.swing.JOptionPane;
 import builder.Builder;
 import builder.codegen.CodeGenerator;
 import builder.commands.History;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.models.GeneralModel;
@@ -95,7 +95,7 @@ public class RibbonListener implements ActionListener {
     if (path.isAbsolute()) {
       currentDirectory = new File(folderPath);
     } else {
-      String workingDir = CommonUtils.getWorkingDir();
+      String workingDir = Utils.getWorkingDir();
       folderPath = workingDir + folderPath;
       currentDirectory = new File(folderPath);
     }
@@ -257,7 +257,7 @@ public class RibbonListener implements ActionListener {
       if (path.isAbsolute()) {
         currentDirectory = new File(sProjectDir);
       } else {
-        String sWorkingDir = CommonUtils.getWorkingDir();
+        String sWorkingDir = Utils.getWorkingDir();
         currentDirectory = new File(sWorkingDir + sProjectDir);
       }
     } else {
@@ -327,7 +327,7 @@ public class RibbonListener implements ActionListener {
       } else {
         resDir = CodeGenerator.ARDUINO_RES;
       }
-      String workingDir = CommonUtils.getWorkingDir();
+      String workingDir = Utils.getWorkingDir();
       currentDirectory = new File(workingDir + resDir);
     } else {
       currentDirectory = new File(resDir);

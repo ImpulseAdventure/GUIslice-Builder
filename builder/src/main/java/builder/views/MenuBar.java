@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import hu.csekme.RibbonMenu.Util;
+import builder.common.Utils;
 
 /**
  * The Class MenuBar.
@@ -86,7 +86,7 @@ public class MenuBar extends JMenuBar {
     mbFile = new JMenu("File");
     
     miNew = new JMenuItem("New", 
-        Util.accessImageFile("resources/icons/file/new.png", 24,24));
+        Utils.getIcon("resources/icons/file/new.png", 24,24));
     miNew.setActionCommand("new");
     miNew.setAccelerator(KeyStroke.getKeyStroke(
         'N', ActionEvent.CTRL_MASK));
@@ -95,7 +95,7 @@ public class MenuBar extends JMenuBar {
     
 
     miOpen = new JMenuItem("Open", 
-      Util.accessImageFile("resources/icons/file/open.png", 24,24));
+      Utils.getIcon("resources/icons/file/open.png", 24,24));
     miOpen.setActionCommand("open");
     miOpen.setAccelerator(KeyStroke.getKeyStroke(
         'O', ActionEvent.CTRL_MASK));
@@ -103,7 +103,7 @@ public class MenuBar extends JMenuBar {
     mbFile.add(miOpen);
     
     miClose = new JMenuItem("Close", 
-      Util.accessImageFile("resources/icons/file/close.png", 24,24));
+      Utils.getIcon("resources/icons/file/close.png", 24,24));
     miClose.setActionCommand("close");
     miClose.setAccelerator(KeyStroke.getKeyStroke(
         'W', ActionEvent.CTRL_MASK));
@@ -111,7 +111,7 @@ public class MenuBar extends JMenuBar {
     mbFile.add(miClose);
     
     miSave = new JMenuItem("Save", 
-      Util.accessImageFile("resources/icons/file/save.png", 24,24));
+      Utils.getIcon("resources/icons/file/save.png", 24,24));
     miSave.setActionCommand("save");
     miSave.setAccelerator(KeyStroke.getKeyStroke(
         'S', ActionEvent.CTRL_MASK));
@@ -119,7 +119,7 @@ public class MenuBar extends JMenuBar {
     mbFile.add(miSave);
     
     miSaveAs = new JMenuItem("Save As...", 
-      Util.accessImageFile("resources/icons/file/saveas.png", 24,24));
+      Utils.getIcon("resources/icons/file/saveas.png", 24,24));
     miSaveAs.setActionCommand("saveas");
     miSaveAs.setToolTipText("Save As Renaming Project File");
     mbFile.add(miSaveAs);
@@ -127,7 +127,7 @@ public class MenuBar extends JMenuBar {
     mbFile.add(new JSeparator()); 
     
     miCode = new JMenuItem("Generate Code", 
-      Util.accessImageFile("resources/icons/file/export.png", 24,24));
+      Utils.getIcon("resources/icons/file/export.png", 24,24));
     miCode.setActionCommand("code");
     miCode.setAccelerator(KeyStroke.getKeyStroke(
         'G', ActionEvent.CTRL_MASK));
@@ -137,7 +137,7 @@ public class MenuBar extends JMenuBar {
     mbFile.add(new JSeparator()); 
     
     miExit = new JMenuItem("Exit", 
-      Util.accessImageFile("resources/icons/file/logout.png", 24,24));
+      Utils.getIcon("resources/icons/file/logout.png", 24,24));
     miExit.setActionCommand("exit");
     miExit.setAccelerator(KeyStroke.getKeyStroke(
         'E', ActionEvent.CTRL_MASK));
@@ -150,22 +150,22 @@ public class MenuBar extends JMenuBar {
   public void initViewMenus() {
     mbView = new JMenu("View");
     miGrid = new JMenuItem("Grid",
-      Util.accessImageFile("resources/icons/view/grid.png", 24,24));
+      Utils.getIcon("resources/icons/view/grid.png", 24,24));
     miGrid.setActionCommand("grid");
     miGrid.setAccelerator(KeyStroke.getKeyStroke(
         'L', ActionEvent.CTRL_MASK));
     miGrid.setToolTipText("Toggle Grid ON/OFF");
     mbView.add(miGrid);
     miZoomIn = new JMenuItem("Zoom In",
-      Util.accessImageFile("resources/icons/view/zoom_in.png", 24,24));
+      Utils.getIcon("resources/icons/view/zoom_in.png", 24,24));
     miZoomIn.setActionCommand("zoomin");
     miZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
     miZoomIn.setToolTipText("Zoom In TFT Simulation page");
     mbView.add(miZoomIn);
     miZoomOut = new JMenuItem("Zoom Out",
-      Util.accessImageFile("resources/icons/view/zoom_out.png", 24,24));
+      Utils.getIcon("resources/icons/view/zoom_out.png", 24,24));
     miZoomOut.setDisabledIcon(
-      Util.accessImageFile("resources/icons/view/disable_zoom_out.png", 24,24));
+      Utils.getIcon("resources/icons/view/disable_zoom_out.png", 24,24));
     miZoomOut.setEnabled(false);
     miZoomOut.setActionCommand("zoomout");
     miZoomOut.setAccelerator(KeyStroke.getKeyStroke('-', ActionEvent.CTRL_MASK));
@@ -180,7 +180,7 @@ public class MenuBar extends JMenuBar {
   public void initEditMenus() {
     mbEdit = new JMenu("Edit");
     miUndo = new JMenuItem("Undo", 
-      Util.accessImageFile("resources/icons/edit/undo.png", 24,24));
+      Utils.getIcon("resources/icons/edit/undo.png", 24,24));
     miUndo.setActionCommand("undo");
     miUndo.setAccelerator(KeyStroke.getKeyStroke(
         'Z', ActionEvent.CTRL_MASK));
@@ -188,7 +188,7 @@ public class MenuBar extends JMenuBar {
     mbEdit.add(miUndo);
     
     miRedo = new JMenuItem("Redo", 
-        Util.accessImageFile("resources/icons/edit/redo.png", 24,24));
+        Utils.getIcon("resources/icons/edit/redo.png", 24,24));
     miRedo.setActionCommand("redo");
     miRedo.setAccelerator(KeyStroke.getKeyStroke(
           'Y', ActionEvent.CTRL_MASK));
@@ -197,7 +197,7 @@ public class MenuBar extends JMenuBar {
       
     mbEdit.add(new JSeparator()); 
     miCopy = new JMenuItem("Copy", 
-      Util.accessImageFile("resources/icons/edit/copy.png", 24,24));
+      Utils.getIcon("resources/icons/edit/copy.png", 24,24));
     miCopy.setActionCommand("copy");
     miCopy.setAccelerator(KeyStroke.getKeyStroke(
         'C', ActionEvent.CTRL_MASK));
@@ -205,7 +205,7 @@ public class MenuBar extends JMenuBar {
     mbEdit.add(miCopy);
 
     miCut = new JMenuItem("Cut", 
-      Util.accessImageFile("resources/icons/edit/cut.png", 24,24));
+      Utils.getIcon("resources/icons/edit/cut.png", 24,24));
     miCut.setActionCommand("cut");
     miCut.setAccelerator(KeyStroke.getKeyStroke(
         'X', ActionEvent.CTRL_MASK));
@@ -213,7 +213,7 @@ public class MenuBar extends JMenuBar {
     mbEdit.add(miCut);
 
     miPaste = new JMenuItem("Paste", 
-      Util.accessImageFile("resources/icons/edit/paste.png", 24,24));
+      Utils.getIcon("resources/icons/edit/paste.png", 24,24));
     miPaste.setActionCommand("paste");
     miPaste.setAccelerator(KeyStroke.getKeyStroke(
         'V', ActionEvent.CTRL_MASK));
@@ -237,7 +237,7 @@ public class MenuBar extends JMenuBar {
      *  so I create a class and extend instead.
      */
 //    Icon deleteIcon = new ImageIcon(Builder.class.getResource("/resources/icons/edit/delete.png"));
-    Icon deleteIcon = Util.accessImageFile("resources/icons/edit/delete.png", 24,24);
+    Icon deleteIcon = Utils.getIcon("resources/icons/edit/delete.png", 24,24);
 
     DeleteAction deleteAction = new DeleteAction("Delete", deleteIcon);
     /*
@@ -249,7 +249,7 @@ public class MenuBar extends JMenuBar {
         keyStrokeDeleteCtrl);
     // Obviously, we need to create the menuitem
     miDelete = new JMenuItem("Delete", 
-      Util.accessImageFile("resources/icons/edit/delete.png", 24,24));
+      Utils.getIcon("resources/icons/edit/delete.png", 24,24));
     // set menuitem to use our delete action
     miDelete.setAction(deleteAction);
     /*
@@ -267,7 +267,7 @@ public class MenuBar extends JMenuBar {
     mbEdit.add(new JSeparator()); 
     
     miOptions = new JMenuItem("Options", 
-      Util.accessImageFile("resources/icons/misc/options.png", 24,24));
+      Utils.getIcon("resources/icons/misc/options.png", 24,24));
     miOptions.setActionCommand("options");
     miOptions.setToolTipText("View/Edit User Preferences.");
     mbEdit.add(miOptions);
@@ -282,7 +282,7 @@ public class MenuBar extends JMenuBar {
     mbHelp = new JMenu("Help");
     
     miAbout= new JMenuItem("About", 
-        Util.accessImageFile("resources/icons/misc/about.png", 24,24));
+        Utils.getIcon("resources/icons/misc/about.png", 24,24));
     miAbout.setActionCommand("about");
     mbHelp.add(miAbout);
     

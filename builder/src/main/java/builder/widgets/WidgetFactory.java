@@ -25,7 +25,7 @@
  */
 package builder.widgets;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.models.BoxModel;
@@ -137,7 +137,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), GraphModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), GraphModel.ELEMENTREF_NAME);
           ((GraphModel) model).setElementRef(ref);
         }
         break;
@@ -175,7 +175,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), ListBoxModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), ListBoxModel.ELEMENTREF_NAME);
           ((ListBoxModel) model).setElementRef(ref);
         }
         break;
@@ -186,7 +186,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), NumberInputModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), NumberInputModel.ELEMENTREF_NAME);
           ((NumberInputModel) model).setElementRef(ref);
         }
         break;
@@ -197,7 +197,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), ProgressBarModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), ProgressBarModel.ELEMENTREF_NAME);
           ((ProgressBarModel) model).setElementRef(ref);
         }
         break;
@@ -217,7 +217,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), RampGaugeModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), RampGaugeModel.ELEMENTREF_NAME);
           ((RampGaugeModel) model).setElementRef(ref);
         }
         break;
@@ -228,7 +228,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), RadialGaugeModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), RadialGaugeModel.ELEMENTREF_NAME);
           ((RadialGaugeModel) model).setElementRef(ref);
         }
         break;
@@ -239,7 +239,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), RingGaugeModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), RingGaugeModel.ELEMENTREF_NAME);
           ((RingGaugeModel) model).setElementRef(ref);
         }
         break;
@@ -250,7 +250,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), SeekbarModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), SeekbarModel.ELEMENTREF_NAME);
           ((SeekbarModel) model).setElementRef(ref);
         }
         break;
@@ -261,7 +261,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), SliderModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), SliderModel.ELEMENTREF_NAME);
           ((SliderModel) model).setElementRef(ref);
         }
         break;
@@ -273,7 +273,7 @@ public class WidgetFactory  {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
           ref = SpinnerModel.ELEMENTREF_NAME;
-          ref = CommonUtils.createElemName(model.getKey(), SpinnerModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), SpinnerModel.ELEMENTREF_NAME);
           ((SpinnerModel) model).setElementRef(ref);
         }
         break;
@@ -293,7 +293,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), TextBoxModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), TextBoxModel.ELEMENTREF_NAME);
           ((TextBoxModel) model).setElementRef(ref);
         }
         break;
@@ -313,7 +313,7 @@ public class WidgetFactory  {
         if (widget != null) {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
-          ref = CommonUtils.createElemName(model.getKey(), TextInputModel.ELEMENTREF_NAME);
+          ref = Utils.createElemName(model.getKey(), TextInputModel.ELEMENTREF_NAME);
           ((TextInputModel) model).setElementRef(ref);
         }
         break;
@@ -325,7 +325,7 @@ public class WidgetFactory  {
           model.setKey(EnumFactory.getInstance().createKey(widgetType));
           model.setEnum(EnumFactory.getInstance().createEnum(widgetType));
         }
-        ref = CommonUtils.createElemName(model.getKey(), ToggleButtonModel.ELEMENTREF_NAME);
+        ref = Utils.createElemName(model.getKey(), ToggleButtonModel.ELEMENTREF_NAME);
         ((ToggleButtonModel) model).setElementRef(ref);
         break;
         

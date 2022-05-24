@@ -40,9 +40,9 @@ import java.util.List;
  */
 public class GUIsliceTheme {
 
-  private String themeName;
+  public String themeName;
   
-  private List<GUIsliceThemeElement> uiElements = new ArrayList<GUIsliceThemeElement>();
+  public List<GUIsliceThemeElement> uiElements = new ArrayList<GUIsliceThemeElement>();
 
   public GUIsliceTheme() {
 

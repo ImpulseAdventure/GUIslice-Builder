@@ -42,16 +42,16 @@ import java.util.List;
 public class FontCategory {
 
   /** The category name. */
-  private String categoryName;
+  public String categoryName;
   
   /** The includes path. */
-  private String includePath;
+  public String includePath;
   
   /** where to find the font data */
-  private String fontFolderPath;
+  public String fontFolderPath;
 
   /** The fonts. */
-  private List<FontItem> fonts = new ArrayList<FontItem>();
+  public List<FontItem> fonts = new ArrayList<FontItem>();
   
   private transient static HashMap<String, Integer> fontMap = null;
 

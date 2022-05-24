@@ -42,7 +42,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.models.ProjectModel;
 
@@ -65,14 +65,14 @@ public class PlatformIO {
   private final static String GUIslice_ENV         = "$<GUIslice_ENV>";
   
   public static void createIniFile(String folder) {
-    String home = CommonUtils.getWorkingDir();
+    String home = Utils.getWorkingDir();
     String m_sFileSep = System.getProperty("file.separator");
     
     File destFile = new File(folder +  m_sFileSep + PLATFORMIO_INI);
     // first test for platform.ini and if found just copy it
     File srcFile = new File(home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_INI);
     if (srcFile.exists()) {
-      CommonUtils.copyFile(srcFile, destFile);
+      Utils.copyFile(srcFile, destFile);
       return;
     }
     // has user set a platformio environment?
@@ -86,7 +86,7 @@ public class PlatformIO {
     String tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_CUSTOM;
     List<String> filter = new ArrayList<String>();
     filter.add(".txt");
-    List<String> list = CommonUtils.listDirectory(tmPathName,filter);
+    List<String> list = Utils.listDirectory(tmPathName,filter);
     boolean bFound = false;
     for(String str: list) {
       if (str.equals(myEnv+".txt")) {
@@ -97,7 +97,7 @@ public class PlatformIO {
     }
     if (!bFound) {
       tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_DEFAULT;
-      list = CommonUtils.listDirectory(tmPathName,filter);
+      list = Utils.listDirectory(tmPathName,filter);
       for(String str: list) {
         if (str.equals(myEnv+".txt")) {
           tmPathName = tmPathName + m_sFileSep + myEnv+".txt";
@@ -218,7 +218,7 @@ public class PlatformIO {
   
   public static List<String> getListEnv() {
     List<String> result = new ArrayList<String>();
-    String home = CommonUtils.getWorkingDir();
+    String home = Utils.getWorkingDir();
     String m_sFileSep = System.getProperty("file.separator");
     int n = 0;
     HashMap<String, Integer> map = new HashMap<String, Integer>();;
@@ -226,7 +226,7 @@ public class PlatformIO {
     String tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_CUSTOM;
     List<String> filter = new ArrayList<String>();
     filter.add(".txt");
-    List<String> list = CommonUtils.listDirectory(tmPathName,filter);
+    List<String> list = Utils.listDirectory(tmPathName,filter);
     for (String str : list) {
       n = str.indexOf(".txt");
       String name = str.substring(0,n);
@@ -234,7 +234,7 @@ public class PlatformIO {
       result.add(name);
     }
     tmPathName = home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_DEFAULT;
-    list = CommonUtils.listDirectory(tmPathName,filter);
+    list = Utils.listDirectory(tmPathName,filter);
     for (String str : list) {
       n = str.indexOf(".txt");
       String name = str.substring(0,n);
@@ -248,7 +248,7 @@ public class PlatformIO {
   
   public static boolean isPlatformIO_INI_Present() {
     boolean bResult = false;
-    String home = CommonUtils.getWorkingDir();
+    String home = Utils.getWorkingDir();
     String m_sFileSep = System.getProperty("file.separator");
     File iniFile = new File(home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_INI);
     if (iniFile.exists()) {

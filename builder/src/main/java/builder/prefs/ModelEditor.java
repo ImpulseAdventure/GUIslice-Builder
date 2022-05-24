@@ -28,7 +28,7 @@ package builder.prefs;
 import java.awt.Color;
 
 /* Remove import Observable for Java 9 and above */
-import java.util.Observable;
+//import java.util.Observable;
 import java.util.prefs.Preferences;
 
 import javax.swing.JComponent;
@@ -55,7 +55,8 @@ import builder.tables.SelectAllCellEditor;
  * 
  */
 /* Remove Observable for Java 9 and above */
-public class ModelEditor extends Observable {
+//public class ModelEditor extends Observable {
+public class ModelEditor {
 
   /** The scroll pane. */
   private JScrollPane scrollPane;
@@ -166,9 +167,6 @@ public class ModelEditor extends Observable {
         fPrefs.putInt(key, def);
       }
     }
-    /* remove setChanged() and notifyObservers() for Java 9 and above */
-    setChanged();
-    notifyObservers();
   }
 
   /**

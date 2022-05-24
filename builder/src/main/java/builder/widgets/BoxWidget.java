@@ -29,7 +29,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.BoxModel;
 import builder.prefs.BoxEditor;
 
@@ -52,7 +52,7 @@ public class BoxWidget extends Widget {
    *          the y coordinate position
    */
   public BoxWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new BoxModel();
     model = m;
     super.setXY(model, x, y);

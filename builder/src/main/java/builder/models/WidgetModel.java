@@ -45,7 +45,7 @@ import builder.Builder;
 import builder.commands.Command;
 import builder.commands.History;
 import builder.commands.PropertyCommand;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
@@ -1118,7 +1118,7 @@ public class WidgetModel extends AbstractTableModel {
           if (src_m.getElementRef() == null || src_m.getElementRef().isEmpty()) {
             data[i][j] = oldData[i][j];
           } else {
-            data[i][j] = CommonUtils.createElemName(dest_m.getKey(), src_m.getElementRef());
+            data[i][j] = Utils.createElemName(dest_m.getKey(), src_m.getElementRef());
           }
         } else {
           data[i][j] = oldData[i][j];

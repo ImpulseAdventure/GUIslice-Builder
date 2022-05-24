@@ -134,7 +134,7 @@ public class TextTFT extends JTextField implements MouseListener, ActionListener
     public LeftAction() {
       putValue(Action.NAME, "Left");
       putValue(Action.SHORT_DESCRIPTION, getValue(Action.NAME));
-      putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_LEFT));
+      putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_LEFT));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -153,7 +153,7 @@ public class TextTFT extends JTextField implements MouseListener, ActionListener
     public RightAction() {
       putValue(Action.NAME, "Right");
       putValue(Action.SHORT_DESCRIPTION, getValue(Action.NAME));
-      putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_RIGHT));
+      putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_RIGHT));
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -39,32 +39,32 @@ import java.awt.Color;
  */
 public class GUIsliceThemeElement {
 
-  private String  uiElemName;
-  private boolean corners_rounded;
-  private boolean trim_en;
-  private boolean thumb_frame_en;
-  private boolean frame_en;
-  private boolean fill_en;
-  private boolean glow_en;
+  public String  uiElemName;
+  public boolean corners_rounded;
+  public boolean trim_en;
+  public boolean thumb_frame_en;
+  public boolean frame_en;
+  public boolean fill_en;
+  public boolean glow_en;
   
-  private String  style;
+  public String  style;
 
-  private String  bar_frame_col;
-  private String  bar_fill_col;
-  private String  checkmark_col;
-  private String  frame_col;
-  private String  fill_col;
-  private String  gap_col;
-  private String  gauge_col;
-  private String  glow_col;
-  private String  on_col;
-  private String  off_col;
-  private String  remain_col;
-  private String  text_col;
-  private String  thumb_col;
-  private String  thumb_frame_col;
-  private String  tick_col;
-  private String  trim_col;
+  public String  bar_frame_col;
+  public String  bar_fill_col;
+  public String  checkmark_col;
+  public String  frame_col;
+  public String  fill_col;
+  public String  gap_col;
+  public String  gauge_col;
+  public String  glow_col;
+  public String  on_col;
+  public String  off_col;
+  public String  remain_col;
+  public String  text_col;
+  public String  thumb_col;
+  public String  thumb_frame_col;
+  public String  tick_col;
+  public String  trim_col;
   
   public GUIsliceThemeElement() {
     corners_rounded = false;

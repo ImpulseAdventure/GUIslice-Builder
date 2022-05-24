@@ -39,7 +39,7 @@ import java.util.List;
 public class BuilderFonts {
   
   /** The all fonts. */
-  private List<FontGraphics> allFonts = new ArrayList<FontGraphics>();
+  public List<FontGraphics> allFonts = new ArrayList<FontGraphics>();
   
   /**
    * Instantiates a new builder fonts.

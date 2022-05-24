@@ -1,6 +1,5 @@
 /**
  *
-
  * The MIT License
  *
  * Copyright 2018-2022 Paul Conti
@@ -44,14 +43,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Observable;
-import java.util.Observer;
-/*
-Use these imports instead of Observable and Observer for Java 9 and up.
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
-*/
 
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
@@ -88,8 +81,8 @@ import builder.commands.DelWidgetCommand;
 import builder.commands.GroupCommand;
 import builder.commands.History;
 import builder.commands.PasteCommand;
-import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.common.Utils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -112,8 +105,6 @@ import builder.views.PagePane;
 import builder.views.TreeView;
 import builder.widgets.Widget;
 
-import hu.csekme.RibbonMenu.Util;
-
 /**
  * The Class Controller of the Model View Controller Pattern.
  *
@@ -122,8 +113,7 @@ import hu.csekme.RibbonMenu.Util;
  * 
  */
 public class Controller extends JInternalFrame 
-  implements iSubscriber, Observer {
-// Use PreferenceChangeListener instead of Observer for Java 9 and above
+  implements iSubscriber, PreferenceChangeListener {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
@@ -223,16 +213,10 @@ public class Controller extends JInternalFrame
     clipboard = new Clipboard ("My clipboard");
     
     // save icons
-//    Dimension iconSz = new Dimension(16,16);
-
-//    ic_page_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
-//    ic_base_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
-//    ic_popup_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
-//    ic_project_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/project.png", iconSz);
-    ic_page_tab = Util.accessImageFile("resources/icons/page/page_32x.png", 16,16);
-    ic_base_tab = Util.accessImageFile("resources/icons/page/basepage_32x.png", 16,16);
-    ic_popup_tab = Util.accessImageFile("resources/icons/page/popup_32x.png", 16,16);
-    ic_project_tab = Util.accessImageFile("resources/icons/misc/project.png", 16,16);
+    ic_page_tab = Utils.getIcon("resources/icons/page/page_32x.png", 16,16);
+    ic_base_tab = Utils.getIcon("resources/icons/page/basepage_32x.png", 16,16);
+    ic_popup_tab = Utils.getIcon("resources/icons/page/popup_32x.png", 16,16);
+    ic_project_tab = Utils.getIcon("resources/icons/misc/project.png", 16,16);
     
     tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     tabbedPane.addChangeListener(new ChangeListener() {
@@ -248,9 +232,7 @@ public class Controller extends JInternalFrame
     
     this.add(tabbedPane,BorderLayout.CENTER);
     this.setTitle(title);
-//    CommonUtils cu = CommonUtils.getInstance();
-//    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
-    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png", 24,24));
+    this.setFrameIcon(Utils.getIcon("resources/icons/guislicebuilder.png", 24,24));
 //    this.pack();
     this.setVisible(true);
     Builder.logger.debug("New Project");
@@ -909,7 +891,7 @@ public class Controller extends JInternalFrame
       String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
       topFrame.setTitle(frameTitle);
     } else {
-      CommonUtils.backupFile(projectFile);
+      Utils.backupFile(projectFile);
     }
     ObjectOutputStream out =  new ObjectOutputStream(new FileOutputStream(projectFile));
     // output current version so we can make changes on future updates
@@ -961,6 +943,11 @@ public class Controller extends JInternalFrame
    *           Signals that an I/O exception has occurred.
    */
   public void saveAsProject(File file) throws IOException {
+    // Test to determine if the user really meant save vs saveas
+    if (projectFile == null) {
+      saveProject(projectFile);
+      return;
+    }
     /* first copy our previous project folder 
      * contents to our new project folder.
      * 
@@ -985,32 +972,32 @@ public class Controller extends JInternalFrame
     int srcIDE = ProjectModel.ARDUINO_IDE_ID;
     
     if (destIDE == ProjectModel.ARDUINO_IDE_ID && srcIDE == ProjectModel.ARDUINO_IDE_ID) {
-      CommonUtils.copyDirectory(srcFolder, destFolder, null);
+      Utils.copyDirectory(srcFolder, destFolder, null);
 
       File header = new File(destFolder + fileSep + srcName+"_GSLC.h");
       if (header.exists() && !srcName.equals(destName)) {
         File new_header = new File(destFolder + fileSep + destName+"_GSLC.h");
-        CommonUtils.fileReplaceStr(header, new_header, srcName,destName);
+        Utils.fileReplaceStr(header, new_header, srcName,destName);
         header.delete();
       }
       File ino = new File(destFolder + System.getProperty("file.separator") + srcName +".ino");
       if (ino.exists() && !srcName.equals(destName)) { 
         File new_ino = new File(destFolder + System.getProperty("file.separator") + destName+".ino");
-        CommonUtils.fileReplaceStr(ino, new_ino, srcName,destName);
+        Utils.fileReplaceStr(ino, new_ino, srcName,destName);
         ino.delete();
       }
     } else if (destIDE == ProjectModel.PIO_IDE_ID && srcIDE == ProjectModel.PIO_IDE_ID) {
-      CommonUtils.copyDirectory(srcFolder, destFolder, null);
+      Utils.copyDirectory(srcFolder, destFolder, null);
       File header = new File(destFolder + fileSep + "include" + fileSep + srcName+"_GSLC.h");
       if (header.exists() && !srcName.equals(destName)) {
         File new_header = new File(destFolder + fileSep + destName+"_GSLC.h");
-        CommonUtils.fileReplaceStr(header, new_header, srcName,destName);
+        Utils.fileReplaceStr(header, new_header, srcName,destName);
         header.delete();
       }
       File app = new File(srcFolder + fileSep + "src" + fileSep + "main.cpp");
       if (app.exists() && !srcName.equals(destName)) { 
         File new_cpp = new File(destFolder + fileSep + "src" + fileSep + "main.cpp");
-        CommonUtils.fileReplaceStr(app, new_cpp, srcName,destName);
+        Utils.fileReplaceStr(app, new_cpp, srcName,destName);
         app.delete();
       }
     } else if (destIDE == ProjectModel.PIO_IDE_ID && srcIDE == ProjectModel.ARDUINO_IDE_ID) {
@@ -1018,11 +1005,11 @@ public class Controller extends JInternalFrame
       String destHeaderFolder = destFolder + fileSep + "include";
       List<String> hList= new ArrayList<String>();
       hList.add(".h");
-      CommonUtils.copyDirectory(srcFolder, destHeaderFolder, hList);
+      Utils.copyDirectory(srcFolder, destHeaderFolder, hList);
       File srcHeader = new File(destFolder + fileSep + "include" + fileSep + srcName+"_GSLC.h");
       if (srcHeader.exists() && !srcName.equals(destName)) {
         File destHeader = new File(destFolder + fileSep + "include" + fileSep + destName+"_GSLC.h");
-        CommonUtils.fileReplaceStr(srcHeader, destHeader, srcName,destName);
+        Utils.fileReplaceStr(srcHeader, destHeader, srcName,destName);
         srcHeader.delete();
       }
       String destSrcFolder = destFolder + fileSep + "src";
@@ -1030,23 +1017,23 @@ public class Controller extends JInternalFrame
       cList.add(".c");
       cList.add(".cpp");
       cList.add(".ino");
-      CommonUtils.copyDirectory(srcFolder, destSrcFolder, cList);
+      Utils.copyDirectory(srcFolder, destSrcFolder, cList);
       File ino = new File(destFolder + fileSep + "src" + fileSep + srcName + ".ino");
       if (ino.exists()) { 
         File new_cpp = new File(destFolder + fileSep + "src" + fileSep + "main.cpp");
-        CommonUtils.fileReplaceStr(ino, new_cpp, srcName,destName);
+        Utils.fileReplaceStr(ino, new_cpp, srcName,destName);
         ino.delete();
       }
       PlatformIO.createIniFile(destFolder);
     } else if (destIDE == ProjectModel.ARDUINO_IDE_ID && srcIDE == ProjectModel.PIO_IDE_ID) {
       String oldFolder = srcFolder + fileSep + "src";
-      CommonUtils.copyDirectory(oldFolder, destFolder, null);
+      Utils.copyDirectory(oldFolder, destFolder, null);
       oldFolder = srcFolder + fileSep + "include";
-      CommonUtils.copyDirectory(oldFolder, destFolder, null);
+      Utils.copyDirectory(oldFolder, destFolder, null);
       File app = new File(destFolder + fileSep + "main.cpp");
       if (app.exists()) { 
         File new_ino = new File(destFolder + fileSep + destName+".ino");
-        CommonUtils.fileReplaceStr(app, new_ino, srcName,destName);
+        Utils.fileReplaceStr(app, new_ino, srcName,destName);
         app.delete();
       }
       File ini = new File(destFolder+fileSep+PlatformIO.PLATFORMIO_INI);
@@ -1304,18 +1291,11 @@ public class Controller extends JInternalFrame
     prefEditors.add(txtbuttonEditor);
     prefEditors.add(alphakeypadEditor);
     prefEditors.add(numkeypadEditor);
-/*  
- *  Java 9 and up needs addPreferenceChangeListener() instead of addObserver()
- *  and even then only for generalEditor
- */
-//    Preferences.userRoot().node(GeneralEditor.MY_NODE).addPreferenceChangeListener(this);
-    generalEditor.addObserver(this);
-    gridEditor.addObserver(this);
-    boxEditor.addObserver(this);
-    textEditor.addObserver(this);
-    txtbuttonEditor.addObserver(this);
-    alphakeypadEditor.addObserver(this);
-    numkeypadEditor.addObserver(this);
+    /*  
+     *  Java 9 and up needs addPreferenceChangeListener() instead of addObserver()
+     *  and even then only for generalEditor
+     */
+    generalEditor.addListener(this);
     strTheme = generalEditor.getThemeClassName();
     return prefEditors;
   }
@@ -1603,6 +1583,7 @@ public class Controller extends JInternalFrame
   * @param o the class object that changed value
   * @param arg the argument passed by the observable object, if any. (usally null)
   */
+/*
   @Override public void update(Observable o, Object arg) {
 
     if (o == generalEditor) {
@@ -1623,11 +1604,11 @@ public class Controller extends JInternalFrame
       }
     }
   }
-/* replace update() with this routine for Java 9 and above
+*/
+// replace update() with this routine for Java 9 and above 
+  @Override
   public void preferenceChange(PreferenceChangeEvent evt) {
-    int width, height;
     String key = evt.getKey();
-    String val = evt.getNewValue();
 
     if (key.equals("Target Platform")) {
       if (!generalEditor.getTarget().equals(getTargetPlatform())) {
@@ -1635,12 +1616,11 @@ public class Controller extends JInternalFrame
         pm.setTargetPlatform(generalEditor.getTarget());
       }
     }
-    if (key.equals("Theme")) {
+    if (key.equals("Java Themes")) {
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();
         try { // change look and feel
-          // NOTE: on mac os you can't get here
-          UIManager.setLookAndFeel(generalEditor.getThemeClassName());
+          Builder.setLookAndFeel(generalEditor.getThemeClassName());
           // update components in this application
           SwingUtilities.updateComponentTreeUI(topFrame);
         } catch (Exception exception) {
@@ -1649,7 +1629,7 @@ public class Controller extends JInternalFrame
       }
     }
  }
-*/
+
   /**
    * Execute.
    *

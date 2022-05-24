@@ -41,7 +41,7 @@ import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
 import builder.commands.PropertyCommand;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.common.HexToImgConv;
 import builder.controller.Controller;
@@ -501,7 +501,7 @@ public class ImgButtonModel extends WidgetModel implements MultipeLineCellListen
       }
       if (isToggle()) {
         if (getElementRef().isEmpty()) {
-          setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+          setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
         }
       } else if (!getElementRef().isEmpty() && getElementRef().startsWith(ELEMENTREF_NAME)) {
         setElementRef(""); 
@@ -811,8 +811,8 @@ public class ImgButtonModel extends WidgetModel implements MultipeLineCellListen
   public void writeModel(ObjectOutputStream out) 
       throws IOException {
     super.writeModel(out);
-    out.writeObject((String)CommonUtils.getInstance().encodeToString(image));
-    out.writeObject((String)CommonUtils.getInstance().encodeToString(imageSelected));
+    out.writeObject((String)Utils.getInstance().encodeToString(image));
+    out.writeObject((String)Utils.getInstance().encodeToString(imageSelected));
   }
   
   /**
@@ -920,12 +920,12 @@ public class ImgButtonModel extends WidgetModel implements MultipeLineCellListen
       data[PROP_JUMP_PAGE][PROP_VAL_VALUE]="";
     }
     String imageString = (String)in.readObject();
-    image = CommonUtils.getInstance().decodeToImage(imageString);
+    image = Utils.getInstance().decodeToImage(imageString);
     if (image == null) {
       throw new IOException("image: " + getImageName() + " is unsupported and has been deleted");
     }
     String imageSelectedString = (String)in.readObject();
-    imageSelected = CommonUtils.getInstance().decodeToImage(imageSelectedString);
+    imageSelected = Utils.getInstance().decodeToImage(imageSelectedString);
     if (imageSelected == null) {
       throw new IOException("glow image: " + getSelectImageName() + " is unsupported and has been deleted");
     }

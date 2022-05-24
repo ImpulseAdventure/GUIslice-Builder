@@ -30,7 +30,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
 import builder.models.TextModel;
@@ -56,7 +56,7 @@ public class TextWidget extends Widget {
    *          the y coordinate position
    */
   public TextWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     ff = FontFactory.getInstance();
     m = new TextModel();
     model = m;

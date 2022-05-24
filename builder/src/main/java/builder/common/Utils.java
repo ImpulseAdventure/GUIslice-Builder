@@ -25,6 +25,7 @@
  */
 package builder.common;
 
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -47,6 +48,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import builder.Builder;
 import builder.codegen.PlatformIO;
@@ -66,10 +68,10 @@ import java.util.List;
  * @author Paul Conti
  * 
  */
-public class CommonUtils {
+public class Utils {
   
   /** The instance. */
-  private static CommonUtils instance = null;
+  private static Utils instance = null;
   
   /** Backup Folder Name. */
   private static final String BACKUP_FOLDER = "gui_backup";
@@ -79,9 +81,9 @@ public class CommonUtils {
    *
    * @return instance
    */
-  public static synchronized CommonUtils getInstance() {
+  public static synchronized Utils getInstance() {
     if (instance == null) {
-      instance = new CommonUtils();
+      instance = new Utils();
     }
     return instance;
   }
@@ -89,7 +91,7 @@ public class CommonUtils {
   /**
    * empty constructor.
    */
-  public CommonUtils() {
+  public Utils() {
   }
 
   /**
@@ -239,15 +241,26 @@ public class CommonUtils {
    * @return workingDir - our working directory
    */
   static public String getWorkingDir() {
-    // The code checking for "lib" is to take care of the case 
-    // where we are running not inside eclipse IDE
     String workingDir;
     String strUserDir = System.getProperty("user.dir");
-    int n = strUserDir.indexOf("lib");
-    if (n > 0) {
-      strUserDir = strUserDir.substring(0,n-1);  // remove "/bin"
+    if (Builder.isInsideIDE()) {
+      /* inside IDE our source tree has all of our folders 
+       * in a common folder called 'package' to make our
+       * gradle build simpler.
+       */
+      workingDir = strUserDir 
+          + System.getProperty("file.separator")
+          + "package"
+          + System.getProperty("file.separator");
+    } else {
+      // The code checking for "bin" is to take care of the case 
+      // where we are running outside eclipse IDE
+      int n = strUserDir.lastIndexOf("bin");
+      if (n > 0) {
+        strUserDir = strUserDir.substring(0,n-1);  // remove "/bin"
+      }
+      workingDir = strUserDir + System.getProperty("file.separator"); 
     }
-    workingDir = strUserDir + System.getProperty("file.separator"); 
     return workingDir;
   }
   
@@ -392,6 +405,10 @@ public class CommonUtils {
     return bResult;
   }
   
+  /**
+   * cleanFolderOfFontHeaders
+   * @param folder
+   */
   public static void cleanFolderOfFontHeaders(String folder) {
       List<File> fileList = new ArrayList<>();
 
@@ -417,6 +434,13 @@ public class CommonUtils {
       }
   }
   
+  /**
+   * fileReplaceStr
+   * @param oldFile
+   * @param newFile
+   * @param stringToReplace
+   * @param replaceWith
+   */
   public static void fileReplaceStr(File oldFile, File newFile,String stringToReplace, String replaceWith) {
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(oldFile), "UTF8"));
@@ -436,6 +460,13 @@ public class CommonUtils {
     }
   }
 
+  /**
+   * fileFindStringValues
+   * @param file
+   * @param stringToFind
+   * @param stringTerminal
+   * @return
+   */
   public static List<String> fileFindStringValues(File file, String stringToFind, String stringTerminal) {
     List<String> list = new ArrayList<String>();
     try {
@@ -462,4 +493,42 @@ public class CommonUtils {
     return list;
   }
 
+  /**
+   * getIcon
+   * @param fileName
+   * @param width
+   * @param height
+   * @return
+   */
+  public static ImageIcon getIcon(String fileName) {
+    try {
+      InputStream stream = getInstance().getClass().getResourceAsStream("/"+fileName);
+      return new ImageIcon(ImageIO.read(stream));
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return null;
+    }
+    
+  }
+
+  /**
+   * getIcon
+   * @param fileName
+   * @param width
+   * @param height
+   * @return
+   */
+  public static ImageIcon getIcon(String fileName, int width, int height) {
+    try {
+      InputStream stream = getInstance().getClass().getResourceAsStream("/"+fileName);
+      BufferedImage image = ImageIO.read(stream);
+      return new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return null;
+    }
+    
+  }
 }

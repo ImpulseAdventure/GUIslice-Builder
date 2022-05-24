@@ -44,7 +44,7 @@ import builder.models.TextModel;
 public class TextEditor extends ModelEditor {
   
   /** The Constant MY_NODE. */
-  private static final String MY_NODE = "com/impulseadventure/builder/text";
+  public static final String MY_NODE = "com/impulseadventure/builder/text";
   
   /** The Constant TITLE. */
   private static final String TITLE = EnumFactory.TEXT;

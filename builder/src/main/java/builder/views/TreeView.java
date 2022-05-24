@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,11 +65,11 @@ import builder.Builder;
 import builder.clipboard.TreeItem;
 import builder.clipboard.TreeItemSelection;
 import builder.common.EnumFactory;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
-import hu.csekme.RibbonMenu.Util;
 
 /**
  * The Class TreeView provides a view of all widgets on all pages.
@@ -201,7 +201,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     scrollPane.setPreferredSize(new Dimension(300, 650));
     add(scrollPane);
     this.setTitle("Tree View");        
-    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png",24,24));
+    this.setFrameIcon(Utils.getIcon("resources/icons/guislicebuilder.png",24,24));
     this.setPreferredSize(new Dimension(250, 400));
     this.pack();
     this.setVisible(true);
@@ -508,31 +508,31 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     private final ImageIcon graphIcon;
 
     public MyTreeRenderer() {
-      projectIcon = Util.accessImageFile("resources/icons/misc/project.png",24,24);
-      pageIcon = Util.accessImageFile("resources/icons/page/page_32x.png",  24,24);
-      basepageIcon = Util.accessImageFile("resources/icons/page/basepage_32x.png",  24,24);
-      boxIcon = Util.accessImageFile("resources/icons/shapes/box_32x.png",  24,24);
-      checkboxIcon = Util.accessImageFile("resources/icons/controls/checkbox_32x.png",  24,24);
-      graphIcon = Util.accessImageFile("resources/icons/controls/graph_32x.png",  24,24);
-      imageIcon = Util.accessImageFile("resources/icons/controls/image_32x.png",  24,24);
-      imgbuttonIcon = Util.accessImageFile("resources/icons/controls/imgbutton_32x.png",  24,24);
-      lineIcon = Util.accessImageFile("resources/icons/shapes/line_32x.png",  24,24);
-      listboxIcon = Util.accessImageFile("resources/icons/controls/listbox_32x.png",  24,24);
-      numinputIcon = Util.accessImageFile("resources/icons/text/numinput_32x.png",  24,24);
-      popupIcon = Util.accessImageFile("resources/icons/page/popup_32x.png",  24,24);
-      progressbarIcon = Util.accessImageFile("resources/icons/gauges/progressbar_32x.png",  24,24);
-      radiobuttonIcon = Util.accessImageFile("resources/icons/controls/radiobutton_32x.png",  24,24);
-      radialIcon = Util.accessImageFile("resources/icons/gauges/radial_32x.png",  24,24);
-      rampIcon = Util.accessImageFile("resources/icons/gauges/ramp_32x.png",  24,24);
-      ringgaugeIcon = Util.accessImageFile("resources/icons/gauges/ringgauge_32x.png",  24,24);
-      sliderIcon = Util.accessImageFile("resources/icons/controls/slider_32x.png",  24,24);
-      spinnerIcon = Util.accessImageFile("resources/icons/controls/spinner_32x.png",  24,24);
-      labelIcon = Util.accessImageFile("resources/icons/text/label_32x.png",  24,24);
-      textboxIcon = Util.accessImageFile("resources/icons/text/textbox_32x.png",  24,24);
-      txtbuttonIcon = Util.accessImageFile("resources/icons/controls/button_32x.png",  24,24);
-      textinputIcon = Util.accessImageFile("resources/icons/text/textinput_32x.png",  24,24);
+      projectIcon = Utils.getIcon("resources/icons/misc/project.png",24,24);
+      pageIcon = Utils.getIcon("resources/icons/page/page_32x.png",  24,24);
+      basepageIcon = Utils.getIcon("resources/icons/page/basepage_32x.png",  24,24);
+      boxIcon = Utils.getIcon("resources/icons/shapes/box_32x.png",  24,24);
+      checkboxIcon = Utils.getIcon("resources/icons/controls/checkbox_32x.png",  24,24);
+      graphIcon = Utils.getIcon("resources/icons/controls/graph_32x.png",  24,24);
+      imageIcon = Utils.getIcon("resources/icons/controls/image_32x.png",  24,24);
+      imgbuttonIcon = Utils.getIcon("resources/icons/controls/imgbutton_32x.png",  24,24);
+      lineIcon = Utils.getIcon("resources/icons/shapes/line_32x.png",  24,24);
+      listboxIcon = Utils.getIcon("resources/icons/controls/listbox_32x.png",  24,24);
+      numinputIcon = Utils.getIcon("resources/icons/text/numinput_32x.png",  24,24);
+      popupIcon = Utils.getIcon("resources/icons/page/popup_32x.png",  24,24);
+      progressbarIcon = Utils.getIcon("resources/icons/gauges/progressbar_32x.png",  24,24);
+      radiobuttonIcon = Utils.getIcon("resources/icons/controls/radiobutton_32x.png",  24,24);
+      radialIcon = Utils.getIcon("resources/icons/gauges/radial_32x.png",  24,24);
+      rampIcon = Utils.getIcon("resources/icons/gauges/ramp_32x.png",  24,24);
+      ringgaugeIcon = Utils.getIcon("resources/icons/gauges/ringgauge_32x.png",  24,24);
+      sliderIcon = Utils.getIcon("resources/icons/controls/slider_32x.png",  24,24);
+      spinnerIcon = Utils.getIcon("resources/icons/controls/spinner_32x.png",  24,24);
+      labelIcon = Utils.getIcon("resources/icons/text/label_32x.png",  24,24);
+      textboxIcon = Utils.getIcon("resources/icons/text/textbox_32x.png",  24,24);
+      txtbuttonIcon = Utils.getIcon("resources/icons/controls/button_32x.png",  24,24);
+      textinputIcon = Utils.getIcon("resources/icons/text/textinput_32x.png",  24,24);
       
-      widgetIcon = Util.accessImageFile("resources/icons/misc/widget.png", 24,24);
+      widgetIcon = Utils.getIcon("resources/icons/misc/widget.png", 24,24);
    }
 
     @Override

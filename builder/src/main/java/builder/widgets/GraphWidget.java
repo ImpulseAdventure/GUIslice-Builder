@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.GraphModel;
 
 /**
@@ -49,7 +49,7 @@ public class GraphWidget extends Widget {
    *          the y coordinate position
    */
   public GraphWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     model = new GraphModel();
     super.setXY(model, x, y);
   }

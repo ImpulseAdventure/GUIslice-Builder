@@ -64,59 +64,59 @@ public class FontItem implements Comparable<FontItem> {
   private transient String key;
   
   /** The font family name. */
-  private String familyName;
+  public String familyName;
   
   /** The display name. */
-  private String displayName;
+  public String displayName;
   
   /** 
    * The external font file name 
    * Points within GUIsliceBuilder/fonts folder
    * (ex: fonts/gfx/FreeSans9pt7b.h). 
    */
-  private String fileName;
+  public String fileName;
   
   /** some fonts have a C source file - only set for fonts that require a C source file */
-  private String srcFilename;
+  public String srcFilename;
   
   /** extern name needed for some fonts that only have a C source file */
-  private String externName;
+  public String externName;
   
   /** flag to indicate we don't need to copy font to project */
-  private boolean bInstalledFont;
+  public boolean bInstalledFont;
   
   /** The include file (ex: Fonts/FreeSans9pt7b.h). */
-  private String includeFile;
+  public String includeFile;
   
   /** The define file (ex: /usr/share/fonts/truetype/droid/DroidSans.ttf). */
-  private String defineFile;
+  public String defineFile;
   
   /** The nFontId parameter used by GUIslice API. */
-  private transient String nFontId;
+  public transient String nFontId;
   
   /** The e eFontRefType parameter used by GUIslice API. */
-  private String eFontRefType;
+  public String eFontRefType;
   
   /** The pvFontRef parameter used by GUIslice API. */
-  private String pvFontRef;
+  public String pvFontRef;
   
   /** The nFontSz parameter used by GUIslice API. */
-  private String nFontSz;
+  public String nFontSz;
   
   /** The java font name. */
-  private String logicalName;
+  public String logicalName;
   
   /** The java font size. */
-  private String logicalSize;
+  public String logicalSize;
   
   /** The java font style. */
-  private String logicalStyle;
+  public String logicalStyle;
   
   /** The Font Ref Mode - optional font set mode API used for built-in fonts */
-  private String fontRefMode;
+  public String fontRefMode;
   
   /** The font scaling */
-  private double scaleFactor;
+  public double scaleFactor;
   
   /**
    * Instantiates a new font item.

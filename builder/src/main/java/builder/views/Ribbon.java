@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,10 +32,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import builder.common.Utils;
+
 import hu.csekme.RibbonMenu.Button;
 import hu.csekme.RibbonMenu.RibbonBar;
 import hu.csekme.RibbonMenu.Tab;
-import hu.csekme.RibbonMenu.Util;
 
 public class Ribbon extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -91,8 +92,8 @@ public class Ribbon extends JPanel {
    */
   public Ribbon() {
     
-    ribbonBar = new RibbonBar();
-
+    ribbonBar = RibbonBar.create();
+    ribbonBar.disableCollapse();
     toolBox = RibbonBar.addTab("ToolBox");
     initText(toolBox);
     initControls(toolBox);
@@ -118,31 +119,31 @@ public class Ribbon extends JPanel {
   public void initText(Tab band) {
     band.setGroupName("Text");
     btn_text= band.addButton("   Text   ");
-    btn_text.setImage(Util.accessImageFile(
+    btn_text.setImage(Utils.getIcon(
         "resources/icons/text/label_32x.png"));
     btn_text.setActionCommand("text");
     btn_text.addToolTip("Add display-only text element.");
 
     btn_txtinput = band.addSlimButton("TextInput");
-    btn_txtinput.setImage(Util.accessImageFile(
+    btn_txtinput.setImage(Utils.getIcon(
         "resources/icons/text/textinput_32x.png"));
     btn_txtinput.setActionCommand("textinput");
     btn_txtinput.addToolTip("Accept text input\nfrom a virtual keypad.");
     
     btn_numinput = band.addSlimButton("NumberInput");
-    btn_numinput.setImage(Util.accessImageFile(
+    btn_numinput.setImage(Utils.getIcon(
         "resources/icons/text/numinput_32x.png"));
     btn_numinput.setActionCommand("numinput");
     btn_numinput.addToolTip("Accept numberic input\nfrom a virtual keypad.");
     
     btn_listbox = band.addSlimButton("ListBox");
-    btn_listbox.setImage(Util.accessImageFile(
+    btn_listbox.setImage(Utils.getIcon(
         "resources/icons/controls/listbox_32x.png"));
     btn_listbox.setActionCommand("listbox");
     btn_listbox.addToolTip("List of items");
     
     btn_textbox = band.addSlimButton("TextBox");
-    btn_textbox.setImage(Util.accessImageFile(
+    btn_textbox.setImage(Utils.getIcon(
         "resources/icons/text/textbox_32x.png"));
     btn_textbox.setActionCommand("textbox");
     btn_textbox.addToolTip("Scrolling multi-line text");
@@ -156,61 +157,61 @@ public class Ribbon extends JPanel {
   public void initControls(Tab band) {
     band.setGroupName("Controls");
     btn_txtbtn = band.addButton("Text\nButton");
-    btn_txtbtn.setImage(Util.accessImageFile(
+    btn_txtbtn.setImage(Utils.getIcon(
         "resources/icons/controls/button_32x.png"));
     btn_txtbtn.setActionCommand("textbutton");
     btn_txtbtn.addToolTip("Button with Text.");
 
     btn_toggle = band.addSlimButton("Toggle Button");
-    btn_toggle.setImage(Util.accessImageFile(
+    btn_toggle.setImage(Utils.getIcon(
         "resources/icons/controls/togglebtn.png"));
     btn_toggle.setActionCommand("toggle");
     btn_toggle.addToolTip("Add Toggle Button element.");
       
     btn_checkbox = band.addSlimButton("Checkbox");
-    btn_checkbox.setImage(Util.accessImageFile(
+    btn_checkbox.setImage(Utils.getIcon(
          "resources/icons/controls/checkbox_32x.png"));
     btn_checkbox.setActionCommand("checkbox");
     btn_checkbox.addToolTip("Add Checkbox element.");
 
     btn_radiobtn = band.addSlimButton("Radio Button");
-    btn_radiobtn.setImage(Util.accessImageFile(
+    btn_radiobtn.setImage(Utils.getIcon(
          "resources/icons/controls/radiobutton_32x.png"));
     btn_radiobtn.setActionCommand("radiobutton");
     btn_radiobtn.addToolTip("Add Radio Button element.");
 
     btn_imgbtn = band.addSlimButton("Image Button");
-    btn_imgbtn.setImage(Util.accessImageFile(
+    btn_imgbtn.setImage(Utils.getIcon(
         "resources/icons/controls/imgbutton_32x.png"));
     btn_imgbtn.setActionCommand("imagebutton");
     btn_imgbtn.addToolTip("Button with BMP image.");
             
     btn_seekbar = band.addSlimButton("Seekbar");
-    btn_seekbar.setImage(Util.accessImageFile(
+    btn_seekbar.setImage(Utils.getIcon(
         "resources/icons/controls/seekbar.png"));
     btn_seekbar.setActionCommand("seekbar");
     btn_seekbar.addToolTip("Seekbar slider element.");
         
     btn_spinner = band.addSlimButton("Spinner");
-    btn_spinner.setImage(Util.accessImageFile(
+    btn_spinner.setImage(Utils.getIcon(
         "resources/icons/controls/spinner_32x.png"));
     btn_spinner.setActionCommand("spinner");
     btn_spinner.addToolTip("Numeric up-down graphical control.");
 
     btn_slider = band.addSlimButton("Slider");
-    btn_slider.setImage(Util.accessImageFile(
+    btn_slider.setImage(Utils.getIcon(
         "resources/icons/controls/slider_32x.png"));
     btn_slider.setActionCommand("slider");
     btn_slider.addToolTip("Slider presents values along a line.");
 
     btn_image = band.addSlimButton("Image");
-    btn_image.setImage(Util.accessImageFile(
+    btn_image.setImage(Utils.getIcon(
         "resources/icons/controls/image_32x.png"));
     btn_image.setActionCommand("image");
     btn_image.addToolTip("Add image element.");
 
     btn_progressbar = band.addSlimButton("Progress Bar");
-    btn_progressbar.setImage(Util.accessImageFile(
+    btn_progressbar.setImage(Utils.getIcon(
         "resources/icons/gauges/progressbar_32x.png"));
     btn_progressbar.setActionCommand("progressbar");
     btn_progressbar.addToolTip("Indicate progress of a\nlengthy operation as a bar.");
@@ -224,19 +225,19 @@ public class Ribbon extends JPanel {
   public void initGauges(Tab band) {
     band.setGroupName("Gauges");
     btn_ringgauge = band.addSlimButton("Ring Gauge");
-    btn_ringgauge.setImage(Util.accessImageFile(
+    btn_ringgauge.setImage(Utils.getIcon(
         "resources/icons/gauges/ringgauge_32x.png"));
     btn_ringgauge.setActionCommand("ringgauge");
     btn_ringgauge.addToolTip("Add Ring Gauge element.");
    
     btn_radial = band.addSlimButton("Radial Gauge");
-    btn_radial.setImage(Util.accessImageFile(
+    btn_radial.setImage(Utils.getIcon(
       "resources/icons/gauges/radial_32x.png"));
     btn_radial.setActionCommand("radial");
     btn_radial.addToolTip("Indicate progress of a\nlengthy operation as a dial.");
     
     btn_ramp = band.addSlimButton("Ramp Gauge");
-    btn_ramp.setImage(Util.accessImageFile(
+    btn_ramp.setImage(Utils.getIcon(
       "resources/icons/gauges/ramp_32x.png"));
     btn_ramp.setActionCommand("ramp");
     btn_ramp.addToolTip("Indicate the progress of a\nlengthy operation as a ramp.");
@@ -250,19 +251,19 @@ public class Ribbon extends JPanel {
   public void initPages(Tab band) {
     band.setGroupName("Pages");
     btn_page = band.addSlimButton("Page");
-    btn_page.setImage(Util.accessImageFile(
+    btn_page.setImage(Utils.getIcon(
       "resources/icons/page/page_32x.png"));
     btn_page.setActionCommand("page");
     btn_page.addToolTip("New Page menu.");
     
     btn_base_page = band.addSlimButton("Base Page");
-    btn_base_page.setImage(Util.accessImageFile(
+    btn_base_page.setImage(Utils.getIcon(
       "resources/icons/page/basepage_32x.png"));
     btn_base_page.setActionCommand("basepage");
     btn_base_page.addToolTip("Page overlay placed on top of all pages.");
 
     btn_popup = band.addSlimButton("Popup Page");
-    btn_popup.setImage(Util.accessImageFile(
+    btn_popup.setImage(Utils.getIcon(
       "resources/icons/page/popup_32x.png"));
     btn_popup.addToolTip("Popup Page Dialog.");
     btn_popup.setActionCommand("popup");
@@ -276,29 +277,29 @@ public class Ribbon extends JPanel {
   public void initMisc(Tab band) {
     band.setGroupName("Misc");
     btn_box = band.addSlimButton("Box");
-    btn_box.setImage(Util.accessImageFile(
+    btn_box.setImage(Utils.getIcon(
       "resources/icons/shapes/box_32x.png"));
     btn_box.setActionCommand("box");
     btn_box.addToolTip("Rectangle box element.");
       
     btn_line = band.addSlimButton("Line");
-    btn_line.setImage(Util.accessImageFile(
+    btn_line.setImage(Utils.getIcon(
         "resources/icons/shapes/line_32x.png"));
     btn_line.setActionCommand("line");
     btn_line.addToolTip("Horizontal or Vertical line element.");
     
     btn_graph = band.addSlimButton("Graph");
-    btn_graph.setImage(Util.accessImageFile(
+    btn_graph.setImage(Utils.getIcon(
         "resources/icons/controls/graph_32x.png"));
     btn_graph.setActionCommand("graph");
     btn_graph.addToolTip("Graph element.");
 
     btn_group = band.addSlimButton("Group");
-    btn_group.setImage(Util.accessImageFile(
+    btn_group.setImage(Utils.getIcon(
         "resources/icons/controls/group.png"));
     btn_group.addToolTip("Assign GroupID to RadioButtons");
     btn_group.setActionCommand("group");
-    btn_group.setDisabledImage(Util.accessImageFile(
+    btn_group.setDisabledImage(Utils.getIcon(
         "resources/icons/controls/disable_group.png"));
     btn_group.setEnabled(false);
 
@@ -311,23 +312,23 @@ public class Ribbon extends JPanel {
   public void initView(Tab band) {
     band.setGroupName("View");
     btn_grid = band.addSlimButton("Grid");
-    btn_grid.setImage(Util.accessImageFile(
+    btn_grid.setImage(Utils.getIcon(
         "resources/icons/view/grid.png"));
     btn_grid.addToolTip("Toggle Grid ON/OFF");
     btn_grid.setActionCommand("grid");
 
     btn_zoom_in = band.addSlimButton("Zoom In");
-    btn_zoom_in.setImage(Util.accessImageFile(
+    btn_zoom_in.setImage(Utils.getIcon(
         "resources/icons/view/zoom_in.png"));
-    btn_zoom_in.setDisabledImage(Util.accessImageFile(
+    btn_zoom_in.setDisabledImage(Utils.getIcon(
         "resources/icons/view/disable_zoom_in.png"));
     btn_zoom_in.addToolTip("Make display larger.");
     btn_zoom_in.setActionCommand("zoomin");
 
     btn_zoom_out = band.addSlimButton("Zoom Out");
-    btn_zoom_out.setImage(Util.accessImageFile(
+    btn_zoom_out.setImage(Utils.getIcon(
         "resources/icons/view/zoom_out.png"));
-    btn_zoom_out.setDisabledImage(Util.accessImageFile(
+    btn_zoom_out.setDisabledImage(Utils.getIcon(
         "resources/icons/view/disable_zoom_out.png"));
     btn_zoom_out.addToolTip("Make display smaller.");
     btn_zoom_out.setActionCommand("zoomout");
@@ -342,61 +343,61 @@ public class Ribbon extends JPanel {
   public void initLayout(Tab band) {
     band.setGroupName("Layout");
     btn_aligntop = band.addButton("Align\nTop");
-    btn_aligntop.setImage(Util.accessImageFile(
+    btn_aligntop.setImage(Utils.getIcon(
         "resources/icons/layout/align_top.png"));
     btn_aligntop.setActionCommand("aligntop");
     btn_aligntop.addToolTip("Align Elements to Top Most Element");
     
     btn_alignbottom = band.addButton("Align\nBottom");
-    btn_alignbottom.setImage(Util.accessImageFile(
+    btn_alignbottom.setImage(Utils.getIcon(
         "resources/icons/layout/align_bottom.png"));
     btn_alignbottom.setActionCommand("alignbottom");
     btn_alignbottom.addToolTip("Align Elements to Bottom Most Element");
     
     btn_aligncenter = band.addButton("Center");
-    btn_aligncenter.setImage(Util.accessImageFile(
+    btn_aligncenter.setImage(Utils.getIcon(
         "resources/icons/layout/align_center.png"));
     btn_aligncenter.setActionCommand("aligncenter");
     btn_aligncenter.addToolTip("Center Elements Horizontally along X axis");
     
     btn_alignleft = band.addButton("Align\nLeft");
-    btn_alignleft.setImage(Util.accessImageFile(
+    btn_alignleft.setImage(Utils.getIcon(
         "resources/icons/layout/align_left.png"));
     btn_alignleft.setActionCommand("alignleft");
     btn_alignleft.addToolTip("Align Horizontally by Leftmost Element");
     
     btn_alignright = band.addButton("Align\nRight");
-    btn_alignright.setImage(Util.accessImageFile(
+    btn_alignright.setImage(Utils.getIcon(
         "resources/icons/layout/align_right.png"));
     btn_alignright.setActionCommand("alignright");
     btn_alignright.addToolTip("Align Horizontally by Rightmost Element");
 
     btn_alignhspace = band.addButton("Align\nHorizontal");
-    btn_alignhspace.setImage(Util.accessImageFile(
+    btn_alignhspace.setImage(Utils.getIcon(
         "resources/icons/layout/align_hspacing.png"));
     btn_alignhspace.setActionCommand("alignhspacing");
     btn_alignhspace.addToolTip("Align the Horizontal Spacing between Elements");
     
     btn_alignvspace = band.addButton("Align\nVertical");
-    btn_alignvspace.setImage(Util.accessImageFile(
+    btn_alignvspace.setImage(Utils.getIcon(
         "resources/icons/layout/align_vspacing.png"));
     btn_alignvspace.setActionCommand("alignvspacing");
     btn_alignvspace.addToolTip("Align the Vertical Spacing between Elements");
     
     btn_alignwidth = band.addButton("Align\nWidth");
-    btn_alignwidth.setImage(Util.accessImageFile(
+    btn_alignwidth.setImage(Utils.getIcon(
         "resources/icons/layout/align_width.png"));
     btn_alignwidth.setActionCommand("alignwidth");
     btn_alignwidth.addToolTip("Align Elements to a Uniform Width");
     
     btn_alignheight = band.addButton("Align\nHeight");
-    btn_alignheight.setImage(Util.accessImageFile(
+    btn_alignheight.setImage(Utils.getIcon(
         "resources/icons/layout/align_height.png"));
     btn_alignheight.setActionCommand("alignheight");
     btn_alignheight.addToolTip("Align Elements to a Uniform Element's Height");
     
     btn_scale = band.addButton("scale");
-    btn_scale.setImage(Util.accessImageFile(
+    btn_scale.setImage(Utils.getIcon(
         "resources/icons/layout/scale.png"));
     btn_scale.setActionCommand("scale");
     btn_scale.addToolTip("Scale elements to a new screen size");

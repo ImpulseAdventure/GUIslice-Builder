@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import builder.Builder;
@@ -80,6 +81,10 @@ public class GeneralEditor extends ModelEditor {
     System.setErr(System.err);  
   }
 
+  public void addListener(PreferenceChangeListener pcl) {
+    fPrefs.addPreferenceChangeListener(pcl);
+  }
+  
   /**
    * Sets the model.
    *

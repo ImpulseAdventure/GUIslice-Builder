@@ -46,7 +46,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.models.ProjectModel;
 
@@ -120,7 +120,7 @@ public class FontFactory {
    */
   public void init() {
     
-    String fullPath = CommonUtils.getWorkingDir();
+    String fullPath = Utils.getWorkingDir();
     String jsonFile = fullPath + "templates" + m_sFileSep 
         + FONT_TEMPLATE;
     readFonts(jsonFile);
@@ -723,7 +723,7 @@ public class FontFactory {
         c.buildMap();
         // handle native fonts that did not require JSON entries
         if (c.getName().equals(FontTFT.FONT_GFX)) {
-          String fullPath = CommonUtils.getWorkingDir();
+          String fullPath = Utils.getWorkingDir();
           String fontsPath = fullPath + c.getFontFolderPath();
           Path startingDir = Paths.get(fontsPath);
           FontLoadGFXFiles fileVisitor = new FontLoadGFXFiles(p, c);
@@ -735,7 +735,7 @@ public class FontFactory {
           }
         } else if (c.getName().equals(FontTFT.FONT_T3)) {
           // Builder.logger.debug(c.toString());
-          String fullPath = CommonUtils.getWorkingDir();
+          String fullPath = Utils.getWorkingDir();
           String fontsPath = fullPath + c.getFontFolderPath();
           Path startingDir = Paths.get(fontsPath);
           FontLoadT3Files fileVisitor = new FontLoadT3Files(p, c);
@@ -747,7 +747,7 @@ public class FontFactory {
           }
         } else if (c.getName().equals(FontTFT.FONT_UTFT)) {
           // Builder.logger.debug(c.toString());
-          String fullPath = CommonUtils.getWorkingDir();
+          String fullPath = Utils.getWorkingDir();
           String fontsPath = fullPath + c.getFontFolderPath();
           Path startingDir = Paths.get(fontsPath);
           FontLoadUtftFiles fileVisitor = new FontLoadUtftFiles(p, c);
@@ -759,7 +759,7 @@ public class FontFactory {
           }
         }
         for (FontItem item : c.getFonts()) {
-          String fileName = new String(CommonUtils.getWorkingDir() + c.getFontFolderPath()+item.getFileName());
+          String fileName = new String(Utils.getWorkingDir() + c.getFontFolderPath()+item.getFileName());
           item.setFileName(fileName);
           item.setPlatform(p);
           item.setCategory(c);
@@ -805,7 +805,7 @@ public class FontFactory {
     }
     Builder.logger.debug("Total number Platforms: " + nPlatforms + " number of fonts: " + idx);
     if (nErrors > 0) {
-      String fileName = CommonUtils.getWorkingDir() + "logs" + m_sFileSep
+      String fileName = Utils.getWorkingDir() + "logs" + m_sFileSep
           + "builder.log";
       String msg = String.format("builder_fonts.json has %d duplicate font(s).\nExamine %s for list of fonts.", nErrors,
           fileName);

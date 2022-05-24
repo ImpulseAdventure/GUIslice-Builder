@@ -35,6 +35,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import builder.Builder;
+import builder.common.Utils;
 import builder.parser.ParserException;
 import builder.parser.Token;
 import builder.parser.Tokenizer;
@@ -114,7 +115,8 @@ public class FontLoadUtftFiles extends SimpleFileVisitor<Path> {
           return CONTINUE;
         }
         Token token = null;
-        String pathName = String.format("%s%s",c.getFontFolderPath(),fileName);
+        String workingDir = Utils.getWorkingDir();
+        String pathName = workingDir + String.format(c.getFontFolderPath()+"%s",fileName);
         File cfile = new File(pathName);
         n = fileName.indexOf(".c");
         String displayName = fileName.substring(0,n);
@@ -125,7 +127,7 @@ public class FontLoadUtftFiles extends SimpleFileVisitor<Path> {
         }
         try {
           tokenizer.setSource(cfile);
-          Builder.logger.debug("Opened file: " + pathName);
+//          Builder.logger.debug("Opened file: " + pathName);
 
           // find open brace
           boolean bFound = false;

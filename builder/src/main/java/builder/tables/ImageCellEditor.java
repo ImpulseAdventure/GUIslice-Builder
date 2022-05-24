@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellEditor;
 
 import builder.codegen.CodeGenerator;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.GeneralModel;
 import builder.prefs.GeneralEditor;
 import builder.views.ImagePreviewPanel;
@@ -175,7 +175,7 @@ public class ImageCellEditor extends AbstractCellEditor implements TableCellEdit
 //        } else {
           resDir = CodeGenerator.ARDUINO_RES;
 //        }
-        String workingDir = CommonUtils.getWorkingDir();
+        String workingDir = Utils.getWorkingDir();
         currentDirectory = new File(workingDir + resDir);
       } else {
         currentDirectory = new File(resDir);

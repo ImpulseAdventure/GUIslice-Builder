@@ -32,7 +32,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.GUIslice;
 import builder.fonts.FontFactory;
 import builder.models.RingGaugeModel;
@@ -58,7 +58,7 @@ public class RingGaugeWidget extends Widget {
    *          the y coordinate position
    */
   public RingGaugeWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     ff = FontFactory.getInstance();
     m = new RingGaugeModel();
     model = m;

@@ -44,7 +44,7 @@ import builder.fonts.BuilderFonts;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
 import builder.fonts.FontGraphics;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.common.Pair;
 import builder.models.KeyPadModel;
@@ -180,7 +180,7 @@ public class FontsPipe extends WorkFlowPipe {
       }
     }
     if (nErrors > 0) {
-      String fileName = CommonUtils.getWorkingDir()
+      String fileName = Utils.getWorkingDir()
           + "logs" 
           + System.getProperty("file.separator")
           + "builder.log";
@@ -321,7 +321,7 @@ public class FontsPipe extends WorkFlowPipe {
 		String sHdrPath = cg.getHdrPath();
 		if (sHdrPath == null)
 			sHdrPath = cg.getAppPath();
-    CommonUtils.cleanFolderOfFontHeaders(sHdrPath);
+    Utils.cleanFolderOfFontHeaders(sHdrPath);
     /* copy font sources for any fonts 
      * not included with the chosen graphics package, 
      * Adafruit_GFX using Google's Noto fonts.
@@ -339,7 +339,7 @@ public class FontsPipe extends WorkFlowPipe {
           inFile = new File(sIn);
           outFile = new File(cg.getAppPath()+sOut); 
         }
-        CommonUtils.copyFile(inFile, outFile);
+        Utils.copyFile(inFile, outFile);
       }
     }
   }

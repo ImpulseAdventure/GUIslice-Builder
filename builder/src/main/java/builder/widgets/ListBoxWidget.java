@@ -33,7 +33,7 @@ import java.awt.Rectangle;
 import builder.common.GUIslice;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.ListBoxModel;
 
 /**
@@ -60,7 +60,7 @@ public class ListBoxWidget extends Widget {
    *          the y coordinate position
    */
   public ListBoxWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     ff = FontFactory.getInstance();
     m = new ListBoxModel();
     model = m;

@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import hu.csekme.RibbonMenu.Util;
+import builder.common.Utils;
 
 /**
  * The Class ToolBar.
@@ -83,25 +83,25 @@ public class ToolBar {
    * Initializes the file buttons.
    */
   public void initFileButtons() {
-    btn_new = new JButton(Util.accessImageFile("resources/icons/file/new.png",22,22));
+    btn_new = new JButton(Utils.getIcon("resources/icons/file/new.png",22,22));
     btn_new.setToolTipText("New Project");
     btn_new.setActionCommand("new");
     toolbar.add(btn_new);
 
     btn_open = new JButton(
-        Util.accessImageFile("resources/icons/file/open.png",22,22));
+        Utils.getIcon("resources/icons/file/open.png",22,22));
     btn_open.setToolTipText("Open Project");
     btn_open.setActionCommand("open");
     toolbar.add(btn_open);
 
     btn_close = new JButton(
-        Util.accessImageFile("resources/icons/file/close.png",22,22));
+        Utils.getIcon("resources/icons/file/close.png",22,22));
     btn_close.setToolTipText("Close Project");
     btn_close.setActionCommand("close");
     toolbar.add(btn_close);
 
     btn_save = new JButton(
-        Util.accessImageFile("resources/icons/file/save.png",22,22));
+        Utils.getIcon("resources/icons/file/save.png",22,22));
     btn_save.setToolTipText("Save Project");
     btn_save.setActionCommand("save");
     toolbar.add(btn_save);
@@ -113,55 +113,55 @@ public class ToolBar {
   public void initEditButtons() {
     
     btn_undo = new JButton(
-        Util.accessImageFile("resources/icons/edit/undo.png",22,22));
+        Utils.getIcon("resources/icons/edit/undo.png",22,22));
     btn_undo.setDisabledIcon(
-        Util.accessImageFile("resources/icons/edit/disable_undo.png",22,22));
+        Utils.getIcon("resources/icons/edit/disable_undo.png",22,22));
     btn_undo.setEnabled(false);
     btn_undo.setToolTipText("Undo Actions");
     btn_undo.setActionCommand("undo");
     toolbar.add(btn_undo);
 
     btn_redo = new JButton(
-        Util.accessImageFile("resources/icons/edit/redo.png",22,22));
+        Utils.getIcon("resources/icons/edit/redo.png",22,22));
     btn_redo.setDisabledIcon(
-        Util.accessImageFile("resources/icons/edit/disable_redo.png",22,22));
+        Utils.getIcon("resources/icons/edit/disable_redo.png",22,22));
     btn_redo.setEnabled(false);
     btn_redo.setToolTipText("Redo Actions");
     btn_redo.setActionCommand("redo");
     toolbar.add(btn_redo);
     
     btn_delete = new JButton(
-        Util.accessImageFile("resources/icons/edit/delete.png",22,22));
+        Utils.getIcon("resources/icons/edit/delete.png",22,22));
     btn_delete.setToolTipText("Delete Widget");
     btn_delete.setActionCommand("delete");
     toolbar.add(btn_delete);
     
     btn_selection = new JButton(
-        Util.accessImageFile("resources/icons/layout/selection.png",22,22));
+        Utils.getIcon("resources/icons/layout/selection.png",22,22));
     btn_selection.setToolTipText("Rectangular Selection");
     btn_selection.setActionCommand("selection");
     toolbar.add(btn_selection);
     
     btn_copy_props = new JButton(
-        Util.accessImageFile("resources/icons/edit/copy_props.png",22,22));
+        Utils.getIcon("resources/icons/edit/copy_props.png",22,22));
     btn_copy_props.setToolTipText("Copy Properties");
     btn_copy_props.setActionCommand("copyprops");
     toolbar.add(btn_copy_props);
         
     btn_paste = new JButton(
-        Util.accessImageFile("resources/icons/edit/paste.png",22,22));
+        Utils.getIcon("resources/icons/edit/paste.png",22,22));
     btn_paste.setToolTipText("Paste");
     btn_paste.setActionCommand("paste");
     toolbar.add(btn_paste);
 
     btn_copy = new JButton(
-        Util.accessImageFile("resources/icons/edit/copy.png",22,22));
+        Utils.getIcon("resources/icons/edit/copy.png",22,22));
     btn_copy.setToolTipText("Copy");
     btn_copy.setActionCommand("copy");
     toolbar.add(btn_copy);
     
     btn_cut = new JButton(
-        Util.accessImageFile("resources/icons/edit/cut.png",22,22));
+        Utils.getIcon("resources/icons/edit/cut.png",22,22));
     btn_cut.setToolTipText("cut");
     btn_cut.setActionCommand("cut");
     toolbar.add(btn_cut);
@@ -173,13 +173,13 @@ public class ToolBar {
    */
   public void initQuitButtons() {
     btn_exit = new JButton(
-        Util.accessImageFile("resources/icons/file/logout.png",22,22));
+        Utils.getIcon("resources/icons/file/logout.png",22,22));
     btn_exit.setToolTipText("Exit Builder");
     btn_exit.setActionCommand("exit");
     toolbar.add(btn_exit);
 
     btn_code = new JButton(
-        Util.accessImageFile("resources/icons/file/export.png",22,22));
+        Utils.getIcon("resources/icons/file/export.png",22,22));
     btn_code.setToolTipText("Generate Code");
     btn_code.setActionCommand("code");
     toolbar.add(btn_code);

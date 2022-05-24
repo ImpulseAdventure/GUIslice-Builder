@@ -409,7 +409,7 @@ public class FontUTFT extends FontTFT {
           Builder.logger.debug(String.format("missing hex number->found %s",fontName,token.getToken()));
           return false;
         }
-        b = new Short(Integer.decode(token.getToken()).shortValue());
+        b = Short.valueOf(Integer.decode(token.getToken()).shortValue());
         bitmap[i] = (byte) (b.byteValue() & 0xFF);
         token = tokenizer.nextToken(); // should be comma
       }

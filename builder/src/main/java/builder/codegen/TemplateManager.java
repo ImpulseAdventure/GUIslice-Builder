@@ -38,7 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 
 /**
  * The Class TemplateManager handles all functions related to 
@@ -101,7 +101,7 @@ public class TemplateManager {
   public void storeTemplatesFromFileName(String templateFileName) throws CodeGenException {
     templateMap = new HashMap<String, Integer>(64);
 //    String pathName = RESOURCES_PATH + templateFileName;
-    String pathName = CommonUtils.getWorkingDir() +
+    String pathName = Utils.getWorkingDir() +
         "templates" + System.getProperty("file.separator") 
         + templateFileName;
     File file = new File(pathName);

@@ -40,19 +40,19 @@ import java.util.List;
 public class FontGraphics {
   
   /** The graphic package name. */
-  private String graphicPackage;
+  public String graphicPackage;
   
   /** The dpi for displays on this platform */
-  private String dpi;
+  public String dpi;
   
   /** The warnings. */
-  private List<String> warnings = new ArrayList<String>();
+  public List<String> warnings = new ArrayList<String>();
   
   /** The categories. */
-  private List<FontCategory> categories = new ArrayList<FontCategory>();
+  public List<FontCategory> categories = new ArrayList<FontCategory>();
   
   /** The extra includes. */
-  private List<String> extraIncludes = new ArrayList<String>();
+  public List<String> extraIncludes = new ArrayList<String>();
   
  /**
    * Sets the name of a platform.
