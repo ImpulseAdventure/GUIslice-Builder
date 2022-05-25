@@ -256,6 +256,8 @@ public class Builder  extends JDesktopPane {
       public void uncaughtException(Thread t, Throwable e) {
           Calendar cal = Calendar.getInstance();
           SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+          // always create crash file outside package folder
+          bInsideIDE = false;
           String workingDir = Utils.getWorkingDir();
           File directory = new File(workingDir + "logs");
           if(!directory.exists()){
