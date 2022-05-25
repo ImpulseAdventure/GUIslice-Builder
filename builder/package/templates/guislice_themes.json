@@ -137,11 +137,11 @@
 			}
 		]},
 		{
-		"themeName": "Cyan Light",
+		"themeName": "Cyan Dark",
 		"uiElements": 
 		[{
 				"uiElemName": "Page",
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "Box",
@@ -150,46 +150,46 @@
 				"fill_en": true,
 				"glow_en": false,
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xeef0f4",  // light gray (238,240,244)
-				"fill_col": "0xeef0f4"   // light gray (238,240,244)
+				"glow_col": "0xe6e6e6",  // darker gray (230,230,230)
+				"fill_col": "0xe6e6e6"   // darker gray (230,230,230)
 			},
 			{
 				"uiElemName": "CheckBox",
 				"style": "0",
-				"checkmark_col": "0x3eb2c2", // darker cyan (62,178,194)
+				"checkmark_col": "0x008b8b", // darker cyan (0,139,139)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
 			},
 			{
 				"uiElemName": "TextInput",
 				"fill_en": true,
-				"text_col": "0x000000", // black (0,0,0)
+				"text_col": "0x000000",  // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col":  "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "NumberInput",
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "ListBox",
 				"frame_en": true,
 				"gap_col": "0xeef0f4",   // light gray (238,240,244)
-				"glow_col": "0x00b7eb",  // lighter cyan (0,183,235)  
+				"glow_col": "0x00ffff",  // cyan (0,255,255)  
 				"text_col": "0x000000",  //  black (0,0,0)
 				"bar_frame_col": "0x000000", // black (0,0,0)
 				"bar_fill_col": "0xf2f2f2",  // light gray (242,242,242)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "ProgressBar",
-				"gauge_col": "0x3eb2c2",  // darker cyan (62,178,194)
+				"gauge_col": "0x008b8b", // darker cyan (0,139,139)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
 			},
 			{
 				"uiElemName": "RadioButton",
@@ -197,9 +197,9 @@
 				"frame_en": true,
 				"fill_en": true,
 				"glow_en": false,
-				"checkmark_col": "0x3eb2c2", // darker cyan (62,178,194)
+				"checkmark_col": "0x008b8b", // darker cyan (0,139,139)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "RingGauge",
@@ -207,7 +207,7 @@
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "SeekBar",
@@ -216,22 +216,22 @@
 				"frame_en": false,
 				"fill_en": true,
 				"glow_en": false,
-				"trim_col": "0x3eb2c2",   // darker cyan (62,178,194)
-				"tick_col":  "0xe4e4e5",  // light grey (228,228,228)
-				"thumb_col":  "0x3eb2c2", // darker cyan (62,178,194)
-				"gauge_col":  "0x3eb2c2", // darker cyan (62,178,194)
+				"trim_col":  "0x008b8b", // darker cyan (0,139,139)
+				"tick_col":  "0xe4e4e5", // light grey (228,228,228)
+				"thumb_col":  "0x008b8b", // darker cyan (0,139,139)
+				"gauge_col":  "0x008b8b", // darker cyan (0,139,139)
 				"remain_col": "0x000000",// black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xf2f2f2",  // light gray (242,242,242)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"glow_col": "0xf0f0f0",   // lightest gray (240,240,240)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "Slider",
 				"trim_en": false,
-				"trim_col": "0x3eb2c2",  // darker cyan (62,178,194)
-				"tick_col": "0x3eb2c2",  // darker cyan (62,178,194)
-				"frame_col": "0x3eb2c2", // darker cyan (62,178,194) 
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"trim_col": "0x000000",// black (0,0,0)
+				"tick_col": "0x000000",// black (0,0,0)
+				"frame_col": "0x008b8b", // darker cyan (0,139,139)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "Text",
@@ -239,7 +239,7 @@
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
 			},
 			{
 				"uiElemName": "TextBox",
@@ -247,8 +247,8 @@
 				"bar_frame_col": "0x000000", // black (0,0,0) 
 				"bar_fill_col":  "0xf2f2f2",   // light gray (242,242,242)
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xf2f2f2",  // light gray (242,242,242)
-				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+				"glow_col": "0xc0c0c0",   // light gray (192,192,192)
+				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
 			},
 			{
 				"uiElemName": "TextButton",
@@ -256,8 +256,8 @@
 				"fill_en": true,
 				"text_col": "0xffffff",  // white (255,255,255)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0x3eb2c2",  // darker cyan (62,178,194)
-				"glow_col": "0x00b7eb"   // lighter cyan (0,183,235)
+				"glow_col": "0x00ffff",  // cyan (0,255,255)
+				"fill_col": "0x008b8b"   // darker cyan (0,139,139)
 			},
 			{
 				"uiElemName": "ToggleButton",
@@ -265,9 +265,9 @@
 				"frame_en": true,
 				"fill_en": true,
 				"glow_en": false,
-				"thumb_col": "0xeef0f4", // light gray (238,240,244)
-				"on_col":  "0x3eb2c2",   // darker cyan (62,178,194)
-				"off_col": "0xeef0f4",    // light gray (238,240,244)
+				"thumb_col": "0xc0c0c0", // light gray (192,192,192)
+				"on_col":  "0x00ffff",  // cyan (0,255,255)
+				"off_col": "0xeef0f4",   // light gray (238,240,244)
 				"frame_col": "0x808080"  // GSLC_COL_GRAY (128,128,128) 
 			}
 		]},
@@ -550,7 +550,7 @@
 		"uiElements": 
 		[{
 				"uiElemName": "Page",
-				"fill_col": "0xc5b284"   // (197,178,132)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "Box",
@@ -559,15 +559,15 @@
 				"fill_en": true,
 				"glow_en": false,
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xf7e3ad",  // (247,227,173)
-				"fill_col": "0xf7e3ad"   // (247,227,173)
+				"glow_col": "0xf6d46f",  // (246,212,111)
+				"fill_col": "0xf6d46f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "CheckBox",
 				"style": "0",
 				"checkmark_col": "0x3570cd",  // light blue (53,112,205)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "TextInput",
@@ -575,14 +575,14 @@
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "NumberInput",
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "ListBox",
@@ -593,13 +593,13 @@
 				"bar_frame_col": "0x000000", // black (0,0,0)
 				"bar_fill_col": "0xf2f2f2",  // light gray (242,242,242)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (231,243,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "ProgressBar",
 				"gauge_col": "0x4e9de7", // lighter blue (78,157,231)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "RadioButton",
@@ -609,7 +609,7 @@
 				"glow_en": false,
 				"checkmark_col": "0x3570cd",  // light blue (53,112,205)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "RingGauge",
@@ -617,7 +617,7 @@
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "SeekBar",
@@ -632,8 +632,8 @@
 				"gauge_col": "0x3570cd", // light blue (53,112,205)
 				"remain_col": "0x000000",// black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xc5b284",  // (247,227,173)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"glow_col": "0xf9e29f",  // (249,226,134)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "Slider",
@@ -641,7 +641,7 @@
 				"trim_col": "0x3570cd", // light blue (53,112,205)
 				"tick_col": "0x3570cd", // light blue (53,112,205)
 				"frame_col": "0x000000", // black (0,0,0) 
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "Text",
@@ -649,7 +649,7 @@
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
 				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "TextBox",
@@ -658,7 +658,7 @@
 				"bar_fill_col": "0xf7e3ad",  // (247,227,173)
 				"frame_col": "0x000000", // black (0,0,0)
 				"glow_col": "0xc5b284",  // (247,227,173)
-				"fill_col": "0xc5b284"   // (247,227,173)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "TextButton",
@@ -666,8 +666,8 @@
 				"fill_en": true,
 				"text_col": "0xffffff",  // white (255,255,255)
 				"frame_col": "0x0000c0", // GSLC_COL_BLUE_DK2 (0,0,224)
-				"fill_col": "0x3570cd",  // light blue (53,112,205)
-				"glow_col": "0x4984be"   // lighter blue (73,132,190)
+				"glow_col": "0x4984be",  // lighter blue (73,132,190)
+				"fill_col": "0x3570cd"   // light blue (53,112,205)
 			},
 			{
 				"uiElemName": "ToggleButton",
