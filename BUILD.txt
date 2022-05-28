@@ -4,19 +4,17 @@ Build instructions
 
 Simply follow these instructions after cloning a personal copy of the Builder. 
 
-In order to build the GUIsliceBuilder from source you will need a Java 
-JRE or JDK installed. 
+In order to build the GUIsliceBuilder from source you will need a Java JDK installed. 
+
+The offical GUIsliceBuilder currently uses release 17.3+7 
   
-On Windows its best to choose to download a version ending with '.msi' 
-so needed system variables are set correctly like, JAVA_HOME.
-
-Your installed version doesn't really matter since the needed toolchain 
-for GUIsliceBuilder will be auto-detected and downloaded dynamically. 
-
 You can find OpenJDK releases for jdk and jre here:
 https://adoptium.net/temurin/releases
 
-The offical GUIsliceBuilder release uses 17.3+7 
+On Windows its best to choose to download a version ending with '.msi' 
+so needed system variables are set correctly like, JAVA_HOME.
+
+Much of the needed toolchain for GUIsliceBuilder will be auto-detected and downloaded dynamically. 
 
 Create runnable program:
 
