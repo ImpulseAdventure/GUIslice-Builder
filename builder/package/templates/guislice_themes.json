@@ -150,8 +150,8 @@
 				"fill_en": true,
 				"glow_en": false,
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xe6e6e6",  // darker gray (230,230,230)
-				"fill_col": "0xe6e6e6"   // darker gray (230,230,230)
+				"glow_col": "0xf0f0f0",   // lightest gray (240,240,240)
+				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
 			},
 			{
 				"uiElemName": "CheckBox",
@@ -285,8 +285,8 @@
 				"fill_en": true,
 				"glow_en": false,
 				"frame_col": "0x383c4a", // dark gray (56,60,74)
-				"glow_col":  "0x596076", // dark gray (56,60,74)
-				"fill_col": "0x596076"   // (89,96,118)
+				"glow_col": "0x121212",   // dark gray (18,18,18)
+				"fill_col": "0x121212"   // dark gray (18,18,18)
 			},
 			{
 				"uiElemName": "CheckBox",
@@ -422,8 +422,8 @@
 				"fill_en": true,
 				"glow_en": false,
 				"frame_col": "0x383c4a", // dark gray (56,60,74)
-				"glow_col": "0x383c4a",  // dark gray (56,60,74)
-				"fill_col": "0x383c4a"   // dark gray (56,60,74)
+				"glow_col": "0x121212",   // dark gray (18,18,18)
+				"fill_col": "0x121212"   // dark gray (18,18,18)
 			},
 			{
 				"uiElemName": "CheckBox",
@@ -559,8 +559,8 @@
 				"fill_en": true,
 				"glow_en": false,
 				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xf6d46f",  // (246,212,111)
-				"fill_col": "0xf6d46f"   // (249,226,134)
+				"glow_col": "0xf9e29f",   // (249,226,134)
+				"fill_col": "0xf9e29f"   // (249,226,134)
 			},
 			{
 				"uiElemName": "CheckBox",

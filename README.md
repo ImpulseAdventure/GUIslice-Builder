@@ -50,13 +50,13 @@ GUIsliceBuilder so you no longer need to deal with its installation.
 
 ### Windows GUIsliceBuilder Install
 
-Download the builder-win-x64.{release}.{build}.zip from github
+Download the builder-win-x64-0.17.b12.zip from github
 GUIslice-Builder Releases:
 https://github.com/ImpulseAdventure/GUIslice-Builder/releases
 
-Then unzip and run the resulting executable builder-win-x64.{release}.{build}.exe
+Then unzip and run the resulting executable builder-win-0.17.b12.exe
 
-This will optionally create a desktop icon you can click on to run.
+This can create a desktop icon you can click on to run.  Optionally, you can use GUIsliceBuilder\GUIslice.bat file to run.
 
 ### LINUX and MACOS install
 
@@ -65,12 +65,12 @@ operating system and cpu architecture (ie., linux-x64) from github
 GUIslice-Builder Releases:
 https://github.com/ImpulseAdventure/GUIslice-Builder/releases
 
-untar builder-win64-1.0.tar.gz into your home directory.
+untar into your home directory.
 
-Open a terminal
+Example: Open a terminal
 ```
 cd $HOME
-tar xvzf builder-linux64-1.0.tar.gz
+tar xvzf builder-linux-x64-0.17.b12.tgz
 ```
 Then enter the new GUIsliceBuilder folder
 ```

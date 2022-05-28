@@ -71,16 +71,38 @@ jlink {
     jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.3_7.tar.gz')
   }
   
+  targetPlatform('linux-aarch64') {
+    jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.3_7.tar.gz')
+  }
+  
+  targetPlatform('macos-x64') {
+    jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_x64_mac_hotspot_17.0.3_7.tar.gz')
+  }
+  
+  targetPlatform('macos-aarch64') {
+    jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.3_7.tar.gz')
+  }
+  
   launcher {
     name = 'GUIslice'
     noConsole = true
   }
 }
 
-def JLINK_LINUX  = "$buildDir/image/GUIslice-linux-x64"
 def JLINK_WIN    = "$buildDir/image/GUIslice-win-x64"
-def TARGET_LINUX = "${buildDir}/tmp/linux/GUIsliceBuilder"
 def TARGET_WIN   = "${buildDir}/tmp/windows/GUIsliceBuilder"
+
+def JLINK_LINUX_X64  = "$buildDir/image/GUIslice-linux-x64"
+def TARGET_LINUX_X64 = "${buildDir}/tmp/linux-x64/GUIsliceBuilder"
+
+def JLINK_LINUX_AARCH64  = "$buildDir/image/GUIslice-linux-aarch64"
+def TARGET_LINUX_AARCH64 = "${buildDir}/tmp/linux-aarch64/GUIsliceBuilder"
+
+def JLINK_MAC_X64  = "$buildDir/image/GUIslice-mac-x64"
+def TARGET_MAC_X64 = "${buildDir}/tmp/mac-x64/GUIsliceBuilder"
+
+def JLINK_MAC_AARCH64  = "$buildDir/image/GUIslice-mac-aarch64"
+def TARGET_MAC_AARCH64 = "${buildDir}/tmp/mac-aarch64/GUIsliceBuilder"
 
 def innoSetupDir = new File("${buildDir}/innosetup")
 
@@ -98,18 +120,43 @@ tasks.jlink.doLast {
       from JLINK_WIN
       into TARGET_WIN
   }
+
   copy {
       from "${projectDir}/scripts/GUIslice.sh"
-      into TARGET_LINUX
+      into TARGET_LINUX_X64
+  }
+  copy {
+      from "${projectDir}/scripts/GUIslice.sh"
+      into TARGET_LINUX_AARCH64 
+  }
+  copy {
+      from "${projectDir}/scripts/GUIslice.sh"
+      into TARGET_MAC_X64
+  }
+  copy {
+      from "${projectDir}/scripts/GUIslice.sh"
+      into TARGET_MAC_AARCH64 
+  }
+
+  copy {
+      includeEmptyDirs = true
+      from "${projectDir}/package"
+      into TARGET_LINUX_X64
   }
   copy {
       includeEmptyDirs = true
       from "${projectDir}/package"
-      into TARGET_LINUX
+      into TARGET_LINUX_AARCH64
   }
   copy {
-      from JLINK_WIN
-      into TARGET_WIN
+      includeEmptyDirs = true
+      from "${projectDir}/package"
+      into TARGET_MAC_X64
+  }
+  copy {
+      includeEmptyDirs = true
+      from "${projectDir}/package"
+      into TARGET_MAC_AARCH64
   }
 
   delete innoSetupDir  
@@ -126,7 +173,7 @@ tasks.jlink.doLast {
     
 }
 
-task packageWinDistrib(type: Zip) {
+task pack_WIN(type: Zip) {
   dependsOn build, assemble
   group = "assemble"
   description = "windows package distribution"
@@ -154,27 +201,80 @@ task packageWinDistrib(type: Zip) {
   destinationDirectory = file("${buildDir}/disp")
 }
 
-task packageLinuxDistrib(type: Tar) {
+task pack_LINUX_X64(type: Tar) {
   dependsOn build, assemble
-  description = "create linux distribution from linux temp folder"
   group = "assemble"
-  description = "linux package distribution"
-  from ("${buildDir}/tmp/linux") {
+  description = "linux-x64 package distribution"
+  from (TARGET_LINUX_X64) {
    exclude ("**/*.sh") // 1
    fileMode 0644
   }
-  from ("${buildDir}/tmp/linux") {
+  from (TARGET_LINUX_X64) {
    include ("**/*.sh")
    fileMode 0755
   }
-  archiveBaseName = "builder-" + "linux"
+  archiveBaseName = "builder-" + "linux-x64"
   destinationDirectory = file("${buildDir}/disp")
-  archiveExtension = "tar.gz"
+  archiveExtension = "tgz"
+  compression = Compression.GZIP  
+}
+
+task pack_LINUX_AARCH64(type: Tar) {
+  dependsOn build, assemble
+  group = "assemble"
+  description = "linux-aarch64 package distribution"
+  from (TARGET_LINUX_AARCH64) {
+   exclude ("**/*.sh") // 1
+   fileMode 0644
+  }
+  from (TARGET_LINUX_AARCH64) {
+   include ("**/*.sh")
+   fileMode 0755
+  }
+  archiveBaseName = "builder-" + "linux-aarch64"
+  destinationDirectory = file("${buildDir}/disp")
+  archiveExtension = "tgz"
+  compression = Compression.GZIP  
+}
+
+task pack_MAC_X64(type: Tar) {
+  dependsOn build, assemble
+  group = "assemble"
+  description = "mac-x64 package distribution"
+  from (TARGET_MAC_X64) {
+   exclude ("**/*.sh") // 1
+   fileMode 0644
+  }
+  from (TARGET_LINUX_X64) {
+   include ("**/*.sh")
+   fileMode 0755
+  }
+  archiveBaseName = "builder-" + "mac-x64"
+  destinationDirectory = file("${buildDir}/disp")
+  archiveExtension = "tgz"
+  compression = Compression.GZIP  
+}
+
+task pack_MAC_AARCH64(type: Tar) {
+  dependsOn build, assemble
+  group = "assemble"
+  description = "mac-aarch64 package distribution"
+  from (TARGET_MAC_AARCH64) {
+   exclude ("**/*.sh") // 1
+   fileMode 0644
+  }
+  from (TARGET_MAC_AARCH64) {
+   include ("**/*.sh")
+   fileMode 0755
+  }
+  archiveBaseName = "builder-" + "mac-aarch64"
+  destinationDirectory = file("${buildDir}/disp")
+  archiveExtension = "tgz"
   compression = Compression.GZIP  
 }
 
 task packageAll() {
-  dependsOn build, assemble, packageWinDistrib, packageLinuxDistrib
+  dependsOn build, assemble, pack_WIN, pack_LINUX_X64, pack_LINUX_AARCH64, pack_MAC_X64, pack_MAC_AARCH64
   group = "assemble"
   description = "package all distributions"
 }
