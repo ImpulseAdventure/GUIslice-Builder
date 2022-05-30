@@ -71,7 +71,7 @@ Source: "..\\..\\package\\linux_res\\*"; DestDir: "{app}\\linux_res"; Flags: ign
 
 [Icons]
 Name: "{group}\\GUIsliceBuilder"; Filename: "{app}\\GUIslice.bat"
-Name: "{commondesktop}\\GUIsliceBuilder"; Filename: "{app}\\GUIslice.bat"; IconFilename: "{app}\\guislicebuilder.ico"; Tasks: desktopicon
+Name: "{commondesktop}\\GUIslice Builder"; Filename: "{app}\\GUIslice.bat"; IconFilename: "{app}\\guislicebuilder.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\\GUIslice.bat"; Description: "{cm:LaunchProgram,GUIsliceBuilder}"; Flags: shellexec postinstall skipifsilent

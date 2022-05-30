@@ -14,7 +14,14 @@ https://adoptium.net/temurin/releases
 On Windows its best to choose to download a version ending with '.msi' 
 so needed system variables are set correctly like, JAVA_HOME.
 
-Much of the needed toolchain for GUIsliceBuilder will be auto-detected and downloaded dynamically. 
+Much of the needed toolchain for GUIsliceBuilder will be auto-detected and downloaded dynamically
+but you do need to start with a version of gradle.
+
+download gradle 7.4.2
+https://gradle.org/releases/
+
+Instructions for installation of gradle is available here:
+https://docs.gradle.org/current/userguide/installation.html
 
 Create runnable program:
 
@@ -33,7 +40,7 @@ WINDOWS INSTALLER
 =======================================================================
 
 If you want to create a windows installer (which isn't stricly needed) 
-you will need to first be running windows 10. This is because the build 
+you will need to first be running windows. This is because the build 
 uses inno setup and that product is windows only. 
 
 Download and install inno setup innosetup-qsp-5.6.1.exe

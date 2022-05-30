@@ -75,11 +75,11 @@ jlink {
     jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.3_7.tar.gz')
   }
   
-  targetPlatform('macos-x64') {
+  targetPlatform('mac-x64') {
     jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_x64_mac_hotspot_17.0.3_7.tar.gz')
   }
   
-  targetPlatform('macos-aarch64') {
+  targetPlatform('mac-aarch64') {
     jdkHome = jdkDownload('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.3_7.tar.gz')
   }
   
@@ -112,12 +112,12 @@ tasks.jlink.doLast {
       into TARGET_WIN
   }
   copy {
-      includeEmptyDirs = true
-      from "${projectDir}/package"
+      from JLINK_WIN
       into TARGET_WIN
   }
   copy {
-      from JLINK_WIN
+      includeEmptyDirs = true
+      from "${projectDir}/package"
       into TARGET_WIN
   }
 
@@ -125,33 +125,51 @@ tasks.jlink.doLast {
       from "${projectDir}/scripts/GUIslice.sh"
       into TARGET_LINUX_X64
   }
+  copy {
+      from JLINK_LINUX_X64
+      into TARGET_LINUX_X64
+  }
+  copy {
+      includeEmptyDirs = true
+      from "${projectDir}/package"
+      into TARGET_LINUX_X64
+  }
+  
   copy {
       from "${projectDir}/scripts/GUIslice.sh"
       into TARGET_LINUX_AARCH64 
   }
   copy {
-      from "${projectDir}/scripts/GUIslice.sh"
-      into TARGET_MAC_X64
-  }
-  copy {
-      from "${projectDir}/scripts/GUIslice.sh"
-      into TARGET_MAC_AARCH64 
-  }
-
-  copy {
-      includeEmptyDirs = true
-      from "${projectDir}/package"
-      into TARGET_LINUX_X64
+      from JLINK_LINUX_AARCH64
+      into TARGET_LINUX_AARCH64
   }
   copy {
       includeEmptyDirs = true
       from "${projectDir}/package"
       into TARGET_LINUX_AARCH64
   }
+  
+  copy {
+      from "${projectDir}/scripts/GUIslice.sh"
+      into TARGET_MAC_X64
+  }
+  copy {
+      from JLINK_MAC_X64
+      into TARGET_MAC_X64
+  }
   copy {
       includeEmptyDirs = true
       from "${projectDir}/package"
       into TARGET_MAC_X64
+  }
+
+  copy {
+      from "${projectDir}/scripts/GUIslice.sh"
+      into TARGET_MAC_AARCH64 
+  }
+  copy {
+      from JLINK_MAC_AARCH64
+      into TARGET_MAC_AARCH64
   }
   copy {
       includeEmptyDirs = true
@@ -245,7 +263,7 @@ task pack_MAC_X64(type: Tar) {
    exclude ("**/*.sh") // 1
    fileMode 0644
   }
-  from (TARGET_LINUX_X64) {
+  from (TARGET_MAC_X64) {
    include ("**/*.sh")
    fileMode 0755
   }
