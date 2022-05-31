@@ -422,6 +422,7 @@ public class RingGaugeModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("TextBox");
     if (element != null) {
       if (element.getTextCol() != null)

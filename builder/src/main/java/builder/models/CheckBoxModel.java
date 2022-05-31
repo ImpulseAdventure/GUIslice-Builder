@@ -280,6 +280,7 @@ public class CheckBoxModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("CheckBox");
     if (element != null) {
       if (element.getStyle() != null) {

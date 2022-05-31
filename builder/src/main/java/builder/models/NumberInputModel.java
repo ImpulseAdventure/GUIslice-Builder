@@ -79,7 +79,7 @@ public class NumberInputModel extends WidgetModel {
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
-  static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(6);
+  static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(5);
   static public  final String  DEF_TEXT_ALIGN        = "GSLC_ALIGN_MID_LEFT";
   static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(5);
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
@@ -205,10 +205,18 @@ public class NumberInputModel extends WidgetModel {
       }
     }
     if (row == PROP_TEXT_SZ) {
-      int size = Integer.valueOf((String) value);
-      if (size <= 0) {
+      try {
+        int size = Integer.parseInt((String) value);
+        if (size <= 0) {
+          JOptionPane.showMessageDialog(null, 
+              "Field Size must be > 0", 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(null, 
-            "Field Size must be > 0", 
+            "Field must be valid integer number", 
             "ERROR",
             JOptionPane.ERROR_MESSAGE);
         return;
@@ -434,6 +442,7 @@ public class NumberInputModel extends WidgetModel {
   */
  @Override
  public void changeThemeColors(GUIsliceTheme theme) {
+   if (theme == null) return;
    GUIsliceThemeElement element = theme.getElement("NumberInput");
    if (element != null) {
      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();

@@ -575,6 +575,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("ListBox");
     if (element != null) {
       data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();

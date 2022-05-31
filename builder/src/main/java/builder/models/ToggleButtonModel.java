@@ -250,6 +250,7 @@ public class ToggleButtonModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("ToggleButton");
     if (element != null) {
       data[PROP_CIRCULAR][PROP_VAL_VALUE] = element.isCornersRounded();

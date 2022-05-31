@@ -374,6 +374,7 @@ public class SeekbarModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("SeekBar");
     if (element != null) {
       data[PROP_THUMB_HASTRIM][PROP_VAL_VALUE] = element.isTrimEnabled();

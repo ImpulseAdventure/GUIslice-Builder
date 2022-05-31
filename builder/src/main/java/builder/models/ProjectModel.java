@@ -808,6 +808,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
 
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("Page");
     if (element != null) {
       data[PROP_BACKGROUND][PROP_VAL_VALUE] = element.getFillCol();

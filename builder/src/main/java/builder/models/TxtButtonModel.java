@@ -661,6 +661,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
     */
    @Override
    public void changeThemeColors(GUIsliceTheme theme) {
+     if (theme == null) return;
      GUIsliceThemeElement element = theme.getElement("TextButton");
      if (element != null) {
        data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();

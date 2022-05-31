@@ -280,6 +280,7 @@ public class RadioButtonModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("RadioButton");
     if (element != null) {
       if (element.getStyle() != null) {

@@ -126,7 +126,7 @@
 			},
 			{
 				"uiElemName": "ToggleButton",
-				"corners_rounded": false,
+				"corners_rounded": true,
 				"frame_en": true,
 				"fill_en": true,
 				"glow_en": false,
@@ -266,7 +266,7 @@
 				"fill_en": true,
 				"glow_en": false,
 				"thumb_col": "0xc0c0c0", // light gray (192,192,192)
-				"on_col":  "0x00ffff",  // cyan (0,255,255)
+				"on_col":  "0x008b8b",   // darker cyan (0,139,139)
 				"off_col": "0xeef0f4",   // light gray (238,240,244)
 				"frame_col": "0x808080"  // GSLC_COL_GRAY (128,128,128) 
 			}
@@ -324,7 +324,7 @@
 				"uiElemName": "ProgressBar",
 				"gauge_col": "0x2679db", //  light blue (38,121,219)
 				"frame_col": "0x2d313c", // (45,49,60)
-				"fill_col": "0x121212"   // dark gray (18,18,18)
+				"fill_col": "0x596076"   // (89,96,118)
 			},
 			{
 				"uiElemName": "RadioButton",
@@ -355,7 +355,7 @@
 				"tick_col": "0xe4e4e5",  // light grey (228,228,228)
 				"thumb_col": "0x383c4a", //  light blue (38,121,219)
 				"gauge_col": "0x2679db", //  light blue (38,121,219)
-				"remain_col": "0x000000",// black (0,0,0)
+				"remain_col": "0x596076",// (89,96,118)
 				"frame_col": "0x2d313c", // (45,49,60)
 				"glow_col": "0x121212",  // dark gray (18,18,18)
 				"fill_col": "0x121212"   // dark gray (18,18,18)
@@ -397,7 +397,7 @@
 			},
 			{
 				"uiElemName": "ToggleButton",
-				"corners_rounded": false,
+				"corners_rounded": true,
 				"frame_en": true,
 				"fill_en": true,
 				"glow_en": false,
@@ -459,7 +459,7 @@
 			},
 			{
 				"uiElemName": "ProgressBar",
-				"gauge_col": "0x018786", // green (1,135,134)
+				"gauge_col": "0x3700B3",    // blue (22,0,70)
 				"frame_col": "0xe4e4e5", // light grey (228,228,228)
 				"fill_col": "0x121212"   // dark gray (18,18,18)
 			},
@@ -488,10 +488,10 @@
 				"frame_en": false,
 				"fill_en": true,
 				"glow_en": false,
-				"trim_col": "0x018786",  // green (1,135,134)
+				"trim_col": "0x3700B3",    // blue (22,0,70)
 				"tick_col": "0xe4e4e5",  // light grey (228,228,228)
-				"thumb_col": "0x018786", // green (1,135,134)
-				"gauge_col": "0x018786", // green (1,135,134)
+				"thumb_col": "0x3700B3",    // blue (22,0,70)
+				"gauge_col": "0x3700B3",    // blue (22,0,70)
 				"remain_col": "0x3700B3",// (89,96,118)
 				"frame_col": "0x2d313c", // (45,49,60)
 				"glow_col": "0x121212",  // dark gray (18,18,18)
@@ -500,8 +500,8 @@
 			{
 				"uiElemName": "Slider",
 				"trim_en": true,
-				"trim_col": "0x018786",  // green (1,135,134)
-				"tick_col": "0x018786",  // green (1,135,134)
+				"trim_col": "0x3700B3",    // blue (22,0,70)
+				"tick_col": "0x3700B3",    // blue (22,0,70)
 				"frame_col": "0x2d313c", // (45,49,60)
 				"glow_col": "0x121212",  // dark gray (18,18,18)
 				"fill_col": "0x121212"   // dark gray (18,18,18)
@@ -528,13 +528,13 @@
 				"frame_en": true,
 				"fill_en": true,
 				"text_col": "0xe4e4e5",  // light grey (228,228,228)
-				"fill_col": "0x018786",  // green (1,135,134)
+				"fill_col": "0x3700B3",  // blue (22,0,70)
 				"frame_col": "0xe4e4e5", // light grey (228,228,228)
 				"glow_col": "0x606060"   // GSLC_COL_GRAY_DK1 (96,96,96)
 			},
 			{
 				"uiElemName": "ToggleButton",
-				"corners_rounded": false,
+				"corners_rounded": true,
 				"frame_en": true,
 				"fill_en": true,
 				"glow_en": false,
@@ -671,7 +671,7 @@
 			},
 			{
 				"uiElemName": "ToggleButton",
-				"corners_rounded": false,
+				"corners_rounded": true,
 				"frame_en": true,
 				"fill_en": true,
 				"glow_en": false,

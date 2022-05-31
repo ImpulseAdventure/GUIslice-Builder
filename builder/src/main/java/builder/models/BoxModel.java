@@ -223,6 +223,7 @@ public class BoxModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("Box");
     if (element != null) {
       data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();

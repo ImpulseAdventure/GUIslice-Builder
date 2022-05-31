@@ -172,10 +172,18 @@ public class TextInputModel extends WidgetModel {
   @Override
   public void setValueAt(Object value, int row, int col) {
     if (row == PROP_TEXT_SZ) {
-      int size = Integer.valueOf((String) value);
-      if (size <= 0) {
+      try {
+        int size = Integer.parseInt((String) value);
+        if (size <= 0) {
+          JOptionPane.showMessageDialog(null, 
+              "Field Size must be > 0", 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(null, 
-            "Field Size must be > 0", 
+            "Field must be valid integer number", 
             "ERROR",
             JOptionPane.ERROR_MESSAGE);
         return;
@@ -401,6 +409,7 @@ public class TextInputModel extends WidgetModel {
   */
  @Override
  public void changeThemeColors(GUIsliceTheme theme) {
+   if (theme == null) return;
    GUIsliceThemeElement element = theme.getElement("TextInput");
    if (element != null) {
      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();

@@ -240,6 +240,7 @@ public class ProgressBarModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("ProgressBar");
     if (element != null) {
       if (element.getGaugeCol() != null)

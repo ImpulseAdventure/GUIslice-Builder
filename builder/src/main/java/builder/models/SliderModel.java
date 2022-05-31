@@ -292,6 +292,7 @@ public class SliderModel extends WidgetModel {
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("Slider");
     if (element != null) {
       data[PROP_TRIM][PROP_VAL_VALUE] = element.isTrimEnabled();
