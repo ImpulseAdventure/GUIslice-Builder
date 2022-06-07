@@ -106,9 +106,9 @@ public class Ribbon extends JPanel {
     
     toolBox.setSelected(true);
 
-    ribbonBar.setPreferredSize(new Dimension(1045,135));
-
-    add(ribbonBar, BorderLayout.CENTER);
+   // ribbonBar.setPreferredSize(new Dimension(1045,135));
+    setLayout(new BorderLayout());
+    add(ribbonBar, BorderLayout.NORTH);
     
   }
   
