@@ -35,6 +35,8 @@ import javax.swing.UIManager;
 import builder.common.Utils;
 
 import hu.csekme.RibbonMenu.Button;
+import hu.csekme.RibbonMenu.QuickAccessBar;
+import hu.csekme.RibbonMenu.QuickButton;
 import hu.csekme.RibbonMenu.RibbonBar;
 import hu.csekme.RibbonMenu.Tab;
 
@@ -42,9 +44,15 @@ public class Ribbon extends JPanel {
   private static final long serialVersionUID = 1L;
 
   private static RibbonBar ribbonBar;
+  private static QuickAccessBar quickbar;
 
   private static Tab toolBox;
 
+  /** The quick access buttons */
+  public QuickButton q_new, q_open, q_close,q_save,
+    q_code, q_exit, q_selection, q_copy_props, q_paste, 
+    q_copy, q_cut, q_undo,q_redo,q_delete;
+  
   /** The text elements */
   private static Button btn_text, btn_textbox, 
     btn_listbox, btn_txtinput, btn_numinput;
@@ -93,7 +101,13 @@ public class Ribbon extends JPanel {
   public Ribbon() {
     
     ribbonBar = RibbonBar.create();
+    
+    // Create quick access bar
+    quickbar = RibbonBar.addQuickAccess();
+    initQuickButtons();
+
     ribbonBar.disableCollapse();
+    
     toolBox = RibbonBar.addTab("ToolBox");
     initText(toolBox);
     initControls(toolBox);
@@ -113,6 +127,99 @@ public class Ribbon extends JPanel {
     
   }
   
+  /**
+   * Initializes the quick access bar buttons.
+   */
+  public void initQuickButtons() {
+/*    
+    q_new = quickbar.addButton("q_new");
+    q_new.setImage(Utils.getIcon("resources/icons/file/new.png"));
+    q_new.addToolTip("New Project");
+    q_new.setActionCommand("new");
+*/
+    q_open = quickbar.addButton("q_open");
+    q_open.setImage(Utils.getIcon("resources/icons/file/open.png"));
+    q_open.addToolTip("Open Project");
+    q_open.setActionCommand("open");
+
+    q_close = quickbar.addButton("q_close");
+    q_close.setImage(Utils.getIcon("resources/icons/file/close.png"));
+    q_close.addToolTip("Close Project");
+    q_close.setActionCommand("close");
+
+    q_save = quickbar.addButton("q_save");
+    q_save.setImage(Utils.getIcon("resources/icons/file/save.png"));
+    q_save.addToolTip("Save Project");
+    q_save.setActionCommand("save");
+
+    q_code = quickbar.addButton("q_code");
+    q_code.setImage(Utils.getIcon("resources/icons/file/export.png"));
+    q_code.addToolTip("Generate Code");
+    q_code.setActionCommand("code");
+    
+    quickbar.addSeperator();
+
+    q_cut = quickbar.addButton("q_cut");
+    q_cut.setImage(Utils.getIcon("resources/icons/edit/cut.png"));
+    q_cut.addToolTip("cut");
+    q_cut.setActionCommand("cut");
+    
+    q_copy = quickbar.addButton("q_copy");
+    q_copy.setImage(Utils.getIcon("resources/icons/edit/copy.png"));
+    q_copy.addToolTip("Copy");
+    q_copy.setActionCommand("copy");
+    
+    q_paste = quickbar.addButton("q_paste");
+    q_paste.setImage(Utils.getIcon("resources/icons/edit/paste.png"));
+    q_paste.addToolTip("Paste");
+    q_paste.setActionCommand("paste");
+
+    quickbar.addSeperator();
+
+    q_copy_props = quickbar.addButton("q_copy_props");
+    q_copy_props.setImage(Utils.getIcon("resources/icons/edit/copy_props.png"));
+    q_copy_props.addToolTip("Copy Properties");
+    q_copy_props.setActionCommand("copyprops");
+        
+    quickbar.addSeperator();
+
+    q_undo = quickbar.addButton("q_undo");
+    q_undo.setImage(Utils.getIcon("resources/icons/edit/undo.png"));
+    q_undo.setDisabledImage(Utils.getIcon("resources/icons/edit/disable_undo.png"));
+    q_undo.setEnabled(false);
+    q_undo.addToolTip("Undo Actions");
+    q_undo.setActionCommand("undo");
+
+    q_redo = quickbar.addButton("q_redo");
+    q_redo.setImage(Utils.getIcon("resources/icons/edit/redo.png"));
+    q_redo.setDisabledImage(Utils.getIcon("resources/icons/edit/disable_redo.png"));
+    q_redo.setEnabled(false);
+    q_redo.addToolTip("Redo Actions");
+    q_redo.setActionCommand("redo");
+    
+    quickbar.addSeperator();
+
+    q_selection = quickbar.addButton("q_selection");
+    q_selection.setImage(Utils.getIcon("resources/icons/layout/selection.png"));
+    q_selection.addToolTip("Rectangular Selection");
+    q_selection.setActionCommand("selection");
+    
+    quickbar.addSeperator();
+
+    q_delete = quickbar.addButton("q_delete");
+    q_delete.setImage(Utils.getIcon("resources/icons/edit/delete.png"));
+    q_delete.addToolTip("Delete Widget");
+    q_delete.setActionCommand("delete");
+    
+    quickbar.addSeperator();
+
+    q_exit = quickbar.addButton("q_exit");
+    q_exit.setImage(Utils.getIcon("resources/icons/file/logout.png"));
+    q_exit.addToolTip("Exit Builder");
+    q_exit.setActionCommand("exit");
+
+  }
+
   /**
    * Initializes the Text elements.
    */
@@ -461,6 +568,23 @@ public class Ribbon extends JPanel {
    */
   public void addListeners(ActionListener al)
   {
+//    q_new.addActionListener(al);
+    q_open.addActionListener(al);
+    q_save.addActionListener(al);
+    q_close.addActionListener(al);
+
+    q_code.addActionListener(al);
+    q_exit.addActionListener(al);
+ 
+    q_undo.addActionListener(al);
+    q_redo.addActionListener(al);
+    q_delete.addActionListener(al);
+    q_selection.addActionListener(al);
+    q_paste.addActionListener(al);
+    q_copy.addActionListener(al);
+    q_copy_props.addActionListener(al);
+    q_cut.addActionListener(al);
+    
     btn_text.addActionListener(al); 
     btn_textbox.addActionListener(al); 
     btn_listbox.addActionListener(al);
@@ -532,6 +656,14 @@ public class Ribbon extends JPanel {
     } else {
       btn_group.setEnabled(false);
     }
+  }
+
+  public void enableUndo(boolean bEnable) {
+    q_undo.setEnabled(bEnable);
+  }
+  
+  public void enableRedo(boolean bEnable) {
+    q_redo.setEnabled(bEnable);
   }
   
 }

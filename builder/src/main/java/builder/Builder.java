@@ -71,7 +71,7 @@ import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
 import builder.views.Ribbon;
 import builder.views.RibbonListener;
-import builder.views.ToolBar;
+//import builder.views.ToolBar;
 import builder.views.TreeView;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -324,10 +324,10 @@ public class Builder  extends JDesktopPane {
     frame.setTitle(frameTitle);
     frame.setJMenuBar(mb);
 
-    ToolBar toolbar = ToolBar.getInstance();
+//    ToolBar toolbar = ToolBar.getInstance();
 
-    toolbar.addListeners(ribbonListener);
-    frame.getContentPane().add(toolbar.get(),BorderLayout.EAST);
+//    toolbar.addListeners(ribbonListener);
+//    frame.getContentPane().add(toolbar.get(),BorderLayout.EAST);
 
     // create our ribbon
     ribbon = Ribbon.getInstance();
