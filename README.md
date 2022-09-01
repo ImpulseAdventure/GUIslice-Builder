@@ -84,13 +84,24 @@ To run:
 ## Release History
 
 ### Enhancements for 0.17.b12
-<P>
-Added support for PlatformIO IDE issue `#117`.  Users now select either Arduino IDE or PlatformIO IDE.
+
+<p>
+Added support for PlatformIO IDE issue `#117`.  Users now select either Arduino IDE or PlatformIO IDE
+either inside the Project Options Tab and/or inside User Preferences by Edit->options->General tab->"Target IDE". 
 The platformio.ini file will be populated with all settings needed for common configurations. 
 The resulting project folder will be structured with a src, include, lib, and test subfolders. Instead of code named
 projectname.ino it will be named main.cpp. The projectname_GSLC.h file will be inside the project folder/includes.
 Further details on customizing the Builder for PlatformIO is available in the 
 `User Guide Chapter 6 - Configuring PlatformIO Support`.
+</p>
+
+<p>
+The Code has been modified to better indicate your graphics library with the choices now being Adafruit_GFX, M5Stack, ILI9341_t3, TFT_eSPI, UTFT, or Linux.
+</p>
+
+<p>
+**WARNING If you have added your own fonts by editing your builder_fonts.json file you will need to modify the newly suplied file with your edits and
+use the new format documented inside the updated User Guide. If you have any problems just post in the issue section.
 </p>
 
 <p>
