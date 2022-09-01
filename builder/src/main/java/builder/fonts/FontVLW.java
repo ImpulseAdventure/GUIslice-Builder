@@ -39,6 +39,8 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import builder.common.Utils;
+
 import java.awt.Font;
 
 /**
@@ -69,11 +71,8 @@ public class FontVLW extends FontTFT {
     this.item = item;
     this.fontType = FONT_VLW;
 
-    String fontFileName = "fonts" 
-      + System.getProperty("file.separator") 
-      + "vlw"
-      + System.getProperty("file.separator") 
-      + item.getLogicalName();
+    String fontFileName = String.format("%s/%s/%s",Utils.getWorkingDir(),
+          item.getCategory().getFontFolderPath(),item.getLogicalName());
     File file = new File(fontFileName);
     try {
       font = Font.createFont(Font.TRUETYPE_FONT, file).deriveFont((float)item.getLogicalSizeAsInt());
@@ -107,7 +106,7 @@ public class FontVLW extends FontTFT {
         Character.UnicodeBlock block = Character.UnicodeBlock.of( codePoint );
         bCanDisplay = (!Character.isISOControl(codePoint)) &&
           (codePoint != KeyEvent.CHAR_UNDEFINED) &&
-                block != null &&
+                block != null                    &&
                 block != Character.UnicodeBlock.SPECIALS;
       }
       } catch(IllegalArgumentException e) {

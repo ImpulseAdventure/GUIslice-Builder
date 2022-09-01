@@ -115,10 +115,14 @@ Improved Code Editing for those who add custom code to Button Callbacks.  The co
 
 ### Bug Fixes 0.17.b12
 
+- Issue `GUIslice API 472` characters outside the range when I add my own font
 - Issue `207` Save As causes fatal error
 - Issue `205` Toggle Button switch/case user code deleted when re-generate from builder
 - Issue `204` Resolution changes to 240*320 without request 
 - Issue `203` Fatal Crash on Generate Code using Flash API version of Toggle Button
+
+### Bug Fixes for 0.17.b11.2
+- Issue `GUIslice API 472` characters outside the range when I add my own font
 
 ### Enhancements for 0.17.b11
 

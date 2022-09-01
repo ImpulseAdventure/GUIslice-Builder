@@ -352,7 +352,7 @@ public class CharacterMap extends JDialog {
     txtCharacters.setFontTFT(ff, font);
     characterList.clear();
     MAXCODEPOINT = 255;
-    if (bTrueTypeFont) MAXCODEPOINT = Short.MAX_VALUE;
+    if (bTrueTypeFont) MAXCODEPOINT = Short.MAX_VALUE * 2;
     Builder.logger.debug(String.format("MAXCODEPOINT: %d",MAXCODEPOINT));
     String testCh = null;
     Point p;
