@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import builder.Builder;
+import builder.common.Utils;
 import builder.parser.ParserException;
 import builder.parser.Token;
 import builder.parser.Tokenizer;
@@ -75,10 +76,11 @@ public class FontLoadUtftFiles extends SimpleFileVisitor<Path> {
   protected static Tokenizer tokenizer = null;
 
   
-  private FontPlatform p;
+  @SuppressWarnings("unused")
+  private FontGraphics p;
   private FontCategory c;
   
-  public FontLoadUtftFiles(FontPlatform p, FontCategory c) {
+  public FontLoadUtftFiles(FontGraphics p, FontCategory c) {
     this.p = p;
     this.c = c;
     if (tokenizer == null) {
@@ -113,74 +115,61 @@ public class FontLoadUtftFiles extends SimpleFileVisitor<Path> {
           return CONTINUE;
         }
         Token token = null;
-        String pathName = String.format("fonts/utft/%s",fileName);
+        String workingDir = Utils.getWorkingDir();
+        String pathName = workingDir + String.format(c.getFontFolderPath()+"%s",fileName);
         File cfile = new File(pathName);
         n = fileName.indexOf(".c");
         String displayName = fileName.substring(0,n);
+        // make sure we didn't already read font in from our json file
+        if (c.findFontItem(displayName) != null) {
+//          Builder.logger.debug("font: " + displayName + " from json file");
+          return CONTINUE;
+        }
         try {
           tokenizer.setSource(cfile);
-          Builder.logger.debug("Opened file: " + fileName);
+//          Builder.logger.debug("Opened file: " + pathName);
 
-          // find font name
+          // find open brace
           boolean bFound = false;
-          while ((token = tokenizer.nextToken()).getType() != SEMICOLON) {
-            if (token.getType() == WORD &&
-                token.getToken().equals(displayName)) {
+          /* 
+           * scan for open brace
+           */
+          while ((token = tokenizer.nextToken()).getType() != 0) {
+            if (token.getType() == OPEN_BRACE) {
               bFound = true;
               break;
             }
           }
           if (!bFound) {
-            Builder.logger.debug(fileName + " missing " + displayName + "[nnnn]");
+            Builder.logger.debug(fileName + " missing " +"{");
             return CONTINUE;
           }
         
-          // find font size should be first hex value in bitmap
-          bFound = false;
-          int size = 0;
-          while ((token = tokenizer.nextToken()).getType() != 0) {
-            if (token.getType() == HEX) {
-              size = Integer.decode(token.getToken()).intValue();
-              bFound = true;
-              break;
-            }
-          }
-          if (!bFound) {
+          // font size should be first hex value in bitmap
+          token = tokenizer.nextToken();
+          if (token.getType() != HEX) {
             Builder.logger.debug(fileName + " Missing->Font Size");
             return CONTINUE;
           }
-          // Yes, we have size
+          int size = Integer.decode(token.getToken()).intValue();
           String sSize = Integer.valueOf(size).toString(); // get font width as string
       
+          tokenizer.close();
+
           FontItem item = new FontItem();
 
-//          item.setFamilyName(familyName);
           item.setFamilyName(displayName);
           item.setDisplayName(displayName);
+          item.setSrcFilename(fileName);
+          item.setExternName(displayName);
           item.setLogicalSize(sSize);
           item.setLogicalStyle(FontItem.PLAIN);
 
-          tokenizer.close();
-
           // now finish up
-          item.setFileName(pathName);
+          item.setFileName(fileName);
           String fontRef = "&" + displayName;
           item.setFontRef(fontRef);
-          item.setPlatform(p);
-          item.setCategory(c);
-          item.generateEnum();
-          item.generateKey();
-          String key = item.getKey();
-          if (!FontFactory.fontMap.containsKey(key)) {
-            c.addFont(item);
-            FontFactory.platformFonts.add(item);
-            FontFactory.list.add(item);
-            FontFactory.fontMap.put(key, Integer.valueOf(FontFactory.idx++));
-//              Builder.logger.debug(fileName + "->" + item.toString());
-          } else {
-            FontFactory.nErrors++;
-            Builder.logger.error(fileName + " duplicate font: " + key);
-          }
+          c.addFont(item);
           return CONTINUE;
         } catch (IOException | ParserException | FontException | NumberFormatException | TokenizerException e) {
           String msg = String.format("File [%s]: %s", 

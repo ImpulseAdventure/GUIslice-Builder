@@ -41,12 +41,90 @@ Repository [Release Notes](https://github.com/ImpulseAdventure/GUIslice-Builder/
 ## Builder Source Code
 
 The Builder source code is located in this repository [ImpulseAdventure/GUIslice-Builder](https://github.com/ImpulseAdventure/GUIslice-Builder)
-- Build instructions can be found in `BUILD.txt`
+- Build instructions can be found in `BUILD.txt` file.
+
+## Installation instructions
+
+The needed version of Java is now custom built and distributed with 
+GUIsliceBuilder so you no longer need to deal with its installation.
+
+### Windows GUIsliceBuilder Install
+
+Download the builder-win-x64-0.17.b12.zip from github
+GUIslice-Builder Releases:
+https://github.com/ImpulseAdventure/GUIslice-Builder/releases
+
+Then unzip and run the resulting executable builder-win-0.17.b12.exe
+
+This can create a desktop icon you can click on to run.  Optionally, you can use GUIsliceBuilder\GUIslice.bat file to run.
+
+### LINUX and MACOS install
+
+Download the builder-{opsys}-{arch}.{release}.{build}.tar.gz using 
+operating system and cpu architecture (ie., linux-x64) from github
+GUIslice-Builder Releases:
+https://github.com/ImpulseAdventure/GUIslice-Builder/releases
+
+untar into your home directory.
+
+Example: Open a terminal
+```
+cd $HOME
+tar xvzf builder-linux-x64-0.17.b12.tgz
+```
+Then enter the new GUIsliceBuilder folder
+```
+cd GUIsliceBuilder
+```
+To run:
+```
+./GUIslice.sh
+```
 
 ## Release History
 
-### Enhancements for 0.17.b11
+### Enhancements for 0.17.b12
+<P>
+Added support for PlatformIO IDE issue `#117`.  Users now select either Arduino IDE or PlatformIO IDE.
+The platformio.ini file will be populated with all settings needed for common configurations. 
+The resulting project folder will be structured with a src, include, lib, and test subfolders. Instead of code named
+projectname.ino it will be named main.cpp. The projectname_GSLC.h file will be inside the project folder/includes.
+Further details on customizing the Builder for PlatformIO is available in the 
+`User Guide Chapter 6 - Configuring PlatformIO Support`.
+</p>
 
+<p>
+Users can now choose a color theme for their Applications written using GUIslice API. You can choose from the original 
+GUIslice, Arc Dark, Cyan Light, Material Dark, or Solarized.  You may modify these themes or add new ones. 
+</p>
+
+![](builder/docs/images/guislice_theme.png)
+![](builder/docs/images/arc_theme.png)
+![](builder/docs/images/cyan_theme.png)
+![](builder/docs/images/material_theme.png)
+![](builder/docs/images/solarized_theme.png)
+
+<p>
+Improved Font handling. The Builder will now identify fonts that come standard with a particular graphics package 
+like Adafruit_GFX and if you request one that isn't provided the Builder will copy the font to your project folder.
+It will also cleanup during a new code generation any font files moved previously that are no longer in use.
+</p>
+
+Improved Code Editing for those who add custom code to Button Callbacks.  The code editing is provided by  
+[RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea)
+
+### Bug Fixes 0.17.b12
+
+- Issue `GUIslice API 472` characters outside the range when I add my own font
+- Issue `207` Save As causes fatal error
+- Issue `205` Toggle Button switch/case user code deleted when re-generate from builder
+- Issue `204` Resolution changes to 240*320 without request 
+- Issue `203` Fatal Crash on Generate Code using Flash API version of Toggle Button
+
+### Bug Fixes for 0.17.b11.2
+- Issue `GUIslice API 472` characters outside the range when I add my own font
+
+### Enhancements for 0.17.b11
 
 The Builder will now support Monochrome 1 bit images that are stored inside a C Array file created by my 
 

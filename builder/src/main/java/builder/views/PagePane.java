@@ -217,13 +217,17 @@ public class PagePane extends JPanel implements iSubscriber {
     for (int i = 0; i < commands.length; i++) {   
       registerKeyboardAction(panelAction,
                       commands[i],
-                      KeyStroke.getKeyStroke(keys[i], InputEvent.ALT_MASK),
+// Java 9 replaces InputEvent.ALT_MASK with InputEvent.ALT_DOWN_MASK
+//                      KeyStroke.getKeyStroke(keys[i], InputEvent.ALT_MASK),
+                      KeyStroke.getKeyStroke(keys[i], InputEvent.ALT_DOWN_MASK),
                       JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
     for (int i = 0; i < commands.length; i++) {   
       registerKeyboardAction(panelAction,
                       commands[i],
-                      KeyStroke.getKeyStroke(keys[i+4], InputEvent.ALT_MASK),
+                   // Java 9 replaces InputEvent.ALT_MASK with InputEvent.ALT_DOWN_MASK
+//                    KeyStroke.getKeyStroke(keys[i], InputEvent.ALT_MASK),
+                      KeyStroke.getKeyStroke(keys[i+4], InputEvent.ALT_DOWN_MASK),
                       JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
     this.setLocation(0, 0);
@@ -813,7 +817,7 @@ public class PagePane extends JPanel implements iSubscriber {
   ev.message = w.getModel().getKey();
   ev.xdata = getKey();
   ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-  MsgBoard.publish(ev, getKey());
+  MsgBoard.publish(ev,getKey());
   repaint();
 }
 
@@ -1108,7 +1112,7 @@ public class PagePane extends JPanel implements iSubscriber {
           w.readObject(in, widgetType);
           widgets.add(w);
         } catch(Exception e) {
-          Builder.logger.error(e);
+          Builder.logger.error(e.toString());
           JOptionPane.showMessageDialog(null, 
               e, 
               "ERROR",

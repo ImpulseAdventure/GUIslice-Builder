@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2018-2021 Paul Conti
+ * Copyright (c) 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import builder.fonts.FontChooser;
-import hu.csekme.RibbonMenu.Util;
+import builder.common.Utils;
 
 public class FontListDialog extends JDialog implements ActionListener, ListSelectionListener {
   private static final long serialVersionUID = 1L;
@@ -111,7 +111,7 @@ public class FontListDialog extends JDialog implements ActionListener, ListSelec
     btn_edit.addActionListener(this);
     btn_edit.setToolTipText("Select an item then press to edit.");
 
-    btn_remove = new JButton(Util.accessImageFile("resources/icons/edit/delete.png", 24,24));
+    btn_remove = new JButton(Utils.getIcon("resources/icons/edit/delete.png", 24,24));
     btn_remove.setActionCommand(removeString);
     btn_remove.addActionListener(this);
     btn_remove.setToolTipText("Select an item then press to delete.");

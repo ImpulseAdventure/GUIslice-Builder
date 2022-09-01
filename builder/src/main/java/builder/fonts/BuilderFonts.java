@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * The Class BuilderFonts.
- * Top level container for all fonts and platforms.
+ * Top level container for all fonts and graphic platforms.
  * 
  * Filled in by JSON deserialization inside FontFactory
  * 
@@ -39,7 +39,7 @@ import java.util.List;
 public class BuilderFonts {
   
   /** The all fonts. */
-  private List<FontPlatform> allFonts = new ArrayList<FontPlatform>();
+  public List<FontGraphics> allFonts = new ArrayList<FontGraphics>();
   
   /**
    * Instantiates a new builder fonts.
@@ -54,7 +54,7 @@ public class BuilderFonts {
    * @param platform
    *          the platform
    */
-  public void addPlatform(FontPlatform platform) {
+  public void addPlatform(FontGraphics platform) {
     allFonts.add(platform);
   }
   
@@ -63,7 +63,7 @@ public class BuilderFonts {
    *
    * @return the platforms
    */
-  public List<FontPlatform> getPlatforms() {
+  public List<FontGraphics> getPlatforms() {
     return allFonts;
   }
   
@@ -74,8 +74,8 @@ public class BuilderFonts {
    *          the platform name
    * @return the platform
    */
-  public FontPlatform getPlatform(String platformName) {
-    for (FontPlatform p : allFonts) {
+  public FontGraphics getPlatform(String platformName) {
+    for (FontGraphics p : allFonts) {
       if (p.getName().equals(platformName))
         return p;
     }

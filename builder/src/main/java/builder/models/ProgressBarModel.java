@@ -32,6 +32,8 @@ import java.io.ObjectInputStream;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -222,6 +224,33 @@ public class ProgressBarModel extends WidgetModel {
         Controller.sendRepaint();
       }
     } 
+  }
+/*
+ *   
+ *static private final int PROP_GAUGE_COLOR       =11;
+  static private final int PROP_FRAME_COLOR       =13;
+  static private final int PROP_FILL_COLOR        =14;
+  static private final int PROP_SELECTED_COLOR    =15;
+ */
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("ProgressBar");
+    if (element != null) {
+      if (element.getGaugeCol() != null)
+        data[PROP_GAUGE_COLOR][PROP_VAL_VALUE] = element.getGaugeCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      fireTableStructureChanged();
+    }
   }
 
   /**

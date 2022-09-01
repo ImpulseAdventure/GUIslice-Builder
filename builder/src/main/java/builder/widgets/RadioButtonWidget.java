@@ -78,7 +78,7 @@ public class RadioButtonWidget extends Widget {
     Color colElemFill  = m.getFillColor();
     
     // Draw the background
-    GUIslice.drawFillRect(pGui,rElem,colElemFill);
+//    GUIslice.drawFillRect(pGui,rElem,colElemFill);
 
     // Generic coordinate calcs
     int nX0,nY0,nX1,nY1,nMidX,nMidY;
@@ -89,19 +89,20 @@ public class RadioButtonWidget extends Widget {
     nMidX = (nX0+nX1)/2;
     nMidY = (nY0+nY1)/2;
     if (nStyle.equals(RadioButtonModel.CHECKBOX_STYLE_BOX)) {
+      // Draw the background
+      GUIslice.drawFillRect(pGui,rElem,colElemFill);
       // Draw the center indicator if checked
       rInner = GUIslice.expandRect(rElem,-5,-5);
       if (bChecked) {
         // If checked, fill in the inner region
         GUIslice.drawFillRect(pGui,rInner,colCheck);
-      } else {
-        // Assume the background fill has already been done so
-        // we don't need to do anything more in the unchecked case
       }
       // Draw a frame around the checkbox
       GUIslice.drawFrameRect(pGui,rElem,colElemFrame);
 
     } else if (nStyle.equals(RadioButtonModel.CHECKBOX_STYLE_X)) {
+      // Draw the background
+      GUIslice.drawFillRect(pGui,rElem,colElemFill);
       // Draw an X through center if checked
       if (bChecked) {
         GUIslice.drawLine(pGui,nX0,nY0,nX1,nY1,colCheck);
@@ -112,6 +113,7 @@ public class RadioButtonWidget extends Widget {
 
     } else if (nStyle.equals(RadioButtonModel.CHECKBOX_STYLE_ROUND)) {
       // Draw inner circle if checked
+      GUIslice.drawFillCircle(pGui,nMidX,nMidY,(rElem.width/2),colElemFill);
       if (bChecked) {
         GUIslice.drawFillCircle(pGui,nMidX,nMidY,5,colCheck);
       }

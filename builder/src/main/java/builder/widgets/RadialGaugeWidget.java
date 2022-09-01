@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.GUIslice;
 import builder.models.RadialGaugeModel;
 
@@ -52,7 +52,7 @@ public class RadialGaugeWidget extends Widget {
    *          the y coordinate position
    */
   public RadialGaugeWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new RadialGaugeModel();
     model = m;
     super.setXY(model, x, y);

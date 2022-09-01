@@ -19,7 +19,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileSystemView;
 
-import builder.prefs.GeneralEditor;
+import builder.prefs.RecentFiles;
 
 public class RecentFilePanel extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -27,6 +27,8 @@ public class RecentFilePanel extends JPanel {
   private JList<File> list;
   private FileListModel listModel = null;
   private JFileChooser fileChooser;
+  protected RecentFiles recentStorage;
+  static final int MAXFILES = 5;
 
   public RecentFilePanel() {
     if (listModel == null) {
@@ -76,27 +78,23 @@ public class RecentFilePanel extends JPanel {
   
   public class FileListModel extends AbstractListModel<File> {
     private static final long serialVersionUID = 1L;
-    private static final int MAXFILES = 6;
     /** lru cache of recent file names */
-    public  ArrayList<String> lruList;
+    public  List<String> lruList;
     public  List<File> files;
 
     public FileListModel() {
       files = new ArrayList<>();
-      lruList = new ArrayList<String>();
-      String listOfFiles = GeneralEditor.getInstance().getRecentFilesList();
-      if (listOfFiles != null) {
-        String[] fileList = listOfFiles.split(File.pathSeparator);
-        for (String fileRef : fileList) {
-            File file = new File(fileRef);
-            if (file.exists()) {
-                files.add(file);
-                lruList.add(fileRef);
-            }
+      if (recentStorage == null)
+        recentStorage = new RecentFiles(MAXFILES);
+      lruList = recentStorage.load();
+      for (String fileRef : lruList) {
+        File file = new File(fileRef);
+        if (file.exists()) {
+          files.add(file);
         }
       }
     }
-    
+
     public void add(File file) {
         setMostRecentFile(file);
         fireContentsChanged(this, 0, getSize());
@@ -135,28 +133,63 @@ public class RecentFilePanel extends JPanel {
      *          the new most recent file accessed.
      */
     public void setMostRecentFile(File file) {
-      // update our lru but first check and see if the file is already present
-      // if so, remove it then add to front of list
       String fileName = file.getPath();
-      lruList.remove(fileName);
-      lruList.add(0, fileName);
-      if (lruList.size() > MAXFILES) {
-        lruList.remove(MAXFILES);
-      }
-//      files.clear();
-      StringBuilder sb = new StringBuilder();
-      for (int index = 0; index < lruList.size(); index++) {
-        fileName = lruList.get(index);
-        file = new File(fileName);
-//  No point in adding file to files list since it won't ever be used again.
-//        files.add(file);
-        if (sb.length() > 0) {
-          sb.append(File.pathSeparator);
+      String temp = "";
+      boolean bFound = false;
+      if (lruList.size() > 0) {
+        /* update our lru but first check and see if the file is already present
+         * if so, make sure its the first in our list
+         * 
+         * The complication here is the list API's use
+         * of add and set. 
+         * add(index,element) will insert at index but 
+         * also push everyone down by 1 
+         * while set will replace the element.
+         */
+        for (int i=0; i<lruList.size(); i++) {
+          temp = lruList.get(i);
+          if (lruList.get(i).equals(fileName)) {
+            // its in our list so make it the first value
+            if (i==0)
+              return;
+            // push everyone above down by 1 then place it first
+            for(int j=i; j>0; j--) {
+              temp = lruList.get(j-1);
+              lruList.set(j,lruList.get(j-1));
+            }
+            lruList.set(0,fileName);
+            bFound = true;
+            break;
+          }
         }
-        sb.append(file.getPath());
+        if (!bFound) {
+          /* file name not in our list so push everyone 
+           * down by one and place our new file at top
+           */
+          int n = lruList.size();
+          if (n == MAXFILES) {
+            /* we reached max size so make a hole
+             * by pushing everyone down by one
+             * and dropping the list's last value
+             * then add fileName to the top.
+             */
+            for (int i=n-1; i>0; i--) {
+              temp = lruList.get(i-1);
+              lruList.set(i,temp);
+            }
+            lruList.set(0,fileName);
+          } else {
+            /* extend our list by 1 while placing
+             * fileName at the top
+             */
+            lruList.add(0,fileName);
+          }
+        }
+      } else {
+        // empty list so just add file name
+        lruList.add(fileName);
       }
-      System.out.println();
-      GeneralEditor.getInstance().setRecentFilesList(sb.toString());
+      recentStorage.store(lruList);
     }
   }
 

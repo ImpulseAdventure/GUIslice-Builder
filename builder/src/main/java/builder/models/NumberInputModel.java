@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,8 @@ import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.prefs.NumKeyPadEditor;
 import builder.tables.TextTFTCellRenderer;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
@@ -77,7 +79,7 @@ public class NumberInputModel extends WidgetModel {
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
-  static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(6);
+  static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(5);
   static public  final String  DEF_TEXT_ALIGN        = "GSLC_ALIGN_MID_LEFT";
   static public  final Integer DEF_TEXT_MARGIN       = Integer.valueOf(5);
   static public  final Boolean DEF_FILL_EN           = Boolean.TRUE;
@@ -203,10 +205,18 @@ public class NumberInputModel extends WidgetModel {
       }
     }
     if (row == PROP_TEXT_SZ) {
-      int size = Integer.valueOf((String) value);
-      if (size <= 0) {
+      try {
+        int size = Integer.parseInt((String) value);
+        if (size <= 0) {
+          JOptionPane.showMessageDialog(null, 
+              "Field Size must be > 0", 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(null, 
-            "Field Size must be > 0", 
+            "Field must be valid integer number", 
             "ERROR",
             JOptionPane.ERROR_MESSAGE);
         return;
@@ -425,6 +435,28 @@ public class NumberInputModel extends WidgetModel {
  }
 
  /**
+  * 
+  * changeThemeColors
+  *
+  * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+  */
+ @Override
+ public void changeThemeColors(GUIsliceTheme theme) {
+   if (theme == null) return;
+   GUIsliceThemeElement element = theme.getElement("NumberInput");
+   if (element != null) {
+     data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();
+     if (element.getTextCol() != null)
+       data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+     if (element.getFrameCol() != null)
+       data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+     if (element.getFillCol() != null)
+       data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+     fireTableStructureChanged();
+   }
+ }
+ 
+ /**
   * readModel() will deserialize our model's data from a string object for backup
   * and recovery.
   *
@@ -469,6 +501,7 @@ public class NumberInputModel extends WidgetModel {
       }
     }
     FontTFT font = ff.getFont(item.getDisplayName());
+    textBox.setFontTFT(ff, font);
     String text = getText();
     if (text.isEmpty())  {
       for (int i=0; i<getTextStorage(); i++) {

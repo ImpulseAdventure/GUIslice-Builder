@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +87,7 @@ public class CutMemento extends Memento {
     page.restore(page_backup, true);
     TreeView.getInstance().restore(tree_backup);
     EnumFactory.getInstance().restore(enum_backup);
-    Controller.getInstance().refreshView();
+    Controller.refreshView();
   }
 
 }

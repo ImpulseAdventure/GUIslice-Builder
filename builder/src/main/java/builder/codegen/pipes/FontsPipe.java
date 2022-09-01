@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
  */
 package builder.codegen.pipes;
 
+import java.io.File;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,12 +40,13 @@ import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
 import builder.controller.Controller;
 import builder.fonts.BuilderFonts;
-import builder.fonts.FontCategory;
+//import builder.fonts.FontCategory;
 import builder.fonts.FontFactory;
 import builder.fonts.FontItem;
-import builder.fonts.FontPlatform;
-import builder.common.CommonUtils;
+import builder.fonts.FontGraphics;
+import builder.common.Utils;
 import builder.common.EnumFactory;
+import builder.common.Pair;
 import builder.models.KeyPadModel;
 import builder.models.KeyPadTextModel;
 import builder.models.ProjectModel;
@@ -65,10 +67,12 @@ import builder.prefs.NumKeyPadEditor;
 public class FontsPipe extends WorkFlowPipe {
 
   /** The Constants for templates. */
+  private final static String FONT_EXTERN_TEMPLATE            = "<FONT_EXTERN>"; 
   private final static String FONT_DEFINE_TEMPLATE            = "<FONT_DEFINE>"; 
   private final static String FONT_INCLUDE_TEMPLATE           = "<FONT_INCLUDE>"; 
    
   /** The Constants for macros. */
+  private final static String EXTERN_MACRO           = "EXTERN_STORAGE";
   private final static String DEFINE_FILE_MACRO      = "DEFINE_FILE";
   private final static String FONT_REF_MACRO         = "FONT_REF";
   private final static String INCLUDE_FILE_MACRO     = "INCLUDE_FILE";
@@ -176,17 +180,16 @@ public class FontsPipe extends WorkFlowPipe {
       }
     }
     if (nErrors > 0) {
-      String fileName = CommonUtils.getInstance().getWorkingDir()
+      String fileName = Utils.getWorkingDir()
           + "logs" 
           + System.getProperty("file.separator")
           + "builder.log";
       throw new CodeGenException(String.format("Sketch has %d missing font(s).\nExamine %s for list of fonts.",
           nErrors,fileName));
     }
-    if (fontNames.size() == 0)
-      return;
     // sort the names and remove duplicates
-    CodeUtils.sortListandRemoveDups(fontNames);
+    if (fontNames.size() > 0)
+      CodeUtils.sortListandRemoveDups(fontNames);
     
     // now use our reduced fontNames list to build up a   
     // list of font items for fonts in use by this project.
@@ -196,6 +199,7 @@ public class FontsPipe extends WorkFlowPipe {
       item = ff.getFontItem(s);
       if (item == null) continue;
       fonts.add(item);
+      Builder.logger.debug("FontsPipe: "+item.toString());
     }
     
     String target = Controller.getTargetPlatform();
@@ -205,55 +209,137 @@ public class FontsPipe extends WorkFlowPipe {
       category = f.getCategory().getName();
       categories.add(category);
     }
-    if (categories.size() == 0)
-      return;
-    // sort the names and remove duplicates
-    CodeUtils.sortListandRemoveDups(categories);
+  	// sort the names and remove duplicates
+    if (categories.size() > 0)
+			CodeUtils.sortListandRemoveDups(categories);
         
     // Do we have any warnings to output?
     BuilderFonts topOfFonts = ff.getBuilderFonts();
-    FontPlatform fontPlatform = topOfFonts.getPlatform(target);
-    for (String s : fontPlatform.getWarnings()) {
+    FontGraphics fontGraphics = topOfFonts.getPlatform(target);
+    for (String s : fontGraphics.getWarnings()) {
       if (s.equals("NULL")) continue;
       sBd.append(s);
       sBd.append(System.lineSeparator());
     }
 
     // Now we need check for any extra include files that might be needed
-    for (FontCategory c : fontPlatform.getCategories()) {
-      for (String s : c.getIncludes()) {
-        if (s == null || s.isEmpty()) continue;
-        sBd.append(s);
-        sBd.append(System.lineSeparator());
-      }
-    }
+		for (String s : fontGraphics.getIncludes()) {
+			if (s == null || s.isEmpty()) continue;
+			sBd.append(s);
+			sBd.append(System.lineSeparator());
+		}
+
     // we are ready to output our font information
+		List<String> externTemplate = null;
     List<String> includeTemplate = null;
     List<String> defineTemplate = null;
     List<String> outputLines = null;
     Map<String, String> map = new HashMap<String, String>();
-    List<String> includesList = new ArrayList<String>();
+    List<Pair> includesList = new ArrayList<Pair>();
+    List<Pair> copyList = new ArrayList<Pair>();
+    int idx;
+    /* the following scans for any headers we need to include,
+     * any defines we need to create, and create a list
+     * of any un-installed fonts we need to copy to the
+     * user's project folder.
+     */
+    boolean bCopyFonts = true;
+    if (pm.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX) ) {
+      bCopyFonts = false;
+    }
+    Pair pair = null;
     for (FontItem f : fonts) {
       if (!f.getIncludeFile().equals("NULL")) {
-          includesList.add(f.getIncludeFile());
+        if (!f.isInstalledFont())
+          pair = new Pair("", f.getIncludeFile());
+        else
+          pair = new Pair(f.getCategory().getIncludePath(), f.getIncludeFile());
+        includesList.add(pair);
       } else if (!f.getDefineFile().equals("NULL")) {
         // This code only affects linux implementation.
         defineTemplate = tm.loadTemplate(FONT_DEFINE_TEMPLATE);
+        map.clear();
         map.put(FONT_REF_MACRO, f.getFontRef());
         map.put(DEFINE_FILE_MACRO, f.getDefineFile());
         outputLines = tm.expandMacros(defineTemplate, map);
         tm.codeWriter(sBd, outputLines);
+      } else if (!f.getExternName().equals("NULL")) {
+        map.clear();
+        map.put(EXTERN_MACRO, f.getExternName());
+        externTemplate = tm.loadTemplate(FONT_EXTERN_TEMPLATE);
+        outputLines = tm.expandMacros(externTemplate, map);
+        tm.codeWriter(sBd, outputLines);
+      }
+      if (!f.isInstalledFont() && bCopyFonts) {
+        if (!f.getIncludeFile().equals("NULL")) {
+          String FName = f.getFileName();
+          idx = FName.indexOf(".h");
+          if (idx > 0) {
+            pair = new Pair(FName,f.getIncludeFile());
+          } else {
+            idx = FName.indexOf(".c");
+            if (idx > 0) {
+              FName = FName.substring(0,idx) + ".h";
+              pair = new Pair(FName,f.getIncludeFile());
+            }
+          }
+          if (pair != null)
+            copyList.add(pair);
+        }
+        /*
+         * Currently only Teensy needs C files
+         */
+        if (!f.getSrcFilename().equals("NULL")) {
+          pair = null;
+          String FName = f.getFileName();
+          idx = FName.indexOf(".c");
+          if (idx > 0) {
+            pair = new Pair(FName,f.getSrcFilename());
+          }
+          if (pair != null)
+            copyList.add(pair);
+        }
       }
     }
     if (includesList.size() > 0) {
       // sort the names and remove duplicates
-      CodeUtils.sortListandRemoveDups(includesList);
-      for (String s : includesList) {
-        if (s == null || s.isEmpty()) continue;
+      CodeUtils.sortPairsRemoveDups(includesList);
+      for (Pair px : includesList) {
+        String s = px.getValue1() + px.getValue2();
         includeTemplate = tm.loadTemplate(FONT_INCLUDE_TEMPLATE);
         map.put(INCLUDE_FILE_MACRO, s);
         outputLines = tm.expandMacros(includeTemplate, map);
         tm.codeWriter(sBd, outputLines);
+      }
+    }
+    File inFile = null;
+    File outFile = null;
+    /*
+     * delete any font files we may 
+     * have previously copied
+     */
+		String sHdrPath = cg.getHdrPath();
+		if (sHdrPath == null)
+			sHdrPath = cg.getAppPath();
+    Utils.cleanFolderOfFontHeaders(sHdrPath);
+    /* copy font sources for any fonts 
+     * not included with the chosen graphics package, 
+     * Adafruit_GFX using Google's Noto fonts.
+     */
+    if (copyList.size() > 0 && bCopyFonts) {
+      // sort the names and remove duplicates
+      CodeUtils.sortPairsRemoveDups(copyList);
+      for (Pair px : copyList) {
+        String sIn = px.getValue1();
+        String sOut = px.getValue2();
+        if (sIn.endsWith(".h")) {
+          inFile = new File(sIn);
+          outFile = new File(sHdrPath+sOut); 
+        } else {
+          inFile = new File(sIn);
+          outFile = new File(cg.getAppPath()+sOut); 
+        }
+        Utils.copyFile(inFile, outFile);
       }
     }
   }

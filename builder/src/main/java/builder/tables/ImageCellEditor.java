@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellEditor;
 
 import builder.codegen.CodeGenerator;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.GeneralModel;
 import builder.prefs.GeneralEditor;
 import builder.views.ImagePreviewPanel;
@@ -75,9 +75,6 @@ public class ImageCellEditor extends AbstractCellEditor implements TableCellEdit
   /** The dialog. */
   JDialog dialog;
   
-  /** The common utilities */
-  private CommonUtils cu; 
-
   /** The Constant EDIT. */
   protected static final String EDIT = "edit";
 
@@ -85,7 +82,6 @@ public class ImageCellEditor extends AbstractCellEditor implements TableCellEdit
    * Instantiates a new image cell editor.
    */
   public ImageCellEditor() {
-    cu = CommonUtils.getInstance();
 //    generalModel = (GeneralModel) GeneralEditor.getInstance().getModel();
 
     //This button brings up the file chooser dialog,
@@ -179,7 +175,7 @@ public class ImageCellEditor extends AbstractCellEditor implements TableCellEdit
 //        } else {
           resDir = CodeGenerator.ARDUINO_RES;
 //        }
-        String workingDir = cu.getWorkingDir();
+        String workingDir = Utils.getWorkingDir();
         currentDirectory = new File(workingDir + resDir);
       } else {
         currentDirectory = new File(resDir);

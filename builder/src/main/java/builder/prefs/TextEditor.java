@@ -44,7 +44,7 @@ import builder.models.TextModel;
 public class TextEditor extends ModelEditor {
   
   /** The Constant MY_NODE. */
-  private static final String MY_NODE = "com/impulseadventure/builder/text";
+  public static final String MY_NODE = "com/impulseadventure/builder/text";
   
   /** The Constant TITLE. */
   private static final String TITLE = EnumFactory.TEXT;
@@ -76,8 +76,8 @@ public class TextEditor extends ModelEditor {
     fPrefs = Preferences.userRoot().node(prefNode);
     model = new TextModel();
     model.TurnOffEvents();
-    updateModel();
     model.setFontReadOnly();
+    updateModel();
     System.setErr(System.err);  
   }
 

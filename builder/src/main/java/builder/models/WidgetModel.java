@@ -45,12 +45,13 @@ import builder.Builder;
 import builder.commands.Command;
 import builder.commands.History;
 import builder.commands.PropertyCommand;
-import builder.common.ColorFactory;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.fonts.FontFactory;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -123,7 +124,7 @@ public class WidgetModel extends AbstractTableModel {
   String widgetType; // type is always hidden from user so keep it out of data array
   
   /** The color factory. */
-  ColorFactory cf = null;
+  GUIsliceThemeFactory cf = null;
   
   /** The event. */
   MsgEvent event;
@@ -133,6 +134,10 @@ public class WidgetModel extends AbstractTableModel {
   
   /** Did the model change during this session */
   public boolean bModelChanged = false;
+  
+  public WidgetModel() {
+    cf = GUIsliceThemeFactory.getInstance();
+  }
   
   /**
    * initProp - helper method for loading a set of property attributes.
@@ -274,9 +279,15 @@ public class WidgetModel extends AbstractTableModel {
   }
 
   /**
-   * getValueAt The first three fields of our data array is always hidden so we
+   * getValueAt 
+   * This routine is called by JTable to display values
+   * but we don't want to show read only values to the user.
+   * 
+   * The first three fields of our data array is always hidden so we
    * just add 3 to columnIndex when our property editor asks for a field. This
    * makes our five field table look a two field table.
+   * JTable asks for col 0 we give back PROP_VAL_NAME 
+   * and for col 1 we give back PROP_VAL_VALUE.
    *
    * @param rowIndex
    *          the row index
@@ -286,8 +297,31 @@ public class WidgetModel extends AbstractTableModel {
    * @see javax.swing.table.TableModel#getValueAt(int, int)
    */
   @Override
-  public Object getValueAt(int rowIndex, int columnIndex) {
-    return data[rowIndex][columnIndex+3];
+  public Object getValueAt(int row, int col) {
+    if ((boolean) data[row][PROP_VAL_READONLY] && col == 1) 
+      return "";
+    return data[row][col+3];
+  }
+  
+  /**
+   * getDataValue 
+   * This routine is called by out User Preferences Editors
+   * during updateModel() function. Unlike getValueAt we don't screen
+   * read only fields.
+   * 
+   * The first three fields of our data array is always hidden so we
+   * just add 3 to columnIndex when our property editor asks for a field. 
+   * This makes our five field table look a two field table.
+   *
+   * @param rowIndex
+   *          the row index
+   * @param columnIndex
+   *          the column index
+   * @return the value at
+   * @see javax.swing.table.TableModel#getValueAt(int, int)
+   */
+  public Object getDataValue(int row, int col) {
+    return data[row][col+3];
   }
   
   /**
@@ -757,7 +791,7 @@ public class WidgetModel extends AbstractTableModel {
    */
   public Map<String, String> getMappedProperties(String pageEnum) {
     int def=0;
-    ColorFactory cf = ColorFactory.getInstance();
+    GUIsliceThemeFactory cf = GUIsliceThemeFactory.getInstance();
     FontFactory  ff = FontFactory.getInstance();
     Map<String, String> map = new HashMap<>();
     // start with our page enum
@@ -981,6 +1015,18 @@ public class WidgetModel extends AbstractTableModel {
   }
   
   /**
+   * Sets the read only properties and any other items 
+   * needed at startup.
+   * 
+   * Called by User Preferences ModelEditor on startup Basically this 
+   * replaces a subclassed readModel() since we don't 
+   * serialize User Preferences Models for save and restores.
+   * It's saved wherever java stores UserPrefences (registry for windows).
+   */
+  public void setReadOnlyProperties() {
+  }
+  
+  /**
    * mapMetaIDtoProperty.
    *
    * @param metaID
@@ -1016,6 +1062,15 @@ public class WidgetModel extends AbstractTableModel {
    * @param fireUpdates indicates that we should notify JTable of changes
    */
   public void calcSizes(boolean fireUpdates) {
+    
+  }
+  
+  
+  /**
+   * changeThemeColors
+   * @param theme
+   */
+  public void changeThemeColors(GUIsliceTheme theme) {
     
   }
   
@@ -1063,7 +1118,7 @@ public class WidgetModel extends AbstractTableModel {
           if (src_m.getElementRef() == null || src_m.getElementRef().isEmpty()) {
             data[i][j] = oldData[i][j];
           } else {
-            data[i][j] = CommonUtils.createElemName(dest_m.getKey(), src_m.getElementRef());
+            data[i][j] = Utils.createElemName(dest_m.getKey(), src_m.getElementRef());
           }
         } else {
           data[i][j] = oldData[i][j];

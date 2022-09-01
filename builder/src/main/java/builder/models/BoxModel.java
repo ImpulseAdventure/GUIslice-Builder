@@ -30,6 +30,8 @@ import java.awt.Color;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class BoxModel implements the model for the Box widget.
@@ -43,15 +45,17 @@ public class BoxModel extends WidgetModel {
   private static final long serialVersionUID = 1L;
   static private final int PROP_ROUNDED           = 7;
   static private final int PROP_TOUCH_EN          = 8;
-  static private final int PROP_DRAW              = 9;
-  static private final int PROP_TICKCB            = 10;
-  static private final int PROP_USE_FLASH         = 11;
-  static private final int PROP_FRAME_COLOR       = 12;
-  static private final int PROP_FILL_COLOR        = 13;
-  static private final int PROP_SELECTED_COLOR    = 14;
+  static private final int PROP_FRAME_EN          = 9;
+  static private final int PROP_DRAW              = 10;
+  static private final int PROP_TICKCB            = 11;
+  static private final int PROP_USE_FLASH         = 12;
+  static private final int PROP_FRAME_COLOR       = 13;
+  static private final int PROP_FILL_COLOR        = 14;
+  static private final int PROP_SELECTED_COLOR    = 15;
   
   /** The Property Defaults */
   static public  final Boolean DEF_ROUNDED           = Boolean.FALSE;
+  static public  final Boolean DEF_FRAME_EN          = Boolean.TRUE;
   static public  final Boolean DEF_TOUCH_EN          = Boolean.FALSE;
   static public  final Boolean DEF_DRAW              = Boolean.FALSE;
   static public  final Boolean DEF_TICKCB            = Boolean.FALSE;
@@ -76,11 +80,12 @@ public class BoxModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.BOX;
-    data = new Object[15][5];
+    data = new Object[16][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
+    initProp(PROP_FRAME_EN, Boolean.class, "COM-010", Boolean.FALSE,"Frame Enabled?",DEF_FRAME_EN);
     initProp(PROP_TOUCH_EN, Boolean.class, "COM-016", Boolean.FALSE,"Touch Enabled?",DEF_TOUCH_EN);
     initProp(PROP_DRAW, Boolean.class, "BOX-100", Boolean.FALSE,"Draw Function",DEF_DRAW);
     initProp(PROP_TICKCB, Boolean.class, "BOX-101", Boolean.FALSE,"Tick Function",DEF_TICKCB);
@@ -135,6 +140,15 @@ public class BoxModel extends WidgetModel {
    */
   public boolean isRoundedEn() {
     return ((Boolean) data[PROP_ROUNDED][PROP_VAL_VALUE]).booleanValue();
+  }
+
+  /**
+   * Checks if is frame enabled.
+   *
+   * @return true, if is frame enabled
+   */
+  public boolean isFrameEnabled() {
+    return ((Boolean) data[PROP_FRAME_EN][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -201,4 +215,27 @@ public class BoxModel extends WidgetModel {
     return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
   }
 
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("Box");
+    if (element != null) {
+      data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();
+      data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      fireTableStructureChanged();
+    }
+  }
+  
 }

@@ -29,7 +29,7 @@ AppPublisherURL=https://www.impulseadventure.com
 AppSupportURL=https://github.com/ImpulseAdventure/GUIslice/issues
 AppUpdatesURL=https://github.com/ImpulseAdventure/GUIslice/releases
 DefaultGroupName=GUIslice
-DefaultDirName={code:DefDirRoot}\\GUIsliceBuilder
+DefaultDirName={userdocs}\\GUIsliceBuilder
 DisableDirPage=no
 DisableWelcomePage=no
 DisableProgramGroupPage=yes
@@ -53,53 +53,37 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Dirs]
 Name: "{app}"; 
-Name: "{app}\\projects"; Permissions: everyone-full
 Name: "{app}\\logs"; Permissions: everyone-full
 
 [Files]
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\GUIslice.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\guislicebuilder.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\\tmp\\windows\\GUIsliceBuilder\\release"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\\tmp\\windows\\GUIsliceBuilder\\bin\\*"; DestDir: "{app}\\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\tmp\\windows\\GUIsliceBuilder\\conf\\*"; DestDir: "{app}\\conf"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\tmp\\windows\\GUIsliceBuilder\\legal\\*"; DestDir: "{app}\\legal"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\lib\\*"; DestDir: "{app}\\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\tmp\\windows\\GUIsliceBuilder\\fonts\\*"; DestDir: "{app}\\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\\..\\templates\\*"; DestDir: "{app}\\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\\..\\arduino_res\\*"; DestDir: "{app}\\arduino_res"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\\..\\linux_res\\*"; DestDir: "{app}\\linux_res"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\..\\package\\templates\\*"; DestDir: "{app}\\templates"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\..\\package\\arduino_res\\*"; DestDir: "{app}\\arduino_res"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\..\\package\\linux_res\\*"; DestDir: "{app}\\linux_res"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\\GUIsliceBuilder"; Filename: "{app}\\GUIslice.bat"
-Name: "{commondesktop}\\GUIsliceBuilder"; Filename: "{app}\\GUIslice.bat"; IconFilename: "{app}\\guislicebuilder.ico"; Tasks: desktopicon
+Name: "{commondesktop}\\GUIslice Builder"; Filename: "{app}\\GUIslice.bat"; IconFilename: "{app}\\guislicebuilder.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\\GUIslice.bat"; Description: "{cm:LaunchProgram,GUIsliceBuilder}"; Flags: shellexec postinstall skipifsilent
 
 [Registry]
-; set JAVA_HOME
-Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName:"JAVA_HOME"; ValueData:"{code:GetJavaHome}"; Flags: preservestringtype
 ; set PROJECT DIRECTORY
 Root: HKCU; Subkey: "Software\\JavaSoft\\Prefs\\com\\impulseadventure\\builder\\general-16"; ValueType:string; ValueName:"/Project /Directory"; ValueData:"{code:GetProjectDir}"
 
 [Code]
 var
-  javaPath: String;
-  JavaDirPage: TInputDirWizardPage;
   ProjectDirPage: TInputDirWizardPage;
   S: String;
-
-function InitializeSetup(): Boolean;
-begin
-  javaPath := GetEnv('JAVA_HOME')   
-  
-  if javaPath = '' then begin
-    javaPath := ExpandConstant('C:\\Program Files (x86)\\Arduino\\java');
-  end
-  Result := True;
-end;
-
-function GetJavaHome(Value: string): string;
-begin
-  Result := JavaDirPage.Values[0];
-end;
 
 function GetProjectDir(Value: string): string;
 begin
@@ -111,14 +95,8 @@ end;
 
 procedure InitializeWizard;
 begin
-  JavaDirPage := CreateInputDirPage(wpLicense, 'Set JAVE_HOME to the folder where Java is installed', 
-    'JAVA_HOME can be set to either Arduino IDE Java or Oracle JRE', 
-    'If the default is acceptable, then click Next.', False, '');
-  JavaDirPage.Add('Java Home:');
-  JavaDirPage.Values[0] := javaPath;
-
   ProjectDirPage := CreateInputDirPage(wpLicense, 'Set your Project Folder to where all projects will be kept.', 
-    'Project Folder should be your Arduino Sketchbook Folder or another writeable Folder',
+    'Project Folder should be your Arduino Sketchbook Folder or PlatformIO Projects Folder',
     'Note that this folder can be changed later in the Builder Preferences.'#13#10 +
     'If the default is acceptable, then click Next.', False, '');
   ProjectDirPage.Add('Project Folder:');
@@ -130,10 +108,3 @@ begin
 Result := not (IsAdminLoggedOn or IsPowerUserLoggedOn);
 end;
 
-function DefDirRoot(Param: String): String;
-begin
-if IsRegularUser then
-Result := ExpandConstant('{userdocs}')
-else
-Result := ExpandConstant('{pf}')
-end;

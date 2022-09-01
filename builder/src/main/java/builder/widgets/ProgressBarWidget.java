@@ -28,7 +28,7 @@ package builder.widgets;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.ProgressBarModel;
 
 /**
@@ -50,7 +50,7 @@ public class ProgressBarWidget extends Widget {
    *          the y coordinate position
    */
   public ProgressBarWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new ProgressBarModel();
     model = m;
     super.setXY(model, x, y);

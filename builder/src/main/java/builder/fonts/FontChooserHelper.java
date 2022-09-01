@@ -1,3 +1,28 @@
+/**
+ *
+ * The MIT License
+ *
+ * Copyright 2018-2022 Paul Conti
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ */
 package builder.fonts;
 
 import java.util.ArrayList;
@@ -49,67 +74,11 @@ public class FontChooserHelper {
   }
 
   private void addSizeToList(String key) {
-    /* we get sizes out of order
-     * so sort them as they are added.
-     */
-    
-    int size = Integer.parseInt(key);
-    int compare = 0;
-    boolean bLess = false;
-    int i = 0;
-    for (String s : fontSizeList) {
-      compare = Integer.parseInt(s);
-      if(size < compare) {
-        bLess = true;
-        break;
-      }
-      i++;
-    }
-    if (bLess) 
-      fontSizeList.add(i,key);
-    else
-      fontSizeList.add(key);
+    fontSizeList.add(key);
   }
 
   private void addStyleToList(String key) {
-    /* we get Styles out of order
-     * so sort them as they are added.
-     */
-    int map = mapStyle(key);
-    int compare = 0;
-    boolean bLess = false;
-    int i = 0;
-    for (String s : fontStyleList) {
-      compare = mapStyle(s);
-      if(map < compare) {
-        bLess = true;
-        break;
-      }
-      i++;
-    }
-    if (bLess) 
-      fontStyleList.add(i,key);
-    else
-      fontStyleList.add(key);
-  }
-  
-  /**
-   * mapStyle will map a style to the order we want them displayed
-   * Regular,Bold,Italic,Bold+Italic
-   * @param style
-   * @return sequence number for sorting
-   */
-  private int mapStyle(String style) {
-    switch (style) {
-    case "Bold":
-      return 1;
-    case "Bold+Italic":
-      return 3;
-    case "Italic":
-      return 2;
-    default:
-      return 0;
-    }
+    fontStyleList.add(key);
   }
   
 }

@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -86,10 +86,27 @@ public class PropertyCommand extends Command {
    */
   @Override
   public String toString() {
-    return new String("model: " + model.getKey() + " Property: '"  
+    if (curValue == null && newValue == null) {
+      return new String("model: " + model.getKey() + " Property: '"  
+          +  model.getPropertyName(row) + "' Changed from->" 
+          + "null to->null"
+          + " row=" + row);
+    } else if (curValue != null && newValue == null) {
+      return new String("model: " + model.getKey() + " Property: '"  
+          +  model.getPropertyName(row) + "' Changed from->" 
+          + curValue.toString() + " to->NULL"
+          + " row=" + row);
+    } else if (curValue == null && newValue != null) {
+        return new String("model: " + model.getKey() + " Property: '"  
+            +  model.getPropertyName(row) + "' Changed from->" 
+            + "null" + " to->"
+            + newValue.toString() + " row=" + row);
+    } else {
+        return new String("model: " + model.getKey() + " Property: '"  
         +  model.getPropertyName(row) + "' Changed from->" 
         + curValue.toString() + " to->"
         + newValue.toString() + " row=" + row);
+    }
   }
 
 }

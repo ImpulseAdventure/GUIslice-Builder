@@ -27,10 +27,12 @@ package builder.models;
 
 import java.awt.Color;
 
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
+import builder.themes.GUIsliceThemeFactory;
 
 /**
  * The Class SliderModel implements the model for the Slider widget.
@@ -85,7 +87,7 @@ public class SliderModel extends WidgetModel {
    * Instantiates a new slider model.
    */
   public SliderModel() {
-    cf = ColorFactory.getInstance();
+    cf = GUIsliceThemeFactory.getInstance();
     initProperties();
   }
   
@@ -277,6 +279,37 @@ public class SliderModel extends WidgetModel {
    */
   public Color getSelectedColor() {
     return (((Color) data[PROP_SELECTED_COLOR][PROP_VAL_VALUE]));
+  }
+
+/*
+  static private final int PROP_TICK_COLOR     =14;
+*/
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("Slider");
+    if (element != null) {
+      data[PROP_TRIM][PROP_VAL_VALUE] = element.isTrimEnabled();
+      if (element.getTrimCol() != null)
+        data[PROP_TRIM_COLOR][PROP_VAL_VALUE] = element.getTrimCol();
+      if (element.getTickCol() != null)
+        data[PROP_TICK_COLOR][PROP_VAL_VALUE] = element.getTickCol();
+      if (element.getTickCol() != null)
+        data[PROP_TICK_COLOR][PROP_VAL_VALUE] = element.getTickCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      fireTableStructureChanged();
+    }
   }
 
 }

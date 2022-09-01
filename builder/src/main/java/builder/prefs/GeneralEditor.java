@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,16 +26,15 @@
 package builder.prefs;
 
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import builder.Builder;
 import builder.models.GeneralModel;
-import builder.models.WidgetModel;
 
 /**
  * The Class GeneralEditor manages the user preferences for the builder.
@@ -82,6 +81,10 @@ public class GeneralEditor extends ModelEditor {
     System.setErr(System.err);  
   }
 
+  public void addListener(PreferenceChangeListener pcl) {
+    fPrefs.addPreferenceChangeListener(pcl);
+  }
+  
   /**
    * Sets the model.
    *
@@ -99,45 +102,6 @@ public class GeneralEditor extends ModelEditor {
     super.savePreferences();
   }
   
-  /**
-   * Gets the recent colors.
-   *
-   * @return the recent colors
-   */
-  public String getRecentColors() {
-    return ((GeneralModel) model).getRecentColors();
-  }
-
-  /**
-   * setRecentColors sets the recent colors
-   * called by our color chooser.
-   * @param s
-   */
-  public void setRecentColors(String s) { 
-    ((GeneralModel) model).setRecentColors(s);
-    savePreferences();
-  }
-
-  /**
-   * Gets the recent file list.
-   *
-   * @return the recent file list
-   */
-  public String getRecentFilesList() {
-    return ((GeneralModel) model).getRecentFilesList();
-  }
-
-  /**
-   * setRecentFilesList sets the recent colors
-   * called by our file chooser.
-   * @param s
-   */
-  public void setRecentFilesList(String s) { 
-    ((GeneralModel) model).setRecentFilesList(s);
-    fPrefs.put("Recent Files", (String)s);
-    super.setChanged();
-  }
-
   /**
    * getTitle
    *
@@ -163,7 +127,7 @@ public class GeneralEditor extends ModelEditor {
    * @return the target
    */
   public String getTarget() {
-    return ((GeneralModel) model).getTarget();
+    return ((GeneralModel) model).getTargetPlatform();
   }
   
   /**
@@ -373,39 +337,5 @@ public class GeneralEditor extends ModelEditor {
       e.printStackTrace();
     }
   }
-
- /**
-  * Update model.
-  */
- @Override
- public void updateModel() {
-   model.TurnOffEvents();
-   int rows = model.getPropertyCount();
-   for (int i=0; i<rows; i++) {
-     String key = (String) model.getValueAt(i, WidgetModel.COLUMN_NAME);
-     Object o = model.getValueAt(i, WidgetModel.COLUMN_VALUE);
-     if(o instanceof String) {
-       model.changeValueAt(fPrefs.get(key, (String)o), i);
-     } else if(o instanceof Integer) {
-       int def = ((Integer)o).intValue();
-       int value = fPrefs.getInt(key, def);
-       if (value != def)
-         model.changeValueAt(Integer.valueOf(value), i);
-     } else if(o instanceof Boolean) {
-       boolean def = ((Boolean)o).booleanValue();
-       boolean value = fPrefs.getBoolean(key, def);
-       if (value != def)
-         model.changeValueAt(Boolean.valueOf(value), i);
-     } else if (o instanceof Color) {
-       int def = ((Color)o).getRGB();
-       int value = fPrefs.getInt(key, def);
-       if (value != def)
-         model.changeValueAt(new Color(value), i);
-     }
-   }
-   ((GeneralModel) model).setReadOnlyProperties();
-   model.TurnOnEvents();
- }
- 
 
 }

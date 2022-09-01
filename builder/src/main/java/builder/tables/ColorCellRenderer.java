@@ -77,6 +77,9 @@ public class ColorCellRenderer extends JLabel
                           JTable table, Object color,
                           boolean isSelected, boolean hasFocus,
                           int row, int column) {
+    if (!(color instanceof Color)) {
+      return this;
+    }
     Color newColor = (Color)color;
     if (color != null) {
       if (column == 1 && !table.getModel().isCellEditable(row, column)){

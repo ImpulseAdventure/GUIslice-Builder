@@ -34,11 +34,11 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import builder.common.ColorFactory;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.fonts.FontFactory;
+import builder.themes.GUIsliceThemeFactory;
 
 /**
  * The Class GraphModel implements the model for the Graph widget.
@@ -92,7 +92,7 @@ public class GraphModel extends WidgetModel {
    * Instantiates a new graph model.
    */
   public GraphModel() {
-    cf = ColorFactory.getInstance();
+    cf = GUIsliceThemeFactory.getInstance();
     ff = FontFactory.getInstance();
     initProperties();
   }

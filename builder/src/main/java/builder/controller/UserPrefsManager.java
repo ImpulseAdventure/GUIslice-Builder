@@ -72,7 +72,7 @@ public class UserPrefsManager {
   private java.util.List<ModelEditor> prefEditors;
   
   /** The backup data. */
-  private String backupData;
+  private static String backupData = null;
   
   /** The title. */
   private String title;
@@ -175,14 +175,17 @@ public UserPrefsManager(JFrame frame, List<ModelEditor> prefEditors) {
   public void okAction() {
     saveSettings();
     dialog.dispose();
+    backupData = null;
   }
   
   /**
    * Close dialog.
    */
   private void closeDialog(){
-    restore(backupData);
+    if (backupData != null) 
+      restore(backupData);
     dialog.dispose();
+    backupData = null;
   }
 
   /**

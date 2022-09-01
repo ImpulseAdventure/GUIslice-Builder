@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 package builder.models;
 
 import java.awt.Color;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
@@ -34,11 +35,13 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 
 import builder.Builder;
+import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
 import builder.common.EnumFactory;
 import builder.common.ThemeInfo;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
-import builder.fonts.FontPlatform;
+import builder.fonts.FontGraphics;
 
 /**
  * The Class GeneralModel implements the model for the builder.
@@ -53,37 +56,46 @@ public class GeneralModel extends WidgetModel {
   
   /** The Property Index Constants. */
   public static final int PROP_THEME                = 1;
-  public static final int PROP_TARGET               = 2;
-  public static final int DISPLAY_WIDTH             = 3;
-  public static final int DISPLAY_HEIGHT            = 4;
-  public static final int PROP_PROJECT_DIR          = 5;
-  public static final int PROP_TARGET_IMAGE_DIR     = 6;
-  public static final int PROP_BACKGROUND           = 7;
-  public static final int PROP_TRANSPARENCY_COLOR   = 8;
-  public static final int PROP_MARGINS              = 9;
-  public static final int PROP_HSPACING             = 10;
-  public static final int PROP_VSPACING             = 11;
-  public static final int PROP_MAX_STRING           = 12;
-  public static final int PROP_ROTATION             = 13;
-  public static final int PROP_BACKWARD_COMPAT      = 14;
-  public static final int PROP_PRESERVE_BTN_CALLBACKS = 15;
+  public static final int PROP_GUISLICE_THEME       = 2;
+  public static final int PROP_IDE                  = 3;
+  public static final int PROP_PIO_ENV              = 4;
+  public static final int PROP_TARGET               = 5;
+  public static final int DISPLAY_WIDTH             = 6;
+  public static final int DISPLAY_HEIGHT            = 7;
+  public static final int PROP_PROJECT_DIR          = 8;
+  public static final int PROP_TARGET_IMAGE_DIR     = 9;
+  public static final int PROP_BACKGROUND           = 10;
+  public static final int PROP_TRANSPARENCY_COLOR   = 11;
+  public static final int PROP_MARGINS              = 12;
+  public static final int PROP_HSPACING             = 13;
+  public static final int PROP_VSPACING             = 14;
+  public static final int PROP_MAX_STRING           = 15;
+  public static final int PROP_ROTATION             = 16;
+  public static final int PROP_BACKWARD_COMPAT      = 17;
+  public static final int PROP_PRESERVE_BTN_CALLBACKS = 18;
+
   // The following properties are hidden from users
-  public static final int PROP_IMAGE_DIR            = 16; // last folder used to load image
-  public static final int PROP_RECENT_COLORS        = 17; // LRU of recent colors choosen
-  public static final int PROP_RECENT_FILES         = 18; // LRU of recent files choosen
+  // TODO - remove hidden props and create a new model RuntimeModel
+  //        to hold these values
+  public static final int PROP_NUM_HIDDEN           = 7;  // must be set to number hidden props
+  
+  public static final int PROP_IMAGE_DIR            = 19; // last folder used to load image
+
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_SIZE_APP_WIDTH       = 19; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 20; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 21; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 22; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 23; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 24; 
+  public static final int PROP_SIZE_APP_WIDTH       = 20; // Size of App Window 
+  public static final int PROP_SIZE_APP_HEIGHT      = 21; 
+  public static final int PROP_SIZE_TFT_WIDTH       = 22; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 23; 
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 24; // Size of Property View Pane 
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 25; 
   
   /** The Property Defaults */
-  static public  final String  DEF_TARGET              = "arduino";
+  static public  final String  DEF_IDE                 = "Arduino IDE";
+  static public  final String  DEF_TARGET              = "Adafruit_GFX";
+  private static final String  DEF_GUISLICE_DEFAULT_THEME = "GUIslice";
   static public  final Integer DEF_WIDTH               = Integer.valueOf(320);
   static public  final Integer DEF_HEIGHT              = Integer.valueOf(240);
   static public  final Integer DEF_DPI                 = Integer.valueOf(144);
@@ -104,11 +116,29 @@ public class GeneralModel extends WidgetModel {
   /** The theme cell editor. */
   DefaultCellEditor  themeCellEditor;
 
+  /** The cb GUIslice themes. */
+  public static JComboBox<String> cbGUIsliceThemes;
+  
+  /** The GUIslice theme cell editor. */
+  DefaultCellEditor  guisliceThemeCellEditor;
+
+  /** The cb ide. */
+  JComboBox<String> cbIDE;
+  
+  /** The ide cell editor. */
+  DefaultCellEditor ideCellEditor;
+  
   /** The cb target. */
   JComboBox<String> cbTarget;
   
   /** The target cell editor. */
   DefaultCellEditor targetCellEditor;
+  
+  /** The cb target. */
+  JComboBox<String> cbPioEnv;
+  
+  /** The target cell editor. */
+  DefaultCellEditor pioenvCellEditor;
   
   /** The default theme name */
   public static String defThemeName;
@@ -117,7 +147,7 @@ public class GeneralModel extends WidgetModel {
    * Instantiates a new general model.
    */
   public GeneralModel() {
-    initThemes();
+    initComboBoxes();
     initProperties();
   }
   
@@ -127,14 +157,18 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[25][5];
+    data = new Object[26][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Themes","");
-    if (Builder.isMAC) {
-      data[PROP_THEME][PROP_VAL_READONLY]= Boolean.TRUE;
-    }
-    initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Target Platform",DEF_TARGET);
+    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
+//    if (Builder.isMAC) {
+//      data[PROP_THEME][PROP_VAL_READONLY]= Boolean.TRUE;
+//    }
+    initProp(PROP_GUISLICE_THEME, String.class, "GEN-097", Boolean.FALSE,"GUIslice API Theme",
+        DEF_GUISLICE_DEFAULT_THEME);
+    initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);
+    initProp(PROP_PIO_ENV, String.class, "GEN-099", Boolean.TRUE,"PlatformIO default_envs",cbPioEnv.getItemAt(0));
+    initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Graphics Library",DEF_TARGET);
 
     initProp(DISPLAY_WIDTH, Integer.class, "GEN-102", Boolean.FALSE,"TFT Screen Width",DEF_WIDTH);
     initProp(DISPLAY_HEIGHT, Integer.class, "GEN-103", Boolean.FALSE,"TFT Screen Height",DEF_HEIGHT);
@@ -160,9 +194,9 @@ public class GeneralModel extends WidgetModel {
         "Backward Compatibility Mode?",DEF_BACKWARD_COMPAT);
     initProp(PROP_PRESERVE_BTN_CALLBACKS, Boolean.class, "GEN-136", Boolean.FALSE,
         "Preserve Button Callbacks?",Boolean.TRUE);
+
+    // hidden - runtime only properties
     initProp(PROP_IMAGE_DIR, String.class, "GEN-113", Boolean.FALSE,"Last Image Directory Accessed","");
-    initProp(PROP_RECENT_COLORS, String.class, "GEN-111", Boolean.TRUE,"Recent Colors","");
-    initProp(PROP_RECENT_FILES, String.class, "GEN-121", Boolean.TRUE,"Recent Files","");
     initProp(PROP_SIZE_APP_WIDTH, Integer.class,  "GEN-130", Boolean.FALSE,"App Win Width",Integer.valueOf(0));
     initProp(PROP_SIZE_APP_HEIGHT, Integer.class, "GEN-131", Boolean.FALSE,"App Win Height",Integer.valueOf(0));
     initProp(PROP_SIZE_TFT_WIDTH, Integer.class,  "GEN-132", Boolean.FALSE,"TFT Pane Width",Integer.valueOf(0));
@@ -172,11 +206,12 @@ public class GeneralModel extends WidgetModel {
   }
   
   /**
-   * Initializes the themes.
+   * Initializes the combo boxes.
    */
-  protected void initThemes()
+  protected void initComboBoxes()
   {
-    defThemeName = "Flat IntelliJ";
+//    defThemeName = "Flat IntelliJ";
+    defThemeName = "Arc Dark (Material)";
     
     cbThemes = new JComboBox<String>();
     for(ThemeInfo ti : Builder.themes) {
@@ -188,13 +223,30 @@ public class GeneralModel extends WidgetModel {
       defThemeName = UIManager.getSystemLookAndFeelClassName();
     }
     
+    cbGUIsliceThemes = new JComboBox<String>();
+    for (String s : cf.getListofThemes()) {
+      cbGUIsliceThemes.addItem(s);
+    }
+    guisliceThemeCellEditor = new DefaultCellEditor(cbGUIsliceThemes);
+    
+    cbIDE = new JComboBox<String>();
+    cbIDE.addItem(ProjectModel.IDE_ARDUINO);
+    cbIDE.addItem(ProjectModel.IDE_PIO);
+    ideCellEditor = new DefaultCellEditor(cbIDE);
+
     cbTarget = new JComboBox<String>();
     FontFactory ff = FontFactory.getInstance();
-    for (FontPlatform p : ff.getBuilderFonts().getPlatforms()) {
+    for (FontGraphics p : ff.getBuilderFonts().getPlatforms()) {
       cbTarget.addItem(p.getName());
     }
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
+    List<String> envOptions = PlatformIO.getListEnv();
+    cbPioEnv = new JComboBox<String>();
+    for (String env : envOptions) {
+      cbPioEnv.addItem(env);
+    }
+    pioenvCellEditor = new DefaultCellEditor(cbPioEnv);
   }
   
   /**
@@ -207,7 +259,7 @@ public class GeneralModel extends WidgetModel {
    */
   @Override
   public int getRowCount() {
-    return data.length-9;  
+    return data.length-PROP_NUM_HIDDEN;  
   }
 
   /**
@@ -270,50 +322,30 @@ public class GeneralModel extends WidgetModel {
   }
   
   /**
-   * Gets the target.
-   *
-   * @return the target
+   * getGUIsliceThemeName
+   * @return
    */
-  public String getTarget() {
+  public String getGUIsliceThemeName() {
+    return (String) data[PROP_GUISLICE_THEME][PROP_VAL_VALUE];
+  }
+  
+  /**
+   * Gets the target platform
+   *
+   * @return the target platform
+   */
+  public String getTargetPlatform() {
     return (String) data[PROP_TARGET][PROP_VAL_VALUE];
   }
 
-  /**
-   * Gets the recent colors.
-   *
-   * @return the recent colors
-   */
-  public String getRecentColors() {
-    return (String) data[PROP_RECENT_COLORS][PROP_VAL_VALUE];
+  public String getIDE() {
+    return (String) data[PROP_IDE][PROP_VAL_VALUE];
   }
-
-  /**
-   * setRecentColors sets the recent colors
-   * called by our color chooser.
-   * @param s
-   */
-  public void setRecentColors(String s) { 
-    shortcutValue(s, PROP_RECENT_COLORS);
+  
+  public String getPioEnv() {
+    return (String) data[PROP_PIO_ENV][PROP_VAL_VALUE];
   }
-
-  /**
-   * Gets the recent file list.
-   *
-   * @return the recent file list
-   */
-  public String getRecentFilesList() {
-    return (String) data[PROP_RECENT_FILES][PROP_VAL_VALUE];
-  }
-
-  /**
-   * setRecentFilesList sets the recent colors
-   * called by our file chooser.
-   * @param s
-   */
-  public void setRecentFilesList(String s) { 
-    shortcutValue(s, PROP_RECENT_FILES);
-  }
-
+  
   /**
    * Gets the project dir.
    *
@@ -598,11 +630,17 @@ public class GeneralModel extends WidgetModel {
    * @see builder.models.WidgetModel#getEditorAt(int)
    */
   @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_THEME)
+  public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_THEME)
       return themeCellEditor;
-    else if (rowIndex == PROP_TARGET)
+    else if (row == PROP_GUISLICE_THEME)
+      return guisliceThemeCellEditor;
+    else if (row == PROP_IDE)
+      return ideCellEditor;
+    else if (row == PROP_TARGET)
       return targetCellEditor;
+    else if (row == PROP_PIO_ENV)
+      return pioenvCellEditor;
     return null;
   }
 
@@ -620,21 +658,64 @@ public class GeneralModel extends WidgetModel {
     } else {
       data[row][PROP_VAL_VALUE] = value;
     }
+    if (row == PROP_IDE) {
+      if (getIDE().equals(ProjectModel.IDE_PIO)) {
+        if (PlatformIO.isPlatformIO_INI_Present())
+          data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+        else {
+          data[PROP_PIO_ENV][PROP_VAL_VALUE] = (String)cbPioEnv.getItemAt(0);
+          data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+        }
+      } else {
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+      }
+    }
+    if (row == PROP_GUISLICE_THEME) {
+      Controller.startGUIsliceTheme(getGUIsliceThemeName());
+    }    
     fireTableCellUpdated(row, COLUMN_VALUE);
   }
 
   /**
-   * Sets the read only properties and any other items 
-   * needed at startup.
-   * 
-   * Called by GeneralEditor on startup Basically this 
-   * replaces a subclassed readModel() since we don't 
-   * serialize GeneralModel for save and restores.
-   * It's saved wherever java stores UserPrefences (registry for windows).
+   * setReadOnlyProperties
+   *
+   * @see builder.models.WidgetModel#setReadOnlyProperties()
    */
+  @Override
   public void setReadOnlyProperties() {
-    if (getTarget().equals("arduino TFT_eSPI")) {
-      data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
+    if (getTargetPlatform().equals("arduino")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Adafruit_GFX";
+    }
+    if (getTargetPlatform().equals("tft_espi")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "TFT_eSPI";
+    }
+    if (getTargetPlatform().equals("teensy")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "ILI9341_t3";
+    }
+    if (getTargetPlatform().equals("m5stack")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "M5Stack";
+    }
+    if (getTargetPlatform().equals("utft")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "UTFT";
+    }
+    if (getTargetPlatform().equals("linux")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Linux";
+    }
+    if (getTargetPlatform().equals("arduino TFT_eSPI")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "TFT_eSPI";
+    }
+    if (getIDE().equals(ProjectModel.IDE_PIO)) {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+    } else {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+    }
+    if (getIDE().equals(ProjectModel.IDE_PIO)) {
+      if (PlatformIO.isPlatformIO_INI_Present())
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+      else
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+    } else {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
     }
     Builder.CANVAS_WIDTH = getWidth();
     Builder.CANVAS_HEIGHT = getHeight();

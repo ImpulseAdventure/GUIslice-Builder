@@ -1,6 +1,5 @@
 /**
  *
-
  * The MIT License
  *
  * Copyright 2018-2022 Paul Conti
@@ -44,14 +43,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Observable;
-import java.util.Observer;
-/*
-Use these imports instead of Observable and Observer for Java 9 and up.
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
-*/
 
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
@@ -64,9 +57,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
+import javax.swing.SwingWorker;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
+import builder.codegen.PlatformIO;
 import builder.commands.AddWidgetCommand;
 import builder.commands.AlignBottomCommand;
 import builder.commands.AlignCenterCommand;
@@ -86,8 +81,8 @@ import builder.commands.DelWidgetCommand;
 import builder.commands.GroupCommand;
 import builder.commands.History;
 import builder.commands.PasteCommand;
-import builder.common.CommonUtils;
 import builder.common.EnumFactory;
+import builder.common.Utils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
@@ -104,11 +99,11 @@ import builder.prefs.ModelEditor;
 import builder.prefs.NumKeyPadEditor;
 import builder.prefs.TextEditor;
 import builder.prefs.TxtButtonEditor;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeFactory;
 import builder.views.PagePane;
 import builder.views.TreeView;
 import builder.widgets.Widget;
-
-import hu.csekme.RibbonMenu.Util;
 
 /**
  * The Class Controller of the Model View Controller Pattern.
@@ -118,8 +113,7 @@ import hu.csekme.RibbonMenu.Util;
  * 
  */
 public class Controller extends JInternalFrame 
-  implements iSubscriber, Observer {
-// Use PreferenceChangeListener instead of Observer for Java 9 and above
+  implements iSubscriber, PreferenceChangeListener {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
@@ -140,7 +134,7 @@ public class Controller extends JInternalFrame
   private GridEditor gridEditor;
   
   /** The general editor. */
-  private GeneralEditor generalEditor;
+  public static GeneralEditor generalEditor;
   
   /** The str theme. */
   private String strTheme;
@@ -164,7 +158,7 @@ public class Controller extends JInternalFrame
   static ProjectModel pm;
   
   /** The pages. */
-  List<PagePane> pages = new ArrayList<PagePane>();
+  static List<PagePane> pages = new ArrayList<PagePane>();
   
   /** The tabs to pages keys mapping */
   List<String> tabPages = new ArrayList<String>();
@@ -201,15 +195,17 @@ public class Controller extends JInternalFrame
    */
   public void initUI() {
     title = "Simulated TFT Panel";
-    this.generalEditor = GeneralEditor.getInstance();
+    generalEditor = GeneralEditor.getInstance();
     MsgBoard.subscribe(this, "Controller");
 
     // trap frame resizing
     this.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
-        GeneralEditor.getInstance().setTFTWinWidth(getWidth());
-        GeneralEditor.getInstance().setTFTWinHeight(getHeight());
+//          Builder.logger.debug("CHANGED WIDTH: "+getWidth()+" to "+Builder.CANVAS_WIDTH);
+          GeneralEditor.getInstance().setTFTWinWidth(getWidth());
+//            Builder.logger.debug("CHANGED HEIGHT: "+getHeight()+" to "+Builder.CANVAS_HEIGHT);
+            GeneralEditor.getInstance().setTFTWinHeight(getHeight());
       }
     });
 
@@ -217,16 +213,10 @@ public class Controller extends JInternalFrame
     clipboard = new Clipboard ("My clipboard");
     
     // save icons
-//    Dimension iconSz = new Dimension(16,16);
-
-//    ic_page_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/page_32x.png", iconSz);
-//    ic_base_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/basepage_32x.png", iconSz);
-//    ic_popup_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/page/popup_32x.png", iconSz);
-//    ic_project_tab = CommonUtils.getInstance().getResizableSmallIcon("resources/icons/misc/project.png", iconSz);
-    ic_page_tab = Util.accessImageFile("resources/icons/page/page_32x.png", 16,16);
-    ic_base_tab = Util.accessImageFile("resources/icons/page/basepage_32x.png", 16,16);
-    ic_popup_tab = Util.accessImageFile("resources/icons/page/popup_32x.png", 16,16);
-    ic_project_tab = Util.accessImageFile("resources/icons/misc/project.png", 16,16);
+    ic_page_tab = Utils.getIcon("resources/icons/page/page_32x.png", 16,16);
+    ic_base_tab = Utils.getIcon("resources/icons/page/basepage_32x.png", 16,16);
+    ic_popup_tab = Utils.getIcon("resources/icons/page/popup_32x.png", 16,16);
+    ic_project_tab = Utils.getIcon("resources/icons/misc/project.png", 16,16);
     
     tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     tabbedPane.addChangeListener(new ChangeListener() {
@@ -242,9 +232,7 @@ public class Controller extends JInternalFrame
     
     this.add(tabbedPane,BorderLayout.CENTER);
     this.setTitle(title);
-//    CommonUtils cu = CommonUtils.getInstance();
-//    this.setFrameIcon(cu.getResizableSmallIcon("resources/icons/guislicebuilder.png", new Dimension(24,24)));
-    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png", 24,24));
+    this.setFrameIcon(Utils.getIcon("resources/icons/guislicebuilder.png", 24,24));
 //    this.pack();
     this.setVisible(true);
     Builder.logger.debug("New Project");
@@ -349,7 +337,8 @@ public class Controller extends JInternalFrame
   /**
    * Refresh view.
    */
-  public void refreshView() {
+  public static void refreshView() {
+    if (currentPage == null) return;
     currentPage.refreshView();
   }
   
@@ -902,7 +891,7 @@ public class Controller extends JInternalFrame
       String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
       topFrame.setTitle(frameTitle);
     } else {
-      CommonUtils.backupFile(projectFile);
+      Utils.backupFile(projectFile);
     }
     ObjectOutputStream out =  new ObjectOutputStream(new FileOutputStream(projectFile));
     // output current version so we can make changes on future updates
@@ -954,50 +943,109 @@ public class Controller extends JInternalFrame
    *           Signals that an I/O exception has occurred.
    */
   public void saveAsProject(File file) throws IOException {
+    // Test to determine if the user really meant save vs saveas
+    if (projectFile == null) {
+      saveProject(projectFile);
+      return;
+    }
     /* first copy our previous project folder 
      * contents to our new project folder.
      * 
      * Our folder names are simply the name minus the ending ".prj"
      */
-    String sOldName = projectFile.getName();
-    String sNewName = file.getName();
-    String sNewFolder = file.getPath();
-    int n = sNewFolder.indexOf(sNewName);
-    sNewFolder = sNewFolder.substring(0,n-1);
-    String sOldFolder = projectFile.getPath();
-    n = sOldFolder.indexOf(sOldName);
-    sOldFolder = sOldFolder.substring(0,n-1);
-    CommonUtils.copyDirectory(sOldFolder, sNewFolder);
-    /* now since we have copied any existing
-     * <old project name>.ino and <old project name>.h
-     * we need to rename them to our new name.
-     * Of course, we are done if they don't exist.
-     */
-    n = sOldName.indexOf(".prj");
-    sOldName = sOldName.substring(0,n);
-    n = sNewName.indexOf(".prj");
-    sNewName = sNewName.substring(0,n);
-    File header = new File(sNewFolder + System.getProperty("file.separator") + sOldName+"_GSLC.h");
-    File ino = new File(sNewFolder + System.getProperty("file.separator") + sOldName +".ino");
-    File prj = new File(sNewFolder + System.getProperty("file.separator") + sOldName + ".prj");
-    if (header.exists()) {
-      File new_header = new File(sNewFolder + System.getProperty("file.separator") + sNewName+"_GSLC.h");
-      CommonUtils.fileReplaceStr(header, new_header, sOldName,sNewName);
-      header.delete();
-    }
-    if (ino.exists()) { 
-      File new_ino = new File(sNewFolder + System.getProperty("file.separator") + sNewName+".ino");
-      CommonUtils.fileReplaceStr(ino, new_ino, sOldName,sNewName);
-      ino.delete();
-    }
-    if (prj.exists()) {
-      prj.delete();
+    String fileSep = System.getProperty("file.separator");
+    String srcName = projectFile.getName();
+    int n = srcName.indexOf(".prj");
+    srcName = srcName.substring(0,n);
+    String destName = file.getName();
+    n = destName.indexOf(".prj");
+    destName = destName.substring(0,n);
+    
+    String destFolder = file.getPath();
+    n = destFolder.lastIndexOf(destName);
+    destFolder = destFolder.substring(0,n-1);
+    String srcFolder = projectFile.getPath();
+    n = srcFolder.lastIndexOf(srcName);
+    srcFolder = srcFolder.substring(0,n-1);
+    
+    int destIDE = getProjectModel().getIDE_ID();
+    int srcIDE = ProjectModel.ARDUINO_IDE_ID;
+    
+    if (destIDE == ProjectModel.ARDUINO_IDE_ID && srcIDE == ProjectModel.ARDUINO_IDE_ID) {
+      Utils.copyDirectory(srcFolder, destFolder, null);
+
+      File header = new File(destFolder + fileSep + srcName+"_GSLC.h");
+      if (header.exists() && !srcName.equals(destName)) {
+        File new_header = new File(destFolder + fileSep + destName+"_GSLC.h");
+        Utils.fileReplaceStr(header, new_header, srcName,destName);
+        header.delete();
+      }
+      File ino = new File(destFolder + System.getProperty("file.separator") + srcName +".ino");
+      if (ino.exists() && !srcName.equals(destName)) { 
+        File new_ino = new File(destFolder + System.getProperty("file.separator") + destName+".ino");
+        Utils.fileReplaceStr(ino, new_ino, srcName,destName);
+        ino.delete();
+      }
+    } else if (destIDE == ProjectModel.PIO_IDE_ID && srcIDE == ProjectModel.PIO_IDE_ID) {
+      Utils.copyDirectory(srcFolder, destFolder, null);
+      File header = new File(destFolder + fileSep + "include" + fileSep + srcName+"_GSLC.h");
+      if (header.exists() && !srcName.equals(destName)) {
+        File new_header = new File(destFolder + fileSep + destName+"_GSLC.h");
+        Utils.fileReplaceStr(header, new_header, srcName,destName);
+        header.delete();
+      }
+      File app = new File(srcFolder + fileSep + "src" + fileSep + "main.cpp");
+      if (app.exists() && !srcName.equals(destName)) { 
+        File new_cpp = new File(destFolder + fileSep + "src" + fileSep + "main.cpp");
+        Utils.fileReplaceStr(app, new_cpp, srcName,destName);
+        app.delete();
+      }
+    } else if (destIDE == ProjectModel.PIO_IDE_ID && srcIDE == ProjectModel.ARDUINO_IDE_ID) {
+      PlatformIO.makePIOFileStruct(destFolder);
+      String destHeaderFolder = destFolder + fileSep + "include";
+      List<String> hList= new ArrayList<String>();
+      hList.add(".h");
+      Utils.copyDirectory(srcFolder, destHeaderFolder, hList);
+      File srcHeader = new File(destFolder + fileSep + "include" + fileSep + srcName+"_GSLC.h");
+      if (srcHeader.exists() && !srcName.equals(destName)) {
+        File destHeader = new File(destFolder + fileSep + "include" + fileSep + destName+"_GSLC.h");
+        Utils.fileReplaceStr(srcHeader, destHeader, srcName,destName);
+        srcHeader.delete();
+      }
+      String destSrcFolder = destFolder + fileSep + "src";
+      List<String> cList= new ArrayList<String>();
+      cList.add(".c");
+      cList.add(".cpp");
+      cList.add(".ino");
+      Utils.copyDirectory(srcFolder, destSrcFolder, cList);
+      File ino = new File(destFolder + fileSep + "src" + fileSep + srcName + ".ino");
+      if (ino.exists()) { 
+        File new_cpp = new File(destFolder + fileSep + "src" + fileSep + "main.cpp");
+        Utils.fileReplaceStr(ino, new_cpp, srcName,destName);
+        ino.delete();
+      }
+      PlatformIO.createIniFile(destFolder);
+    } else if (destIDE == ProjectModel.ARDUINO_IDE_ID && srcIDE == ProjectModel.PIO_IDE_ID) {
+      String oldFolder = srcFolder + fileSep + "src";
+      Utils.copyDirectory(oldFolder, destFolder, null);
+      oldFolder = srcFolder + fileSep + "include";
+      Utils.copyDirectory(oldFolder, destFolder, null);
+      File app = new File(destFolder + fileSep + "main.cpp");
+      if (app.exists()) { 
+        File new_ino = new File(destFolder + fileSep + destName+".ino");
+        Utils.fileReplaceStr(app, new_ino, srcName,destName);
+        app.delete();
+      }
+      File ini = new File(destFolder+fileSep+PlatformIO.PLATFORMIO_INI);
+      if (ini.exists()) {
+        ini.delete();
+      }
     }
     saveProject(file);
     closeProject();
     openProject(file);
   }
-  
+ 
   /**
    * Open project.
    *
@@ -1243,18 +1291,11 @@ public class Controller extends JInternalFrame
     prefEditors.add(txtbuttonEditor);
     prefEditors.add(alphakeypadEditor);
     prefEditors.add(numkeypadEditor);
-/*  
- *  Java 9 and up needs addPreferenceChangeListener() instead of addObserver()
- *  and even then only for generalEditor
- */
-//    Preferences.userRoot().node(GeneralEditor.MY_NODE).addPreferenceChangeListener(this);
-    generalEditor.addObserver(this);
-    gridEditor.addObserver(this);
-    boxEditor.addObserver(this);
-    textEditor.addObserver(this);
-    txtbuttonEditor.addObserver(this);
-    alphakeypadEditor.addObserver(this);
-    numkeypadEditor.addObserver(this);
+    /*  
+     *  Java 9 and up needs addPreferenceChangeListener() instead of addObserver()
+     *  and even then only for generalEditor
+     */
+    generalEditor.addListener(this);
     strTheme = generalEditor.getThemeClassName();
     return prefEditors;
   }
@@ -1388,19 +1429,14 @@ public class Controller extends JInternalFrame
     try {
       int oldWidth = Integer.valueOf(txtOldWidth.getText());
       int oldHeight = Integer.valueOf(txtOldHeight.getText());
-      ProjectModel pm = getProjectModel();
-      int newWidth = pm.getWidth();
-      int newHeight = pm.getHeight();
+      int newWidth = Builder.CANVAS_WIDTH;
+      int newHeight = Builder.CANVAS_HEIGHT;
       if (oldWidth == newWidth && oldHeight == newHeight) {
         JOptionPane.showConfirmDialog(null, 
             "Did you forget to first change to a\nnew screen size inside Project Options?\n",
              "Error!",
             JOptionPane.PLAIN_MESSAGE);
-        
-        if (option != JOptionPane.OK_OPTION) {
-          Builder.logger.debug("Scale canceled");
           return;
-        }
       }
       // calcualte our scaling ratios
       double ratioX = (double)newWidth / (double)oldWidth;
@@ -1482,6 +1518,42 @@ public class Controller extends JInternalFrame
     currentPage.refreshView();
   }
   
+  public static void changeGUIsliceTheme(String newTheme) {
+    WidgetModel m = null;
+    GUIsliceTheme theme = GUIsliceThemeFactory.getInstance().findThemeByName(newTheme);
+    if (theme != null) {
+      pm.changeThemeColors(theme);
+      for (PagePane p : pages) {
+        for (Widget w : p.getWidgets()) {
+          m = w.getModel();
+          m.changeThemeColors(theme);
+        }
+      }
+    }
+  }
+  
+  public static void startGUIsliceTheme(String newTheme) {
+    @SuppressWarnings("rawtypes")
+    SwingWorker sw1 = new SwingWorker() {
+
+      @Override
+      protected String doInBackground() throws Exception {
+        changeGUIsliceTheme(newTheme);
+        String res = "Finished";
+        return res;
+      }
+
+      @Override
+      protected void done() {
+        // this method is called when the background
+        // thread finishes execution
+      }
+    };
+
+    // executes the swing worker on worker thread
+    sw1.execute();
+  }
+
   /**
    * updateEvent
    *
@@ -1511,20 +1583,13 @@ public class Controller extends JInternalFrame
   * @param o the class object that changed value
   * @param arg the argument passed by the observable object, if any. (usally null)
   */
+/*
   @Override public void update(Observable o, Object arg) {
 
     if (o == generalEditor) {
       if (!generalEditor.getTarget().equals(getTargetPlatform())) {
         // we need to update our current project
         pm.setTargetPlatform(generalEditor.getTarget());
-      }
-      if (generalEditor.getWidth() != pm.getWidth()) {
-        pm.setWidth(generalEditor.getWidth());
-        refreshView();
-      }
-      if (generalEditor.getHeight() != pm.getHeight()) {
-        pm.setHeight(generalEditor.getHeight());
-        refreshView();
       }
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();
@@ -1539,11 +1604,11 @@ public class Controller extends JInternalFrame
       }
     }
   }
-/* replace update() with this routine for Java 9 and above
+*/
+// replace update() with this routine for Java 9 and above 
+  @Override
   public void preferenceChange(PreferenceChangeEvent evt) {
-    int width, height;
     String key = evt.getKey();
-    String val = evt.getNewValue();
 
     if (key.equals("Target Platform")) {
       if (!generalEditor.getTarget().equals(getTargetPlatform())) {
@@ -1551,12 +1616,11 @@ public class Controller extends JInternalFrame
         pm.setTargetPlatform(generalEditor.getTarget());
       }
     }
-    if (key.equals("Theme")) {
+    if (key.equals("Java Themes")) {
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();
         try { // change look and feel
-          // NOTE: on mac os you can't get here
-          UIManager.setLookAndFeel(generalEditor.getThemeClassName());
+          Builder.setLookAndFeel(generalEditor.getThemeClassName());
           // update components in this application
           SwingUtilities.updateComponentTreeUI(topFrame);
         } catch (Exception exception) {
@@ -1565,7 +1629,7 @@ public class Controller extends JInternalFrame
       }
     }
  }
-*/
+
   /**
    * Execute.
    *

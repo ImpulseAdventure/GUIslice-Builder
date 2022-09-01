@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2019 Paul Conti
+ * Copyright 2019-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,17 +31,14 @@ import java.awt.Graphics;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
-import builder.prefs.GeneralEditor;
+import builder.Builder;
 
 /**
  * The Class SwatchPanel manages recent color selection
@@ -66,11 +63,8 @@ public class SwatchPanel extends JPanel {
   /** number of rows in our recent colors panel  */
   public static final int NROWS = 4;
   
-  /** The general editor. */
-  private GeneralEditor generalEditor;
-  
   /** lru cache of recent colors */
-  ArrayList<Color> lruList;
+  static List<Color> colorList = null;
   
   /** The swatch size. */
   protected Dimension swatchSize;
@@ -88,8 +82,10 @@ public class SwatchPanel extends JPanel {
   private int selCol;
   
   /** The num colors. */
-//  private int numColors;
+  private static final int NUMCOLORS = 16;
 
+  private static Color defaultColor = null;
+  
 //  private Color defaultColor = new Color(230,230,230);
 
   /**
@@ -130,41 +126,23 @@ public class SwatchPanel extends JPanel {
   protected void initValues() {
     swatchSize = new Dimension(NSQUARE, NSQUARE);
     numSwatches = new Dimension(NCOLUMNS, NROWS);
-//    numColors = NCOLUMNS * NROWS;
     gap = new Dimension(1, 1);
-    generalEditor = GeneralEditor.getInstance();
   }
 
   /**
    * Initializes the colors.
    */
-  @SuppressWarnings("unchecked")
   protected void initColors() {
-//    Color defaultColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor", getLocale());
-    String recentColors = generalEditor.getRecentColors();
-    lruList = new ArrayList<Color>();
-    // do we have any user preferences for colors?
-    if (recentColors.length() > 0) {
-      ObjectInputStream in;
-      try {
-        byte[] data = Base64.getDecoder().decode(recentColors);
-        in = new ObjectInputStream(new ByteArrayInputStream(data));
-        lruList = (ArrayList<Color>) in.readObject();
-        in.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
+    if (defaultColor == null) {
+      defaultColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor", getLocale());
+    }
+    if (colorList == null) {
+      colorList = new ArrayList<Color>();
+      // initialize lru with nulls
+      for (int i = 0; i < NUMCOLORS; i++) {
+        colorList.add(null);
       }
     }
-/*
-    else {
-      // initialize lru with default colors
-      for (int i = 0; i < numColors; i++) {
-        lruList.add(defaultColor);
-      }
-    }
-*/
   }
 
   /**
@@ -180,7 +158,7 @@ public class SwatchPanel extends JPanel {
       for (int column = 0; column < numSwatches.width; column++) {
         Color c = getColorForCell(column, row);
         if (c == null) 
-          return;
+          c = defaultColor;
         g.setColor(c);
         int x;
         if (!this.getComponentOrientation().isLeftToRight()) {
@@ -192,7 +170,7 @@ public class SwatchPanel extends JPanel {
         g.setColor(Color.black);
         g.drawLine(x + swatchSize.width - 1, y, x + swatchSize.width - 1, y + swatchSize.height - 1);
         g.drawLine(x, y + swatchSize.height - 1, x + swatchSize.width - 1, y + swatchSize.height - 1);
-
+/*
         if (selRow == row && selCol == column && this.isFocusOwner()) {
           Color c2 = new Color(c.getRed() < 125 ? 255 : 0, c.getGreen() < 125 ? 255 : 0, c.getBlue() < 125 ? 255 : 0);
           g.setColor(c2);
@@ -204,6 +182,7 @@ public class SwatchPanel extends JPanel {
           g.drawLine(x, y, x + swatchSize.width - 1, y + swatchSize.height - 1);
           g.drawLine(x, y + swatchSize.height - 1, x + swatchSize.width - 1, y);
         }
+*/
       }
     }
   }
@@ -280,8 +259,8 @@ public class SwatchPanel extends JPanel {
   private Color getColorForCell(int column, int row) {
     // convert a 2D array index into a 1D index
     int idx = row * NCOLUMNS + column;
-    if (idx>=lruList.size()) return null;
-    return lruList.get(idx);
+    if (idx>=colorList.size()) return null;
+    return colorList.get(idx);
   }
 
   /**
@@ -291,44 +270,43 @@ public class SwatchPanel extends JPanel {
    *          the new most recent color
    */
   public void setMostRecentColor(Color c) {
-    // update our lru but first check and see if the color is already present
-    // if so, remove it then add to front of list
-/*
-    lruList.remove(c);
-    lruList.add(0,c);
-    if (lruList.size() > numColors) {
-      lruList.remove(numColors);
-    }
-*/
-    if (lruList.size() == 0) {
-      lruList.add(c);
-    } else if (!c.equals(lruList.get(0))) {
-      ArrayList<Color> newList = new ArrayList<Color>();
-      newList.add(c);
-      for (Color oldColor : lruList) {
-        if (!c.equals(oldColor)) {
-          newList.add(oldColor);
-        }
+    /* update our colorlist but first check and 
+     * see if the color is already present
+     * if so, just return
+     */
+    if (c == null)
+      return;
+    if (colorList.size() == 0) {
+      // defensive programming, can't or should never get here
+      colorList.add(c);
+      return;
+    } 
+    ListIterator<Color> litr = colorList.listIterator();
+    Color swatch=null;
+    int n = 0;
+    // find first free location
+    while(litr.hasNext()){
+      swatch = litr.next();
+      if (swatch == null) {
+//        Builder.logger.debug("==null");
+        break;
       }
-      lruList.clear();
-      for (Color oldColor : newList) {
-        lruList.add(oldColor);
+//      Builder.logger.debug("n="+n+" swatch: "+swatch.toString()+" c: "+c.toString());
+      if (swatch.getRGB() == c.getRGB()) {
+//        Builder.logger.debug("==c.getRGB()");
+        return;
       }
+      n++;
     }
+    if (n >= NUMCOLORS) {
+      // just replace end of list
+      // TODO - create a hole and push everyone down by one position
+      Builder.logger.debug("add to end");
+      colorList.set(NUMCOLORS-1,c); // can't use add
+    }
+    colorList.set(n,c);
+    Builder.logger.debug("add next");
     repaint();
-    // now push the recent colors panel to user preferences
-    ObjectOutputStream out;
-    try {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      out = new ObjectOutputStream(baos);
-      out.writeObject(lruList);
-      out.close();
-      String recentColors = Base64.getEncoder().encodeToString(baos.toByteArray());
-      generalEditor.setRecentColors(recentColors);
-      generalEditor.savePreferences(); 
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
 }

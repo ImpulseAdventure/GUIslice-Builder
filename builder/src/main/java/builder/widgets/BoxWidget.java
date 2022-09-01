@@ -29,7 +29,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.BoxModel;
 import builder.prefs.BoxEditor;
 
@@ -41,6 +41,8 @@ import builder.prefs.BoxEditor;
  */
 public class BoxWidget extends Widget {
 
+  BoxModel m;
+  
   /**
    * Instantiates a new box widget.
    *
@@ -50,8 +52,9 @@ public class BoxWidget extends Widget {
    *          the y coordinate position
    */
   public BoxWidget(int x, int y) {
-    u = CommonUtils.getInstance();
-    model = new BoxModel();
+    u = Utils.getInstance();
+    m = new BoxModel();
+    model = m;
     super.setXY(model, x, y);
     setUserPrefs(BoxEditor.getInstance().getModel());
   }
@@ -71,12 +74,17 @@ public class BoxWidget extends Widget {
     g2d.setColor(c);
     if (((BoxModel) model).isRoundedEn()) {
       g2d.fillRoundRect(b.x, b.y, b.width, b.height,15,15);
-      g2d.setColor(((BoxModel) model).getFrameColor());
-      g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
     } else {
       g2d.fillRect(b.x, b.y, b.width, b.height);
-      g2d.setColor(((BoxModel) model).getFrameColor());
-      g2d.drawRect(b.x, b.y, b.width, b.height);
+    }
+    if (m.isFrameEnabled()) {
+      if (((BoxModel) model).isRoundedEn()) {
+        g2d.setColor(m.getFrameColor());
+        g2d.drawRoundRect(b.x, b.y, b.width, b.height,15,15);
+      } else {
+        g2d.setColor(m.getFrameColor());
+        g2d.drawRect(b.x, b.y, b.width, b.height);
+      }
     }
     super.drawSelRect(g2d, b);
   }

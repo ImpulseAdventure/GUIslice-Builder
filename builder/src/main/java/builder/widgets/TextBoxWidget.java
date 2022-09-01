@@ -28,7 +28,7 @@ package builder.widgets;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.TextBoxModel;
 
 /**
@@ -48,7 +48,7 @@ public class TextBoxWidget extends Widget {
    *          the y coordinate position
    */
   public TextBoxWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     model = new TextBoxModel();
     super.setXY(model, x, y);
   }

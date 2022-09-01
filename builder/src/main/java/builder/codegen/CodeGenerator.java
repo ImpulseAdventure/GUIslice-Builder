@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ import builder.codegen.pipes.SliderCbPipe;
 import builder.codegen.pipes.SpinnerCbPipe;
 import builder.codegen.pipes.StartupPipe;
 import builder.codegen.pipes.TickCbPipe;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.models.ProjectModel;
 import builder.models.WidgetModel;
@@ -95,7 +95,7 @@ import builder.widgets.Widget;
  * <li>ino2.t for new arduino projects and is the skeleton for the users application
  * <li>ino.t for older arduino projects
  * <li>c.t for linux C skeleton
- * <li>arduino.t for arduino code templates
+ * <li>graphics.t for non-linux code templates
  * <li>linux.t for linux code templates
  * 
  * @author Paul Conti
@@ -106,36 +106,22 @@ public class CodeGenerator {
   /** The instance. */
   private static CodeGenerator instance = null;
 
-  /** The Constant PREFIX. */
-  public final static String PREFIX                 = "//<";
+  public final static String  PREFIX                 = "//<";
   
-  /** The Constant ARDUINO_RES. */
+  public  final static String TEMPLATE_FOLDER        = "templates";
   public  final static String ARDUINO_RES             = "arduino_res";
-  
-  /** The Constant LINUX_RES. */
   public  final static String LINUX_RES               = "linux_res";
-  
-  /** The Constant ARDUINO_TEMPLATE. */
   public  final static String HDR_TEMPLATE            = "hdr.t";
-  
-  /** The Constant ARDUINO_TEMPLATE. */
   public  final static String ARDUINO_TEMPLATE        = "ino2.t";
-  
-  /** The Constant ARDUINO_TEMPLATE. */
   public  final static String ARDUINO_COMPAT_TEMPLATE = "ino.t";
-  
-  /** The Constant LINUX_FILE. */
   public  final static String LINUX_TEMPLATE          = "c.t";
-  
-  /** The Constant ARDUINO_EXT. */
   public  final static String ARDUINO_EXT             = ".ino";
-  
-  /** The Constant HEADER_EXT. */
   public  final static String HEADER_EXT              = "_GSLC.h";
-  
-  /** The Constant LINUX_EXT. */
   public  final static String LINUX_EXT               = ".c";
-
+  public  final static String PIO_APP                 = "main.cpp";
+  public  final static String PIO_TEMPLATE            = "platformio.ini";
+  public  final static String DEFAULT_ENVS            = "default_envs =";
+  
   /** regex pattern */
   private final static Pattern LTRIM = Pattern.compile("^\\s+");
   private final static String EMPTY_STRING = "";
@@ -147,33 +133,42 @@ public class CodeGenerator {
   List<WidgetModel> models;
   
   /** The current project name. */
-  String sProjectName = null;
+  String m_sProjectName = null;
   
   /** The current workflow file name. */
-  String sTemplateFileName = null;
+  String m_sTemplateFileName = null;
   
   /** The current workflow output file name. */
-  String sOutputFileName = null;
+  String m_sOutputFileName = null;
+  
+  /** path to where our C Application will be created */
+  String m_sAppPath = null;
+  
+  /** path to where our Header "*_GSLC.h" for Application will be created */
+  String m_sHdrPath = null;
   
   /** The template manager. */
   TemplateManager tm = null;
   
+  /** Our project model */
+  ProjectModel pm = null;
+  
   /** The background color. */
   Color background;
   
-  /** fsm states */
+  /** finite state machine states */
   protected static final int    ST_UNDEFINED             = 0;
-  protected static final int    ST_LINUX                 = 10;
-  protected static final int    ST_LINUX_NEW             = 11;
-  protected static final int    ST_LINUX_EXISTS          = 12;
-  protected static final int    ST_ARDUINO_COMPAT        = 20;
-  protected static final int    ST_ARDUINO_COMPAT_NEW    = 21;
-  protected static final int    ST_ARDUINO_COMPAT_EXISTS = 22;
-  protected static final int    ST_ARDUINO_HDR           = 30;
-  protected static final int    ST_ARDUINO_HDR_NEW       = 31;
-  protected static final int    ST_ARDUINO_HDR_EXISTS    = 32;
+  protected static final int    ST_LINUX                 = 1;
+  protected static final int    ST_ARDUINO_COMPAT        = 2;
+  protected static final int    ST_ARDUINO_HDR           = 3;
+  protected static final int    ST_PIO                   = 10;
+  protected static final int    ST_PIO_LINUX             = 11;
+  protected static final int    ST_PIO_ARDUINO_COMPAT    = 12;
+  protected static final int    ST_PIO_ARDUINO_HDR       = 13;
   
   protected int m_nState = ST_UNDEFINED;
+  
+  protected static String m_sFileSep = null;
   
   /** The code generation pipe lines. */
   private Pipeline<StringBuilder> workFlow_Linux;
@@ -214,6 +209,7 @@ public class CodeGenerator {
   public static synchronized CodeGenerator getInstance() {
     if (instance == null) {
       instance = new CodeGenerator();
+      CodeGenerator.m_sFileSep = System.getProperty("file.separator");
     }
     // create our pipe line for processing code generation
     instance.appPipe = new AppPipe(instance);
@@ -357,14 +353,24 @@ public class CodeGenerator {
       if(target.equals(ProjectModel.PLATFORM_LINUX)) {
         // do not use header version with linux C files
         m_nState = ST_LINUX;
-        tm.storeTemplates("linux.t");
+        tm.storeTemplatesFromFileName("linux.t");
       } else {
         if (bCompat) {
           m_nState = ST_ARDUINO_COMPAT;
         } else {
           m_nState = ST_ARDUINO_HDR;
         }
-        tm.storeTemplates("arduino.t");
+        tm.storeTemplatesFromFileName("graphics.t");
+      }
+      if (m_nState == 0) {
+        Builder.logger.debug("Code Generation Failed: Graphics Library not defined");
+        JOptionPane.showMessageDialog(null, "Code Generation Failed: Graphics Library not defined", 
+            "Error", JOptionPane.ERROR_MESSAGE);
+      }
+      // adjust for chosen IDE
+      pm = Controller.getProjectModel();
+      if (pm.getIDE().equals(ProjectModel.IDE_PIO)) {
+        m_nState += ST_PIO;
       }
       // do the work
       return doCodeGen(projectFile);
@@ -386,363 +392,229 @@ public class CodeGenerator {
    */
   public String doCodeGen(File projectFile) throws CodeGenException 
   {
-    String sMessage = null;
     StringBuilder sBd = null;
     StringBuilder code = null;
     
     String folder = projectFile.getParent();
     // remove the project extension from our input file
-    sProjectName = projectFile.getName();
-    int n = sProjectName.indexOf(".prj");
-    sProjectName = sProjectName.substring(0,n);
-    String appName = null;
-    String appFullPath = null;
-    String hdrName = null;
-    String hdrFullPath = null;
+    m_sProjectName = projectFile.getName();
+    int n = m_sProjectName.indexOf(".prj");
+    m_sProjectName = m_sProjectName.substring(0,n);
     
     File tmFile = null;
     File appFile = null;
     File hdrFile = null;
     BufferedWriter bw = null;
+
     try {
+      // if we are using PlatformIO IDE we may need to create some directory structure
+      if (m_nState >= 10) {
+        PlatformIO.makePIOFileStruct(folder);
+        PlatformIO.createIniFile(folder);
+      }
+      
+      String appName = createAppName(m_sProjectName);
+      m_sAppPath = createAppPath(folder);
+      String appFullPath = m_sAppPath + appName;
+      String hdrName = createHdrName(m_sProjectName);
+      m_sHdrPath = createHdrPath(folder);
+      String hdrFullPath = m_sHdrPath + hdrName;
+      /* for user's information in case of any errors
+       * we track our input file inside m_sTemplateFileName variable
+       * which will either be the previous C Code app (*.ino), 
+       * or our a template file like ino.t, ino2.t, or c.t
+       */
+      m_sTemplateFileName = appFullPath;
+      m_sOutputFileName = appName;
+      /* does our app c code exist?
+       * NOTE: our *.prj file was already backed up by Controller.save()
+       */
+      appFile = new File(appFullPath);
+      if (appFile.exists()) {
+        boolean bUpgraded = false;
+        /*
+         * One more complication is a possible upgrade of
+         * our single *.ino file needing to be broken up
+         * into two files *.ino and *_GSLC.h
+         */
+        if (m_nState == ST_ARDUINO_HDR) {
+          bUpgraded = modifyAppToUseHdr(folder, appFullPath, hdrFullPath);
+        }
+        if (!bUpgraded) {
+          /*
+           * No upgrade needed so just backup our existing App File
+           */
+          Utils.backupFile(appFile);
+        }
+      } else {
+        /*
+         * since our app doesn't currently exist create a new one
+         * from one of our templates, ino.t, ino2.t or c.t
+         */
+        m_sTemplateFileName = createTemplateName();
+        tmFile = new File(m_sTemplateFileName);
+        Utils.copyFile(tmFile, appFile);
+      }
+      /* now dump our app starting code into a string buffer
+       * so our pipes can process it for code generation
+       */
+      sBd = CodeUtils.copyFileToBuffer(appFile);
+      // run our chosen pipe line
       switch (m_nState) {
+        case ST_PIO_LINUX:
         case ST_LINUX:
-          appName = new String(sProjectName + LINUX_EXT);
-          appFullPath = folder + System.getProperty("file.separator") + appName;
-          sTemplateFileName = appFullPath;
-          /* Do we need to create our application file from templateName?
-           */
-          appFile = new File(appFullPath);
-          if (!appFile.exists()) {
-            String fullPath = CommonUtils.getInstance().getWorkingDir() +
-                "templates" + System.getProperty("file.separator") + LINUX_TEMPLATE;
-            tmFile = new File(fullPath);
-            CommonUtils.copyFile(tmFile, appFile);
-            sTemplateFileName = fullPath;
-          } else {
-            // Make a backup copy of project's file
-            CommonUtils.backupFile(appFile);
-          }
-          sBd = CodeUtils.copyFileToBuffer(appFile);
-          // run our pipe line
-          sTemplateFileName = appFullPath;
-          sOutputFileName = appName;
           code = workFlow_Linux.process(sBd);
-//          bw = new BufferedWriter(new FileWriter(appFile));
           bw = new BufferedWriter(new OutputStreamWriter(
               new FileOutputStream(appFile), "UTF-8"));
           bw.write(code.toString());
-          bw.flush();
-          bw.close();
-          sMessage = new String(appName);
           break;
+        case ST_PIO_ARDUINO_COMPAT:
         case ST_ARDUINO_COMPAT:
-          appName = new String(sProjectName + ARDUINO_EXT);
-          appFullPath = folder + System.getProperty("file.separator") + appName;
-          sTemplateFileName = appFullPath;
-          /* Do we need to upgrade a beta application file?
-           */
-          upgradeBetaApp(appFullPath);
-          /* Do we need to create our application file from templateName?
-           */
-          appFile = new File(appFullPath);
-          if (!appFile.exists()) {
-            String fullPath = CommonUtils.getInstance().getWorkingDir() +
-                "templates" + System.getProperty("file.separator") + ARDUINO_COMPAT_TEMPLATE;
-            tmFile = new File(fullPath);
-            CommonUtils.copyFile(tmFile, appFile);
-            sTemplateFileName = fullPath;
-          } else {
-            // Make a backup copy of project's file
-            CommonUtils.backupFile(appFile);
-          }
-          sBd = CodeUtils.copyFileToBuffer(appFile);
           // run our pipe line
-          sOutputFileName = appName;
           code = workFlow_Compat.process(sBd);
-//          bw = new BufferedWriter(new FileWriter(appFile));
+          bw = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(appFile), "UTF-8"));
+          bw.write(code.toString());
+          break;
+        case ST_PIO_ARDUINO_HDR:
+        case ST_ARDUINO_HDR:
+          /* here we have two files to output
+           * the app file *.ino,*.c, or *.cpp
+           * and the header file *._GSLC.h
+           */
+          code = workFlow_ArduinoIno.process(sBd); 
           bw = new BufferedWriter(new OutputStreamWriter(
               new FileOutputStream(appFile), "UTF-8"));
           bw.write(code.toString());
           bw.flush();
           bw.close();
-          sMessage = new String(appName);
-          break;
-        case ST_ARDUINO_HDR:
-          /* due to my dyslexia I created files with _GLSC.h
-           * instead of _GSLC.h so I check here and delete
-           * them if found.
-           */
-          hdrName = new String(sProjectName + "_GLSC.h");
-          hdrFullPath = folder + System.getProperty("file.separator") + hdrName;
-          hdrFile = new File(hdrFullPath);
-          if (hdrFile.exists()) {
-            hdrFile.delete();
-          }
-          /* Back to business - create app + header pathnames 
-           */
-          appName = new String(sProjectName + ARDUINO_EXT);
-          appFullPath = folder + System.getProperty("file.separator") + appName;
-          hdrName = new String(sProjectName + HEADER_EXT);
-          hdrFullPath = folder + System.getProperty("file.separator") + hdrName;
-          sTemplateFileName = appFullPath;
-          /* Do we need to repair the application file?
-           */
-          removePastSins(appFullPath);
-          /* Do we need to upgrade a beta application file?
-           */
-          upgradeBetaApp(appFullPath);
-          /* now we need to determine if we have a 
-           * older single file that needs upgrading.
-           */
-          modifyAppToUseHdr(folder, appFullPath, hdrFullPath);
-          /* Do we need to create our application file from templateName?
-           */
-          appFile = new File(appFullPath);
-          if (!appFile.exists()) {
-            String name= CommonUtils.getInstance().getWorkingDir() +
-                "templates" + System.getProperty("file.separator") + ARDUINO_TEMPLATE;
-            tmFile = new File(name);
-            CommonUtils.copyFile(tmFile, appFile);
-            sTemplateFileName = name;
-          } else {
-            // Make a backup copy of project's app file
-            CommonUtils.backupFile(appFile);
-          }
+          // finished with app now we deal with our header
           hdrFile = new File(hdrFullPath);
           String hdrTemplate = hdrFullPath;
           if (!hdrFile.exists()) {
-            String name = CommonUtils.getInstance().getWorkingDir() +
-                "templates" + System.getProperty("file.separator") + HDR_TEMPLATE;
+            /* since it doesn't exist we create a fresh copy
+             * from our template HDR_TEMPLATE
+             */
+            String name = Utils.getWorkingDir() +
+                TEMPLATE_FOLDER + m_sFileSep + HDR_TEMPLATE;
             tmFile = new File(name);
-            CommonUtils.copyFile(tmFile, hdrFile);
+            Utils.copyFile(tmFile, hdrFile);
             hdrTemplate = name;
           } else {
             // Make a backup copy of project's header file
-            CommonUtils.backupFile(hdrFile);
+            Utils.backupFile(hdrFile);
           }
-          sBd = CodeUtils.copyFileToBuffer(appFile);
-          // run our pipe line
-          sOutputFileName = appName;
-          code = workFlow_ArduinoIno.process(sBd);
-          bw = new BufferedWriter(new OutputStreamWriter(
-              new FileOutputStream(appFile), "UTF-8"));
-          bw.write(code.toString());
-          bw.flush();
-          bw.close();
           sBd = CodeUtils.copyFileToBuffer(hdrFile);
           // run our pipe line
-          sTemplateFileName = hdrTemplate;  // for any error messages
-          sOutputFileName = hdrName;
+          m_sTemplateFileName = hdrTemplate;  // for any error messages
+          m_sOutputFileName = hdrName;
           code = workFlow_ArduinoHdr.process(sBd);
           bw = new BufferedWriter(new OutputStreamWriter(
               new FileOutputStream(hdrFile), "UTF-8"));
           bw.write(code.toString());
-          bw.flush();
-          bw.close();
-          sMessage = new String(appName + ", " + hdrName);
           break;
       }
-      return sMessage;
+      bw.flush();
+      bw.close();
+      return new String(m_sProjectName + m_sFileSep + appName);
     } catch (IOException e) {
       throw new CodeGenException(e.toString());
     } 
   }
   
-  /**
-   * upgrade our beta version of app to current single file app 
-   * @param appName
-   * @param backupName
-   * @param hdrName
-   * @param bOldApp
-   */
-  public void upgradeBetaApp(String appName) throws CodeGenException, IOException {
-    File appFile = new File(appName);
-    if (!appFile.exists()) {
-      return; // nothing to do here
+  private String createAppName(String m_sProjectName) {
+    String name=null;
+    switch (m_nState) {
+      case ST_LINUX:
+        name = new String(m_sProjectName + LINUX_EXT);
+        break;
+      case ST_ARDUINO_COMPAT:
+      case ST_ARDUINO_HDR:
+        name = new String(m_sProjectName + ARDUINO_EXT);
+        break;
+      case ST_PIO_LINUX:
+      case ST_PIO_ARDUINO_COMPAT:
+      case ST_PIO_ARDUINO_HDR:
+        name = PIO_APP;
+        break;
     }
-    BufferedReader br;
-    BufferedWriter bwA;
-    String APP_TAG = new String(Tags.TAG_PREFIX + Tags.APP_TAG + Tags.TAG_SUFFIX_START);
-    String FILE_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_START);
-    String FILE_END_TAG = new String(Tags.TAG_PREFIX + Tags.FILE_TAG + Tags.TAG_SUFFIX_END);
-    String FONTS_TAG = new String(Tags.TAG_PREFIX + Tags.FONTS_TAG + Tags.TAG_SUFFIX_START);
-    String INCLUDES_TAG = new String(Tags.TAG_PREFIX + Tags.INCLUDES_TAG + Tags.TAG_SUFFIX_START);
-    String INCLUDES_END_TAG = new String(Tags.TAG_PREFIX + Tags.INCLUDES_TAG + Tags.TAG_SUFFIX_END);
-    String CHECKBOXCB_TAG = new String(Tags.TAG_PREFIX + Tags.CHECKBOXCB_TAG + Tags.TAG_SUFFIX_START);
-    String CHECKBOXCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.CHECKBOXCB_TAG + Tags.TAG_SUFFIX_END);
-    String KEYPADCB_TAG = new String(Tags.TAG_PREFIX + Tags.KEYPADCB_TAG + Tags.TAG_SUFFIX_START);
-    String KEYPADCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.KEYPADCB_TAG + Tags.TAG_SUFFIX_END);
-    String SPINNERCB_TAG = new String(Tags.TAG_PREFIX + Tags.SPINNERCB_TAG + Tags.TAG_SUFFIX_START);
-    String SPINNERCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.SPINNERCB_TAG + Tags.TAG_SUFFIX_END);
-    String LISTBOXCB_TAG = new String(Tags.TAG_PREFIX + Tags.LISTBOXCB_TAG + Tags.TAG_SUFFIX_START);
-    String LISTBOXCB_END_TAG = new String(Tags.TAG_PREFIX + Tags.LISTBOXCB_TAG + Tags.TAG_SUFFIX_END);
-    String STARTUP_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_START);
-    String STARTUP_END_TAG = new String(Tags.TAG_PREFIX + Tags.STARTUP_TAG + Tags.TAG_SUFFIX_END);
-    
-    try {
-      br = new BufferedReader(
-          new InputStreamReader(
-              new FileInputStream(appFile), "UTF8"));
-
-      String backupName = "";
-      String sTestTag = "";
-      String line = "";
-
-      line = br.readLine();
-      /*
-       * we have three conditions here 
-       * 1- line == "//<App !Start!>" no upgrade needed
-       * 2- line == "//<File !Start!>" upgrade may be needed, look deeper 
-       * 3- line not equal to either - needs upgrade
-       */
-      if (line.equals(APP_TAG)) {
-        br.close();
-        return;
-      }
-      if (line.equals(FILE_TAG)) {
-        /* We need to look deeper, search for INCLUDES_TAG 
-         * If we find it great, no update needed.
-         * If we find FONTS_TAG first we need upgrade
-         */
-        boolean bNeedUpgrade = false;
-        while ((line = br.readLine()) != null) {
-          if (line.equals(INCLUDES_TAG)) {
-            break;
-          }
-          if (line.equals(FONTS_TAG)) {
-            bNeedUpgrade = true;
-            break;
-          }
-        }
-        if (!bNeedUpgrade) {
-          br.close();
-          return;
-        }
-      } 
-      // We need to upgrade so first make a backup copy of app file
-      br.close();
-      backupName = new String(appName + ".beta");
-      File backupFile = new File(backupName);
-      appFile.renameTo(backupFile);
-      br = new BufferedReader(
-          new InputStreamReader(
-              new FileInputStream(backupFile), "UTF8"));
-      appFile = new File(appName);
-      bwA = new BufferedWriter(new OutputStreamWriter(
-          new FileOutputStream(appFile), "UTF-8"));
-      line = br.readLine();
-      if (!line.equals(FILE_TAG)) {
-        bwA.write(FILE_TAG);
-        bwA.newLine();
-        bwA.write(line);
-        bwA.newLine();
-        while ((line = br.readLine()) != null) {
-          if (line.isEmpty())
-            break;
-          bwA.write(line);
-          bwA.newLine();
-        }
-        bwA.write(FILE_END_TAG);
-        bwA.newLine();
-        bwA.newLine();
-      } 
-
-      while ((line = br.readLine()) != null) {
-        if (line.equals("#include \"GUIslice_ex.h\"")) {
-          continue;
-        }
-        if (line.equals("#include <Adafruit_GFX.h>")) {
-          bwA.write(line);
-          bwA.newLine();
-          bwA.newLine();
-          bwA.write(INCLUDES_TAG);
-          bwA.newLine();
-          bwA.write(INCLUDES_END_TAG);
-          bwA.newLine();
-          bwA.newLine();
-          continue;
-        }
-        if (line.equals("// Common Button callback")) {
-          bwA.write(line);
-          bwA.newLine();
-          break;
-        }
-        bwA.write(line);
-        bwA.newLine();
-      }
-      while ((line = br.readLine()) != null) {
-        if (line.equals("}")) {
-          bwA.write(line);
-          bwA.newLine();
-          break;
-        }
-        bwA.write(line);
-        bwA.newLine();
-      }
-      bwA.newLine();
-      bwA.write(CHECKBOXCB_TAG);
-      bwA.newLine();
-      bwA.write(CHECKBOXCB_END_TAG);
-      bwA.newLine();
-
-      bwA.write(KEYPADCB_TAG);
-      bwA.newLine();
-      bwA.write(KEYPADCB_END_TAG);
-      bwA.newLine();
-
-      bwA.write(SPINNERCB_TAG);
-      bwA.newLine();
-      bwA.write(SPINNERCB_END_TAG);
-      bwA.newLine();
-
-      bwA.write(LISTBOXCB_TAG);
-      bwA.newLine();
-      bwA.write(LISTBOXCB_END_TAG);
-      bwA.newLine();
-
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals("InitGUI();")) {
-          bwA.write(line);
-          bwA.newLine();
-          bwA.newLine();
-          bwA.write(STARTUP_TAG);
-          bwA.newLine();
-          bwA.write(STARTUP_END_TAG);
-          bwA.newLine();
-          break;
-        }
-        bwA.write(line);
-        bwA.newLine();
-      }
-      // remove Quick_Access section
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals("//<Quick_Access !Start!>")) {
-          break;
-        }
-        bwA.write(line);
-        bwA.newLine();
-      }
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.equals("//<Quick_Access !End!>")) {
-          break;
-        }
-      }
-      // finish up by copying everything left over
-      while ((line = br.readLine()) != null) {
-        bwA.write(line);
-        bwA.newLine();
-      }
-      br.close();
-      bwA.close();
-    } catch (IOException e) {
-      throw new CodeGenException("IOException converting beta App: " + e.toString());
-    }
+    return name;
   }
 
+  private String createHdrName(String m_sProjectName) {
+    String name=null;
+    switch (m_nState) {
+      case ST_LINUX:
+        break;
+      case ST_ARDUINO_COMPAT:
+        break;
+      case ST_ARDUINO_HDR:
+      case ST_PIO_LINUX:
+      case ST_PIO_ARDUINO_COMPAT:
+      case ST_PIO_ARDUINO_HDR:
+        name = new String(m_sProjectName + HEADER_EXT);
+        break;
+    }
+    return name;
+  }
+  
+  private String createTemplateName() {
+    String fullPath = null;
+    String wdPath = Utils.getWorkingDir() + TEMPLATE_FOLDER + m_sFileSep;
+    switch (m_nState) {
+      case ST_LINUX:
+      case ST_PIO_LINUX:
+        fullPath = wdPath + LINUX_TEMPLATE;
+        break;
+      case ST_ARDUINO_COMPAT:
+      case ST_PIO_ARDUINO_COMPAT:
+        fullPath = wdPath + ARDUINO_COMPAT_TEMPLATE;
+      case ST_ARDUINO_HDR:
+      case ST_PIO_ARDUINO_HDR:
+        fullPath = wdPath + ARDUINO_TEMPLATE;
+        break;
+  }
+    return fullPath;
+  }
+
+  private String createAppPath(String folder) {
+    String name=null;
+    switch (m_nState) {
+      case ST_LINUX:
+      case ST_ARDUINO_COMPAT:
+      case ST_ARDUINO_HDR:
+        name = folder + m_sFileSep;
+        break;
+      case ST_PIO_LINUX:
+      case ST_PIO_ARDUINO_COMPAT:
+      case ST_PIO_ARDUINO_HDR:
+        name = folder + m_sFileSep + "src" + m_sFileSep;
+        break;
+    }
+    return name;
+  }
+
+  private String createHdrPath(String folder) {
+    String name=null;
+    switch (m_nState) {
+      case ST_LINUX:
+        break;
+      case ST_ARDUINO_COMPAT:
+        break;
+      case ST_ARDUINO_HDR:
+        name = folder + m_sFileSep;
+        break;
+      case ST_PIO_LINUX:
+        break;
+      case ST_PIO_ARDUINO_COMPAT:
+        break;
+      case ST_PIO_ARDUINO_HDR:
+        name = folder + m_sFileSep + "include" + m_sFileSep;
+        break;
+    }
+    return name;
+  }
+  
   /**
    * Modify the application to use a header
    * instead of a single file, if necessary
@@ -751,10 +623,14 @@ public class CodeGenerator {
    * @param appName
    * @param hdrName
    */
-  public void modifyAppToUseHdr(String folder, String appName, String hdrName) throws CodeGenException {
+  public boolean modifyAppToUseHdr(String folder, String appName, String hdrName) throws CodeGenException {
     File appFile = new File(appName);
     if (!appFile.exists()) {
-      return; // nothing to do here
+      return false; // nothing to do here
+    }
+    File hdrFile = new File(hdrName);
+    if (hdrFile.exists()) {
+      return false; // nothing to do here
     }
     /*
      * It exists so we need to read the first line. It will tell us if we need to
@@ -792,10 +668,11 @@ public class CodeGenerator {
         }
       }
       br.close();
-      return;
+      return true;
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return false;
   }
 
   /**
@@ -995,128 +872,6 @@ public class CodeGenerator {
   }
 
   /**
-   * remove past sins to create the new app file.
-   * Over time we have made few mistakes that need cleaning up.
-   * This routine will scan and repair them for future use.
-   * It will first check the builder version number and if its
-   * 14 or higher we do nothing. Otherwise we do a full scan
-   * and if we don't find anything, great we just bail out.
-   * Once we find the first problem we stop scanning and make
-   * a backup copy with the extension ".bad" and then make our 
-   * repairs to a new file with original appName.
-   * 
-   * @param appName
-   */
-  public void removePastSins(String appName) throws CodeGenException, IOException {
-    String PROGMEM_ELEMREF_ERROR1  =
-        "gslc_tsElem* pElem = pElemRef->pElem;";
-    String PROGMEM_ELEMREF_ERROR2 =
-        "gslc_tsElem*    pElem     = pElemRef->pElem;";
-    String PROGMEM_ELEMREF_FIX  =
-        "  gslc_tsElem* pElem = gslc_GetElemFromRef(&m_gui,pElemRef);";
-    
-    File appFile = new File(appName);
-    if (!appFile.exists()) return;
-    BufferedWriter bwA = null;
-    BufferedReader br;
-    try {
-      br = new BufferedReader(
-          new InputStreamReader(
-              new FileInputStream(appFile), "UTF8"));
-      String line = "";
-      line = br.readLine();
-      if (!(line.startsWith("//<App") || line.startsWith("//<File"))) {
-        // not sure what we have here so bail
-        br.close();
-        return;
-      }
-      line = br.readLine();
-      if (!line.startsWith("// FILE:")) {
-        br.close();
-        return;
-      }
-      line = br.readLine();
-      if (!line.startsWith("// Created")) {
-        br.close();
-        return;
-      }
-      /* now we can check version number
-       * 14 or greater and we have nothing further to do.
-       * we will treat it as 9.99 number and ignore the final .b999
-       */
-      String sVersion;
-      int n = line.indexOf("[");
-      sVersion = line.substring(n+1, n+5);
-      float version = Float.parseFloat(sVersion);
-      if (version >= 0.14) {
-        br.close();
-        return;
-      }
-      // first scan for errors if none found bail.
-      boolean bFoundError = false;
-      String sTestTag = "";
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.startsWith("#include")) {
-          if(sTestTag.endsWith("_GLSC.h\"")) {
-            bFoundError = true;
-            break;
-          }
-        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR1)) {
-          bFoundError = true;
-          break;
-        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR2)) {
-          bFoundError = true;
-          break;
-        }
-      }
-      br.close();
-      if (!bFoundError) {
-        return;
-      }
-      // found errors so we need to create a backup and fix them.
-      String backupName = new String(appName + ".bad");
-      File backupFile = new File(backupName);
-      appFile.renameTo(backupFile);
-      br = new BufferedReader(
-          new InputStreamReader(
-              new FileInputStream(backupFile), "UTF8"));
-      appFile = new File(appName);
-      bwA = new BufferedWriter(new OutputStreamWriter(
-          new FileOutputStream(appFile), "UTF-8"));
-      String line2 = "";
-      // now fix the errors
-      while ((line = br.readLine()) != null) {
-        sTestTag = LTRIM.matcher(line).replaceAll(EMPTY_STRING);
-        if (sTestTag.startsWith("#include")) {
-          if(sTestTag.endsWith("_GLSC.h\"")) {
-            n = line.indexOf("_GLSC.h");
-            line2 = line.substring(0,n) + "_GSLC.h\"";
-            bwA.write(line2);
-            bwA.newLine();
-          } else {
-            bwA.write(line);
-            bwA.newLine();
-          }
-        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR1)) {
-          bwA.write(PROGMEM_ELEMREF_FIX);
-          bwA.newLine();
-        } else if (sTestTag.equals(PROGMEM_ELEMREF_ERROR2)) {
-          bwA.write(PROGMEM_ELEMREF_FIX);
-          bwA.newLine();
-        } else {
-          bwA.write(line);
-          bwA.newLine();
-        }
-      }
-      br.close();
-      bwA.close();
-    } catch (IOException e) {
-      throw new CodeGenException("removePastSins IOException: " + e.toString());
-    }
-  }
-
-  /**
    * Gets the pages.
    *
    * @return the pages
@@ -1140,7 +895,7 @@ public class CodeGenerator {
    * @return the project name
    */
   public String getProjectName() {
-    return sProjectName;
+    return m_sProjectName;
   }
   
   /**
@@ -1149,7 +904,7 @@ public class CodeGenerator {
    * @return the project template
    */
   public String getTemplateName() {
-    return sTemplateFileName;
+    return m_sTemplateFileName;
   }
   
   /**
@@ -1158,7 +913,7 @@ public class CodeGenerator {
    * @return the project template
    */
   public String getOutputName() {
-    return sOutputFileName;
+    return m_sOutputFileName;
   }
   
   /**
@@ -1169,5 +924,24 @@ public class CodeGenerator {
   public TemplateManager getTemplateManager() {
     return tm;
   }
+
+  /**
+   * get the path to where our application will store C source code
+   * This varies according to IDE in use. 
+   * PlatformIO for example uses "src" folder.
+   * @return Application Path
+   */
+  public String getAppPath() {
+    return m_sAppPath;
+  }
   
+  /**
+   * get the path to where our application will store H header source code
+   * This varies according to IDE in use.
+   * PlatformIO for example uses "include" folder.
+   * @return Header path 
+   */
+  public String getHdrPath() {
+    return m_sHdrPath;
+  }
 }

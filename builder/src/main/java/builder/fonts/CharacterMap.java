@@ -314,17 +314,26 @@ public class CharacterMap extends JDialog {
   private void updateFont() {
     currentCharacter = null;
     int fontSz = 12;
+    int fontSzInc = 2;
+    String fontStyle = FontItem.PLAIN;
     if (inFont instanceof FontTtf || inFont instanceof FontVLW) {
       fontSz = 20;
+      fontSzInc = 4;
     }
-    font = ff.getFontbySizeStyle(currentName, fontSz, FontItem.PLAIN);
+    if (inFont != null) {
+      fontStyle = inFont.getFontItem().getLogicalStyle();
+      if (inFont.getFontItem().getLogicalSizeAsInt()+fontSzInc >= fontSz) {
+        fontSz = inFont.getFontItem().getLogicalSizeAsInt();
+      }
+    }
+    font = ff.getFontbySizeStyle(currentName, fontSz, fontStyle);
+    if (font == null)
+      font = ff.getFontbySizeStyle(currentName, fontSz, FontItem.PLAIN);
     if (font == null)
       font = ff.getFontbySizeStyle(currentName, fontSz, FontItem.BOLD);
     if (font == null) {
       JOptionPane.showMessageDialog(null, 
-          "Sorry, CharacterMap can only display Font Families with fonts size "
-          + Integer.valueOf(fontSz)
-          + " or less", 
+          "Sorry, CharacterMap can't read this Font",
           "ERROR",
           JOptionPane.ERROR_MESSAGE);
       bValidFont = false;
@@ -343,7 +352,7 @@ public class CharacterMap extends JDialog {
     txtCharacters.setFontTFT(ff, font);
     characterList.clear();
     MAXCODEPOINT = 255;
-    if (bTrueTypeFont) MAXCODEPOINT = Short.MAX_VALUE;
+    if (bTrueTypeFont) MAXCODEPOINT = Short.MAX_VALUE * 2;
     Builder.logger.debug(String.format("MAXCODEPOINT: %d",MAXCODEPOINT));
     String testCh = null;
     Point p;
@@ -391,7 +400,8 @@ public class CharacterMap extends JDialog {
    */
   private void scaleImage(CharacterHelper h) {
       Rectangle r = new Rectangle(0,0,BOX_WIDTH,BOX_HEIGHT);
-      BufferedImage charImage = ff.drawTextImage(FontTFT.ALIGN_CENTER, r, h.ch, font, colLineTxt, colLineTxt, 0);
+//      BufferedImage charImage = ff.drawTextImage(r, h.ch, font, colLineTxt, colLineTxt, 0);
+      BufferedImage charImage = ff.drawPreviewImage(FontTFT.ALIGN_CENTER, r, h.ch, font, colLineTxt, colLineTxt, 0);
       if (charImage == null) return;
       int width = charImage.getWidth(this);
       int height = charImage.getHeight(this);

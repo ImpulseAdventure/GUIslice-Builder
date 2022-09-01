@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ package builder.prefs;
 import java.awt.Color;
 
 /* Remove import Observable for Java 9 and above */
-import java.util.Observable;
+//import java.util.Observable;
 import java.util.prefs.Preferences;
 
 import javax.swing.JComponent;
@@ -55,7 +55,8 @@ import builder.tables.SelectAllCellEditor;
  * 
  */
 /* Remove Observable for Java 9 and above */
-public class ModelEditor extends Observable {
+//public class ModelEditor extends Observable {
+public class ModelEditor {
 
   /** The scroll pane. */
   private JScrollPane scrollPane;
@@ -94,7 +95,9 @@ public class ModelEditor extends Observable {
     DefaultTableCellRenderer checkBoxNonEditableCellRenderer = new NonEditableCellRenderer();
     checkBoxNonEditableCellRenderer.setHorizontalAlignment( SwingConstants.LEFT );
     table.setDefaultRenderer(Boolean.class, checkBoxNonEditableCellRenderer);
-
+    DefaultTableCellRenderer JTextFieldNonEditableCellRenderer = new NonEditableCellRenderer();
+    table.setDefaultRenderer(JTextField.class, JTextFieldNonEditableCellRenderer);
+    
     // Setup editor for our Font cells.
     table.setDefaultEditor(JTextField.class, new FontCellEditor());
 
@@ -164,9 +167,6 @@ public class ModelEditor extends Observable {
         fPrefs.putInt(key, def);
       }
     }
-    /* remove setChanged() and notifyObservers() for Java 9 and above */
-    setChanged();
-    notifyObservers();
   }
 
   /**
@@ -203,9 +203,12 @@ public class ModelEditor extends Observable {
     int rows = model.getPropertyCount();
     for (int i=0; i<rows; i++) {
       String key = (String) model.getValueAt(i, WidgetModel.COLUMN_NAME);
-      Object o = model.getValueAt(i, WidgetModel.COLUMN_VALUE);
+      Object o = model.getDataValue(i, WidgetModel.COLUMN_VALUE);
       if(o instanceof String) {
-        model.changeValueAt(fPrefs.get(key, (String)o), i);
+        String def = ((String)o);
+        String value = fPrefs.get(key, def);
+        if (!value.equals(def))
+          model.changeValueAt(value, i);
       } else if(o instanceof Integer) {
         int def = ((Integer)o).intValue();
         int value = fPrefs.getInt(key, def);
@@ -223,6 +226,7 @@ public class ModelEditor extends Observable {
           model.changeValueAt(new Color(value), i);
       }
     }
+    model.setReadOnlyProperties();
     model.TurnOnEvents();
   }
   

@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b10
+        Ver: 0.17.b12
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published February 25, 2022. Based on GUIslice API Library 0.17.0
+Published April 2022. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -43,24 +43,39 @@ The GUIslice Builder creates a cross-platform desktop application that automates
 
 The net result is that the Builder allows users to layout their UI visually and enables boilerplate GUI code to be generated quickly with a drag-and-drop desktop application and save the user from some of the bookkeeping and potential errors that might otherwise come up.
 
-It generate a skeleton file for the target platform, either 'project.ino' for Arduino IDE, or 'project.c' for linux.
-A 'project_GSLC.h' header file will also be created for Arduino IDE projects but generally, you won't need to view or edit this file.
+It generate a skeleton file for your Graphics Library, either 'project.ino' for Arduino IDE, or main.cpp for PlatformIO, or 'project.c' for Linux.
+A 'project_GSLC.h' header file will also be created for Arduino IDE and PlatformIO IDE projects but generally, you won't need to view or edit this file.
 
-Target Platforms are defined inside builder_fonts.json file, refer to Appendex B Font File Format for more details.
+Graphics packages are defined inside builder_fonts.json file since your chosen package mostly affects 
+font handling. Refer to Appendex B Font File Format for more details.
 
-Currently we ship with these Target Platforms.
-- arduino
-- m5stack
-- teensy
-- tft_espi
-- utft
-- linux
+Currently we ship with support for these Graphic Packages.
+- Adafruit_GFX
+- M5Stack 
+- ILI9341_t3
+- TFT_eSPI
+- UTFT
+- Linux SDL1, SDL2 and TSLIB 
 
-You switch to these using the Project Tab's property view. You can set the default value for new projects inside User Preferences General Tab.  This is available by selecting Edit menu and then Options.
+You switch to these using the E_PROJECT_OPTIONS's property view. You can set the default value for new projects inside User Preferences General Tab.  This is available by selecting Edit menu and then Options.
+<p>
+The Builder supports the Arduino IDE and PlatformIO IDE. You may choose this inside General Tab mentioned above or on 
+a per project basis using the E_PROJECT_OPTIONS tab that appears next to the E_PG_MAIN tab. 
+For more details about PlatformIO support see Chapter 6 - PlatformIO Configuration.
+</p>
 
-It is also possible to add your own platform and fonts by editing builder_fonts.json file. See section 5.6 Fonts and Appendix B Font File Format for more details.
+<P>
+Both the User Preference General Tab and E_PROJECT_OPTIONS Tab allow Users to select a Color Scheme for their projects. 
+See 5.4 GUIslice API Themes for your choices.
+</p>
 
-Within the Arduino platform some UI Elements support Flash based versions that reduce RAM requirements. See section 4.0 for details.
+<p>
+Note it is also possible to add your own fonts by simply dropping them into the correct Builder's font folder. 
+However, Smooth fonts (*.vlw") and Linux fonts would also require you to edit builder_fonts.json file. 
+See section 5.6 Fonts and Appendix B Font File Format for more details.
+</p>
+
+Some MicroControllers like Arduino support UI Elements that are Flash based versions that reduce RAM requirements. See section 4.0 for details.
 
 It should be noted that the Builder makes no attempt to support all GUIslice API calls or UI Elements. Simply a rich enough set to do useful work.  
 
@@ -1594,24 +1609,69 @@ One of the directories created and populated by the builder is called templates.
 
 Files are created here:
 
-- **ino2.t** Arduino `*.ino` Template
-- **hdr.t** Arduino `*_GSLC.h` Template
+- **ino2.t** Template for Arduino IDE `*.ino` and PlatformIO IDE `main.cpp`
+- **hdr.t** Template for `*_GSLC.h` 
 - **c.t** Linux Template
-- **arduino.t** Arduino code blocks
+- **graphics.t** Non Linux code blocks
 - **linux.t** linux code blocks
-- **default_colors.csv**
+- **guislice_colors.csv** mapping of GUIslice color names to RGB colors, like GSLC_COL_BLUE to (0,0,255)
 - **builder_fonts.json**
+- **ino.t** Template used when in General preferences a user has set `Backward Compatibility Mode? = true`
+to avoid a `*_GSLC.h` being created.
 
 See Appendix B for format of the json font file.
 
-The files **ino2.t**, **hdr.t** and **c.t** are the skeleton programs for the supported platforms.  You can edit them to include your name, copyright, and whtaever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
+The files **ino2.t**, **hdr.t**, **ino.t** and **c.t** are the skeleton programs for the supported platforms. You can edit them to include your name, copyright, and whatever else you need.  Just be careful of the code generation tags.  If you delete or modify them the builder will fail to work correctly. 
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-## 5.4 default_colors.cvs
+## 5.4 GUIslice API Themes
 
-This file lists the mapping of colors in RGB format to the GUIslice API names.  For example, rgb (0,0,0) is GSLC_COL_BLACK.  The top 7 rows are the default values the library uses, although these are spread about in the code base.  If you don't like the default color scheme you can use the builder to override them on an individual element basis.  Inside the Properties View will be "Use Default Colors?=true". You simply click the property value to change it to false and you can then edit the Frame, Fill, and Select colors.
+Users can now select a Color Scheme for their GUIslice API UI Elements.
+
+<p>
+The Color Theme is selected inside User Preference General Tab for all new projects and E_PROJECT_OPTIONS Tab for a particular project
+Use the `GUIslice API Theme` property combobox pull-down to make your selection.
+
+You may choose between GUIslice, Arc Dark, Cyan Light, Material Dark, or Solarized themes.
+</p>
+
+![](images/guislice_theme.png)
+![](images/arc_theme.png)
+![](images/cyan_theme.png)
+![](images/material_theme.png)
+![](images/solarized_theme.png)
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+<p>
+The Themes are defined in the file templates/guislice_themes.json which you may edit using a text editor. You can make
+changes or add new themes to this file. An example below for Cyan Light **Box **element is:
+</p>
+```
+		{
+		"themeName": "Cyan Light",
+		"uiElements": 
+		[{
+				"uiElemName": "Page",
+				"fill_col": "0xf2f2f2"   // light gray (242,242,242)
+			},
+			{
+				"uiElemName": "Box",
+				"corners_rounded": true,
+				"frame_en": true,
+				"fill_en": true,
+				"glow_en": false,
+				"frame_col": "0x000000", // black (0,0,0)
+				"glow_col": "0xeef0f4",  // light gray (238,240,244)
+				"fill_col": "0xeef0f4"   // light gray (238,240,244)
+			},
+```
+
+
+
 
 ## 5.5 Images ![](images/controls/image_32x.png)
 
@@ -1650,26 +1710,36 @@ The builder uses one file inside GUIsliceBuilder/templates to define available f
 
 - **builder_fonts.json**
 
-The builder can now actually run the target platform fonts at the actual size as they will appear on your Target TFT Display Screen.
-For this support the actual font C Headers and C files are stored inside the Builder's fonts folder, organized by driver.
+The builder can now actually run the target graphics package fonts at the actual size as they will appear on your Target TFT Display Screen.
+For this support the actual font C Headers and C files are stored inside the Builder's fonts folder, organized by driver. 
+
+A partial Example:
 ```
   | GUIsliceBuilder
    |- fonts
-     |- gfx
+     |- gfx 
        |- FreeMono
          |- BOLD
          |- BOLD_ITALIC
          |- ITALIC
          |- PLAIN
      |- glcd
-     |- t3
+     |- ili9341_t3
        |- Arial
          |- BOLD
          |- PLAIN
-       |- AwesomeF080
-         |- PLAIN
+     |- m5stack
+       |- gfx 
+         |- FreeMono
+           |- BOLD
+           |- BOLD_ITALIC
+           |- ITALIC
+           |- PLAIN
      |- ttf (Place linux true type font files here and add the names to builder_fonts.json)
      |- utft
+		   |- BigFont.c
+			 |- SmallFont.c
+			 |- SevenSegNumFont.c
      |- vlw smooth fonts created by Processing IDE for TFT_eSPI driver
 ```  
 
@@ -1677,24 +1747,30 @@ The Builder ships with FreeFonts, Google's Dosis and Noto(tm) fonts pre-built fo
 copying the headers files from GUIsliceBuilder/fonts/gfx to either libraries Adafruit_GFX/Fonts or TFT_eSPI/Fonts/GFXFF 
 depending upon your target platform.
 
-You may add additional Adafruit compatible fonts and/or Teensy ILI9341_T3 fonts by copying them into the Builder's font folder, GUIsliceBuilder/fonts 
-under either the gfx or t3 folder. You must create a folder that can be used by the Builder as the Font's Family name ie: 'FreeMono'. 
+You may add additional Adafruit compatible fonts, Teensy ILI9341_T3 fonts or UTFT fonts by copying them into the Builder's font folder, GUIsliceBuilder/fonts 
+under the driver folder.  GFX and T3 font support require you to create a folder that can be used by the Builder as the Font's Family name ie: 'FreeMono'. 
 Under this new folder you must create Font Style sub-folders, any combination of BOLD, BOLD_ITALIC, ITALIC, or PLAIN depending upon what fonts you have decided to add.
 
 For Teensy fonts don't forget to copy both the Headers and C files. 
 
 The Builder also supports UTFT fonts that you download from [UTFT Fonts](http://www.rinkydinkelectronics.com/r_fonts.php). 
 
-You do not need to edit the builder_fonts.json file for these new Adafruit GFX, UTFT or T3 fonts, just drop them into the correct folders and restart the Builder.
+You do not need to edit the builder_fonts.json file for these new Adafruit GFX, UTFT or T3 fonts, just drop them into the correct existing folders or create new folders and restart the Builder.
 
-Please remember usage of the fonts require you to also copy them to a folder your C++ IDE can find them in. Example: Adafruit-GFX/Fonts or to TFT_eSPI/Fonts/GFXFF or to your project folder depending upon your driver.
+You **DON'T** **need** to also copy them to a folder your C++ IDE can find them in!** 
 
-VLW smoothfonts do need edits to the builder_fonts.json file to add them. Google's Noto Bold is already 
+The builder is aware of fonts that come standard with your target garphics package and if a font doesn't come with it the Builder will copy the correct files
+to you project folder. If you change fonts between code generation it will also cleanup and remove un-referenced font files it had previously copied.
+
+For example, Adafruit ships Free fonts but only in 9,12,18 and 24 sizes. If you chose say FreeSans size 14 the builder will copy 
+FreeSans14pt7b.h to your project sketch folder and if it becomes un-referenced in your project it will be deleted during a new code generation.
+
+While `*.vlw` smoothfonts do need edits to the builder_fonts.json file to add them. Google's Noto Bold is already 
 supported so you can use its entries as a guide.  Note that you don't place the actual *.vlw fonts in the 
 Builders folders. You place the *.ttf file that you used as input to Processing IDE that created your *.vlw 
-fonts. The Builder can't read the *.vlw files only the TrueType fonts. You will however notice a sub folder 
+fonts. The Builder currently can't read the *.vlw files only the TrueType fonts. You will however notice a sub folder 
 called data where the NotoBold vlw files have been placed as a convenience so you don't need to generate them, 
-just copy to your Arduino project data folder. 
+just copy to your Arduino project `data` folder and upload them to your SPIFFS file system. 
 
 As an example, say you need to support a chinese font called "wqyMicroHei.ttf" and the size 16. You first copy this font to GUIsliceBuilder/fonts/vlw.
 
@@ -1722,12 +1798,12 @@ Then you edit the GUIsliceBuilder/templates/builder_fonts.json file as so:
               "displayName": "NotoSansBold16V",
 ```
 
-If you need to use a font that doesn't fall into the above categories then you will need to tell the Builder to simulate it. 
-This is fairly easy to do but can be a bit fussy. There isn't much error handling so be careful with edits. 
-If an error is detected it will be reported inside GUIsliceBuilder/logs/builder.log. You should get a line number and most likely 
-a cryptic message. For example: saying a name was expected. Look for extra or missing commas ',', brackets ']' or curly braces '}'.
-
-When you add your own fonts there is one additional requirement. For Adafruit GFX fonts you need to create at least one fone size 10 or less, while TrueType, or vlw needs at least one size 18 or less. The Builder requires this for Property Table display of your text fields.
+If you need to use a font that doesn't fall into the above categories then you will need to tell the Builder to simulate it, "categoryName": "FONT_SIM".
+This is fairly easy to do but can be a bit fussy. There isn't much error handling so be careful with edits.
+You will need to study Appendix B to be successful. If you need help or advice simply post to the Builder Github respository's issues section.
+ 
+If an error is detected processing builder_fonts.json it will be reported inside GUIsliceBuilder/logs/builder.log or a crash *.txt file.
+You should get a line number and most likely a cryptic message. For example: saying a name was expected. Look for extra or missing commas ',', brackets ']' or curly braces '}'.
 
 The builder_fonts.json file format is documented in Appendix B.
 
@@ -1736,7 +1812,42 @@ If you edit this file you must restart the Builder it will then use the new font
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
+# 6.0 PlatformIO Configuration
+
+<p>
+Users selecting PlatformIO IDE may either choose one of the pre-configued options provided by GUIsliceBuilder or
+provide their own platformio.ini file. 
+</p>
+
+<p>
+GUIslice API distribution has inside its GUIslice folder a sample
+platformio.ini that you can use as a starting point for edits.  Once you have completed them you simply copy it to
+the Builder's template folder and it will be copied over to your PlatformIO/Projects/appname folder with each code generation. 
+</p>
+
+<p>
+The Builder does provide pre-configured options inside PlatformIO_Config. If the Builder doesn't find a platformio.ini file
+inside its templates folder these options will be presented to you in your Project Options Tab within 
+the `PlatformIO default_envs` property. 
+The Builder will use your choice to create a platformio.ini dynamically for you and copy this to your 
+PlatformIO/Projects/appname folder.  Each of your GUIslice projects may have a different enviroment in this manner. 
+So one project might be for an Arduino Mega while another might be a esp32.
+</p>
+
+<p>
+If you need to edit any files found in PlatformIO_Config I suggest you first copy it to templates/PlatformIO_Custom folder first.
+In this way when you later update GUIsliceBuilder to a newer version your configuration files won't be overwritten.
+</p>
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
 # Appendix A - Acknowledgements
+
+All Copyright Notices are included in Appendix C
 
 ## JRibbonBar Project
 
@@ -1769,6 +1880,9 @@ Tracing of our runtime is provided by the apache library.
 - **log4j-api-2.8.jar**
 - **log4j-core-2.8.jar** 
 
+## bobbylight/RSyntaxTextArea provides Code editing support
+<https://github.com/bobbylight/RSyntaxTextArea>
+
 ## Icon Attribution
 
 Virtually all icon's used by the Builder were created by Paul Conti. However, a small set have been made by other people.
@@ -1796,10 +1910,10 @@ You can add or remove fonts from builder_font.json to support any font that exis
 
 The file is in JSON Format - See RFC 8259. We use Google's GSON to read this file and it is a superset of the json standard.  The most useful of which is that it will take C style comments and ignore them.
 
-The JSON objects that are in this file starts with allFonts which is an array of platformName objects that itself contains an array of categories.  Each cataegory contains a set of font definitions.
+The JSON objects that are in this file starts with allFonts which is an array of graphicPackage objects that itself contains an array of categories.  Each cataegory contains a set of font definitions.
 ```
 allFonts
-  |- platformName
+  |- graphicPackage
     |- categories
       |-fonts
         -font definition
@@ -1808,34 +1922,34 @@ allFonts
       |-fonts
         -font definition
         -font definition
-  |- platformName
+  |- graphicPackage
     |- categories
       |-fonts
 ```
 Please note that object and fields names must match the case shown inside our json file or they will be ignored!
 
-Platform names are mostly used to identify font handling for code generation.
-The current list of platforms supported are:
-- arduino
-- m5stack
-- teensy
-- tft_espi
-- utft
-- linux
+graphicPackage names are mostly used to identify font handling for code generation.
+The current list of graphicPackage supported are:
+- Adafruit_GFX
+- M5Stack
+- ILI9341_t3 (Teensy)
+- TFT_eSPI
+- UTFT
+- Linux
 
-Within the platformName object you may have optionally a set of warning messages to output during code generation. This can be useful if you accidently choose an incorrect GUIslice configuration file inside GUIslice_config.h.
-For example is say you chose platform arduino but you used a TFT_eSPI driver these warning messages would give you a compile time error.
+Within the graphicPackage object you may have optionally a set of warning messages to output during code generation. This can be useful if you accidently choose an incorrect GUIslice configuration file inside GUIslice_config.h.
+For example is say you chose platform Adafruit_GFX but you used a TFT_eSPI driver these warning messages would give you a compile time error.
 ```
 #if defined(DRV_DISP_TFT_ESPI)
   #error Project tab->Target Platform should be tft_espi
 #endif 
 ```
-You simply add them to the warnings array of platformName object like so:
+You simply add them to the warnings array of graphicPackage object like so:
 ```
 {
   "allFonts": [
     {
-      "platformName": "arduino",
+      "graphicPackage": "Adafruit_GFX",
       "warnings": [
          "#if defined(DRV_DISP_TFT_ESPI)",
          "  #error Project tab->Target Platform should be tft_espi",
@@ -1846,7 +1960,7 @@ You may also supply a "dpi": field if you are simulating a font. Usually this is
 
 Example:
 ```
-      "platformName": "linux",
+      "Adafruit_GFX": "Linux",
       "dpi": "72",
       "categories": [
 ```
@@ -1860,23 +1974,11 @@ The Categories supported are:
 - FONT_UTFT which are for the UTFT driver supplied by [UTFT Library](http://www.rinkydinkelectronics.com/library.php?id=51)
 - FONT_VLW which are smoothfonts supported by TFT_eSPI driver. 
 
-The FONT_GFX, FONT_GLCD, FONT_UTFT and FONT_T3 fonts are supported as native fonts. That is the BUilder 
-actually reads and parses the C headers or C files that define the font.  It uses that information 
+The FONT_GFX, FONT_GLCD, FONT_UTFT and FONT_T3 fonts are supported as native fonts. That is the Builder 
+actually reads and parses the C `*.h` headers and/or C `*c` files that define the font.  It uses that information 
 and bitmaps to render the fonts in the TFT Simulation area.  
   
-Categories object supports adding extra include files for its fonts.
-
-Example, say your new font additions require one C File for all of your new fonts and its called My_Fonts.c and since its not a supported font the Builder needs to simulate it.
-```
-        {
-          "categoryName": FONT_SIM,
-          "extraIncludes": [
-            "#include "\"My_Fonts.c\""
-          ],
-```
-Do Note the need to escape the quote marks.
-
-This will cause the code generator to output the `#include "My_Fonts.c"` if one of your new fonts is selected during code generation.
+The graphicPackage object supports adding extra include files.
 
 Just like coding in C or C++ keep your curly braces `{}` and brackets `[]` balanced and keep note of your commas placements. 
 JSON doesn't give much in the way of error checking feedback.
@@ -1886,38 +1988,49 @@ to use Fonts and therefore we use the same names so you can match them to the re
 the Builder to either give you helpful information within the Font Chooser Dialog or to simply be able to 
 display the font within your UI Elements on the TFT Simulation Panel.
 
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
 The fields are:
 
-1.  **fontName** - No Default
+ -  **fontName** - No Default
     refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
-2.  **displayName** - No Default
+ -  **displayName** - No Default
     refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
-3.  **includeFile** - Default: NULL
-    on the arduino platform it points to where to find a font, ex: 'Fonts/FreeSansBold12pt7b.h' or NULL
-4.  **defineFile** - Default: NULL
-    On linux platform it points to the font, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
-5.  **eFontRefType** - Default: GSLC_FONTREF_PTR
+ - **externName** - Default: "NULL"
+    Ex: UTFT package it points to the font storage name "BigFont". Code Generation will then create `extern uint8_t BigFont[];`.
+ - **includeFile** - Default: "NULL"
+    Ex: "FreeSansBold12pt7b.h". This name will have category object parameter includePath added to it during code generation.  
+		Ex: categoryName=FONT_GFX has "includePath": "Fonts/" giving: `#include "Fonts/FreeSansBold12pt7b.h;`.
+ -  **defineFile** - Default: "NULL"
+    On linux platform it points to the font in linux filesystem, Ex: '/usr/share/fonts/truetype/droid/DroidSans.ttf'
+ -  **headerName** - Default: "NULL"
+    Optional. Simple name	of header. Ex: "BigFont.h". Note that BigFont file contains multiple font sizes and entries must be made for each font.
+ -  **srcName** - Default: "NULL"
+    c source file name, Ex: "BigFont.c". Note that BigFont file contains multiple font sizes and entries must be made for each font. 		
+ -  **eFontRefType** - Default: GSLC_FONTREF_PTR
     GUIslice API parameter Font reference type (eg. filename "GSLC_FONTREF_FNAME" or pointer "GSLC_FONTREF_PTR")
-6.  **pvFontRef** - No default
+ -  **pvFontRef** - No Default
     GUIslice API parameter Reference pointer to identify the font. 
     Example: Adafruit FreeFonts would be GSLC_FONTREF_PTR it's "&display name" like "&FreeMono9pt7b" which must be a 
     pointer value to the font bitmap array. TFT_eSPI Smooth Fonts stored in Flash would also be defined this way.
     In the case of SDL mode or TFT_eSPI Smooth Fonts, it is a filepath to the font file.
-7.  **nFontSz** - Default: 1
+ -  **nFontSz** - Default: 1
     GUIslice API parameter Typeface size to use. For Arduino built-in fonts a number from 1 to 5, 
     Most fonts will set this to 1, while in SDL mode its actual logical size of font.
-8.  **logicalFont** - Default: NULL
+ -  **logicalFont** - Default: NULL
     Used only when font type is FONT_SIM. It's the name java needs to use when accessing this font.
     Java ships with five platform independent fonts: Dialog, DialogInput, SansSerif, Serif, and Monospaced. 
     It doesn't have to be a Java builtin font but must be whatever name the operating system uses.
-9.  **logicalFontSize** - No Default
+ -  **logicalFontSize** - No Default
     The size of the Font.
-10. **logicalFontStyle** - No Default
-    The font style, PLAIN, BOLD, ITALIC, BOLD+ITALIC
-11. **fontRefMode** - Default: GSLC_FONTREF_MODE_DEFAULT
+ - **logicalFontStyle** - No Default
+    The font style, PLAIN, BOLD, ITALIC, BOLD_ITALIC
+ - **fontRefMode** - Default: GSLC_FONTREF_MODE_DEFAULT
     This is for drivers that need special handling within GUIslice API. 
 
-If the default value of a font field satisfactory for your font you can simply skip the field.
+If the default value of a font field is satisfactory for your font you can simply skip the field.
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
@@ -2156,6 +2269,40 @@ For example:
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
+
+## bobbylight/RSyntaxTextArea Copyright
+
+Licensed under the BSD 3-Clause "New" or "Revised" License
+
+Copyright (c) 2021, Robert Futrell
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+* Neither the name of the author nor the names of its contributors may
+  be used to endorse or promote products derived from this software
+  without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------------------------------------------
+<div style="page-break-after: always;"></div>
+
 
 # Appendix D - Theme Support
 

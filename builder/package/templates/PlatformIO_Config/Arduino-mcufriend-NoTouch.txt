@@ -1,0 +1,77 @@
+; ---------------------------------------------------------
+; Display: prenticedavid/MCUFRIEND_kbv
+; ---------------------------------------------------------
+[disp-mcufriend]
+lib_deps =
+	Wire
+	adafruit/Adafruit BusIO
+	adafruit/Adafruit GFX Library
+	prenticedavid/MCUFRIEND_kbv
+build_flags =
+
+; ---------------------------------------------------------
+; MCU: "Arduino"
+; - Includes:
+;   - Atmel AVR
+;     - Arduino UNO (board=uno)
+;   - Atmel megaAVR
+;     - ATmega2560 (board=ATmega2560)
+;   - Atmel SAM
+;     - Adafruit Grand Central M4 (board=adafruit_grandcentral_m4)
+;     - Arduino Due (board=due)
+;     - Arduino Zero (board=zero
+;   - etc.
+; ---------------------------------------------------------
+[mcu-Arduino]
+platform = atmelavr
+board = ATmega2560
+framework = arduino
+; Board default is:
+; - upload_protocol = arduino
+; try custom if you get Error: Please specify `upload_port` for environment 
+;upload_port = custom
+upload_protocol = stk500v2
+upload_flags = 
+	-Pusb
+
+[env:Arduino-mcufriend-NoTouch]
+extends = mcu-Arduino
+lib_deps =
+	${disp-mcufriend.lib_deps}
+	GUIslice
+build_flags =
+	${common.build_flags}
+	${disp-mcufriend.build_flags}
+	-DUSER_CONFIG_LOADED
+	-DDRV_DISP_ADAGFX
+	-DDRV_DISP_ADAGFX_MCUFRIEND
+;MCUFRIEND write-only displays may need to force an ID value
+	-DDRV_DISP_ADAGFX_MCUFRIEND_FORCE=0x9481
+	-DDRV_TOUCH_NONE
+	-DADAGFX_PIN_CS=10
+	-DADAGFX_PIN_DC=9
+	-DADAGFX_PIN_RST=0
+	-DADAGFX_SPI_HW=1
+	-DADAGFX_PIN_MOSI=11
+	-DADAGFX_PIN_MISO=12
+	-DADAGFX_PIN_CLK=13
+	-DADAGFX_PIN_SDCS=10
+	-DGSLC_ROTATE=1
+;	-DINIT_MSG_DISABLE	
+	-DDEBUG_ERR=1
+	-DGSLC_FEATURE_COMPOUND=0
+	-DGSLC_FEATURE_XTEXTBOX_EMBED=0
+	-DGSLC_FEATURE_INPUT=0
+	-DGSLC_SD_EN=0
+	-DGSLC_TOUCH_MAX_EVT=1
+	-DGSLC_SD_BUFFPIXEL=50
+	-DGSLC_CLIP_EN=1
+	-DGSLC_BMP_TRANS_EN=1
+	-DGSLC_BMP_TRANS_RGB=0xFF,0x00,0xFF
+	-DGSLC_USE_FLOAT=0
+	-DGSLC_DEV_TOUCH=\"\"
+	-DGSLC_USE_PROGMEM=1
+	-DGSLC_LOCAL_STR=0
+	-DGSLC_LOCAL_STR_LEN=30
+;	-DUSER_CONFIG_INC_FILE
+;	-DUSER_CONFIG_INC_FNAME=\"../configs/ard-shld-mcufriend.h\"

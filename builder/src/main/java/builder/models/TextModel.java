@@ -38,7 +38,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
@@ -47,6 +47,8 @@ import builder.fonts.FontItem;
 import builder.fonts.FontTFT;
 import builder.fonts.InputTextField;
 import builder.tables.TextTFTCellRenderer;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class TextModel implements the model for the Text widget.
@@ -117,8 +119,8 @@ public class TextModel extends WidgetModel {
    */
   public TextModel() {
     ff = FontFactory.getInstance();
-    initProperties();
     initEditors();
+    initProperties();
     calcSizes(false);
   }
   
@@ -138,10 +140,11 @@ public class TextModel extends WidgetModel {
     cbAlign.addItem(FontTFT.ALIGN_BOT_CENTER);
     cbAlign.addItem(FontTFT.ALIGN_BOT_RIGHT);
     alignCellEditor = new DefaultCellEditor(cbAlign);
-    textBox.setFontTFT(ff, null);
+    FontTFT tmpfont = ff.getFont(ff.getDefFontName());
+    textBox.setFontTFT(ff, tmpfont);
     editorText = new DefaultCellEditor(textBox);
     rendererText = new TextTFTCellRenderer();
-    rendererText.setFontTFT(ff, null);
+    rendererText.setFontTFT(ff, tmpfont);
   }
   
   /**
@@ -214,6 +217,34 @@ public class TextModel extends WidgetModel {
   }
   
   /**
+   * setValueAt
+   *
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+   */
+  @Override
+  public void setValueAt(Object value, int row, int col) {
+    if (row == PROP_TEXT_SZ) {
+      try {
+        int size = Integer.parseInt((String) value);
+        if (size <= 0) {
+          JOptionPane.showMessageDialog(null, 
+              "Field Size must be > 0", 
+              "ERROR",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(null, 
+            "Field must be valid integer number", 
+            "ERROR",
+            JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+    }
+    super.setValueAt(value, row, col);
+  }
+
+  /**
    * changeValueAt
    *
    * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)
@@ -256,7 +287,7 @@ public class TextModel extends WidgetModel {
     if (row == PROP_TEXT_SZ) {
       if (getTextStorage() > 0) {
         if (getElementRef().isEmpty()) {
-          setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+          setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
           fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
         }
         calcSizes(true);
@@ -279,7 +310,13 @@ public class TextModel extends WidgetModel {
   @Override
   public void setFontReadOnly() {
     data[PROP_FONT][PROP_VAL_READONLY] = true;
+    data[PROP_TEXT][PROP_VAL_READONLY] = true;
+    data[PROP_ELEMENTREF][PROP_VAL_READONLY] = true;
+    data[PROP_ENUM][PROP_VAL_READONLY] = true;
     data[PROP_FONT][PROP_VAL_VALUE] = "";
+    data[PROP_TEXT][PROP_VAL_VALUE] = "";
+    data[PROP_ELEMENTREF][PROP_VAL_VALUE] = "";
+    data[PROP_ENUM][PROP_VAL_VALUE] = "";
   }
   
   /**
@@ -489,6 +526,8 @@ public class TextModel extends WidgetModel {
       int cp;
       String fontName = getFontDisplayName();
       FontTFT myFont = ff.getFont(fontName);
+      if (myFont == null)
+        return s;
       for (int i = 0; i < len; i++) {
         cp = s.codePointAt(i);
         if (myFont.canDisplay(cp)) {
@@ -508,6 +547,31 @@ public class TextModel extends WidgetModel {
       }
     }
     return ret;
+  }
+  
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("Text");
+    if (element != null) {
+      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isCornersRounded();
+      data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+      if (element.getTextCol() != null)
+        data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      fireTableStructureChanged();
+    }
   }
   
  /**
@@ -563,6 +627,7 @@ public class TextModel extends WidgetModel {
       }
     }
     FontTFT font = ff.getFont(item.getDisplayName());
+    textBox.setFontTFT(ff, font);
     String text = getText();
     if (getTextStorage() > 0) {
       text = "";

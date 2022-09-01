@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -218,16 +218,29 @@ public abstract class FontTFT {
   public abstract void drawString(Graphics2D g2d, Rectangle r, String str, Color colTxt, Color colBg, boolean bClippingEn);
 
   /**
-   * Draw a text string image
-   *
+   * Draw a text string image This routine is used when we need to draw inside a
+   * JTable column or inside our FontChooser dialog.
+   * 
+   * Here we want to fill the entire rectangle not draw the minimum size the text
+   * takes up otherwise inside table columns we end up with, for example, black text
+   * with white background of only the string length of our text while the rest of
+   * the column could and often is a different background. Note that JTable
+   * subclass JLabel which we must use doesn't let us set the background so we
+   * must create a Icon the exact size of the column.
+   * 
    * WARNING: Newlines and Wrap are NOT supported.
    * 
-   * @param r       Rectangle region to contain the text
-   * @param str     String to display
-   * @param colTxt  Color to draw text
-   * @param colBg   Color of background
-   * @param bClippingEn Enable Clipping? true or false
-   * @return Image  a rendered image given a string using this font.
+   * @param r
+   *          Rectangle region to contain the text
+   * @param str
+   *          String to display
+   * @param colTxt
+   *          Color to draw text
+   * @param colBg
+   *          Color of background
+   * @param bClippingEn
+   *          Enable Clipping? true or false
+   * @return Image a rendered image given a string using this font.
    */
   public abstract BufferedImage drawImage(Rectangle r, String str, Color colTxt, Color colBg, boolean bClippingEn);
 

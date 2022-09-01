@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
@@ -41,15 +42,19 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import builder.Builder;
+import builder.codegen.PlatformIO;
 import builder.commands.PropertyCommand;
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
-import builder.fonts.FontPlatform;
+import builder.fonts.FontGraphics;
 import builder.tables.ImageCellEditor;
 import builder.tables.MultiStringsCell;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.MultiStringsCell.MCDialogType;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class ProjectModel implements the model for the builder.
@@ -62,32 +67,45 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID  = 1L;
   
+  /** Target IDE */
+  public static final String IDE_ARDUINO       = "Arduino IDE";
+  public static final String IDE_PIO           = "PlatformIO IDE";
+  public static final int    ARDUINO_IDE_ID    = 1;
+  public static final int    PIO_IDE_ID        = 2;
+  
+
   /** Target Platforms */
-  public static final String PLATFORM_ARDUINO  = "arduino";
-  public static final String PLATFORM_TFT_ESPI = "tft_espi";
-  public static final String PLATFORM_LINUX    = "linux";
-  public static final String PLATFORM_UTFT     = "utft";
+  public static final String PLATFORM_ARDUINO  = "Adafruit_GFX";
+  public static final String PLATFORM_TFT_ESPI = "TFT_eSPI";
+  public static final String PLATFORM_LINUX    = "Linux";
+  public static final String PLATFORM_UTFT     = "UTFT";
+  public static final String PLATFORM_M5STACK  = "M5Stack";
   
   /** The Property Index Constants. */
-  public static final int PROP_TARGET               = 2;
-  public static final int PROP_FONT_LIST            = 3;
-  public static final int DISPLAY_WIDTH             = 4;
-  public static final int DISPLAY_HEIGHT            = 5;
-  public static final int PROP_BACKGROUND           = 6;
-  public static final int PROP_USE_IMAGE_BACKGROUND = 7;
-  public static final int PROP_TARGET_IMAGE_DIR     = 8;
-  public static final int PROP_IMAGE_BACKGROUND_FILE = 9; 
-  public static final int PROP_IMAGE_BACKGROUND_DEFINE    = 10;
-  public static final int PROP_IMAGE_BACKGROUND_MEMORY    = 11;
-  public static final int PROP_IMAGE_BACKGROUND_FORMAT    = 12;
-  public static final int PROP_MARGINS              = 13;
-  public static final int PROP_HSPACING             = 14;
-  public static final int PROP_VSPACING             = 15;
-  public static final int PROP_MAX_STRING           = 16;
-  public static final int PROP_ROTATION             = 17;
+  public static final int PROP_IDE                  = 2;
+  public static final int PROP_PIO_ENV              = 3;
+  private static final String  DEF_GUISLICE_DEFAULT_THEME = "GUIslice";
+  public static final int PROP_TARGET               = 4;
+  public static final int PROP_GUISLICE_THEME       = 5;
+  public static final int PROP_FONT_LIST            = 6;
+  public static final int DISPLAY_WIDTH             = 7;
+  public static final int DISPLAY_HEIGHT            = 8;
+  public static final int PROP_BACKGROUND           = 9;
+  public static final int PROP_USE_IMAGE_BACKGROUND = 10;
+  public static final int PROP_TARGET_IMAGE_DIR     = 11;
+  public static final int PROP_IMAGE_BACKGROUND_FILE      = 12; 
+  public static final int PROP_IMAGE_BACKGROUND_DEFINE    = 13;
+  public static final int PROP_IMAGE_BACKGROUND_MEMORY    = 14;
+  public static final int PROP_IMAGE_BACKGROUND_FORMAT    = 15;
+  public static final int PROP_MARGINS              = 16;
+  public static final int PROP_HSPACING             = 17;
+  public static final int PROP_VSPACING             = 18;
+  public static final int PROP_MAX_STRING           = 19;
+  public static final int PROP_ROTATION             = 20;
   
   /** The Property Defaults */
-  static public  final String  DEF_TARGET              = "arduino";
+  static public  final String  DEF_IDE                 = "Arduino IDE";
+  static public  final String  DEF_TARGET              = "Adafruit_GFX";
   static public  final String[] DEF_INCLUDES           = { "" };
   static public  final Integer DEF_WIDTH               = Integer.valueOf(320);
   static public  final Integer DEF_HEIGHT              = Integer.valueOf(240);
@@ -112,14 +130,29 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   /** The theme cell editor. */
   DefaultCellEditor  themeCellEditor;
 
+  /** The cb ide. */
+  JComboBox<String> cbIDE;
+  
+  /** The ide cell editor. */
+  DefaultCellEditor ideCellEditor;
+  
   /** The cb target. */
   JComboBox<String> cbTarget;
   
   /** The target cell editor. */
   DefaultCellEditor targetCellEditor;
   
-  /** The default theme name */
-  public static String defThemeName;
+  /** The cb target. */
+  JComboBox<String> cbPioEnv;
+  
+  /** The target cell editor. */
+  DefaultCellEditor pioenvCellEditor;
+  
+  /** The cb GUIslice themes. */
+  public static JComboBox<String> cbGUIsliceThemes;
+  
+  /** The GUIslice theme cell editor. */
+  DefaultCellEditor  guisliceThemeCellEditor;
 
   /** The background image. */
   private BufferedImage image = null;
@@ -160,6 +193,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    */
   public ProjectModel() {
     ff = FontFactory.getInstance();
+    initComboBoxes();
     initProperties();
   }
   
@@ -169,11 +203,15 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   protected void initProperties()
   {
     widgetType = EnumFactory.PROJECT + "$1";
-    data = new Object[18][5];
+    data = new Object[21][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_ENUM, String.class, "COM-002", Boolean.FALSE,"ENUM","E_PROJECT_OPTIONS");
-    initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Target Platform",DEF_TARGET);
+    initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);
+    initProp(PROP_PIO_ENV, String.class, "GEN-099", Boolean.TRUE,"PlatformIO default_envs","");
+    initProp(PROP_TARGET, String.class, "GEN-101", Boolean.FALSE,"Graphics Library",DEF_TARGET);
+    initProp(PROP_GUISLICE_THEME, String.class, "GEN-097", Boolean.FALSE,"GUIslice API Theme",
+        DEF_GUISLICE_DEFAULT_THEME);
 
     initProp(PROP_FONT_LIST, String[].class, "LIST-108", Boolean.FALSE,
         "Project's Extra Fonts",DEF_INCLUDES);
@@ -201,13 +239,38 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     initProp(PROP_ROTATION, Integer.class, "GEN-112", Boolean.FALSE,
         "Screen Rotation [0-3 or -1 default]",DEF_ROTATION);
 
+  }
+  
+  /**
+   * Initializes the combo boxes.
+   */
+  protected void initComboBoxes()
+  {
+    cbIDE = new JComboBox<String>();
+    cbIDE.addItem(IDE_ARDUINO);
+    cbIDE.addItem(IDE_PIO);
+    ideCellEditor = new DefaultCellEditor(cbIDE);
+
     cbTarget = new JComboBox<String>();
     FontFactory ff = FontFactory.getInstance();
-    for (FontPlatform p : ff.getBuilderFonts().getPlatforms()) {
+    for (FontGraphics p : ff.getBuilderFonts().getPlatforms()) {
       cbTarget.addItem(p.getName());
     }
     targetCellEditor = new DefaultCellEditor(cbTarget);
     
+    cbGUIsliceThemes = new JComboBox<String>();
+    for (String s : cf.getListofThemes()) {
+      cbGUIsliceThemes.addItem(s);
+    }
+    guisliceThemeCellEditor = new DefaultCellEditor(cbGUIsliceThemes);
+    
+    List<String> envOptions = PlatformIO.getListEnv();
+    cbPioEnv = new JComboBox<String>();
+    for (String env : envOptions) {
+      cbPioEnv.addItem(env);
+    }
+    pioenvCellEditor = new DefaultCellEditor(cbPioEnv);
+
     imageCellEditor = new ImageCellEditor();
 
     cbMemory = new JComboBox<String>();
@@ -297,6 +360,29 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     }
   }
 
+  /**
+   * getGUIsliceThemeName
+   * @return
+   */
+  public String getGUIsliceThemeName() {
+    return (String) data[PROP_GUISLICE_THEME][PROP_VAL_VALUE];
+  }
+  
+  public String getIDE() {
+    return (String) data[PROP_IDE][PROP_VAL_VALUE];
+  }
+  
+  public int getIDE_ID() {
+    if(((String) data[PROP_IDE][PROP_VAL_VALUE]).equals(IDE_ARDUINO)) {
+      return ARDUINO_IDE_ID;
+    }
+    return PIO_IDE_ID;
+  }
+  
+  public String getPioEnv() {
+    return (String) data[PROP_PIO_ENV][PROP_VAL_VALUE];
+  }
+  
   /**
    * Gets the target platform
    *
@@ -534,17 +620,23 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
    * @see builder.models.WidgetModel#getEditorAt(int)
    */
   @Override
-  public TableCellEditor getEditorAt(int rowIndex) {
-    if (rowIndex == PROP_FONT_LIST)
+  public TableCellEditor getEditorAt(int row) {
+    if (row == PROP_FONT_LIST)
       return fontsListCell;
-    if (rowIndex == PROP_TARGET)
+    else if (row == PROP_IDE)
+      return ideCellEditor;
+    else if (row == PROP_GUISLICE_THEME)
+      return guisliceThemeCellEditor;
+    else if (row == PROP_TARGET)
       return targetCellEditor;
-    else if (rowIndex == PROP_IMAGE_BACKGROUND_MEMORY)
+    else if (row == PROP_IMAGE_BACKGROUND_MEMORY)
       return memoryCellEditor;
-    else if (rowIndex == PROP_IMAGE_BACKGROUND_FILE)
+    else if (row == PROP_IMAGE_BACKGROUND_FILE)
       return imageCellEditor;
-    else if (rowIndex == PROP_IMAGE_BACKGROUND_FORMAT)
+    else if (row == PROP_IMAGE_BACKGROUND_FORMAT)
       return formatCellEditor;
+    else if (row == PROP_PIO_ENV)
+      return pioenvCellEditor;
     return null;
   }
 
@@ -676,6 +768,18 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     if (row == DISPLAY_HEIGHT) {
       Builder.CANVAS_HEIGHT = getHeight();
     }
+    if (row == PROP_IDE) {
+      if (getIDE().equals(ProjectModel.IDE_PIO)) {
+        if (PlatformIO.isPlatformIO_INI_Present())
+          data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+        else {
+          data[PROP_PIO_ENV][PROP_VAL_VALUE] = (String)cbPioEnv.getItemAt(0);
+          data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+        }
+      } else {
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+      }
+    }
     if (row == PROP_USE_IMAGE_BACKGROUND) {
       if (useBackgroundImage()) {
         data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -694,17 +798,30 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       }
       fireTableCellUpdated(PROP_IMAGE_BACKGROUND_FILE, COLUMN_VALUE);
     }
+    if (row == PROP_GUISLICE_THEME) {
+      Controller.startGUIsliceTheme(getGUIsliceThemeName());
+    }    
     if (row == PROP_FONT_LIST) {
       fireTableStructureChanged();
     }
   }
 
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("Page");
+    if (element != null) {
+      data[PROP_BACKGROUND][PROP_VAL_VALUE] = element.getFillCol();
+    }
+  }
+
   /**
-   * Sets the read only properties and any other items 
-   * needed at startup.
-   * 
+   * setReadOnlyProperties
    * Called by Controller on creating a new project file. 
+   *
+   * @see builder.models.WidgetModel#setReadOnlyProperties()
    */
+  @Override
   public void setReadOnlyProperties() {
     if (!getBackgroundImageName().isEmpty()) {
       File file = new File(getBackgroundImageName());
@@ -724,8 +841,39 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.TRUE;
     }
+    if (getTargetPlatform().equals("arduino")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Adafruit_GFX";
+    }
+    if (getTargetPlatform().equals("tft_espi")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "TFT_eSPI";
+    }
+    if (getTargetPlatform().equals("teensy")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "ILI9341_t3";
+    }
+    if (getTargetPlatform().equals("m5stack")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "M5Stack";
+    }
+    if (getTargetPlatform().equals("utft")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "UTFT";
+    }
+    if (getTargetPlatform().equals("linux")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Linux";
+    }
     if (getTargetPlatform().equals("arduino TFT_eSPI")) {
-      data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
+      data[PROP_TARGET][PROP_VAL_VALUE] = "TFT_eSPI";
+    }
+    if (getIDE().equals(ProjectModel.IDE_PIO)) {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+    } else {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+    }
+    if (getIDE().equals(ProjectModel.IDE_PIO)) {
+      if (PlatformIO.isPlatformIO_INI_Present())
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+      else
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+    } else {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
     }
   }
 
@@ -743,7 +891,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
   public void writeModel(ObjectOutputStream out) throws IOException {
     super.writeModel(out);
     if (useBackgroundImage()) {
-      out.writeObject((String) CommonUtils.getInstance().encodeToString(image));
+      out.writeObject((String) Utils.getInstance().encodeToString(image));
     }
   }
 
@@ -767,7 +915,7 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     super.readModel(in,  widgetType);
     if (useBackgroundImage()) {
       String imageString = (String) in.readObject();
-      image = CommonUtils.getInstance().decodeToImage(imageString);
+      image = Utils.getInstance().decodeToImage(imageString);
       data[PROP_IMAGE_BACKGROUND_DEFINE][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_IMAGE_BACKGROUND_MEMORY][PROP_VAL_READONLY]=Boolean.FALSE;
       data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.FALSE;
@@ -782,8 +930,39 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       data[PROP_IMAGE_BACKGROUND_FORMAT][PROP_VAL_READONLY]=Boolean.TRUE;
       data[PROP_IMAGE_BACKGROUND_FILE][PROP_VAL_READONLY]=Boolean.TRUE;
     }
+    if (getTargetPlatform().equals("arduino")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Adafruit_GFX";
+    }
+    if (getTargetPlatform().equals("tft_espi")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "TFT_eSPI";
+    }
+    if (getTargetPlatform().equals("teensy")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Teensy";
+    }
+    if (getTargetPlatform().equals("m5stack")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "M5Stack";
+    }
+    if (getTargetPlatform().equals("utft")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "UTFT";
+    }
+    if (getTargetPlatform().equals("linux")) {
+      data[PROP_TARGET][PROP_VAL_VALUE] = "Linux";
+    }
     if (getTargetPlatform().equals("arduino TFT_eSPI")) {
-      data[PROP_TARGET][PROP_VAL_VALUE] = "tft_espi";
+      data[PROP_TARGET][PROP_VAL_VALUE] = "TFT_eSPI";
+    }
+    if (getIDE().equals(ProjectModel.IDE_PIO)) {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+    } else {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+    }
+    if (getIDE().equals(ProjectModel.IDE_PIO)) {
+      if (PlatformIO.isPlatformIO_INI_Present())
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
+      else
+        data[PROP_PIO_ENV][PROP_VAL_READONLY] = false;
+    } else {
+      data[PROP_PIO_ENV][PROP_VAL_READONLY] = true;
     }
     Builder.CANVAS_WIDTH = getWidth();
     Builder.CANVAS_HEIGHT = getHeight();

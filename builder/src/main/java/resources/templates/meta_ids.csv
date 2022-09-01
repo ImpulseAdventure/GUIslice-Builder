@@ -60,6 +60,9 @@ COM-017,Callback En
 COM-018,Key Count (Number in the Key after the $)
 COM-019,ELEMENT REF
 COM-020,Use Flash API
+GEN-097,GUIslice Themes
+GEN-098,Target IDE
+GEN-099,PIO Default Environments
 GEN-100,Theme
 GEN-101,Target Platform
 GEN-102,TFT Screen Width
@@ -107,6 +110,8 @@ LIST-105,Set Text Margins? - NOT Used
 LIST-106,Item Gap
 LIST-107,Item Gap Color
 LIST-108,Include List
+LIST-110,Text Width
+LIST-111,Text Height
 IBTN-100,Image
 IBTN-101,Image When Selected
 IBTN-102,Image #defines

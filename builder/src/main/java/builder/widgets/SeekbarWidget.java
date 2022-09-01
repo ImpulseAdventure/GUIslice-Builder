@@ -29,7 +29,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.GUIslice;
 import builder.models.SeekbarModel;
 
@@ -52,7 +52,7 @@ public class SeekbarWidget extends Widget {
    *          the y coordinate position
    */
   public SeekbarWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new SeekbarModel();
     model = m;
     super.setXY(model, x, y);

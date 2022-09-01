@@ -33,7 +33,7 @@ import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.models.LineModel;
 
 /**
@@ -55,7 +55,7 @@ public class LineWidget extends Widget {
    *          the y coordinate position
    */
   public LineWidget(int x, int y) {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
     m = new LineModel();
     model = m;
     super.setXY(model, x, y);

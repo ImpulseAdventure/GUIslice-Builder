@@ -49,6 +49,8 @@ import builder.tables.MultiStringsCell;
 import builder.tables.MultipeLineCellListener;
 import builder.tables.TextTFTCellRenderer;
 import builder.tables.MultiStringsCell.MCDialogType;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class TxtButtonModel implements the model for the Text Button widget.
@@ -148,7 +150,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
     rendererText = new TextTFTCellRenderer();
     rendererText.setFontTFT(ff, null);
 
-    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.STRING_DIALOG);
+    codeCell = new MultiStringsCell("Custom Code Segment", MCDialogType.CODE_DIALOG);
     codeCell.setData(DEF_CODE);
     codeCell.addButtonListener(this);
   }
@@ -197,7 +199,13 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   @Override
   public void setFontReadOnly() {
     data[PROP_FONT][PROP_VAL_READONLY] = true;
+    data[PROP_TEXT][PROP_VAL_READONLY] = true;
+    data[PROP_ELEMENTREF][PROP_VAL_READONLY] = true;
+    data[PROP_ENUM][PROP_VAL_READONLY] = true;
     data[PROP_FONT][PROP_VAL_VALUE] = "";
+    data[PROP_TEXT][PROP_VAL_VALUE] = "";
+    data[PROP_ELEMENTREF][PROP_VAL_VALUE] = "";
+    data[PROP_ENUM][PROP_VAL_VALUE] = "";
   }
 
   /**
@@ -589,6 +597,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
      if (name == null || name.isEmpty()) return;
      FontItem item = ff.getFontItem(name);
      if (item == null) return;
+     FontTFT font = ff.getFont(item.getDisplayName());
+     textBox.setFontTFT(ff, font);
      if (!item.getDisplayName().equals(name)) {
        data[PROP_FONT][PROP_VAL_VALUE] = item.getDisplayName();
        if (fireUpdates) {
@@ -611,6 +621,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
        int ch;
        String fontName = getFontDisplayName();
        FontTFT myFont = ff.getFont(fontName);
+       if (myFont == null)
+         return s;
        for (int i = 0; i < len; i++) {
          ch = s.charAt(i);
          // test for \n and if so place actual newline character
@@ -639,6 +651,32 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
        }
      }
      return sb.toString();
+   }
+   
+   /**
+    * 
+    * changeThemeColors
+    *
+    * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+    */
+   @Override
+   public void changeThemeColors(GUIsliceTheme theme) {
+     if (theme == null) return;
+     GUIsliceThemeElement element = theme.getElement("TextButton");
+     if (element != null) {
+       data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();
+       data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+       data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();
+       if (element.getTextCol() != null)
+         data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();
+       if (element.getFrameCol() != null)
+         data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+       if (element.getFillCol() != null)
+         data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+       if (element.getGlowCol() != null)
+         data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+       fireTableStructureChanged();
+     }
    }
    
   /**

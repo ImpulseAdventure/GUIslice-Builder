@@ -37,7 +37,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import builder.common.CommonUtils;
+import builder.Builder;
+import builder.common.Utils;
 
 /**
  * The Class TemplateManager handles all functions related to 
@@ -50,6 +51,7 @@ import builder.common.CommonUtils;
  * @author Paul Conti
  * 
  */
+@SuppressWarnings("unused")
 public class TemplateManager {
 
   /** The Constant RESOURCES_PATH. */
@@ -89,17 +91,17 @@ public class TemplateManager {
   }
 
   /**
-   * Store templates.
+   * Store templates from filename.
    *
    * @param templateFileName
    *          the template file name
    * @throws CodeGenException
    *           the code gen exception
    */
-  public void storeTemplates(String templateFileName) throws CodeGenException {
+  public void storeTemplatesFromFileName(String templateFileName) throws CodeGenException {
     templateMap = new HashMap<String, Integer>(64);
 //    String pathName = RESOURCES_PATH + templateFileName;
-    String pathName = CommonUtils.getInstance().getWorkingDir() +
+    String pathName = Utils.getWorkingDir() +
         "templates" + System.getProperty("file.separator") 
         + templateFileName;
     File file = new File(pathName);
@@ -112,6 +114,7 @@ public class TemplateManager {
     try {
       tbr = new BufferedReader(new InputStreamReader(
           new FileInputStream(file), "UTF8"));
+//      Builder.logger.debug("Open Template File: " + pathName);
       while((templateName = tbr.readLine()) != null) {
         if (templateName.equals(END_TEMPLATE))
           break;
@@ -121,10 +124,50 @@ public class TemplateManager {
         }
         templateMap.put(templateName, i);
         listOfTemplates[i] = lines;
-//        System.out.println("Stored Template: " + templateName + " idx=" + i);
+//        Builder.logger.debug("Stored Template: " + templateName + " idx=" + i);
         i++;
       }
       
+    } catch (IOException e) {
+      throw new CodeGenException(e.toString());
+    } finally {
+      try {
+        if (tbr != null) tbr.close();
+      } catch (IOException e) {
+        throw new CodeGenException(e.toString());
+      }
+    }
+  }
+    
+  /**
+   * Store single template from pathname.
+   *
+   * @param templateName
+   *          the simple name of the template
+   * @param templatePathName
+   *          the template path name
+   * @throws CodeGenException
+   *           the code gen exception
+   */
+  public void storeTemplateFromPathName(String templateName, String templatePathName) throws CodeGenException {
+    templateMap = new HashMap<String, Integer>(64);
+    File file = new File(templatePathName);
+    BufferedReader tbr=null;
+    try {
+      tbr = new BufferedReader(new InputStreamReader(
+          new FileInputStream(file), "UTF8"));
+//      Builder.logger.debug("Open Template File: " + templatePathName);
+      List<String> lines = new ArrayList<String>();
+      String line;
+      while(true) {
+        if((line = tbr.readLine()) == null) {
+          templateMap.put(templateName, 0);
+          listOfTemplates[0] = lines;
+          break;
+        }
+        lines.add(line);
+      }
+//    Builder.logger.debug("Stored Template: " + templateName);
     } catch (IOException e) {
       throw new CodeGenException(e.toString());
     } finally {
@@ -281,7 +324,33 @@ public class TemplateManager {
       }
     }
   }
- 
+
+  /**
+   * codeReplaceWord
+   *    Writes out code block replacing lines with a new one.
+   * 
+   * @param sBd
+   * @param lines
+   * @param oldWord
+   * @param newWord
+   * @param line_no
+   * @param stop_no
+   */
+  public void codeReplaceWord(StringBuilder sBd, List<String> lines, 
+      String oldWord, String newWord, int line_no) {
+    int n = -1;
+    for (String l : lines) {
+      n++;
+      if (n == line_no) {
+        sBd.append(l.replace(oldWord, newWord));
+        sBd.append(System.lineSeparator());
+      } else {
+        sBd.append(l);
+        sBd.append(System.lineSeparator());
+      }
+    }
+  }
+
   public void codeAppendLine(StringBuilder sBd, List<String> lines, 
       String replacement) {
     int n = -1;

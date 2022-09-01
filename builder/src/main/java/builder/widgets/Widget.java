@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.models.WidgetModel;
@@ -59,7 +59,7 @@ public class Widget {
       BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {1.0f,2.0f}, 0);
 
   /** The u. */
-  CommonUtils u;
+  Utils u;
   
   /** The ff. */
   FontFactory ff;
@@ -71,7 +71,7 @@ public class Widget {
   boolean bSelected = false;
   
   public Widget() {
-    u = CommonUtils.getInstance();
+    u = Utils.getInstance();
   }
 
   /**
@@ -114,8 +114,8 @@ public class Widget {
   public void setXY(WidgetModel m, int x, int y) {
     // if x and y are set to -1 we will position widget later (paste operation)
     if (x >= 0 && y >= 0) {
-      Point p = CommonUtils.getInstance().fitToGrid(x, y, m.getWidth(), m.getHeight());
-      p = CommonUtils.getInstance().snapToGrid(p.x, p.y);
+      Point p = Utils.getInstance().fitToGrid(x, y, m.getWidth(), m.getHeight());
+      p = Utils.getInstance().snapToGrid(p.x, p.y);
       m.setX(p.x);
       m.setY(p.y);
     }

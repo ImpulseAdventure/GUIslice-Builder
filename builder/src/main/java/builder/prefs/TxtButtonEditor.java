@@ -76,8 +76,8 @@ public class TxtButtonEditor extends ModelEditor {
     fPrefs = Preferences.userRoot().node(prefNode);
     model = new TxtButtonModel();
     model.TurnOffEvents();
-    updateModel();
     model.setFontReadOnly();
+    updateModel();
     System.setErr(System.err);  
   }
 

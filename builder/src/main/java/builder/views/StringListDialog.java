@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2018-2021 Paul Conti
+ * Copyright (c) 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,9 +65,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
 
 import builder.Builder;
+import builder.common.Utils;
 import builder.tables.EditListAction;
 import builder.tables.ListAction;
-import hu.csekme.RibbonMenu.Util;
 
 public class StringListDialog extends JDialog implements ActionListener, ListSelectionListener {
   private static final long serialVersionUID = 1L;
@@ -143,7 +143,7 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
     btn_down.addActionListener(this);
 
     btn_remove = new JButton(
-        Util.accessImageFile("resources/icons/edit/delete.png", 24,24));
+        Utils.getIcon("resources/icons/edit/delete.png", 24,24));
     btn_remove.setActionCommand(removeString);
     btn_remove.addActionListener(this);
     btn_remove.setToolTipText("Select an item then press to delete.");

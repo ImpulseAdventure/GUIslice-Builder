@@ -38,13 +38,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
 import builder.Builder;
+import builder.common.Utils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.models.WidgetModel;
 import builder.prefs.GeneralEditor;
 import builder.views.PropEditor;
-import hu.csekme.RibbonMenu.Util;
 
 /**
  * <p>
@@ -98,7 +98,7 @@ public class PropManager extends JInternalFrame implements ActionListener, iSubs
     cards = new JPanel(layout);
     add(cards);
     this.setTitle("Property View");
-    this.setFrameIcon(Util.accessImageFile("resources/icons/guislicebuilder.png", 24,24));
+    this.setFrameIcon(Utils.getIcon("resources/icons/guislicebuilder.png", 24,24));
     int width = 227;
     if (GeneralEditor.getInstance().getPropWinWidth() > 0) 
       width = GeneralEditor.getInstance().getPropWinWidth();

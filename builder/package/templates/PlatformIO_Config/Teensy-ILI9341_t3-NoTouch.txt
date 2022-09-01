@@ -1,0 +1,40 @@
+; ---------------------------------------------------------
+; Display: ILI9341_t3
+; ---------------------------------------------------------
+[disp-ILI9341_t3]
+; NOTE (lib_deps):
+; - Need to specify the github sources otherwise PIO
+;   compilation reports "no such file" on SPI.h
+lib_deps =
+	https://github.com/PaulStoffregen/Wire
+    https://github.com/PaulStoffregen/SPI
+    https://github.com/PaulStoffregen/ILI9341_t3
+build_flags =
+
+; ---------------------------------------------------------
+; MCU: Teensy
+; - Includes:
+;   - Teensy 3.1/3.2 (board=teensy31)
+;   - Teensy 4.0 (board=teensy40)
+;   - etc.
+; ---------------------------------------------------------
+[mcu-Teensy]
+platform = teensy
+board = teensy31
+framework = arduino
+
+; Disable ks0108 as PIO compile for T3 will fail even
+; though the ks0108 library is not being used/included.
+lib_ignore = ks0108
+
+[env:Teensy-ILI9341_t3-NoTouch]
+extends = mcu-Teensy
+lib_deps =
+	${disp-ILI9341_t3.lib_deps}
+	GUIslice
+build_flags =
+	${common.build_flags}
+	${disp-ILI9341_t3.build_flags}
+	-DUSER_CONFIG_LOADED
+	-DUSER_CONFIG_INC_FILE
+	-DUSER_CONFIG_INC_FNAME=\"../configs/teensy-adagfx-ili9341_t3-NoTouch-audio.h\"

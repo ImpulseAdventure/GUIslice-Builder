@@ -34,11 +34,11 @@ import java.util.Map;
 import builder.codegen.CodeGenerator;
 import builder.codegen.Tags;
 import builder.codegen.TemplateManager;
-import builder.common.ColorFactory;
 import builder.controller.Controller;
 import builder.models.GeneralModel;
 import builder.models.ProjectModel;
 import builder.prefs.GeneralEditor;
+import builder.themes.GUIsliceThemeFactory;
 
 /**
  * The Class StartupPipe handles code generation
@@ -95,7 +95,7 @@ public class StartupPipe extends WorkFlowPipe {
     Color defaultColor = new Color(255,0,255);
     if (!color.equals(defaultColor)) {
       map.clear();
-      String strColor = ColorFactory.getInstance().colorAsString(color);
+      String strColor = GUIsliceThemeFactory.getInstance().colorAsString(color);
       map.put(COLOR_MACRO, strColor);      
       templateLines = tm.loadTemplate(TRANSPARENCY_COLOR_TEMPLATE);
       outputLines = tm.expandMacros(templateLines, map);

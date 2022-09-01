@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -87,6 +87,8 @@ public class PropEditor {
     DefaultTableCellRenderer checkBoxNonEditableCellRenderer = new NonEditableCellRenderer();
     checkBoxNonEditableCellRenderer.setHorizontalAlignment( SwingConstants.LEFT );
     table.setDefaultRenderer(Boolean.class, checkBoxNonEditableCellRenderer);
+    DefaultTableCellRenderer JTextFieldNonEditableCellRenderer = new NonEditableCellRenderer();
+    table.setDefaultRenderer(JTextField.class, JTextFieldNonEditableCellRenderer);
 
     // Setup editor for our Font cells.
     table.setDefaultEditor(JTextField.class, new FontCellEditor());

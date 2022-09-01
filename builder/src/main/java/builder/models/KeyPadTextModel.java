@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -192,7 +192,8 @@ public class KeyPadTextModel extends WidgetModel {
     // The test for Integer. supports copy and paste from clipboard.
     // Otherwise we get a can't cast class String to Integer fault
     if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
-        data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
+        if (!((String)value).isEmpty())
+          data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
     } else {
       data[row][PROP_VAL_VALUE] = value;
     }
@@ -205,14 +206,11 @@ public class KeyPadTextModel extends WidgetModel {
   }
 
   /**
-   * Sets the read only properties and any other items 
-   * needed at startup.
-   * 
-   * Called by AlphaKeyPadEditor on startup Basically this 
-   * replaces a subclassed readModel() since we don't 
-   * serialize the Model for save and restores.
-   * It's saved wherever java stores UserPrefences (registry for windows).
+   * setReadOnlyProperties
+   *
+   * @see builder.models.WidgetModel#setReadOnlyProperties()
    */
+  @Override
   public void setReadOnlyProperties() {
     if (useDefBtnSize()) {
       data[PROP_BUTTONSZ_W][PROP_VAL_READONLY] = Boolean.TRUE;

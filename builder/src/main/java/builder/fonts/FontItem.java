@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2021 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
  */
 package builder.fonts;
 
+import java.util.Comparator;
+
 import builder.Builder;
 
 /**
@@ -42,18 +44,18 @@ import builder.Builder;
  * @author Paul Conti
  * 
  */
-public class FontItem {
+public class FontItem implements Comparable<FontItem> {
   
-  static public String BOLD = "Bold";
-  static public String ITALIC = "Italic";
-  static public String PLAIN = "Regular";
-  static public String BOLD_ITALIC = "Bold+Italic";
+  final static public String BOLD = "Bold";
+  final static public String ITALIC = "Italic";
+  final static public String PLAIN = "Regular";
+  final static public String BOLD_ITALIC = "Bold_Italic";
 
   /** The java font. */
   private transient FontTFT font;
   
   /** The parent platform */
-  private transient FontPlatform platform;
+  private transient FontGraphics platform;
   
   /** The parent category */
   private transient FontCategory category;
@@ -62,50 +64,59 @@ public class FontItem {
   private transient String key;
   
   /** The font family name. */
-  private String familyName;
+  public String familyName;
   
   /** The display name. */
-  private String displayName;
+  public String displayName;
   
   /** 
    * The external font file name 
    * Points within GUIsliceBuilder/fonts folder
    * (ex: fonts/gfx/FreeSans9pt7b.h). 
    */
-  private String fileName;
+  public String fileName;
+  
+  /** some fonts have a C source file - only set for fonts that require a C source file */
+  public String srcFilename;
+  
+  /** extern name needed for some fonts that only have a C source file */
+  public String externName;
+  
+  /** flag to indicate we don't need to copy font to project */
+  public boolean bInstalledFont;
   
   /** The include file (ex: Fonts/FreeSans9pt7b.h). */
-  private String includeFile;
+  public String includeFile;
   
   /** The define file (ex: /usr/share/fonts/truetype/droid/DroidSans.ttf). */
-  private String defineFile;
+  public String defineFile;
   
   /** The nFontId parameter used by GUIslice API. */
-  private transient String nFontId;
+  public transient String nFontId;
   
   /** The e eFontRefType parameter used by GUIslice API. */
-  private String eFontRefType;
+  public String eFontRefType;
   
   /** The pvFontRef parameter used by GUIslice API. */
-  private String pvFontRef;
+  public String pvFontRef;
   
   /** The nFontSz parameter used by GUIslice API. */
-  private String nFontSz;
+  public String nFontSz;
   
   /** The java font name. */
-  private String logicalName;
+  public String logicalName;
   
   /** The java font size. */
-  private String logicalSize;
+  public String logicalSize;
   
   /** The java font style. */
-  private String logicalStyle;
+  public String logicalStyle;
   
   /** The Font Ref Mode - optional font set mode API used for built-in fonts */
-  private String fontRefMode;
+  public String fontRefMode;
   
   /** The font scaling */
-  private double scaleFactor;
+  public double scaleFactor;
   
   /**
    * Instantiates a new font item.
@@ -123,6 +134,9 @@ public class FontItem {
      logicalSize = "NULL";
      logicalStyle = "NULL";
      fontRefMode = "NULL";
+     srcFilename = "NULL";
+     setExternName("NULL");
+     bInstalledFont = false;
   }
   
   /**
@@ -141,14 +155,14 @@ public class FontItem {
    * getPlatform
    * @return platform
    */
-  public FontPlatform getPlatform() {
+  public FontGraphics getPlatform() {
     return platform;
   }
   
   /**
    * setPlatform
    */
-  public void setPlatform(FontPlatform platform) {
+  public void setPlatform(FontGraphics platform) {
     this.platform = platform;
   }
   
@@ -468,20 +482,22 @@ public class FontItem {
    */
   public void setLogicalStyle(String style) {
     switch (style) {
-    case "BOLD":
-      this.logicalStyle = BOLD;
-      break;
-    case "BOLD_ITALIC":
-      this.logicalStyle = BOLD_ITALIC;
-      break;
-    case "ITALIC":
-      this.logicalStyle = ITALIC;
-      break;
-    default:
-      this.logicalStyle = PLAIN;
-      break;
+      case "BOLD":
+        this.logicalStyle = BOLD;
+        break;
+      case "BOLD_ITALIC":
+        this.logicalStyle = BOLD_ITALIC;
+        break;
+      case "ITALIC":
+        this.logicalStyle = ITALIC;
+        break;
+      case "PLAIN":
+        this.logicalStyle = PLAIN;
+      default:
+        this.logicalStyle = style;
+        break;
     }
-  }
+  }    
   
   /**
    * Gets the fontRefMode.
@@ -504,6 +520,57 @@ public class FontItem {
     return scaleFactor;
   }
   
+  public String getSrcFilename() {
+    return srcFilename;
+  }
+
+  public void setSrcFilename(String c_filename) {
+    this.srcFilename = c_filename;
+  }
+
+  public String getExternName() {
+    return externName;
+  }
+
+  public void setExternName(String externName) {
+    this.externName = externName;
+  }
+
+  public boolean isInstalledFont() {
+    return bInstalledFont;
+  }
+
+  public void setInstalledFont(boolean bInstalledFont) {
+    this.bInstalledFont = bInstalledFont;
+  }
+
+  public int getStyleSortOrder() {
+    int order = 0;
+    switch (this.logicalStyle) {
+      case FontItem.BOLD:
+        order = 2;
+        break;
+      case FontItem.ITALIC:
+        order = 3;
+        break;
+      case FontItem.BOLD_ITALIC:
+        order = 9;
+        break;
+      default:
+        order = 1;
+        break;
+      }
+    return order;
+  }
+  
+  @Override
+  public int compareTo(FontItem o) {
+    return Comparator.comparing(FontItem::getFamilyName)
+        .thenComparingInt(FontItem::getStyleSortOrder)
+        .thenComparingInt(FontItem::getLogicalSizeAsInt)
+        .compare(this, o);
+}
+
   /**
    * toString
    *
@@ -511,7 +578,8 @@ public class FontItem {
    */
   @Override
   public String toString() {
-    return String.format("Platform: %s Font: %s size: %s style: %s include: %s", 
-        platform.getName(), displayName, logicalSize, logicalStyle, includeFile);
+    return String.format("Platform: %s Category: %s Family: %s style: %s size: %s Font: %s include: %s", 
+        platform.getName(), category.getName(), familyName, logicalStyle, logicalSize, displayName, includeFile);
   }
+
 }

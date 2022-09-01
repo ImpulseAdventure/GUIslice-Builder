@@ -30,7 +30,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import builder.common.GUIslice;
-//import builder.common.CommonUtils;
 import builder.models.CheckBoxModel;
 
 /**

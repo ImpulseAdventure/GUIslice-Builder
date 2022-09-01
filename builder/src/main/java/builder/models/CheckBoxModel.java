@@ -33,10 +33,12 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 
-import builder.common.CommonUtils;
+import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class CheckBoxModel implements the model for the Checkbox widget.
@@ -72,7 +74,7 @@ public class CheckBoxModel extends WidgetModel {
   static public  final Boolean DEF_CHECKED           = Boolean.FALSE;
   static public  final String  DEF_STYLE             = CHECKBOX_STYLE_X;
   static public  final Color   DEF_MARK_COLOR        = new Color(255,165,0); // // GSLC_COL_ORANGE
-  static public  final Boolean DEF_CALLBACK_EN       = Boolean.FALSE;
+  static public  final Boolean DEF_CALLBACK_EN       = Boolean.TRUE;
   static public  final Boolean DEF_USE_FLASH         = Boolean.FALSE;
   static public  final Color   DEF_FRAME_COLOR       = new Color(128,128,128); // GSLC_COL_GRAY
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
@@ -132,6 +134,7 @@ public class CheckBoxModel extends WidgetModel {
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
     initProp(PROP_SELECTED_COLOR, Color.class, "COL-304", Boolean.FALSE,"Selected Color",DEF_SELECTED_COLOR);
 
+    setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
 //    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
 
   }
@@ -181,7 +184,7 @@ public class CheckBoxModel extends WidgetModel {
     }
     if (row == PROP_CALLBACK_EN) {
       if (isCallbackEn() && getElementRef().isEmpty()) {
-        setElementRef(CommonUtils.createElemName(getKey(), ELEMENTREF_NAME));
+        setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
         fireTableCellUpdated(PROP_ELEMENTREF, COLUMN_VALUE);
       }
     }
@@ -269,6 +272,38 @@ public class CheckBoxModel extends WidgetModel {
     return ((String) data[PROP_GROUP][PROP_VAL_VALUE]);
   }
 */
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("CheckBox");
+    if (element != null) {
+      if (element.getStyle() != null) {
+        String style = element.getStyle();
+        if (style.equals("0"))
+          data[PROP_STYLE][PROP_VAL_VALUE] = CHECKBOX_STYLE_BOX;
+        else if (style.equals("1"))
+          data[PROP_STYLE][PROP_VAL_VALUE] = CHECKBOX_STYLE_X;
+        else if (style.equals("2"))
+          data[PROP_STYLE][PROP_VAL_VALUE] = CHECKBOX_STYLE_ROUND;
+      }
+      if (element.getFrameCol() != null)
+        data[PROP_MARK_COLOR][PROP_VAL_VALUE] = element.getCheckmarkCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      if (element.getFillCol() != null)
+        data[PROP_FILL_COLOR][PROP_VAL_VALUE] = element.getFillCol();
+      if (element.getGlowCol() != null)
+        data[PROP_SELECTED_COLOR][PROP_VAL_VALUE] = element.getGlowCol();
+      fireTableStructureChanged();
+    }
+  }
+  
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.

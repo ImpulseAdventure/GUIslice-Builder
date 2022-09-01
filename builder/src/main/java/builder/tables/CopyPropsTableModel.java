@@ -24,18 +24,18 @@ public class CopyPropsTableModel extends AbstractTableModel {
   private Object[][] commonData = {
   {"",                 "Key",              "Text$1",               "COM-001"},
   {"",                 "ENUM",             "E_ELEM_TEXT1",         "COM-002"},
-  {new Boolean(false), "Width",            new Integer(80),        "COM-005"},
-  {new Boolean(false), "Height",           new Integer(40),        "COM-006"},
-  {new Boolean(false), "Corners Rounded?", new Boolean(false),     "COM-012"},
-  {new Boolean(false), "Frame Enabled?",   new Boolean(true),      "COM-010"},
-  {new Boolean(false), "Fill Enabled?",    new Boolean(true),      "COM-011"},
-  {new Boolean(false), "Use Flash API?",   new Boolean(true),      "COM-020"},
-  {new Boolean(false), "Text Color",       Color.yellow,           "COL-301"},
-  {new Boolean(false), "Frame Color",      Color.gray,             "COL-302"},
-  {new Boolean(false), "Fill Color",       Color.black,            "COL-303"},
-  {new Boolean(false), "Selected Color",   Color.black,            "COL-304"},
-  {new Boolean(false), "Font",             "NotoSans10pt7b",       "TXT-200"},
-  {new Boolean(false), "Text Alignment",   "GSLC_ALIGN_MID_RIGHT", "TXT-213"}
+  {Boolean.valueOf(false), "Width",            Integer.valueOf(80),        "COM-005"},
+  {Boolean.valueOf(false), "Height",           Integer.valueOf(40),        "COM-006"},
+  {Boolean.valueOf(false), "Corners Rounded?", Boolean.valueOf(false),     "COM-012"},
+  {Boolean.valueOf(false), "Frame Enabled?",   Boolean.valueOf(true),      "COM-010"},
+  {Boolean.valueOf(false), "Fill Enabled?",    Boolean.valueOf(true),      "COM-011"},
+  {Boolean.valueOf(false), "Use Flash API?",   Boolean.valueOf(true),      "COM-020"},
+  {Boolean.valueOf(false), "Text Color",       Color.yellow,           "COL-301"},
+  {Boolean.valueOf(false), "Frame Color",      Color.gray,             "COL-302"},
+  {Boolean.valueOf(false), "Fill Color",       Color.black,            "COL-303"},
+  {Boolean.valueOf(false), "Selected Color",   Color.black,            "COL-304"},
+  {Boolean.valueOf(false), "Font",             "NotoSans10pt7b",       "TXT-200"},
+  {Boolean.valueOf(false), "Text Alignment",   "GSLC_ALIGN_MID_RIGHT", "TXT-213"}
   };
 
   private Object data[][];

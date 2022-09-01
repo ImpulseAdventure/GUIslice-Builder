@@ -34,6 +34,8 @@ import java.io.ObjectInputStream;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.events.MsgBoard;
+import builder.themes.GUIsliceTheme;
+import builder.themes.GUIsliceThemeElement;
 
 /**
  * The Class ToggleButtonModel implements the model for the Toggle Button widget.
@@ -239,7 +241,32 @@ public class ToggleButtonModel extends WidgetModel {
   public String getGroupId() {
     return ((String) data[PROP_GROUP][PROP_VAL_VALUE]);
   }
-
+  
+  /**
+   * 
+   * changeThemeColors
+   *
+   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   */
+  @Override
+  public void changeThemeColors(GUIsliceTheme theme) {
+    if (theme == null) return;
+    GUIsliceThemeElement element = theme.getElement("ToggleButton");
+    if (element != null) {
+      data[PROP_CIRCULAR][PROP_VAL_VALUE] = element.isCornersRounded();
+      data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
+      if (element.getThumbCol() != null)
+        data[PROP_THUMB_COLOR][PROP_VAL_VALUE] = element.getThumbCol();
+      if (element.getOnCol() != null)
+        data[PROP_ON_COLOR][PROP_VAL_VALUE] = element.getOnCol();
+      if (element.getOffCol() != null)
+        data[PROP_OFF_COLOR][PROP_VAL_VALUE] = element.getOffCol();
+      if (element.getFrameCol() != null)
+        data[PROP_FRAME_COLOR][PROP_VAL_VALUE] = element.getFrameCol();
+      fireTableStructureChanged();
+    }
+  }
+  
   /**
    * readModel() will deserialize our model's data from a string object for backup
    * and recovery.
