@@ -132,9 +132,6 @@ Improved Code Editing for those who add custom code to Button Callbacks.  The co
 - Issue `204` Resolution changes to 240*320 without request 
 - Issue `203` Fatal Crash on Generate Code using Flash API version of Toggle Button
 
-### Bug Fixes for 0.17.b11.2
-- Issue `GUIslice API 472` characters outside the range when I add my own font
-
 ### Enhancements for 0.17.b11
 
 The Builder will now support Monochrome 1 bit images that are stored inside a C Array file created by my 

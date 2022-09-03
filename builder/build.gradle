@@ -94,15 +94,19 @@ def TARGET_WIN   = "${buildDir}/tmp/windows/GUIsliceBuilder"
 
 def JLINK_LINUX_X64  = "$buildDir/image/GUIslice-linux-x64"
 def TARGET_LINUX_X64 = "${buildDir}/tmp/linux-x64/GUIsliceBuilder"
+def DISP_LINUX_X64 = "${buildDir}/tmp/linux-x64"
 
 def JLINK_LINUX_AARCH64  = "$buildDir/image/GUIslice-linux-aarch64"
 def TARGET_LINUX_AARCH64 = "${buildDir}/tmp/linux-aarch64/GUIsliceBuilder"
+def DISP_LINUX_AARCH64 = "${buildDir}/tmp/linux-aarch64"
 
 def JLINK_MAC_X64  = "$buildDir/image/GUIslice-mac-x64"
 def TARGET_MAC_X64 = "${buildDir}/tmp/mac-x64/GUIsliceBuilder"
+def DISP_MAC_X64 = "${buildDir}/tmp/mac-x64"
 
 def JLINK_MAC_AARCH64  = "$buildDir/image/GUIslice-mac-aarch64"
 def TARGET_MAC_AARCH64 = "${buildDir}/tmp/mac-aarch64/GUIsliceBuilder"
+def DISP_MAC_AARCH64 = "${buildDir}/tmp/mac-aarch64"
 
 def innoSetupDir = new File("${buildDir}/innosetup")
 
@@ -223,11 +227,11 @@ task pack_LINUX_X64(type: Tar) {
   dependsOn build, assemble
   group = "assemble"
   description = "linux-x64 package distribution"
-  from (TARGET_LINUX_X64) {
+  from (DISP_LINUX_X64) {
    exclude ("**/*.sh") // 1
    fileMode 0644
   }
-  from (TARGET_LINUX_X64) {
+  from (DISP_LINUX_X64) {
    include ("**/*.sh")
    fileMode 0755
   }
@@ -241,11 +245,11 @@ task pack_LINUX_AARCH64(type: Tar) {
   dependsOn build, assemble
   group = "assemble"
   description = "linux-aarch64 package distribution"
-  from (TARGET_LINUX_AARCH64) {
+  from (DISP_LINUX_AARCH64) {
    exclude ("**/*.sh") // 1
    fileMode 0644
   }
-  from (TARGET_LINUX_AARCH64) {
+  from (DISP_LINUX_AARCH64) {
    include ("**/*.sh")
    fileMode 0755
   }
@@ -259,11 +263,11 @@ task pack_MAC_X64(type: Tar) {
   dependsOn build, assemble
   group = "assemble"
   description = "mac-x64 package distribution"
-  from (TARGET_MAC_X64) {
+  from (DISP_MAC_X64) {
    exclude ("**/*.sh") // 1
    fileMode 0644
   }
-  from (TARGET_MAC_X64) {
+  from (DISP_MAC_X64) {
    include ("**/*.sh")
    fileMode 0755
   }
@@ -277,11 +281,11 @@ task pack_MAC_AARCH64(type: Tar) {
   dependsOn build, assemble
   group = "assemble"
   description = "mac-aarch64 package distribution"
-  from (TARGET_MAC_AARCH64) {
+  from (DISP_MAC_AARCH64) {
    exclude ("**/*.sh") // 1
    fileMode 0644
   }
-  from (TARGET_MAC_AARCH64) {
+  from (DISP_MAC_AARCH64) {
    include ("**/*.sh")
    fileMode 0755
   }
