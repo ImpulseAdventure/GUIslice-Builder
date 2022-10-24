@@ -50,17 +50,17 @@ GUIsliceBuilder so you no longer need to deal with its installation.
 
 ### Windows GUIsliceBuilder Install
 
-Download the builder-win-x64-0.17.b12.zip from github
+Download the builder-win-x64-0.17.b13.zip from github
 GUIslice-Builder Releases:
 https://github.com/ImpulseAdventure/GUIslice-Builder/releases
 
-Then unzip and run the resulting executable builder-win-0.17.b12.exe
+Then unzip and run the resulting executable builder-win-0.17.b13.exe
 
 This can create a desktop icon you can click on to run.  Optionally, you can use GUIsliceBuilder\GUIslice.bat file to run.
 
-### LINUX and MACOS install
+### LINUX install
 
-Download the builder-{opsys}-{arch}.{release}.{build}.tar.gz using 
+Download the builder-linux-{arch}.{release}.{build}.tar.gz using 
 operating system and cpu architecture (ie., linux-x64) from github
 GUIslice-Builder Releases:
 https://github.com/ImpulseAdventure/GUIslice-Builder/releases
@@ -70,7 +70,7 @@ untar into your home directory.
 Example: Open a terminal
 ```
 cd $HOME
-tar xvzf builder-linux-x64-0.17.b12.tgz
+tar xvzf builder-linux-x64-0.17.b13.tgz
 ```
 Then enter the new GUIsliceBuilder folder
 ```
@@ -80,8 +80,38 @@ To run:
 ```
 ./GUIslice.sh
 ```
+### MACOS install
+
+Download the builder-mac-{arch}.{release}.{build}.tar.gz using 
+operating system and cpu architecture (ie., mac-aarch64) from github
+GUIslice-Builder Releases:
+https://github.com/ImpulseAdventure/GUIslice-Builder/releases
+
+untar into your home directory.
+
+Example: Open a terminal
+```
+cd $HOME
+tar xvzf builder-mac-aarch64-0.17.b13.tgz
+```
+Then enter the new GUIsliceBuilder folder
+```
+cd GUIsliceBuilder
+```
+To run:
+```
+./GUIslice.sh
+```
+**WARNING** 
+The first time you run the builder on MACOS you are likely to encounter the Security Alert:
+![](builder/docs/macos_security_warning.png)
+You will need to select "Allow Anyway" to continue.
 
 ## Release History
+
+### Bug Fixes 0.17.b13
+- Issue `213` Permission problems on MacOS
+- Issue `212` permission denied error when running .sh on Ubuntu 22.04
 
 ### Enhancements for 0.17.b12
 
@@ -100,7 +130,7 @@ The Code has been modified to better indicate your graphics library with the cho
 </p>
 
 <p>
-**WARNING If you have added your own fonts by editing your builder_fonts.json file you will need to modify the newly suplied file with your edits and
+**WARNING** If you have added your own fonts by editing your builder_fonts.json file you will need to modify the newly suplied file with your edits and
 use the new format documented inside the updated User Guide. If you have any problems just post in the issue section.
 </p>
 
