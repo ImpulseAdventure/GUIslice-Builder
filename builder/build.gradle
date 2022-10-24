@@ -15,7 +15,7 @@ repositories {
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-project.version = '0.17.b12'
+project.version = '0.17.b13'
  
 processResources { 
      from("src/main/java/") { 
@@ -214,13 +214,12 @@ task pack_WIN(type: Zip) {
       workingDir projectDir
       commandLine "ISCC.exe ${innoSetupDir}/setup.iss /q".split()
     }  
-    delete "${innoSetupDir}/setup.iss"
+//    delete "${innoSetupDir}/setup.iss"
   }
   from innoSetupDir
   archiveBaseName = "builder-" + "win-x64"
   destinationDirectory = file("${buildDir}/disp")
   archiveExtension = "zip"
-  destinationDirectory = file("${buildDir}/disp")
 }
 
 task pack_LINUX_X64(type: Tar) {
@@ -228,11 +227,11 @@ task pack_LINUX_X64(type: Tar) {
   group = "assemble"
   description = "linux-x64 package distribution"
   from (DISP_LINUX_X64) {
-   exclude ("**/*.sh") // 1
+   excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
   from (DISP_LINUX_X64) {
-   include ("**/*.sh")
+   includes = ["**/*.sh", "**/bin/java"]
    fileMode 0755
   }
   archiveBaseName = "builder-" + "linux-x64"
@@ -246,11 +245,11 @@ task pack_LINUX_AARCH64(type: Tar) {
   group = "assemble"
   description = "linux-aarch64 package distribution"
   from (DISP_LINUX_AARCH64) {
-   exclude ("**/*.sh") // 1
+   excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
   from (DISP_LINUX_AARCH64) {
-   include ("**/*.sh")
+   includes = ["**/*.sh", "**/bin/java"]
    fileMode 0755
   }
   archiveBaseName = "builder-" + "linux-aarch64"
@@ -264,11 +263,11 @@ task pack_MAC_X64(type: Tar) {
   group = "assemble"
   description = "mac-x64 package distribution"
   from (DISP_MAC_X64) {
-   exclude ("**/*.sh") // 1
+   excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
   from (DISP_MAC_X64) {
-   include ("**/*.sh")
+   includes = ["**/*.sh", "**/bin/java"]
    fileMode 0755
   }
   archiveBaseName = "builder-" + "mac-x64"
@@ -282,11 +281,11 @@ task pack_MAC_AARCH64(type: Tar) {
   group = "assemble"
   description = "mac-aarch64 package distribution"
   from (DISP_MAC_AARCH64) {
-   exclude ("**/*.sh") // 1
+   excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
   from (DISP_MAC_AARCH64) {
-   include ("**/*.sh")
+   includes = ["**/*.sh", "**/bin/java"]
    fileMode 0755
   }
   archiveBaseName = "builder-" + "mac-aarch64"
