@@ -339,26 +339,49 @@ public class Utils {
     }
   }
   
-  public static void copyDirectory(String src, String dest, List<String>filterList) 
+  public static void copyDirectory(String strSRC, String strDEST, List<String>fileList) 
       throws IOException {
-    Files.walk(Paths.get(src))
+    System.out.println("***src: "+strSRC);
+    Path dir = Paths.get(strSRC);
+    Files.walk(dir,2)
       .forEach(a -> {
-          Path b = Paths.get(dest, a.toString().substring(src.length()));
+          Path b = Paths.get(strDEST, a.toString().substring(strSRC.length()));
           try {
             boolean bMatch = false;
-            String name = b.toString();
-            if (filterList != null) {
-              for(String include : filterList) {
-                if (name.endsWith(include))
-                  bMatch=true;
+            String name = b.getFileName().toString();
+            File testDir = new File(a.toString());
+            if (testDir.isDirectory()) {
+              if (name.equals(strDEST)) {
+                bMatch=true;  // need to match root dir
+              } else {
+                switch(name) {
+                  case "include":
+                    bMatch=true;
+                    break;
+                  case "src":
+                    bMatch=true;
+                    break;
+                  case "res":
+                    bMatch=true;
+                    break;
+                  case "test":
+                    bMatch=true;
+                    break;
+                  default:
+                    break;
+                }
               }
             } else {
-              bMatch=true;
+              if (fileList == null) {
+                bMatch=true;
+              } else {
+                for(String include : fileList) {
+                  if (name.endsWith(include))
+                    bMatch=true;
+                }
+              }
             }
             if (bMatch &&
-                !name.contains("gui_backup") &&
-                !name.startsWith(".") &&
-                !name.endsWith(".prj") &&
                 !name.endsWith(".bak")) {
               Files.copy(a, b,new CopyOption[]{StandardCopyOption.REPLACE_EXISTING,
                   StandardCopyOption.COPY_ATTRIBUTES});
@@ -367,8 +390,9 @@ public class Utils {
               e.printStackTrace();
           }
       });
+
   }
-  
+
   public static List<String> listDirectory(String src, List<String>filterList) {
     List<String> list = new ArrayList<String>();
     try {

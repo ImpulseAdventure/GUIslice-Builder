@@ -109,6 +109,9 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes 0.17.b14
+- Issue `215` Folder loop creation using SaveAs
+
 ### Bug Fixes 0.17.b13
 - Issue `213` Permission problems on MacOS
 - Issue `212` permission denied error when running .sh on Ubuntu 22.04
