@@ -15,7 +15,7 @@ repositories {
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-project.version = '0.17.b14'
+project.version = '0.17.b15'
  
 processResources { 
      from("src/main/java/") { 
@@ -47,7 +47,7 @@ jar {
 }
 
 jlink {
-  options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+  options = ['--compress', '2', '--no-header-files', '--no-man-pages']
 
   mergedModule {
     requires 'java.management';

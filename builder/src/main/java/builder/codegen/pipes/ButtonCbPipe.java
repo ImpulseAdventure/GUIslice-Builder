@@ -319,7 +319,7 @@ public class ButtonCbPipe extends WorkFlowPipe {
     // do we support round trip edits?
     boolean bPreserveCode = gm.isPreserveButtonCallbacks();
     
-    listOfCases = new ArrayList[256];
+    listOfCases = new ArrayList[1024];
 
     // setup our templates for outputs   
     List<String> templateStandard  = tm.loadTemplate(BUTTON_CASE_TEMPLATE);

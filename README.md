@@ -109,6 +109,9 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes 0.17.b15
+- Issue `218` Builder crash in a large project
+
 ### Bug Fixes 0.17.b14
 - Issue `215` Folder loop creation using SaveAs
 
