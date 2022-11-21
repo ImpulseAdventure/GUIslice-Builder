@@ -146,7 +146,7 @@ public class Controller extends JInternalFrame
   private PagePane projectPage;
   
   /** The project file. */
-  private File projectFile = null;
+  private static File projectFile = null;
   
   /** The title. */
   private String title;
@@ -1134,6 +1134,7 @@ public class Controller extends JInternalFrame
       EnumFactory.getInstance().resetCounts(pages);
       MsgBoard.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_PAGEPANE);
       MsgBoard.sendEvent("Controller",MsgEvent.OBJECT_UNSELECT_TREEVIEW);
+      MsgBoard.sendEvent("Controller",MsgEvent.TREEVIEW_RESET);
     } catch (ClassNotFoundException e) {
       JOptionPane.showMessageDialog(null, "Project File Corrupted", e.toString(), JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
@@ -1327,6 +1328,16 @@ public class Controller extends JInternalFrame
         JOptionPane.showMessageDialog(topFrame, "Sorry, You must Name Project before asking for code generation",
             "Error", JOptionPane.ERROR_MESSAGE);
     }
+  }
+  
+  /** getProjectName 
+   * @return name of project
+   */
+  public static String getProjectName() {
+    if (projectFile != null) {
+      return projectFile.getName();
+    }
+    return "unnamed";
   }
   
   /**

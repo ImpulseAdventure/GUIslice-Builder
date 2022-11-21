@@ -109,6 +109,14 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancements for 0.17.b16
+- Issue `221` Area simulates TFT panel > scroll possibility with a large number of pages
+              Builder already supplies scroll bar inside tab panel but now the TreeView
+							will support selecting the icons for Expand and Collapse Page Elements. 
+							Inside the TreeView Pages will start out collapsed to better support
+							larger projects.
+- Issue `220` Tree view > Adjust Width Area. You can now drag the view larger or smaller.
+
 ### Bug Fixes 0.17.b15
 - Issue `218` Builder crash in a large project
 

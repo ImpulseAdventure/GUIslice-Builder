@@ -69,7 +69,7 @@ GEN-102,TFT Screen Width
 GEN-103,TFT Screen Height
 GEN-104,TFT Screen DPI
 GEN-105,Project Directory
-GEN-106,Target’s Image Directory
+GEN-106,Targetï¿½s Image Directory
 GEN-107,Screen Margins
 GEN-108,Horizontal Spacing
 GEN-109,Vertical Spacing
@@ -90,6 +90,8 @@ GEN-133,Height of TFT Simulation Window
 GEN-134,Width  of Property View Window
 GEN-135,Height of Property View Window
 GEN-136,Remove existing Code
+GEN-137,Width  of Tree View Window
+GEN-138,Height of Tree View Window
 GRID-100,Grid
 GRID-101,Grid Snap To
 GRID-102,Grid Minor Width

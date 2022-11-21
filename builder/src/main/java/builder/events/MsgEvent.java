@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2022 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@ public class MsgEvent {
   static final public int PAGE_ENUM_CHANGE         = 10;
   static final public int PAGE_TAB_CHANGE          = 11;
   static final public int ACTION_COMMAND           = 12;
+  static final public int TREEVIEW_RESET           = 13;
  
   /** The code contains one of the MsgEvent constants. */
   public int    code;
@@ -117,6 +118,8 @@ public class MsgEvent {
         return String.format("PAGE_TAB_CHANGE Key: " + message);
       case ACTION_COMMAND:
         return String.format("ACTION_COMMAND action: " + message);
+      case TREEVIEW_RESET:
+        return String.format("TREEVIEW_RESET");
       default:
         return new String("Invalid code");
     }
