@@ -77,20 +77,21 @@ public class GeneralModel extends WidgetModel {
   // The following properties are hidden from users
   // TODO - remove hidden props and create a new model RuntimeModel
   //        to hold these values
-  public static final int PROP_NUM_HIDDEN           = 7;  // must be set to number hidden props
+  public static final int PROP_NUM_HIDDEN           = 9;  // must be set to number hidden props
   
-  public static final int PROP_IMAGE_DIR            = 19; // last folder used to load image
-
   /* window sizes are hidden from the users because if you change one
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
+  public static final int PROP_IMAGE_DIR            = 19; // last folder used to load image
   public static final int PROP_SIZE_APP_WIDTH       = 20; // Size of App Window 
   public static final int PROP_SIZE_APP_HEIGHT      = 21; 
   public static final int PROP_SIZE_TFT_WIDTH       = 22; // Size of TFT Simulation Pane
   public static final int PROP_SIZE_TFT_HEIGHT      = 23; 
   public static final int PROP_SIZE_PROPVIEW_WIDTH  = 24; // Size of Property View Pane 
   public static final int PROP_SIZE_PROPVIEW_HEIGHT = 25; 
+  public static final int PROP_SIZE_TREEVIEW_WIDTH  = 26; // Size of tree View Pane 
+  public static final int PROP_SIZE_TREEVIEW_HEIGHT = 27; 
   
   /** The Property Defaults */
   static public  final String  DEF_IDE                 = "Arduino IDE";
@@ -157,7 +158,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[26][5];
+    data = new Object[28][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
@@ -203,6 +204,8 @@ public class GeneralModel extends WidgetModel {
     initProp(PROP_SIZE_TFT_HEIGHT, Integer.class, "GEN-133", Boolean.FALSE,"TFT Pane Height",Integer.valueOf(0));
     initProp(PROP_SIZE_PROPVIEW_WIDTH, Integer.class,  "GEN-134", Boolean.FALSE,"PropView Pane Width",Integer.valueOf(0));
     initProp(PROP_SIZE_PROPVIEW_HEIGHT, Integer.class, "GEN-135", Boolean.FALSE,"PropView Pane Height",Integer.valueOf(0));
+    initProp(PROP_SIZE_TREEVIEW_WIDTH, Integer.class,  "GEN-137", Boolean.FALSE,"TreeView Pane Width",Integer.valueOf(240));
+    initProp(PROP_SIZE_TREEVIEW_HEIGHT, Integer.class, "GEN-138", Boolean.FALSE,"TreeView Pane Height",Integer.valueOf(400));
   }
   
   /**
@@ -542,6 +545,46 @@ public class GeneralModel extends WidgetModel {
    */
   public void setPropWinHeight(int h) {
     shortcutValue(Integer.valueOf(h), PROP_SIZE_PROPVIEW_HEIGHT);
+  }
+
+  /**
+   * getTreeWinWidth
+   * 
+   * @return the width
+   */
+  public int getTreeWinWidth() {
+    // return Integer.parseInt((String) data[PROP_WIDTH][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_TREEVIEW_WIDTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setTreeWinWidth
+   *
+   * @param w
+   *          the new width
+   */
+  public void setTreeWinWidth(int w) {
+    shortcutValue(Integer.valueOf(w), PROP_SIZE_TREEVIEW_WIDTH);
+  }
+
+  /**
+   * getTreeWinHeight
+   *
+   * @return the height
+   */
+  public int getTreeWinHeight() {
+    // return Integer.parseInt((String) data[PROP_HEIGHT][PROP_VAL_VALUE]);
+    return (((Integer) (data[PROP_SIZE_TREEVIEW_HEIGHT][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * setTreeWinHeight
+   *
+   * @param h
+   *          the new height
+   */
+  public void setTreeWinHeight(int h) {
+    shortcutValue(Integer.valueOf(h), PROP_SIZE_TREEVIEW_HEIGHT);
   }
 
   /**

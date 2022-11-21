@@ -30,6 +30,8 @@ import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -70,6 +72,7 @@ import builder.controller.Controller;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
+import builder.prefs.GeneralEditor;
 
 /**
  * The Class TreeView provides a view of all widgets on all pages.
@@ -118,6 +121,12 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   /** The root object */
   private TreeItem rootItem;
   
+  /** TREE_WIDTH */
+  private static int TREE_WIDTH;
+  
+  /** TREE_HEIGHT */
+  private static int TREE_HEIGHT;
+  
   /**
    * Gets the single instance of TreeView.
    *
@@ -142,6 +151,22 @@ public class TreeView extends JInternalFrame implements iSubscriber {
    * Initializes the UI.
    */
   private void initUI() {
+    TREE_WIDTH = GeneralEditor.getInstance().getTreeWinWidth();
+    TREE_HEIGHT = GeneralEditor.getInstance().getTreeWinHeight();
+    this.setResizable(true);
+    // trap frame resizing
+    this.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+//          Builder.logger.debug("CHANGED WIDTH: "+getWidth()+" to "+Builder.CANVAS_WIDTH);
+          TREE_WIDTH = getWidth();
+          TREE_HEIGHT = getHeight();
+          instance.setPreferredSize(new Dimension(TREE_WIDTH, TREE_HEIGHT));
+          GeneralEditor.getInstance().setTreeWinWidth(TREE_WIDTH);
+//          Builder.logger.debug("CHANGED HEIGHT: "+TREE_HEIGHT);
+          GeneralEditor.getInstance().setTreeWinHeight(TREE_HEIGHT);
+      }
+    });
     // create the root node
     rootItem = new TreeItem("Root", null);
     root = new DefaultMutableTreeNode(rootItem);
@@ -154,7 +179,8 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     MyTreeRenderer renderer = new MyTreeRenderer();
     tree.setCellRenderer(renderer);
 
-    tree.setRootVisible(false);
+    // if setRootVisible(false) you won't get the expand/collapse icons to show
+    //    tree.setRootVisible(false);
     tree.setEditable(true);
     tree.setDragEnabled(true);
     tree.setDropMode(DropMode.ON_OR_INSERT);
@@ -166,7 +192,8 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     tree.setTransferHandler(new TreeTransferHandler());
     tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 //    tree.setRootVisible(false);
-    tree.setFocusable( true ); 
+    tree.setFocusable( true );
+    
     tree.addMouseListener(new MouseHandler());
     tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       @Override
@@ -179,6 +206,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
           if (selectWidget == null || (!selectWidget.equals(widget))) {
             selectWidget = widget;
             TreePath parentPath = e.getPath().getParentPath();
+            if (parentPath == null) return;
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
             MsgBoard.sendEvent("TreeView", MsgEvent.OBJECT_SELECTED_TREEVIEW,
                 selectWidget.getKey(),
@@ -202,9 +230,10 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     add(scrollPane);
     this.setTitle("Tree View");        
     this.setFrameIcon(Utils.getIcon("resources/icons/guislicebuilder.png",24,24));
-    this.setPreferredSize(new Dimension(250, 400));
+    this.setPreferredSize(new Dimension(TREE_WIDTH, 400));
     this.pack();
     this.setVisible(true);
+    
  }
 
   /**
@@ -615,8 +644,11 @@ public class TreeView extends JInternalFrame implements iSubscriber {
             this.setIcon(textinputIcon);
             break;
           default:
+            if (item.getKey().equals("Root")) {
+                this.setIcon(null);
+                return this;
+            }
             this.setIcon(widgetIcon);
-            break;
         }
         this.setText("<html>" + item.getEnum() + "</html>");
       }
@@ -902,17 +934,17 @@ public class TreeView extends JInternalFrame implements iSubscriber {
   
   @Override
   public void updateEvent(MsgEvent e) {
+    TreePath treePath = null;
 //  System.out.println("TreeView: " + e.toString());
-    if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE ||
-        e.code == MsgEvent.PAGE_TAB_CHANGE) {
+    if (e.code == MsgEvent.OBJECT_SELECTED_PAGEPANE) {
       Builder.logger.debug("TreeView recv: " + e.toString());
       TreeItem pageItem = new TreeItem(e.message, null);
       DefaultMutableTreeNode w = findNode(pageItem);
       if (w != null) {
         selectWidget = ((TreeItem)w.getUserObject());
-        TreePath path = new TreePath(w.getPath());
-        tree.setSelectionPath(path);
-        tree.scrollPathToVisible(path);
+        treePath = new TreePath(w.getPath());
+        tree.setSelectionPath(treePath);
+        tree.scrollPathToVisible(treePath);
         repaint();
       }
     } else if (e.code == MsgEvent.OBJECT_UNSELECT_PAGEPANE) {
@@ -922,15 +954,32 @@ public class TreeView extends JInternalFrame implements iSubscriber {
     } else if (e.code == MsgEvent.WIDGET_ENUM_CHANGE ||
           e.code == MsgEvent.PAGE_ENUM_CHANGE) {
       Builder.logger.debug("TreeView recv: " + e.toString());
-        TreeItem pageItem = new TreeItem(e.message, null);
+        TreeItem pageItem = new TreeItem(e.message, e.xdata);
         DefaultMutableTreeNode w = findNode(pageItem);
         if (w != null) {
           selectWidget = ((TreeItem)w.getUserObject());
           selectWidget.setEnum(e.xdata);
           treeModel.nodeChanged(w);
-          TreePath path = new TreePath(w.getPath());
-          tree.setSelectionPath(path);
-          tree.scrollPathToVisible(path);
+          treePath = new TreePath(w.getPath());
+          tree.setSelectionPath(treePath);
+          tree.scrollPathToVisible(treePath);
+          repaint();
+        }
+    } else if (e.code == MsgEvent.TREEVIEW_RESET) {
+      Builder.logger.debug("TreeView recv: " + e.toString());
+      // start with all pages shown but all elements collapsed
+      treePath = new TreePath(root.getPath());
+      expandOrCollapsToLevel(tree, treePath, 1, false);
+    } else if (e.code == MsgEvent.PAGE_TAB_CHANGE) {
+        Builder.logger.debug("TreeView recv: " + e.toString());
+        TreeItem pageItem = new TreeItem(e.message, null);
+        DefaultMutableTreeNode w = findNode(pageItem);
+        if (w != null) {
+          selectWidget = ((TreeItem)w.getUserObject());
+          treePath = new TreePath(w.getPath());
+          tree.setSelectionPath(treePath);
+          tree.scrollPathToVisible(treePath);
+          currentPage = w;
           repaint();
         }
     } 
@@ -994,7 +1043,40 @@ public class TreeView extends JInternalFrame implements iSubscriber {
 
   }
 
-  /**
+  public void expandOrCollapsToLevel(JTree tree, TreePath treePath, int level, boolean expand) {
+    try {
+      expandOrCollapsePath(tree, treePath, level, 0, expand);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // do nothing
+    }
+  }
+
+  public void expandOrCollapsePath(JTree tree, TreePath treePath, int level, int currentLevel, boolean expand) {
+    // System.err.println("Exp level "+currentLevel+", exp="+expand);
+    if (expand && level <= currentLevel && level > 0)
+      return;
+
+    TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
+    if (treeModel.getChildCount(treeNode) >= 0) {
+      for (int i = 0; i < treeModel.getChildCount(treeNode); i++) {
+        TreeNode n = (TreeNode) treeModel.getChild(treeNode, i);
+        TreePath path = treePath.pathByAddingChild(n);
+        expandOrCollapsePath(tree, path, level, currentLevel + 1, expand);
+      }
+      if (!expand && currentLevel < level)
+        return;
+    }
+    if (expand) {
+      tree.expandPath(treePath);
+      // System.err.println("Path expanded at level "+currentLevel+"-"+treePath);
+    } else {
+      tree.collapsePath(treePath);
+      // System.err.println("Path collapsed at level "+currentLevel+"-"+treePath);
+    }
+  }
+
+/**
    * Backup all widget keys and their parent keys into a serialized string object.
    *
    * @return the <code>String</code> object

@@ -289,6 +289,45 @@ public class GeneralEditor extends ModelEditor {
   }
 
   /**
+   * getTreeWinWidth.
+   *
+   * @return the width
+   */
+  public int getTreeWinWidth() {
+    return ((GeneralModel) model).getTreeWinWidth();
+  }
+  
+  /**
+   * setTreeWinWidth.
+   *
+   * @param width
+   *          the new width
+   */
+  public void setTreeWinWidth(int width) {
+    ((GeneralModel) model).setTreeWinWidth(width);
+    savePreferences();
+  }
+
+  /**
+   * getTreeWinHeight.
+   *
+   * @return the height
+   */
+  public int getTreeWinHeight() {
+    return ((GeneralModel) model).getTreeWinHeight();
+  }
+
+  /**
+   * setTreeWinHeight.
+   *
+   * @param h
+   *          the new height
+   */
+  public void setTreeWinHeight(int h) {
+    ((GeneralModel) model).setTreeWinHeight(h);
+    savePreferences();
+  }
+  /**
    * Gets the margins.
    *
    * @return the margins
