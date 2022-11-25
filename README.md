@@ -109,6 +109,9 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes 0.17.b17
+- Issue `223` Application will not start on Ubuntu 
+
 ### Enhancements for 0.17.b16
 - Issue `221` Area simulates TFT panel > scroll possibility with a large number of pages
               Builder already supplies scroll bar inside tab panel but now the TreeView
