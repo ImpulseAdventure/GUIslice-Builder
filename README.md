@@ -110,6 +110,8 @@ You will need to select "Allow Anyway" to continue.
 ## Release History
 
 ### Bug Fixes 0.17.b17
+
+- Issue `224` Fatal error when SaveAs new empty project  
 - Issue `223` Application will not start on Ubuntu 
 
 ### Enhancements for 0.17.b16
