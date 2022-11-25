@@ -15,7 +15,7 @@ repositories {
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-project.version = '0.17.b16'
+project.version = '0.17.b17'
  
 processResources { 
      from("src/main/java/") { 
@@ -227,6 +227,7 @@ task pack_LINUX_X64(type: Tar) {
   group = "assemble"
   description = "linux-x64 package distribution"
   from (DISP_LINUX_X64) {
+   includeEmptyDirs = true
    excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
@@ -245,6 +246,7 @@ task pack_LINUX_AARCH64(type: Tar) {
   group = "assemble"
   description = "linux-aarch64 package distribution"
   from (DISP_LINUX_AARCH64) {
+   includeEmptyDirs = true
    excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
@@ -263,6 +265,7 @@ task pack_MAC_X64(type: Tar) {
   group = "assemble"
   description = "mac-x64 package distribution"
   from (DISP_MAC_X64) {
+   includeEmptyDirs = true
    excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }
@@ -281,6 +284,7 @@ task pack_MAC_AARCH64(type: Tar) {
   group = "assemble"
   description = "mac-aarch64 package distribution"
   from (DISP_MAC_AARCH64) {
+   includeEmptyDirs = true
    excludes = ["**/*.sh", "**/bin/java"]
    fileMode 0644
   }

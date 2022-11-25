@@ -885,14 +885,13 @@ public class Controller extends JInternalFrame
    *           Signals that an I/O exception has occurred.
    */
   public void saveProject(File file) throws IOException {
-    if (file != null) {
+    if (projectFile == null) {
       projectFile = file;
       // Until the first save occurs no project name exists.
       String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
       topFrame.setTitle(frameTitle);
-    } else {
-      Utils.backupFile(projectFile);
     }
+    Utils.backupFile(projectFile);
     ObjectOutputStream out =  new ObjectOutputStream(new FileOutputStream(projectFile));
     // output current version so we can make changes on future updates
     out.writeObject(Builder.FILE_VERSION_NO);
@@ -945,7 +944,7 @@ public class Controller extends JInternalFrame
   public void saveAsProject(File file) throws IOException {
     // Test to determine if the user really meant save vs saveas
     if (projectFile == null) {
-      saveProject(projectFile);
+      saveProject(file);
       return;
     }
     /* first copy our previous project folder 

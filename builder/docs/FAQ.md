@@ -13,54 +13,15 @@ GUIslice API
 
 **Publication date and software versions**
 
-Published September, 2021. Based on GUIslice Builder 0.16.0 and GUIslice API Library 0.16.0
+Published November, 2022. Based on GUIslice Builder 0.17.b17 and GUIslice API Library 0.16.0
 
 ## Using the GUIsliceBuilder
 
-### GUIsliceBuilder fails to start in windows.
+### I changed the Graphics Library by way of  GUIslice Builder->Edit->Options->General Tab->Graphics Library
 
-Check GUIsliceBuilder/logs/builder.log for any errors.
-
-The Builder logs everything so if the folder GUIsliceBuilder/logs is empty then it
-sounds like the environment variable JAVE_HOME isn't set correctly.
-
-Open a terminal cmd window using cmd.exe
-First enter 
-```
-echo %JAVE_HOME%
-```
-If you are reusing Arduino's IDE Java than it would be something like
-C:\Program Files (x86)\Arduino\java
-
-It must point to the top level folder containing Java runtime whereupon /bin/javaw.exe will be appended 
-to actually run the builder. 
-
-If you notice the path set inside JAVA_HOME is incorrect you can simply rerun the Builder's install to correct it.
-
-If that looks ok enter
-```
-%JAVA_HOME%\bin\java -version
-```
-You should get something like
-```
-java version "1.8.0_192"
-Java(TM) SE Runtime Environment (build 1.8.0_192-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.192-b12, mixed mode)
-```
-If you read our wiki for the installation you will note we require Java 1.8 not any higher although 
-it has been used with Java 9 and 11 without issue.
-
-If all of this is good then cd to the GUIsliceBuilder installation folder for example:
-```
-cd C:\Program Files (x86)\GUIsliceBuilder
-```
-then try running the Builder directly using this command
-```
-%JAVA_HOME%\bin\java -jar lib\builder-0.15.b006.jar
-```
-Assuming you are using 0.15.b006 otherwise look inside the lib folder for the name of the jar file.
-Now just check for whatever error is reported.
-
+All new projects will use this value but your existing projects will still have the old values and will need to be modified by going to the Project Options tab and changing the graphics library.  
+Otherwise your project will continue to use the previous values. Anytime you make changes inside the General Tab 
+you should double check your values inside your open project.
 
 ### I switched a project over to using flash for UI Elements and it's not working, Why?
 
