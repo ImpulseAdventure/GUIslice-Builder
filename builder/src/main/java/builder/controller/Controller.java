@@ -1040,6 +1040,7 @@ public class Controller extends JInternalFrame
         ini.delete();
       }
     }
+    projectFile = file;
     saveProject(file);
     closeProject();
     openProject(file);
