@@ -109,8 +109,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
-### Bug Fixes 0.17.b17
+### Bug Fixes 0.17.b18
 
+- Bug Fix     Redefine complier error when using freefont with TFT_eSPI graphics driver.
+- Bug Fix     SaveAs project also moved over the previous project's *.prg file leaving two *.prg files in the new folder
 - Issue `224` Fatal error when SaveAs new empty project  
 - Issue `223` Application will not start on Ubuntu 
 
