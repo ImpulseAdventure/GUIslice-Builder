@@ -954,6 +954,7 @@ public class Controller extends JInternalFrame
      */
     String fileSep = System.getProperty("file.separator");
     String srcName = projectFile.getName();
+    String oldProjectName = srcName;  // save so we can delete later
     int n = srcName.indexOf(".prj");
     srcName = srcName.substring(0,n);
     String destName = file.getName();
@@ -963,6 +964,7 @@ public class Controller extends JInternalFrame
     String destFolder = file.getPath();
     n = destFolder.lastIndexOf(destName);
     destFolder = destFolder.substring(0,n-1);
+    oldProjectName = destFolder + System.getProperty("file.separator") + oldProjectName;
     String srcFolder = projectFile.getPath();
     n = srcFolder.lastIndexOf(srcName);
     srcFolder = srcFolder.substring(0,n-1);
@@ -1041,6 +1043,11 @@ public class Controller extends JInternalFrame
       }
     }
     projectFile = file;
+    // final cleanup
+    File oldProject = new File(oldProjectName);
+    if (oldProject.exists()) {
+      oldProject.delete();
+    }
     saveProject(file);
     closeProject();
     openProject(file);

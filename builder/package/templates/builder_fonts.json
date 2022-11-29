@@ -2137,7 +2137,6 @@
         },
 				{
           "categoryName": "FONT_GFX",
-          "includePath": "Fonts/GFXFF/",
 					"fontFolderPath": "fonts/gfx/",
           "fonts": [
             {
