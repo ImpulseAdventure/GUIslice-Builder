@@ -43,7 +43,6 @@ import builder.common.Pair;
 import builder.controller.Controller;
 import builder.fonts.FontTFT;
 import builder.fonts.FontTtf;
-import builder.fonts.FontVLW;
 import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
@@ -126,8 +125,9 @@ public final class CodeUtils {
     StringBuilder sBd = new StringBuilder();
     StringBuilder code = new StringBuilder();
     String hex;
-    if (font instanceof FontTtf || font instanceof FontVLW) {
-      for (int i=0; i<text.length(); i++) {
+//    if (font instanceof FontTtf || font instanceof FontVLW) {
+    if (font instanceof FontTtf || target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
+      for (int i=0; i<text.length(); i++) { 
         char ch = text.charAt(i);
         // is this printable ascii?
         int nChar = (int)ch;
@@ -147,30 +147,6 @@ public final class CodeUtils {
         } else {
           // we can output unicode which will be converted to utf8
           code.append(ch);
-        }
-      }
-    } else if(target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
-      for (int i=0; i<text.length(); i++) {
-        char ch = text.charAt(i);
-        int nChar = (int)ch;
-        if (nChar == 0) continue;
-        if (nChar < 127) {
-          if (nChar < 32) {
-            // we need to create hex value of character
-            hex = String.format("\\x%02x", nChar);
-            code.append(hex);
-          } else {
-            if (nChar == 34 /*quote mark*/) {
-              hex = String.format("\\\"", nChar);
-              code.append(hex);
-            } else {
-              code.append(ch);
-            }
-          }
-        } else {
-          // TFT_eSPI treats leading nul as unicode 16
-          hex = String.format("\\u00%02x", nChar);
-          code.append(hex);
         }
       }
     } else {
