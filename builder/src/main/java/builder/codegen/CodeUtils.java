@@ -40,9 +40,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import builder.common.Pair;
+import builder.controller.Controller;
 import builder.fonts.FontTFT;
 import builder.fonts.FontTtf;
 import builder.fonts.FontVLW;
+import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -118,6 +120,9 @@ public final class CodeUtils {
   }
 
   public static String createLiteral(FontTFT font, String qmark, String text) {
+    // grab user's defaults from the General model so we can determine our target platform.
+    String target =Controller.getTargetPlatform();  
+
     StringBuilder sBd = new StringBuilder();
     StringBuilder code = new StringBuilder();
     String hex;
@@ -144,11 +149,11 @@ public final class CodeUtils {
           code.append(ch);
         }
       }
-    } else {
+    } else if(target.equals(ProjectModel.PLATFORM_TFT_ESPI)) {
       for (int i=0; i<text.length(); i++) {
         char ch = text.charAt(i);
-        // is this printable ascii?
         int nChar = (int)ch;
+        if (nChar == 0) continue;
         if (nChar < 127) {
           if (nChar < 32) {
             // we need to create hex value of character
@@ -163,7 +168,32 @@ public final class CodeUtils {
             }
           }
         } else {
-          // we need to create hex value of character
+          // TFT_eSPI treats leading nul as unicode 16
+          hex = String.format("\\u00%02x", nChar);
+          code.append(hex);
+        }
+      }
+    } else {
+      for (int i=0; i<text.length(); i++) {
+        char ch = text.charAt(i);
+        // is this printable ascii?
+        int nChar = (int)ch;
+        if (nChar == 0) continue;
+        if (nChar < 127) {
+          if (nChar < 32) {
+            // we need to create hex value of character
+            hex = String.format("\\x%02x", nChar);
+            code.append(hex);
+          } else {
+            if (nChar == 34 /*quote mark*/) {
+              hex = String.format("\\\"", nChar);
+              code.append(hex);
+            } else {
+              code.append(ch);
+            }
+          }
+        } else {
+          // we need to create hex value of character with leading nul
           hex = String.format("\\x%02x", nChar);
           code.append(hex);
         }

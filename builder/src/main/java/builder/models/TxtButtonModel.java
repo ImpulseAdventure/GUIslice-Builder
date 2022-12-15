@@ -168,7 +168,12 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-202", Boolean.FALSE,"Label",DEF_TEXT);
-    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
+
+    if(Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) { 
+      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
+    } else {
+      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.TRUE,"UTF-8?",DEF_UTF8);
+    }
 
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
     initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
