@@ -154,7 +154,6 @@ public final class NumberInputCodeBlock implements CodeBlock {
         template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
         outputLines = tm.expandMacros(template, map);
         tm.codeWriter(sBd, outputLines);
-      }
     }
 
     template.clear();
