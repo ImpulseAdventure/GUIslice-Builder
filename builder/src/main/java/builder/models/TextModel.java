@@ -286,7 +286,7 @@ public class TextModel extends WidgetModel {
       calcSizes(true);
       fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
-    if (row == PROP_TEXT_ALIGN) {
+    if (row == PROP_TEXT_ALIGN || row == PROP_FRAME_EN) {
       calcSizes(true);
     }
     if (row == PROP_TEXT_SZ) {
@@ -298,6 +298,7 @@ public class TextModel extends WidgetModel {
         calcSizes(true);
       }
     }
+    
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
@@ -648,7 +649,10 @@ public class TextModel extends WidgetModel {
       // calculate the real sizes of our display text
       Dimension nChSz = ff.getTextBounds(getX(),getY(),font, text);
       setWidth(nChSz.width+(getTextMargin()*2)); // account for margin
-      setHeight(nChSz.height+1); // account for frame
+      if (isFrameEnabled())
+        setHeight(nChSz.height+2); // account for frame
+      else
+        setHeight(nChSz.height); // no frame
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }

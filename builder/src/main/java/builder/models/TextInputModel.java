@@ -271,10 +271,9 @@ public class TextInputModel extends WidgetModel {
       calcSizes(true);
       fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
-    if (row == PROP_TEXT_SZ) {
-      calcSizes(true);
-    }
-    if (row == PROP_TEXT) {
+    if (row == PROP_TEXT ||
+        row == PROP_TEXT_ALIGN ||
+        row == PROP_TEXT_SZ) {
       calcSizes(true);
     }
     if (bSendEvents) {
@@ -484,7 +483,7 @@ public class TextInputModel extends WidgetModel {
       // calculate the real sizes of our display text
       Dimension nChSz = ff.getTextBounds(getX(),getY(),font, text);
       setWidth(nChSz.width+(getTextMargin()*2)); // account for margin
-      setHeight(nChSz.height+1); // account for frame
+      setHeight(nChSz.height+2); // account for frame
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }
