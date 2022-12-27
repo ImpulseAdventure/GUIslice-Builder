@@ -515,7 +515,6 @@ public class FontFactory {
         if (metricLine.w > metrics.w)
           metrics.w = metricLine.w;
         metrics.h += metricLine.h;
-        metrics.base_height = metricLine.base_height;
       }
       // Calculate the text alignment
       Rectangle rTxt = alignBounds(align, r, metrics, nMargin);

@@ -30,7 +30,6 @@ public class FontMetrics {
   public int  y1;  // The boundary Y coordinate
   public int  w;  // The boundary width
   public int  h;  // The boundary height
-  public int  base_height; //<<< distance to bas line
   
   
   public FontMetrics() {
@@ -38,7 +37,6 @@ public class FontMetrics {
     this.y1 = 0;
     this.w = 0;
     this.h = 0;
-    this.base_height = 0;
   }
   
   public FontMetrics(int x1, int y1, int w, int h) {
@@ -46,7 +44,6 @@ public class FontMetrics {
      this.y1 = y1;
      this.w = w;
      this.h = h;
-     this.base_height = 0;
   }
 
   public FontMetrics(int x1, int y1, int w, int h,int base_height) {
@@ -54,7 +51,6 @@ public class FontMetrics {
     this.y1 = y1;
     this.w = w;
     this.h = h;
-    this.base_height = base_height;
  }
 
   /**
@@ -64,7 +60,7 @@ public class FontMetrics {
    */
   @Override
   public String toString() {
-    return String.format("Metrics: x1=%d y1=%d w=%d h=%d base=%d", 
-      x1, y1, w, h, base_height);
+    return String.format("Metrics: x1=%d y1=%d w=%d h=%d", 
+      x1, y1, w, h);
   }
 }
