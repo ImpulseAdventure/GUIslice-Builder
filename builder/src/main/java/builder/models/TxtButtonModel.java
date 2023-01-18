@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,22 +66,22 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
   static private final int PROP_TEXT              = 8;
-  static private final int PROP_UTF8              = 9;
-  static private final int PROP_ROUNDED           = 10;
-  static private final int PROP_FILL_EN           = 11;
-  static private final int PROP_FRAME_EN          = 12;
-  static private final int PROP_TEXT_SZ           = 13;
-  static private final int PROP_TEXT_ALIGN        = 14;
-  static private final int PROP_TEXT_MARGIN       = 15;
-  static private final int PROP_CODE              = 16;
-  static private final int PROP_JUMP_PAGE         = 17;
-  static private final int PROP_POPUP_PAGE        = 18;
-  static private final int PROP_POPUP_HIDE        = 19;
-  static private final int PROP_USE_FLASH         = 20;
-  static private final int PROP_TEXT_COLOR        = 21;
-  static private final int PROP_FRAME_COLOR       = 22;
-  static private final int PROP_FILL_COLOR        = 23;
-  static private final int PROP_SELECTED_COLOR    = 24;
+//  static private final int PROP_UTF8              = 9;
+  static private final int PROP_ROUNDED           = 9;
+  static private final int PROP_FILL_EN           = 10;
+  static private final int PROP_FRAME_EN          = 11;
+  static private final int PROP_TEXT_SZ           = 12;
+  static private final int PROP_TEXT_ALIGN        = 13;
+  static private final int PROP_TEXT_MARGIN       = 14;
+  static private final int PROP_CODE              = 15;
+  static private final int PROP_JUMP_PAGE         = 16;
+  static private final int PROP_POPUP_PAGE        = 17;
+  static private final int PROP_POPUP_HIDE        = 18;
+  static private final int PROP_USE_FLASH         = 19;
+  static private final int PROP_TEXT_COLOR        = 20;
+  static private final int PROP_FRAME_COLOR       = 21;
+  static private final int PROP_FILL_COLOR        = 22;
+  static private final int PROP_SELECTED_COLOR    = 23;
   
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
@@ -162,18 +162,14 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   {
     widgetType = EnumFactory.TEXTBUTTON;
     
-    data = new Object[25][5];
+    data = new Object[24][5];
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-202", Boolean.FALSE,"Label",DEF_TEXT);
 
-    if(Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) { 
-      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
-    } else {
-      initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.TRUE,"UTF-8?",DEF_UTF8);
-    }
+//    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
 
     initProp(PROP_ROUNDED, Boolean.class, "COM-012", Boolean.FALSE,"Corners Rounded?",DEF_ROUNDED);
     initProp(PROP_FILL_EN, Boolean.class, "COM-011", Boolean.FALSE,"Fill Enabled?",DEF_FILL_EN);
@@ -430,7 +426,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
    * @return true, if is utf8
    */
   public boolean isUTF8() {
-    return ((Boolean) data[PROP_UTF8][PROP_VAL_VALUE]).booleanValue();
+//    return ((Boolean) data[PROP_UTF8][PROP_VAL_VALUE]).booleanValue();
+    return false;
   }
 
   /**
