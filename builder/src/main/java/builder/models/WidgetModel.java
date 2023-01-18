@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1133,6 +1133,14 @@ public class WidgetModel extends AbstractTableModel {
       dest_m.setImageSelected(src_m.getImageSelected());
     }
 
+  }
+  
+  public void printModel(String name) {
+    Builder.logger.debug(name);
+    for (int i=2; i<getPropertyCount(); i++) {
+      Builder.logger.debug(data[i][PROP_VAL_NAME].toString() + ": " +
+        data[i][PROP_VAL_VALUE].toString());
+     }
   }
 
 }
