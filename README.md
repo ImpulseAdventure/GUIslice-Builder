@@ -111,8 +111,7 @@ You will need to select "Allow Anyway" to continue.
 
 ### Enhancements for 0.17.b19
 <p>
-The UTF8? property has been made read-only unless you are using "Graphics Library=Linux"
-since GUIslice API only supports this on a RaspberryPI. 
+The UTF8? property has been removed since GUIslice API only supports this on a RaspberryPI. 
 </p"
 
 - Issue `228` Guislice-Builder doesn't display German Umlauts using TFT_eSPI and GFX fonts.
