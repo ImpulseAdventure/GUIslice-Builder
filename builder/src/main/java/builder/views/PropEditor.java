@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -108,7 +108,7 @@ public class PropEditor {
     table.setRowSelectionAllowed(true);
     table.setColumnSelectionAllowed(true);
 
-    // Force JTable to “commit” data to model while it is still in editing mode
+    // Force JTable to commit data to model while it is still in editing mode
     table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     
     // disable user column dragging

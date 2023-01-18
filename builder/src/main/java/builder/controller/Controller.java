@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
+//import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
@@ -236,6 +236,7 @@ public class Controller extends JInternalFrame
 //    this.pack();
     this.setVisible(true);
     Builder.logger.debug("New Project");
+    pm.printModel("Project Options");
   }
   
   /**
@@ -1100,6 +1101,7 @@ public class Controller extends JInternalFrame
       } else {
         createProjectModel();
       }
+      pm.printModel("Project Options");
       if (strVersion.equals("17")) {
         PagePane.setZoom(in.readDouble());
       }
@@ -1637,6 +1639,13 @@ public class Controller extends JInternalFrame
     if (key.equals("Java Themes")) {
       if (!generalEditor.getThemeClassName().equals(strTheme)) {
         strTheme = generalEditor.getThemeClassName();
+        JOptionPane.showMessageDialog(null, 
+            "You will need to restart the Builder\nfor your new theme to take effect",
+            "Warning", JOptionPane.WARNING_MESSAGE);
+/*  Java jdk-17.0.5+8 and above with FlatLaf 3.0 crashes if I try to use
+ *  SwingUtilities.updateComponentTreeUI() so its removed for now...
+ */
+/*
         try { // change look and feel
           Builder.setLookAndFeel(generalEditor.getThemeClassName());
           // update components in this application
@@ -1644,6 +1653,7 @@ public class Controller extends JInternalFrame
         } catch (Exception exception) {
           exception.printStackTrace();
         }
+*/
       }
     }
  }
