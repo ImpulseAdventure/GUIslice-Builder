@@ -4,8 +4,8 @@ plugins {
     id 'eclipse'
     id 'application'
     id 'java-library'
-    id 'org.javamodularity.moduleplugin' version "1.8.11"
-    id "org.beryx.jlink" version "2.25.0"
+    id 'org.javamodularity.moduleplugin' version "1.8.12"
+    id "org.beryx.jlink" version "2.26.0"
 }
 
 repositories {
