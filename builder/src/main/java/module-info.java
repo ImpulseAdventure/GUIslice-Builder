@@ -6,8 +6,6 @@ module builder {
   requires transitive java.desktop;
   requires transitive java.prefs;
   requires transitive java.logging;
-  requires flatlaf;
-  requires flatlaf.intellij.themes;
   requires com.google.gson;
   requires org.fife.RSyntaxTextArea;
   requires transitive JRibbonMenu;

@@ -32,8 +32,10 @@ import java.util.Map;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
+import builder.models.ProjectModel;
 import builder.models.TextInputModel;
 import builder.models.WidgetModel;
 
@@ -141,7 +143,7 @@ public final class TextInputCodeBlock implements CodeBlock {
     template = tm.loadTemplate(TOUCH_EN_TEMPLATE);
     tm.codeWriter(sBd, template);
     
-    if (m.isUTF8()) {
+    if (m.isUTF8() && Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) {
       template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);

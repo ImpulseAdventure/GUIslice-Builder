@@ -157,7 +157,7 @@ public class FontGFX extends FontTFT {
 
     if (strMetrics.w <=0 || strMetrics.h <= 0) return;
 
-//    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
+    Builder.logger.debug("drawString: " + s + " clipping=" + bClippingEn + " " + strMetrics.toString());
     
     try {
     // create our image
@@ -173,7 +173,8 @@ public class FontGFX extends FontTFT {
       }
     }
     cursor_x = strMetrics.x1;
-    cursor_y = strMetrics.base_height;
+//    cursor_y = strMetrics.base_height;
+    cursor_y = Math.abs(strMetrics.y1);
     char c;
     for (int i = 0; i < length; i++) {
       c = s.charAt(i);
@@ -239,7 +240,7 @@ public class FontGFX extends FontTFT {
       }
     }
 */
-    //    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
+    Builder.logger.debug("drawImage: " + s + " " + strMetrics.toString());
     
     // create our image
     BufferedImage image = new BufferedImage(img_w, img_h, BufferedImage.TYPE_INT_ARGB );
@@ -261,7 +262,8 @@ public class FontGFX extends FontTFT {
     if (strMetrics.w > 0 || strMetrics.h > 0) {
 
       cursor_x = r.x+strMetrics.x1;
-      cursor_y = r.y+strMetrics.base_height;
+//      cursor_y = r.y+strMetrics.base_height;
+      cursor_y = r.y+Math.abs(strMetrics.y1);
     
       for (int i = 0; i < length; i++) {
         ch = s.charAt(i);
@@ -283,14 +285,9 @@ public class FontGFX extends FontTFT {
    * Determine size of a string with current font/size. 
    * Pass string and a cursor position, returns UL corner and W,H.
    * 
-   * WARNING!  This code is a port of Adafruit's GFX code and
-   * and that code is buggy. 
+   * This code is a port of Adafruit's GFX code
    * 
-   * (1) If you use GFXfonts the width given back is too short.  You can adjust 
-   * this to the true width by taking the width (w) given back and adding
-   * the x1 value * 2.
-   * 
-   * (2) The code for sizing strings with newlines ('\n') is completely bogus.
+   * The code for sizing strings with newlines ('\n') is completely bogus.
    * You need to break the string up into multiple strings with each one
    * representing one line. I have therefore flag newlines by throwing
    * an FontException. 
@@ -361,7 +358,7 @@ public class FontGFX extends FontTFT {
       if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
     }
     FontMetrics metrics = new FontMetrics(x1,y1,w,h,maxbase);
-//    Builder.logger.debug("getTextBounds: " + str + " " + metrics.toString());
+    Builder.logger.debug("getTextBounds: " + str + " " + metrics.toString());
     return metrics;
   }
  
@@ -409,8 +406,10 @@ public class FontGFX extends FontTFT {
   private void charBounds(char ch, boolean bClippingEn) {
     if ((ch >= first) && (ch <= last)) { // Char present in this font?
       FontGFXGlyph glyph = glyphList.get(ch - first);
-      int gw = glyph.image_width;
-      int gh = glyph.image_height;
+      int gw = glyph.width;
+      int gh = glyph.height;
+//      int gw = glyph.image_width;
+//      int gh = glyph.image_height;
       int xa = glyph.xAdvance;
       int xo = glyph.xOffset;
       int yo = glyph.yOffset;
@@ -441,7 +440,11 @@ public class FontGFX extends FontTFT {
       if (yBase2 > maxbase)
         maxbase = yBase2;
       tmpX += xa * tsx;
+      
+      Builder.logger.debug(String.format("charBounds [%c] y=%d gh=%d yo=%d miny=%d maxy=%d",
+        ch,tmpY,gh,yo,miny,maxy));
     }
+
   }
 
   /**
@@ -475,20 +478,14 @@ public class FontGFX extends FontTFT {
     int xo16 = 0;
     int yo16 = 0;
     
-//    y = h;
-    
     if (size_x > 1 || size_y > 1) {
       xo16 = xo;
       yo16 = yo;
     }
-    // Todo: Add character clipping here
     int dbit;
     int bit = 0;
     for (yy = 0; yy < h; yy++) {
       for (xx = 0; xx < w; xx++) {
-        /* I know this is ugly and stupid but I just copied it over
-         * from Adafruit's GFX font handling and it works so...
-         */
         dbit = bit++ & 7;
         if (dbit == 0) {
           bits = bitmap[bo++] & 0xFF;
@@ -551,6 +548,7 @@ public class FontGFX extends FontTFT {
   private boolean parseGFXFont(String fontFileName, String fontName) throws FontException {
     Token token = null;
     File file = new File(fontFileName);
+    Builder.logger.debug(String.format("parseGFXFont %s", fontName));
     try {
       tokenizer.setSource(file);
 //      Builder.logger.debug("Opened file: " + fileName);
@@ -618,15 +616,15 @@ public class FontGFX extends FontTFT {
           token = tokenizer.nextToken();
           if (token.getType() != INTEGER) parseError(token, "glyph missing yOffset");
           glyph.yOffset = Integer.parseInt(token.getToken());
-          if (test_idx++ == 65) {
+          if (test_idx == 65) {
             // letter A - save height for fields of all spaces
             cap_width = glyph.width;
             cap_height = glyph.height;
           }
 /*
           Builder.logger.debug(String.format(
-              "Char [%d]-> bitmapOffset=%d  width=%d height=%d xAdvance=%d xOffset=%d yOffset="  
-              ,test_idx++ 
+              "Char [%d]-> bitmapOffset=%d  width=%d height=%d xAdvance=%d xOffset=%d yOffset=%d"  
+              ,test_idx
               ,glyph.bitmapOffset
               ,glyph.width
               ,glyph.height
@@ -636,6 +634,7 @@ public class FontGFX extends FontTFT {
               ));
 */
           glyphList.add(glyph);
+          test_idx++;
         }
       }
       //----------------------------------------------------------------------------------------
@@ -668,12 +667,9 @@ public class FontGFX extends FontTFT {
       byteList.clear();
       byteList = null;
       tokenizer.close();
-      // now we need to repair our glyphs due to the fact descent isn't recorded.
-      char_maxwidth = 0;
-      char_maxheight = 0;
-      for (int i=first; i<=last; i++) {
-        repairGlyph((char)i);
-      }
+      char_maxwidth = cap_width;
+      char_maxheight = cap_height;
+
       return true;
     } catch (IOException | ParserException | FontException | NumberFormatException | TokenizerException e) {
       String msg = String.format("File [%s]: %s", 
@@ -681,98 +677,6 @@ public class FontGFX extends FontTFT {
       tokenizer.close();
       Builder.logger.error(msg);
       return false;
-    }
-  }
-
-  /**
-   * repairGlyph()
-   * It turns out that the information inside the Adafruit's GFX glyphs is wrong.
-   * While width is sometimes incorrect the biggest issue is the the glyph height
-   * is for the baseline of the character not its real height. This means that
-   * characters with a descent are not properly sized for bounding boxes.
-   * This isn't a big problem for Adafruit since they can write past a boundary box
-   * bit Java won't let us to do that.
-   * Fixing height and width is one issue but if that is all thats done we will still
-   * truncate characters with a descent because to do the display we need to adjust
-   * the y parameter to the baseline since all of the bitmaps assume thats the
-   * starting point for drawing.
-   * @param    ch    The character in question
-   */
-  private void repairGlyph(char ch) {
-    if ((ch >= first) && (ch <= last)) { // Char present in this font?
-      FontGFXGlyph glyph = glyphList.get(ch - first);
-      int w = glyph.width;
-      int h = glyph.height;
-      int xo = glyph.xOffset;
-      int yo = glyph.yOffset;
-      int bo = glyph.bitmapOffset;
-      int xx, yy;
-      int dbit;
-      int bit = 0;
-      int bits = 0;
-      int x = 0;
-      int y = h;
-
-      int maxx = -32767;
-      int maxy = -32767;
-      int minx = 32767;
-      int miny = 32767;
-      int posX = 0;
-      int posY = 0;
-      /* So the idea here is to pretend to draw the character to an imaginary display
-       * tracking maximum x and y values so we can later adjust the height and width
-       * stored for the glyph.
-       */
-      for (yy = 0; yy < h; yy++) {
-        for (xx = 0; xx < w; xx++) {
-          dbit = bit++ & 7;
-          if (dbit == 0) {
-            bits = bitmap[bo++] & 0xFF;
-          }
-          if ((bits & 0x80) > 0) {
-            posX = x + xo + xx;
-            posY = y + yo + yy;
-            if (posX > maxx)
-              maxx = posX;
-            if (posY > maxy)
-              maxy = posY;
-            if (posX < minx)
-              minx = posX;
-            if (posY < miny)
-              miny = posY;
-          }
-          bits = (bits << 1) & 0xFF;
-        } // end xx < w
-      } // end yy < h
-      if (maxx + 1 > glyph.width) {
-        glyph.image_width = maxx + 1;
-      } else {
-        glyph.image_width = glyph.width;
-      }
-      if (maxy + 1 > glyph.height) {
-        glyph.image_height = maxy + 1;
-      } else {
-        glyph.image_height = glyph.height;
-      }
-      if (glyph.image_width >= char_maxwidth) {
-        char_maxwidth = glyph.image_width;
-      }
-      if (glyph.image_height >= char_maxheight) {
-        char_maxheight = glyph.image_height;
-      }
-/*
-      Builder.logger.debug(String.format(
-          "Char [%c]->width=%d height=%d xAdvance=%d xOffset=%d yOffset=%d img_w=%d img_h=%d"  
-          ,ch 
-          ,glyph.width
-          ,glyph.height
-          ,glyph.xAdvance
-          ,glyph.xOffset
-          ,glyph.yOffset
-          ,glyph.image_width
-          ,glyph.image_height
-          ));
-*/
     }
   }
 

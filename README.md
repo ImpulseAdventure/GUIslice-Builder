@@ -109,6 +109,17 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancements for 0.17.b19
+
+The Builder has been updated to use Java 18 and FlatLaf 3.0.
+
+<p>
+The UTF8? property on text fields has been removed since GUIslice API only supports this on a RaspberryPI. 
+</p"
+
+### Bug Fixes 0.17.b19
+- Issue `228` Guislice-Builder doesn't display German Umlauts using TFT_eSPI and GFX fonts.
+
 ### Bug Fixes 0.17.b18
 
 - Bug Fix     Redefine complier error when using freefont with TFT_eSPI graphics driver.

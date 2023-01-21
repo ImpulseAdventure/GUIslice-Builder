@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,17 +66,17 @@ public class TextModel extends WidgetModel {
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
   static private final int PROP_TEXT              = 8;
-  static private final int PROP_UTF8              = 9;
-  static private final int PROP_TEXT_SZ           = 10;
-  static private final int PROP_TEXT_ALIGN        = 11;
-  static private final int PROP_TEXT_MARGIN       = 12;
-  static private final int PROP_FILL_EN           = 13;
-  static private final int PROP_FRAME_EN          = 14;
-  static private final int PROP_USE_FLASH         = 15;
-  static private final int PROP_TEXT_COLOR        = 16;
-  static private final int PROP_FRAME_COLOR       = 17;
-  static private final int PROP_FILL_COLOR        = 18;
-  static private final int PROP_SELECTED_COLOR    = 19;
+//  static private final int PROP_UTF8              = 9;
+  static private final int PROP_TEXT_SZ           = 9;
+  static private final int PROP_TEXT_ALIGN        = 10;
+  static private final int PROP_TEXT_MARGIN       = 11;
+  static private final int PROP_FILL_EN           = 12;
+  static private final int PROP_FRAME_EN          = 13;
+  static private final int PROP_USE_FLASH         = 14;
+  static private final int PROP_TEXT_COLOR        = 15;
+  static private final int PROP_FRAME_COLOR       = 16;
+  static private final int PROP_FILL_COLOR        = 17;
+  static private final int PROP_SELECTED_COLOR    = 18;
 
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
@@ -153,13 +153,15 @@ public class TextModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TEXT;
-    data = new Object[20][5];
+    data = new Object[19][5];
 
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
-    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
+    
+//    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
+
     initProp(PROP_TEXT_SZ, Integer.class, "TXT-205", Boolean.FALSE,"External Storage Size",DEF_TEXT_SZ);
     initProp(PROP_TEXT_ALIGN, String.class, "TXT-213", Boolean.FALSE,"Text Alignment",DEF_TEXT_ALIGN);
     initProp(PROP_TEXT_MARGIN, Integer.class, "TXT-212", Boolean.FALSE,"Text Margin",DEF_TEXT_MARGIN);
@@ -281,7 +283,7 @@ public class TextModel extends WidgetModel {
       calcSizes(true);
       fireTableCellUpdated(PROP_TEXT, COLUMN_VALUE);
     } 
-    if (row == PROP_TEXT_ALIGN) {
+    if (row == PROP_TEXT_ALIGN || row == PROP_FRAME_EN) {
       calcSizes(true);
     }
     if (row == PROP_TEXT_SZ) {
@@ -293,6 +295,7 @@ public class TextModel extends WidgetModel {
         calcSizes(true);
       }
     }
+    
     if (bSendEvents) {
       if (row == PROP_ENUM) {
         MsgBoard.sendEnumChange(getKey(), getKey(), getEnum());
@@ -390,7 +393,8 @@ public class TextModel extends WidgetModel {
    * @return true, if is utf8
    */
   public boolean isUTF8() {
-    return ((Boolean) data[PROP_UTF8][PROP_VAL_VALUE]).booleanValue();
+//    return ((Boolean) data[PROP_UTF8][PROP_VAL_VALUE]).booleanValue();
+    return false;
   }
 
   /**
@@ -643,7 +647,10 @@ public class TextModel extends WidgetModel {
       // calculate the real sizes of our display text
       Dimension nChSz = ff.getTextBounds(getX(),getY(),font, text);
       setWidth(nChSz.width+(getTextMargin()*2)); // account for margin
-      setHeight(nChSz.height+1); // account for frame
+      if (isFrameEnabled())
+        setHeight(nChSz.height+2); // account for frame
+      else
+        setHeight(nChSz.height); // no frame
       fireTableCellUpdated(PROP_WIDTH, COLUMN_VALUE);
       fireTableCellUpdated(PROP_HEIGHT, COLUMN_VALUE);
     }

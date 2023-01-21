@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2020 Paul Conti
+ * Copyright 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import builder.mementos.Memento;
  * <p>
  * The pattern intends to encapsulate in an object all the data required 
  * for performing a given action (command), including what method to call, 
- * the method’s arguments, and the object to which the method belongs.
+ * the method's arguments, and the object to which the method belongs.
  * </p>
  * <p>
  * However, instead of following this pattern exactly, it will be extended

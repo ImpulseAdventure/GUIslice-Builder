@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2018-2022 Paul Conti
+ * Copyright (c) 2018-2023 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,6 +74,7 @@ import builder.views.RibbonListener;
 //import builder.views.ToolBar;
 import builder.views.TreeView;
 
+import com.formdev.flatlaf.util.SystemInfo;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -113,7 +114,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.17.b18";
+  public static final String VERSION = "0.17.b19";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
@@ -155,19 +156,15 @@ public class Builder  extends JDesktopPane {
   /** The controller. */
   protected Controller controller;
   
-  /** The boolean indicating running on a MacOS system */
-  public static boolean isMAC = false;
-  
   public static String NO_OPTIONAL_LAFS = "NO_OPTIONAL_LAFS";
   
   public static JSplitPane splitPane;
   
   public static double version;
   
-  public static String osName;
-  
   public static Ribbon ribbon;
   
+  public static boolean isMAC = false;
   private static boolean bInsideIDE = false;
   
   /** our logger */
@@ -180,9 +177,6 @@ public class Builder  extends JDesktopPane {
    *          the arguments
    */
   public static void main(String[] args) {
-    // On Windows 10 move menubar to Title pane
-    JFrame.setDefaultLookAndFeelDecorated( true );
-    JDialog.setDefaultLookAndFeelDecorated( true );
     // Check how many arguments were passed in
     if(args.length > 0)
     {
@@ -196,14 +190,43 @@ public class Builder  extends JDesktopPane {
     
     Builder builder = new Builder();
     version = Double.parseDouble(System.getProperty("java.specification.version"));
-    osName = System.getProperty("os.name").toLowerCase();
-    isMAC = osName.startsWith("mac os x");
+    // macOS  (see https://www.formdev.com/flatlaf/macos/)
+    if( SystemInfo.isMacOS ) {
+//      isMAC = true;
+      // enable screen menu bar
+      // (moves menu bar from JFrame window to top of screen)
+      System.setProperty( "apple.laf.useScreenMenuBar", "true" );
+
+      // application name used in screen menu bar
+      // (in first menu after the "apple" menu)
+      System.setProperty( "apple.awt.application.name", "GUIsliceBuilder" );
+
+      // appearance of window title bars
+      // possible values:
+      //   - "system": use current macOS appearance (light or dark)
+      //   - "NSAppearanceNameAqua": use light appearance
+      //   - "NSAppearanceNameDarkAqua": use dark appearance
+      // (needs to be set on main thread; setting it on AWT thread does not work)
+      System.setProperty( "apple.awt.application.appearance", "system" );
+    }
+
+    // Linux
+    if( SystemInfo.isLinux || SystemInfo.isWindows_10_orLater) {
+      // enable custom window decorations
+      JFrame.setDefaultLookAndFeelDecorated( true );
+      JDialog.setDefaultLookAndFeelDecorated( true );
+    }
+
     // start our logger
     logger = LogManager.getLogger();
     // do not use Utils.getWorkingDir() or you will write to package/logs and screw up releases
     String logFile = "./logs/builder.log";
     logger.openLogger(logFile);
-    logger.debug("Builder ver: " + VERSION + " started java ver: " + version + " osys: " + osName);
+    logger.debug("Builder ver: " + VERSION + 
+        " started java ver: " + version + 
+        " osname: " + System.getProperty( "os.name" ) +
+        " osarc: "  + System.getProperty( "os.arch" ) +
+        " osver: " + SystemInfo.osVersion);
     loadThemes();
     builder.startUp();
   }

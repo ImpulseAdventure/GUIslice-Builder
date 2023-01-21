@@ -32,8 +32,10 @@ import java.util.Map;
 import builder.codegen.CodeGenerator;
 import builder.codegen.CodeUtils;
 import builder.codegen.TemplateManager;
+import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
+import builder.models.ProjectModel;
 import builder.models.TxtButtonModel;
 import builder.models.WidgetModel;
 
@@ -137,7 +139,7 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       tm.codeWriter(sBd, outputLines);
     }
 
-    if (m.isUTF8()) {
+    if (m.isUTF8() && Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) {
       template = tm.loadTemplate(TEXTUTF8_TEMPLATE);
       tm.codeWriter(sBd, template);
     }

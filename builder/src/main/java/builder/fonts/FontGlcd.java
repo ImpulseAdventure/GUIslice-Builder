@@ -268,8 +268,6 @@ public class FontGlcd extends FontTFT {
     tmpX = x;
     y1 = y;
     tmpY = y;
-    int w  = 0;
-    int h = 0;
     // clipping
     if (bClippingEn) {
       minx = Builder.CANVAS_WIDTH;
@@ -280,6 +278,10 @@ public class FontGlcd extends FontTFT {
     }
     maxx = -1;
     maxy = -1;
+
+    Dimension sz = getMaxCharSize();
+    int w  = 0;
+    int h = sz.height;
     
     for (int i=0; i<str.length(); i++) {
       ch = str.charAt(i);
@@ -288,20 +290,17 @@ public class FontGlcd extends FontTFT {
         continue;
       }
       charBounds(ch);  // modifies class variables for sizing
+      w += sz.width;
     }
     
     if (maxx >= minx) {
       x1 = 0;
-      w = maxx - minx + 1;
     }
     if (maxy >= miny) {
       y1 = 0;
-      h = maxy - miny + 1;
     }
 
     // clipping
-    w++;
-    h++;
     if (bClippingEn) {
       if (w > Builder.CANVAS_WIDTH) w = Builder.CANVAS_WIDTH;
       if (h > Builder.CANVAS_HEIGHT) h = Builder.CANVAS_HEIGHT;
