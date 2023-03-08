@@ -1,0 +1,55 @@
+//
+// Use this version of gradle if running inside an IDE
+// and using gradle like with Intellij IDEA IDE
+// Start by deleting or renaming build.gradle and
+// renaming build.gradle-ide-version to build.gradle
+//
+
+plugins {
+    id 'eclipse'
+    id 'application'
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+}
+
+mainClassName = "builder.Builder"
+applicationName = "GUIslice"
+archivesBaseName = 'builder'
+project.version = '0.17.b20'
+
+processResources { 
+     from("src/main/java/") { 
+         include 'resources/**' 
+     } 
+}
+
+application {
+    mainClass = 'builder.Builder'
+    mainModule = 'builder'
+}
+
+def compiler = javaToolchains.compilerFor {
+    languageVersion = JavaLanguageVersion.of(18)
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(18)
+    }
+}
+
+jar {
+  manifest {
+    attributes 'Main-Class': 'builder.Builder',
+      "Implementation-Title": "GUIsliceBuilder",
+      "Implementation-Version": archiveVersion
+  }
+}
+
+dependencies {
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+} 
+

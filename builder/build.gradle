@@ -15,7 +15,7 @@ repositories {
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-project.version = '0.17.b19'
+project.version = '0.17.b20'
  
 processResources { 
      from("src/main/java/") { 
@@ -109,6 +109,7 @@ def TARGET_MAC_AARCH64 = "${buildDir}/tmp/mac-aarch64/GUIsliceBuilder"
 def DISP_MAC_AARCH64 = "${buildDir}/tmp/mac-aarch64"
 
 def innoSetupDir = new File("${buildDir}/innosetup")
+def INNO_PROGRAM = "C:/Program Files (x86)/Inno Setup 6/ISCC.exe"
 
 tasks.jlink.doLast {
   copy {
@@ -212,7 +213,7 @@ task pack_WIN(type: Zip) {
     
     exec {
       workingDir projectDir
-      commandLine "ISCC.exe ${innoSetupDir}/setup.iss /q".split()
+      commandLine "${INNO_PROGRAM} ${innoSetupDir}/setup.iss /q".split()
     }  
 //    delete "${innoSetupDir}/setup.iss"
   }
