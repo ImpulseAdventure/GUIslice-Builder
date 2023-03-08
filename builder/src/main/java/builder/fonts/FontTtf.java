@@ -75,6 +75,17 @@ public class FontTtf extends FontTFT {
       + "ttf"
       + System.getProperty("file.separator") 
       + item.getLogicalName();
+    
+    if (Builder.isInsideIDE()) {
+    	String strUserDir = System.getProperty("user.dir");
+
+    	fontFileName = strUserDir 
+                + System.getProperty("file.separator")
+                + "package"
+                + System.getProperty("file.separator")
+                + fontFileName;
+    }
+    
     File file = new File(fontFileName);
     try {
       font = Font.createFont(Font.TRUETYPE_FONT, file).deriveFont((float)item.getLogicalSizeAsInt());
