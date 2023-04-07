@@ -109,6 +109,13 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fix 0.17.b21
+- Bug Fix `232` Builder cannot be instructed not to overwrite existing files
+  Enhancement has been made to not overwrite any existing platformio.ini file when doing a code generation.
+
+### Bug Fixes 0.17.b20
+- Bug Fix `230` Fix FontTtf.java to allow running directly within Eclipse IDE 
+
 ### Enhancements for 0.17.b19
 
 The Builder has been updated to use Java 18 and FlatLaf 3.0.
