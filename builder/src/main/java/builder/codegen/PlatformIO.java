@@ -70,7 +70,12 @@ public class PlatformIO {
     
     File destFile = new File(folder +  m_sFileSep + PLATFORMIO_INI);
     // first test for platform.ini and if found just copy it
-    File srcFile = new File(home + CodeGenerator.TEMPLATE_FOLDER + m_sFileSep + PLATFORMIO_INI);
+    File srcFile = new File(home
+      + CodeGenerator.TEMPLATE_FOLDER
+      + m_sFileSep
+      + PLATFORMIO_CUSTOM
+      +  m_sFileSep
+      + PLATFORMIO_INI);
     if (srcFile.exists()) {
       Utils.copyFile(srcFile, destFile);
       return;

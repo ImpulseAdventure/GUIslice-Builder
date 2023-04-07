@@ -394,7 +394,7 @@ public class CodeGenerator {
   {
     StringBuilder sBd = null;
     StringBuilder code = null;
-    
+    Builder.logger.debug("doCodeGen for: "+projectFile.toString());
     String folder = projectFile.getParent();
     // remove the project extension from our input file
     m_sProjectName = projectFile.getName();
@@ -408,7 +408,7 @@ public class CodeGenerator {
 
     try {
       // if we are using PlatformIO IDE we may need to create some directory structure
-      if (m_nState >= 10) {
+      if (m_nState >= 10 && !Utils.isPlatformIO_INI_Present(folder)) {
         PlatformIO.makePIOFileStruct(folder);
         PlatformIO.createIniFile(folder);
       }
@@ -430,7 +430,7 @@ public class CodeGenerator {
        * NOTE: our *.prj file was already backed up by Controller.save()
        */
       appFile = new File(appFullPath);
-      if (appFile.exists()) {
+      if (appFile.exists() && isValidateApp(folder, appFullPath)) {
         boolean bUpgraded = false;
         /*
          * One more complication is a possible upgrade of
@@ -614,7 +614,58 @@ public class CodeGenerator {
     }
     return name;
   }
-  
+
+  /**
+   * Validate the application
+   * instead of a single file, if necessary
+   *
+   * @param folder
+   * @param appName
+   */
+  public boolean isValidateApp(String folder, String appName) throws CodeGenException {
+    File appFile = new File(appName);
+    /*
+     * It exists so we need to read the first line. It will tell us if we need to
+     * upgrade or not.
+     */
+    BufferedReader br;
+    try {
+      br = new BufferedReader(
+        new InputStreamReader(
+          new FileInputStream(appFile), "UTF8"));
+      String line = "";
+      if ((line = br.readLine()) != null) {
+        /*
+         * we have three conditions here
+         * 1- line == "//<App !Start!>" no upgrade needed
+         * 2- line == "//<File !Start!>" upgrade needed
+         * 3- line not equal to either - really old beta project should have been upgraded
+         */
+        if (!line.equals("//<App !Start!>")) {
+          Builder.logger.debug("file: " + appFile.toString() + " is missing tag: //<App !Start!> needs update");
+          Builder.logger.debug("first line is: " + line);
+          if (!line.equals("//<File !Start!>")) {
+            br.close();
+            Builder.logger.debug("file: " + appFile.toString() + " is also missing tag: //<File !Start!>");
+            Builder.logger.debug("So we will simply delete and recreate the files");
+            return false; // corrupted file
+          } else {
+            br.close();
+            return true;  // valid file
+          }
+        }
+        Builder.logger.debug("file: " + appFile.toString() + " is valid");
+        br.close();
+        return true;
+      }
+      Builder.logger.debug("file: " + appFile.toString() + "is empty");
+      br.close();
+      return false; // invalid file
+    } catch (IOException e) {
+      Builder.logger.debug(e.toString());
+      throw new CodeGenException(e.toString());
+    }
+  }
   /**
    * Modify the application to use a header
    * instead of a single file, if necessary
@@ -650,9 +701,11 @@ public class CodeGenerator {
          * 3- line not equal to either - really old beta project should have been upgraded
          */
         if (!line.equals("//<App !Start!>")) {
+          Builder.logger.debug("file: " + appFile.toString() + " is missing tag: //<App !Start!>");
+          Builder.logger.debug("first line is: " + line);
           if (!line.equals("//<File !Start!>")) {
             br.close();
-            throw new CodeGenException("file: " + getTemplateName() + "\n is corrupted missing tag: //<File !Start!>");
+            throw new CodeGenException("file: " + appFile.toString() + "\n is corrupted missing tag: //<File !Start!>");
           }
           // Make a backup copy of app file
           br.close();
