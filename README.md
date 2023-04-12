@@ -6,6 +6,12 @@ Please refer to the wiki page for installation and usage details:
 
 ![image](https://user-images.githubusercontent.com/8510097/90728338-9a8be100-e279-11ea-969e-cbd8bb0ac6c6.png)
 
+## Code of Conduct
+[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/code_of_conduct.md)
+
+## Contributing
+[CONTRIBUTING](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
+
 ## Brief Overview
 <p>
 The GUIslice Builder is a standalone desktop application that is more than a layout tool for your UI. It's designed as 
