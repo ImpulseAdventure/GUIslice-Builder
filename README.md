@@ -11,10 +11,12 @@ Please refer to the wiki page for installation and usage details:
 [Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/code_of_conduct.md)
 
 ## Contributing
-[CONTRIBUTING](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
+[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
 
+Many thanks to Jetbrains for supplying development software!
 <a href="url"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" align="left" height="48" width="48" alt="JetBrains Logo (Main) logo."></a>
 [Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
+
 
 ## Brief Overview
 <p>
