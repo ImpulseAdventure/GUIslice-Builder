@@ -13,7 +13,7 @@ Please refer to the wiki page for installation and usage details:
 ## Contributing
 [CONTRIBUTING](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
 
-![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
+<a href="url"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" align="left" height="48" width="48" alt="JetBrains Logo (Main) logo."></a>
 [Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
 
 ## Brief Overview
