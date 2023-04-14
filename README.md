@@ -1,3 +1,4 @@
+
 # GUIslice Builder
 
 Please refer to the wiki page for installation and usage details:
@@ -11,6 +12,9 @@ Please refer to the wiki page for installation and usage details:
 
 ## Contributing
 [CONTRIBUTING](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
+
+![jetbrains](https://www.jetbrains.com/company/brand/#logos-and-icons)
+[Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
 
 ## Brief Overview
 <p>
