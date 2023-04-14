@@ -7,18 +7,6 @@ Please refer to the wiki page for installation and usage details:
 
 ![image](https://user-images.githubusercontent.com/8510097/90728338-9a8be100-e279-11ea-969e-cbd8bb0ac6c6.png)
 
-## Code of Conduct
-[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/code_of_conduct.md)
-
-## Contributing
-[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
-
-Many thanks to Jetbrains.com for supplying development software!
-<a href="url"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" align="left" height="48" width="48" alt="JetBrains Logo (Main) logo."></a>
-
-[Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
-
-
 ## Brief Overview
 <p>
 The GUIslice Builder is a standalone desktop application that is more than a layout tool for your UI. It's designed as 
@@ -44,6 +32,17 @@ You can find Example project files inside GUIslice/examples/builder
 ## Disclaimer ##
 <p>The Software is not designed for use in devices or situations where there may be physical injury 
 if the Software has errors.</p>
+
+## Contributing
+[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
+
+Many thanks to Jetbrains.com for supplying development software!
+<a href="url"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" align="left" height="48" width="48" alt="JetBrains Logo (Main) logo."></a>
+
+[Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
+
+## Code of Conduct
+[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/code_of_conduct.md)
 
 ## Builder Contents
 
