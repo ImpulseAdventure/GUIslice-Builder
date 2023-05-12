@@ -13,7 +13,7 @@ GUIslice API
 
 **Publication date and software versions**
 
-Published November, 2022. Based on GUIslice Builder 0.17.b17 and GUIslice API Library 0.16.0
+Published May, 2023. Based on GUIslice Builder 0.17.b21 and GUIslice API Library 0.16.0
 
 ## Using the GUIsliceBuilder
 
@@ -241,4 +241,14 @@ Call:
   gslc_tsElemRef*  m_pElemTextbox    = NULL;
   gslc_ElemXTextboxReset(&m_gui,m_pElemTextbox);
 ```
+
+### Using PlatformIO IDE I get fatal error: Adafruit_I2CDevice.h: No such file or directory after set GSLC_USE_PROGMEM to 1
+
+The reason is simply that the PIO Library Dependency Python script is ignoring C's preprocessor syntax that is kicking in
+when GSLC_USE_PROGMEM is set to 1.  The solution is to change from deep to deep+ as so:
+
+```
+lib_ldf_mode = deep+
+```
+
 
