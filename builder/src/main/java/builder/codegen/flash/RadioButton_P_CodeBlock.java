@@ -83,15 +83,13 @@ public final class RadioButton_P_CodeBlock implements CodeBlock {
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
 
-    if (!m.getElementRef().isEmpty()) {
-      // we need to do a gslc_PageFindElemById
-      template = tm.loadTemplate(ELEMENTREF_FIND_TEMPLATE);
-      outputLines = tm.expandMacros(template, map);
-      tm.codeWriter(sBd, outputLines);
-    } 
+     if (m.isCallbackEn()) {
+       // we need to do a gslc_PageFindElemById
+       template = tm.loadTemplate(ELEMENTREF_FIND_TEMPLATE);
+       outputLines = tm.expandMacros(template, map);
+       tm.codeWriter(sBd, outputLines);
 
-    if (m.isCallbackEn()) {
-      template = tm.loadTemplate(CHECKBOXSETSTATE_TEMPLATE);
+       template = tm.loadTemplate(CHECKBOXSETSTATE_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }

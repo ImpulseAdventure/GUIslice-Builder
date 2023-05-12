@@ -121,6 +121,9 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fix 0.17.b22
+- Bug Fix for Flash based checkbox and radio buttons with callback enabled.
+
 ### Bug Fix 0.17.b21
 - Bug Fix `232` Builder cannot be instructed not to overwrite existing files
   Enhancement has been made to not overwrite any existing platformio.ini file when doing a code generation.
