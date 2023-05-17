@@ -92,13 +92,10 @@ import builder.models.PageModel;
 import builder.models.ProjectModel;
 import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
-import builder.prefs.BoxEditor;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 import builder.prefs.ModelEditor;
 import builder.prefs.NumKeyPadEditor;
-import builder.prefs.TextEditor;
-import builder.prefs.TxtButtonEditor;
 import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeFactory;
 import builder.views.PagePane;
@@ -1288,17 +1285,11 @@ public class Controller extends JInternalFrame
   public List<ModelEditor> initUserPrefs() {
     generalEditor = GeneralEditor.getInstance();
     gridEditor = GridEditor.getInstance();
-    BoxEditor boxEditor = BoxEditor.getInstance();
-    TextEditor textEditor = TextEditor.getInstance();
-    TxtButtonEditor txtbuttonEditor = TxtButtonEditor.getInstance();
     AlphaKeyPadEditor alphakeypadEditor = AlphaKeyPadEditor.getInstance();
     NumKeyPadEditor numkeypadEditor = NumKeyPadEditor.getInstance();
     List<ModelEditor> prefEditors = new ArrayList<ModelEditor>();
     prefEditors.add(generalEditor);
     prefEditors.add(gridEditor);
-    prefEditors.add(boxEditor);
-    prefEditors.add(textEditor);
-    prefEditors.add(txtbuttonEditor);
     prefEditors.add(alphakeypadEditor);
     prefEditors.add(numkeypadEditor);
     /*  

@@ -34,7 +34,6 @@ import builder.common.GUIslice;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
 import builder.models.TxtButtonModel;
-import builder.prefs.TxtButtonEditor;
 
 /**
  * The Class TxtButtonWidget simulates GUIslice API gslc_ElemCreateTxt() call.
@@ -61,7 +60,6 @@ public class TxtButtonWidget extends Widget {
     m = new TxtButtonModel();
     model = m;
     super.setXY(model, x, y);
-    setUserPrefs(TxtButtonEditor.getInstance().getModel());
   }
 
   /**

@@ -31,7 +31,6 @@ import java.awt.Rectangle;
 
 import builder.common.Utils;
 import builder.models.BoxModel;
-import builder.prefs.BoxEditor;
 
 /**
  * The Class BoxWidget simulates GUIslice API gslc_ElemCreateBox() call.
@@ -56,7 +55,6 @@ public class BoxWidget extends Widget {
     m = new BoxModel();
     model = m;
     super.setXY(model, x, y);
-    setUserPrefs(BoxEditor.getInstance().getModel());
   }
 
   /**

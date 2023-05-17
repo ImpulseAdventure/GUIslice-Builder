@@ -121,6 +121,11 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancement for 0.17.b23
+
+Removed edit->options tabs for Box, Text, and TextButton since now you should edit theme inside GUIsliceBuilder/templates
+guislice_themes.json If you understand json syntax you can add your own theme or simply edit the GUIslice version.
+
 ### Bug Fix 0.17.b22
 - Bug Fix for Flash based checkbox and radio buttons with callback enabled.
 
