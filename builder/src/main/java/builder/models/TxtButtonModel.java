@@ -666,6 +666,11 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
      if (theme == null) return;
      GUIsliceThemeElement element = theme.getElement("TextButton");
      if (element != null) {
+       if (element.getWidth() != null)
+         data[PROP_WIDTH][PROP_VAL_VALUE] = element.getWidth();
+       if (element.getHeight() != null)
+         data[PROP_HEIGHT][PROP_VAL_VALUE] = element.getHeight();
+       data[PROP_USE_FLASH][PROP_VAL_VALUE] = element.isUse_flash();
        data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();
        data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
        data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();

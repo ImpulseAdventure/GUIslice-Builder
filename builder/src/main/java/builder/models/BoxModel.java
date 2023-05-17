@@ -226,6 +226,11 @@ public class BoxModel extends WidgetModel {
     if (theme == null) return;
     GUIsliceThemeElement element = theme.getElement("Box");
     if (element != null) {
+      if (element.getWidth() != null)
+        data[PROP_WIDTH][PROP_VAL_VALUE] = element.getWidth();
+      if (element.getHeight() != null)
+        data[PROP_HEIGHT][PROP_VAL_VALUE] = element.getHeight();
+      data[PROP_USE_FLASH][PROP_VAL_VALUE] = element.isUse_flash();
       data[PROP_ROUNDED][PROP_VAL_VALUE] = element.isCornersRounded();
       data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
       if (element.getFrameCol() != null)

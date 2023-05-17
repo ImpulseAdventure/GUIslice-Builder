@@ -7,270 +7,284 @@
 				"uiElemName": "Page",
 				"fill_col": "0x000000"   // black (0,0,0)
 		 },
-     {
-				"uiElemName": "Box",
-				"corners_rounded": false,
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
-				"glow_col": "0x000000",  // black (0,0,0)
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "CheckBox",
-				"style": "1",
-				"checkmark_col": "0xffa500", // GSLC_COL_ORANGE (255,165,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "TextInput",
-				"fill_en": true,
-				"text_col": "0xffff00",  // yellow (255,255,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "NumberInput",
-				"fill_en": true,
-				"text_col": "0xffff00",  // yellow (255,255,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "ListBox",
-				"frame_en": true,
-				"gap_col": "0x000000",   //  black
-				"glow_col": "0x000000",  //  black
-				"text_col": "0xffffff",  //  white (255,255,255)
-				"bar_frame_col": "0x0000ff", // GSLC_COL_BLUE (0,0,255) 
-				"bar_fill_col": "0x000000",  // black (0,0,0)
-				"frame_col": "0x0000ff", // GSLC_COL_BLUE (0,0,255) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "ProgressBar",
-				"gauge_col": "0x00ff00", // GSLC_COL_GREEN (0,255,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "RadioButton",
-				"style": "2",
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"checkmark_col": "0xffa500", // GSLC_COL_ORANGE (255,165,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "RingGauge",
-				"frame_en": false,
-				"fill_en": true,
-				"text_col": "0xffff00",  // yellow (255,255,0)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "SeekBar",
-				"trim_en": true,
-				"thumb_frame_en": false,
-				"frame_en": false,
-				"fill_en": true,
-				"glow_en": false,
-				"trim_col": "0x8080ff",  // GSLC_COL_BLUE_LT4 (128,128,255)
-				"tick_col":  "0x808080", // GSLC_COL_GRAY (128,128,128)
-				"thumb_col": "0x0000c0", // GSLC_COL_BLUE_DK2 (0,0,192)
-				"gauge_col":  "0x0000ff",// GSLC_COL_BLUE (0,0,255) 
-				"remain_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
-				"thumb_frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "Slider",
-				"trim_en": false,
-				"trim_col": "0x0000ff",  // GSLC_COL_BLUE (0,0,255)
-				"tick_col": "0x0000ff",  // GSLC_COL_BLUE (0,0,255)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"glow_col": "0x000000",  // (0,0,0)
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "Text",
-				"frame_en": false,
-				"fill_en": true,
-				"text_col": "0xffff00",  // yellow (255,255,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "TextBox",
-				"text_col": "0xffff00",  // yellow (255,255,0)
-				"bar_frame_col": "0x0000ff", // GSLC_COL_BLUE (0,0,255) 
-				"bar_fill_col": "0x000000",  // black (0,0,0)
-				"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"glow_col": "0x000000",  // black (0,0,0)
-				"fill_col": "0x000000"   // black (0,0,0)
-			},
-			{
-				"uiElemName": "TextButton",
-				"frame_en": true,
-				"fill_en": true,
-				"text_col": "0xffffff",  // white (255,255,255)
-				"frame_col": "0x0000c0", // GSLC_COL_BLUE_DK2 (0,0,192)
-				"glow_col": "0x0000e0",   // GSLC_COL_BLUE_DK1 (0,0,224)
-				"fill_col": "0x000080"  // GSLC_COL_BLUE_DK4 (0,0,128)
-			},
-			{
-				"uiElemName": "ToggleButton",
-				"corners_rounded": true,
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"thumb_col": "0x808080", // GSLC_COL_GRAY (128,128,128) 
-				"on_col":  "0x0000c0",   // GSLC_COL_BLUE_DK2 (0,0,224)
-				"off_col": "0xe0e0e0",   // GSLC_COL_GRAY_LT3 (224,224,224)
-				"frame_col": "0x808080"  // GSLC_COL_GRAY (128,128,128) 
-			}
-		]},
 		{
-		"themeName": "Cyan Dark",
-		"uiElements": 
-		[{
-				"uiElemName": "Page",
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "Box",
-				"corners_rounded": false,
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xf0f0f0",   // lightest gray (240,240,240)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "CheckBox",
-				"style": "0",
-				"checkmark_col": "0x008b8b", // darker cyan (0,139,139)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
-			},
-			{
-				"uiElemName": "TextInput",
-				"fill_en": true,
-				"text_col": "0x000000",  // black (0,0,0)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col":  "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "NumberInput",
-				"fill_en": true,
-				"text_col": "0x000000", // black (0,0,0)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "ListBox",
-				"frame_en": true,
-				"gap_col": "0xeef0f4",   // light gray (238,240,244)
-				"glow_col": "0x00ffff",  // cyan (0,255,255)  
-				"text_col": "0x000000",  //  black (0,0,0)
-				"bar_frame_col": "0x000000", // black (0,0,0)
-				"bar_fill_col": "0xf2f2f2",  // light gray (242,242,242)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "ProgressBar",
-				"gauge_col": "0x008b8b", // darker cyan (0,139,139)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
-			},
-			{
-				"uiElemName": "RadioButton",
-				"style": "2",
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"checkmark_col": "0x008b8b", // darker cyan (0,139,139)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "RingGauge",
-				"frame_en": false,
-				"fill_en": true,
-				"text_col": "0x000000", // black (0,0,0)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "SeekBar",
-				"trim_en": true,
-				"thumb_frame_en": true,
-				"frame_en": false,
-				"fill_en": true,
-				"glow_en": false,
-				"trim_col":  "0x008b8b", // darker cyan (0,139,139)
-				"tick_col":  "0xe4e4e5", // light grey (228,228,228)
-				"thumb_col":  "0x008b8b", // darker cyan (0,139,139)
-				"gauge_col":  "0x008b8b", // darker cyan (0,139,139)
-				"remain_col": "0x000000",// black (0,0,0)
-				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xf0f0f0",   // lightest gray (240,240,240)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "Slider",
-				"trim_en": false,
-				"trim_col": "0x000000",// black (0,0,0)
-				"tick_col": "0x000000",// black (0,0,0)
-				"frame_col": "0x008b8b", // darker cyan (0,139,139)
-				"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
-			},
-			{
-				"uiElemName": "Text",
-				"frame_en": false,
-				"fill_en": true,
-				"text_col": "0x000000", // black (0,0,0)
-				"frame_col": "0x000000", // black (0,0,0)
-				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
-			},
-			{
-				"uiElemName": "TextBox",
-				"text_col": "0x000000", // black (0,0,0)
-				"bar_frame_col": "0x000000", // black (0,0,0) 
-				"bar_fill_col":  "0xf2f2f2",   // light gray (242,242,242)
-				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0xc0c0c0",   // light gray (192,192,192)
-				"fill_col": "0xc0c0c0"   // light gray (192,192,192)
-			},
-			{
-				"uiElemName": "TextButton",
-				"frame_en": true,
-				"fill_en": true,
-				"text_col": "0xffffff",  // white (255,255,255)
-				"frame_col": "0x000000", // black (0,0,0)
-				"glow_col": "0x00ffff",  // cyan (0,255,255)
-				"fill_col": "0x008b8b"   // darker cyan (0,139,139)
-			},
-			{
-				"uiElemName": "ToggleButton",
-				"corners_rounded": false,
-				"frame_en": true,
-				"fill_en": true,
-				"glow_en": false,
-				"thumb_col": "0xc0c0c0", // light gray (192,192,192)
-				"on_col":  "0x008b8b",   // darker cyan (0,139,139)
-				"off_col": "0xeef0f4",   // light gray (238,240,244)
-				"frame_col": "0x808080"  // GSLC_COL_GRAY (128,128,128) 
-			}
-		]},
+			"uiElemName": "Box",
+			"width": "300",
+			"height": "150",
+			"use_flash": false,
+			"corners_rounded": false,
+			"frame_en": true,
+			"fill_en": true,
+			"glow_en": false,
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"glow_col": "0x000000",  // black (0,0,0)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "CheckBox",
+			"style": "1",
+			"checkmark_col": "0xffa500", // GSLC_COL_ORANGE (255,165,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "TextInput",
+			"fill_en": true,
+			"text_col": "0xffff00",  // yellow (255,255,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "NumberInput",
+			"fill_en": true,
+			"text_col": "0xffff00",  // yellow (255,255,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "ListBox",
+			"frame_en": true,
+			"gap_col": "0x000000",   //  black
+			"glow_col": "0x000000",  //  black
+			"text_col": "0xffffff",  //  white (255,255,255)
+			"bar_frame_col": "0x0000ff", // GSLC_COL_BLUE (0,0,255)
+			"bar_fill_col": "0x000000",  // black (0,0,0)
+			"frame_col": "0x0000ff", // GSLC_COL_BLUE (0,0,255)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "ProgressBar",
+			"gauge_col": "0x00ff00", // GSLC_COL_GREEN (0,255,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "RadioButton",
+			"style": "2",
+			"frame_en": true,
+			"fill_en": true,
+			"glow_en": false,
+			"checkmark_col": "0xffa500", // GSLC_COL_ORANGE (255,165,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "RingGauge",
+			"frame_en": false,
+			"fill_en": true,
+			"text_col": "0xffff00",  // yellow (255,255,0)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "SeekBar",
+			"trim_en": true,
+			"thumb_frame_en": false,
+			"frame_en": false,
+			"fill_en": true,
+			"glow_en": false,
+			"trim_col": "0x8080ff",  // GSLC_COL_BLUE_LT4 (128,128,255)
+			"tick_col":  "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"thumb_col": "0x0000c0", // GSLC_COL_BLUE_DK2 (0,0,192)
+			"gauge_col":  "0x0000ff",// GSLC_COL_BLUE (0,0,255)
+			"remain_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"thumb_frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "Slider",
+			"trim_en": false,
+			"trim_col": "0x0000ff",  // GSLC_COL_BLUE (0,0,255)
+			"tick_col": "0x0000ff",  // GSLC_COL_BLUE (0,0,255)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"glow_col": "0x000000",  // (0,0,0)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "Text",
+			"use_flash": false,
+			"frame_en": false,
+			"fill_en": true,
+			"text_col": "0xffff00",  // yellow (255,255,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "TextBox",
+			"text_col": "0xffff00",  // yellow (255,255,0)
+			"bar_frame_col": "0x0000ff", // GSLC_COL_BLUE (0,0,255)
+			"bar_fill_col": "0x000000",  // black (0,0,0)
+			"frame_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"glow_col": "0x000000",  // black (0,0,0)
+			"fill_col": "0x000000"   // black (0,0,0)
+		},
+		{
+			"uiElemName": "TextButton",
+			"width": "80",
+			"height": "40",
+			"use_flash": false,
+			"frame_en": true,
+			"fill_en": true,
+			"text_col": "0xffffff",  // white (255,255,255)
+			"frame_col": "0x0000c0", // GSLC_COL_BLUE_DK2 (0,0,192)
+			"glow_col": "0x0000e0",   // GSLC_COL_BLUE_DK1 (0,0,224)
+			"fill_col": "0x000080"  // GSLC_COL_BLUE_DK4 (0,0,128)
+		},
+		{
+			"uiElemName": "ToggleButton",
+			"corners_rounded": true,
+			"frame_en": true,
+			"fill_en": true,
+			"glow_en": false,
+			"thumb_col": "0x808080", // GSLC_COL_GRAY (128,128,128)
+			"on_col":  "0x0000c0",   // GSLC_COL_BLUE_DK2 (0,0,224)
+			"off_col": "0xe0e0e0",   // GSLC_COL_GRAY_LT3 (224,224,224)
+			"frame_col": "0x808080"  // GSLC_COL_GRAY (128,128,128)
+		}
+	]},
+	{
+	"themeName": "Cyan Dark",
+	"uiElements":
+	[{
+			"uiElemName": "Page",
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "Box",
+			"width": "300",
+			"height": "150",
+			"use_flash": false,
+			"corners_rounded": false,
+			"frame_en": true,
+			"fill_en": true,
+			"glow_en": false,
+			"frame_col": "0x000000", // black (0,0,0)
+			"glow_col": "0xf0f0f0",   // lightest gray (240,240,240)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "CheckBox",
+			"style": "0",
+			"checkmark_col": "0x008b8b", // darker cyan (0,139,139)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xc0c0c0"   // light gray (192,192,192)
+		},
+		{
+			"uiElemName": "TextInput",
+			"fill_en": true,
+			"text_col": "0x000000",  // black (0,0,0)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col":  "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "NumberInput",
+			"fill_en": true,
+			"text_col": "0x000000", // black (0,0,0)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "ListBox",
+			"frame_en": true,
+			"gap_col": "0xeef0f4",   // light gray (238,240,244)
+			"glow_col": "0x00ffff",  // cyan (0,255,255)
+			"text_col": "0x000000",  //  black (0,0,0)
+			"bar_frame_col": "0x000000", // black (0,0,0)
+			"bar_fill_col": "0xf2f2f2",  // light gray (242,242,242)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "ProgressBar",
+			"gauge_col": "0x008b8b", // darker cyan (0,139,139)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xc0c0c0"   // light gray (192,192,192)
+		},
+		{
+			"uiElemName": "RadioButton",
+			"style": "2",
+			"frame_en": true,
+			"fill_en": true,
+			"glow_en": false,
+			"checkmark_col": "0x008b8b", // darker cyan (0,139,139)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "RingGauge",
+			"frame_en": false,
+			"fill_en": true,
+			"text_col": "0x000000", // black (0,0,0)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "SeekBar",
+			"trim_en": true,
+			"thumb_frame_en": true,
+			"frame_en": false,
+			"fill_en": true,
+			"glow_en": false,
+			"trim_col":  "0x008b8b", // darker cyan (0,139,139)
+			"tick_col":  "0xe4e4e5", // light grey (228,228,228)
+			"thumb_col":  "0x008b8b", // darker cyan (0,139,139)
+			"gauge_col":  "0x008b8b", // darker cyan (0,139,139)
+			"remain_col": "0x000000",// black (0,0,0)
+			"frame_col": "0x000000", // black (0,0,0)
+			"glow_col": "0xf0f0f0",   // lightest gray (240,240,240)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "Slider",
+			"trim_en": false,
+			"trim_col": "0x000000",// black (0,0,0)
+			"tick_col": "0x000000",// black (0,0,0)
+			"frame_col": "0x008b8b", // darker cyan (0,139,139)
+			"fill_col": "0xf0f0f0"   // lightest gray (240,240,240)
+		},
+		{
+			"uiElemName": "Text",
+			"use_flash": false,
+			"frame_en": false,
+			"fill_en": true,
+			"text_col": "0x000000", // black (0,0,0)
+			"frame_col": "0x000000", // black (0,0,0)
+			"fill_col": "0xc0c0c0"   // light gray (192,192,192)
+		},
+		{
+			"uiElemName": "TextBox",
+			"text_col": "0x000000", // black (0,0,0)
+			"bar_frame_col": "0x000000", // black (0,0,0)
+			"bar_fill_col":  "0xf2f2f2",   // light gray (242,242,242)
+			"frame_col": "0x000000", // black (0,0,0)
+			"glow_col": "0xc0c0c0",   // light gray (192,192,192)
+			"fill_col": "0xc0c0c0"   // light gray (192,192,192)
+		},
+		{
+			"uiElemName": "TextButton",
+			"width": "80",
+			"height": "40",
+			"use_flash": false,
+			"frame_en": true,
+			"fill_en": true,
+			"text_col": "0xffffff",  // white (255,255,255)
+			"frame_col": "0x000000", // black (0,0,0)
+			"glow_col": "0x00ffff",  // cyan (0,255,255)
+			"fill_col": "0x008b8b"   // darker cyan (0,139,139)
+		},
+		{
+			"uiElemName": "ToggleButton",
+			"corners_rounded": false,
+			"frame_en": true,
+			"fill_en": true,
+			"glow_en": false,
+			"thumb_col": "0xc0c0c0", // light gray (192,192,192)
+			"on_col":  "0x008b8b",   // darker cyan (0,139,139)
+			"off_col": "0xeef0f4",   // light gray (238,240,244)
+			"frame_col": "0x808080"  // GSLC_COL_GRAY (128,128,128)
+		}
+	]},
 	{
 		"themeName": "Arc Dark",
 		"uiElements": 
@@ -280,6 +294,9 @@
 			},
 			{
 				"uiElemName": "Box",
+				"width": "300",
+				"height": "150",
+				"use_flash": false,
 				"corners_rounded": false,
 				"frame_en": false,
 				"fill_en": true,
@@ -371,6 +388,7 @@
 			},
 			{
 				"uiElemName": "Text",
+				"use_flash": false,
 				"frame_en": false,
 				"fill_en": true,
 				"text_col": "0xe4e4e5",  // light grey (228,228,228)
@@ -388,6 +406,9 @@
 			},
 			{
 				"uiElemName": "TextButton",
+				"width": "80",
+				"height": "40",
+				"use_flash": false,
 				"frame_en": true,
 				"fill_en": true,
 				"text_col": "0xe4e4e5",  // light grey (228,228,228)
@@ -417,6 +438,9 @@
 			},
 			{
 				"uiElemName": "Box",
+				"width": "300",
+				"height": "150",
+				"use_flash": false,
 				"corners_rounded": false,
 				"frame_en": false,
 				"fill_en": true,
@@ -508,6 +532,7 @@
 			},
 			{
 				"uiElemName": "Text",
+				"use_flash": false,
 				"frame_en": false,
 				"fill_en": true,
 				"text_col": "0xe4e4e5",  // light grey (228,228,228)
@@ -525,6 +550,10 @@
 			},
 			{
 				"uiElemName": "TextButton",
+				"width": "80",
+				"height": "40",
+				"text_margin": "0",
+				"use_flash": false,
 				"frame_en": true,
 				"fill_en": true,
 				"text_col": "0xe4e4e5",  // light grey (228,228,228)
@@ -554,6 +583,9 @@
 			},
 			{
 				"uiElemName": "Box",
+				"width": "300",
+				"height": "150",
+				"use_flash": false,
 				"corners_rounded": false,
 				"frame_en": true,
 				"fill_en": true,
@@ -645,6 +677,7 @@
 			},
 			{
 				"uiElemName": "Text",
+				"use_flash": false,
 				"frame_en": false,
 				"fill_en": true,
 				"text_col": "0x000000", // black (0,0,0)
@@ -662,6 +695,10 @@
 			},
 			{
 				"uiElemName": "TextButton",
+				"width": "80",
+				"height": "40",
+				"text_margin": "0",
+				"use_flash": false,
 				"frame_en": true,
 				"fill_en": true,
 				"text_col": "0xffffff",  // white (255,255,255)

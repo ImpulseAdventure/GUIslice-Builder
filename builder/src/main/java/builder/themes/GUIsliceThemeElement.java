@@ -40,13 +40,17 @@ import java.awt.Color;
 public class GUIsliceThemeElement {
 
   public String  uiElemName;
+  public String width;
+  public String height;
+
+  public boolean use_flash;
   public boolean corners_rounded;
   public boolean trim_en;
   public boolean thumb_frame_en;
   public boolean frame_en;
   public boolean fill_en;
   public boolean glow_en;
-  
+
   public String  style;
 
   public String  bar_frame_col;
@@ -67,6 +71,9 @@ public class GUIsliceThemeElement {
   public String  trim_col;
   
   public GUIsliceThemeElement() {
+    width = null;
+    height = null;
+    use_flash = false;
     corners_rounded = false;
     trim_en = false;
     thumb_frame_en = false;
@@ -90,6 +97,18 @@ public class GUIsliceThemeElement {
     thumb_col = "NULL";
     thumb_frame_col = "NULL";
     trim_col = "NULL";
+  }
+
+  public Integer getWidth() {
+    return Integer.valueOf(width);
+  }
+
+  public Integer getHeight() {
+    return Integer.valueOf(height);
+  }
+
+  public boolean isUse_flash() {
+    return use_flash;
   }
 
   public String getUiElemName() {

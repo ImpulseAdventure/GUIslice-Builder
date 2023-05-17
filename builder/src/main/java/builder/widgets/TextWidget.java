@@ -34,7 +34,6 @@ import builder.common.Utils;
 import builder.fonts.FontFactory;
 import builder.fonts.FontTFT;
 import builder.models.TextModel;
-import builder.prefs.TextEditor;
 
 /**
  * The Class TextWidget simulates GUIslice API gslc_ElemCreateTxt() call.
@@ -61,7 +60,6 @@ public class TextWidget extends Widget {
     m = new TextModel();
     model = m;
     super.setXY(model, x, y);
-    setUserPrefs(TextEditor.getInstance().getModel());
   }
 
   /**
