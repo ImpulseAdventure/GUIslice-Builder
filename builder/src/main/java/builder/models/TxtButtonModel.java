@@ -230,11 +230,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   public void setValueAt(Object value, int row, int col) {
     // we handle code segment through a backdoor "buttonClicked"
     if (row == PROP_CODE) return;
-    if (col == COLUMN_VALUE) {
-      // commands are used to support undo and redo actions.
-      PropertyCommand c = new PropertyCommand(this, value, row);
-      execute(c);
-    }
+    super.setValueAt(value, row, col);
   }
 
   /**

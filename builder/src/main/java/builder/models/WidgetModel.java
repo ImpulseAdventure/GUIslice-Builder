@@ -661,6 +661,20 @@ public class WidgetModel extends AbstractTableModel {
           return;
         }
       }
+      if (row == PROP_ENUM) {
+        String test = (String)value;
+        // enums must not start with special characters or numbers
+        if (test.charAt(0) >= 'A' && test.toUpperCase().charAt(0) <= 'Z' ) {
+          // commands are used to support undo and redo actions.
+          PropertyCommand c = new PropertyCommand(this, value, row);
+          execute(c);
+          return;
+        }
+        JOptionPane.showMessageDialog(null, "Your ENUM should start with a Capital Letter A-Z,\n"+
+                "No numbers or special characters",
+            "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+      }
       // commands are used to support undo and redo actions.
       PropertyCommand c = new PropertyCommand(this, value, row);
       execute(c);

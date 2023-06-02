@@ -412,9 +412,7 @@ public class ImgButtonModel extends WidgetModel implements MultipeLineCellListen
           return;
         }
       }
-      // commands are used to support undo and redo actions.
-      PropertyCommand c = new PropertyCommand(this, value, row);
-      execute(c);
+      super.setValueAt(value, row, col);
     }
   }
 
