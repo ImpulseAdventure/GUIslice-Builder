@@ -243,11 +243,7 @@ public class ListBoxModel extends WidgetModel implements MultipeLineCellListener
   public void setValueAt(Object value, int row, int col) {
     // we handle list of items through a backdoor "buttonClicked"
     if (row == PROP_ITEMS) return;
-    if (col == COLUMN_VALUE) {
-      // commands are used to support undo and redo actions.
-      PropertyCommand c = new PropertyCommand(this, value, row);
-      execute(c);
-    }
+    super.setValueAt(value, row, col);
   }
 
   /**

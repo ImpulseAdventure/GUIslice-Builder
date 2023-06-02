@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b12
+        Ver: 0.17.b24
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published April 2022. Based on GUIslice API Library 0.17.0
+Published June 2023. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -2331,6 +2331,12 @@ You can add you own themes simply by loading into the intellijthemes folder.  Th
 The Builder supports a richer set of functions for Button callbacks like Jump to Page, Show Popup page and Hide Popup Page and since users can set these values on/off in many different editing sessions the Builder attempts to do a more intelligent update for the Button callbacks. 
 
 The rules here apply only to the Button callbacks.  All other callbacks simply look for existing case statement with ENUM and if it finds it within your *.ino file the code is left unchanged. If a UI Element is deleted the code generator will remove it's case statement.
+
+**WARNING!**
+
+You must not place switch or additional break statements inside your callbacks.  The code generator will crash.
+Instead simply create a subroutine that has your more complex logic and call that from inside your callback.
+
 
 **Example** **One**
 
