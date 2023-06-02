@@ -13,9 +13,13 @@ GUIslice API
 
 **Publication date and software versions**
 
-Published May, 2023. Based on GUIslice Builder 0.17.b21 and GUIslice API Library 0.16.0
+Published June, 2023. Based on GUIslice Builder 0.17.b24 and GUIslice API Library 0.17.0
 
 ## Using the GUIsliceBuilder
+
+### WARNING!
+
+You must not place switch or additional break statements inside your button callbacks. The code generator will crash. Instead simply create a subroutine that has your more complex logic and call that from inside your callback.
 
 ### I changed the Graphics Library by way of  GUIslice Builder->Edit->Options->General Tab->Graphics Library
 

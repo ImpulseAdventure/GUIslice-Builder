@@ -121,6 +121,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes 0.17.b24
+- Issue `233` Using TFT_eSPI with gfx freefonts created include 'NULLFreeSans12pt7b.h'
+- Bug Fix Now the Builder tests that your enums start with a capital letter A to Z to fix compile time issues.
+
 ### Enhancement for 0.17.b23
 
 Removed edit->options tabs for Box, Text, and TextButton since now you should edit theme inside GUIsliceBuilder/templates
