@@ -34,7 +34,7 @@ You can find Example project files inside GUIslice/examples/builder
 if the Software has errors.</p>
 
 ## Contributing
-[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/CONTRIBUTING.md)
+[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/docs/CONTRIBUTING.md)
 
 Many thanks to Jetbrains.com for supplying development software!
 <a href="url"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" align="left" height="48" width="48" alt="JetBrains Logo (Main) logo."></a>
@@ -42,7 +42,7 @@ Many thanks to Jetbrains.com for supplying development software!
 [Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
 
 ## Code of Conduct
-[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/code_of_conduct.md)
+[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/docs/code_of_conduct.md)
 
 ## Builder Contents
 
@@ -120,6 +120,32 @@ The first time you run the builder on MACOS you are likely to encounter the Secu
 You will need to select "Allow Anyway" to continue.
 
 ## Release History
+
+### Enhancements for 0.17.b25
+
+Added support for Arabic fonts using TFT_eFEX library.
+
+Arabic Fonts require using TFT_eSPI SMOOTH_FONTS (.VLW extension) and this in turn needs eFontRefType = GSLC_FONTREF_FNAME and fontRefMode = GSLC_FONTREF_MODE_1.
+
+The following fonts are shipped with the Builder inside GUIsliceBuilder/fonts/vlw/data:
+
+ - cairobold16.vlw
+ - cairobold20.vlw
+ - cairolight16.vlw
+ - cairolight20.vlw
+ - cairomedium16.vlw
+ - cairomedium20.vlw
+ 
+Generated Code Example:
+```
+  // ------------------------------------------------
+  // Load Fonts
+  // ------------------------------------------------
+//<Load_Fonts !Start!>
+    if (!gslc_FontSet(&m_gui,E_CAIROBOLD16,GSLC_FONTREF_FNAME,CAIROBOLD16_VLW,16)) { return; }
+    gslc_FontSetMode(&m_gui, E_CAIROBOLD16, GSLC_FONTREF_MODE_1);
+//<Load_Fonts !End!>
+```
 
 ### Bug Fixes 0.17.b24
 - Issue `233` Using TFT_eSPI with gfx freefonts created include 'NULLFreeSans12pt7b.h'
