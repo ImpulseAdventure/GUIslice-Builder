@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b24
+        Ver: 0.17.b25
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published June 2023. Based on GUIslice API Library 0.17.0
+Published October 2023. Based on GUIslice API Library 0.17.0
 
 **Copyright**
 
@@ -2049,6 +2049,8 @@ For example:
 * The RA8876 display driver uses FONTREF_MODE_DEFAULT to select the internal ROM fonts, whereas other modes are used to select fonts from external ROM chips.
 * The RA8875_SUMO display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas GSLC_FONTREF_MODE_1 is used to select an ILI9341_t3_font.
 * The ILI9341_t3 display driver uses FONTREF_MODE_DEFAULT to select the Adafruit-GFX fonts, whereas GSLC_FONTREF_MODE_1 is used to select an ILI9341_t3_font.
+* Arabic Fonts require using TFT_eSPI SMOOTH_FONTS (.VLW extension) and this in turn needs eFontRefType = GSLC_FONTREF_FNAME and fontRefMode = GSLC_FONTREF_MODE_1.
+
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
