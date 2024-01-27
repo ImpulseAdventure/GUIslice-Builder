@@ -14,20 +14,14 @@ https://adoptium.net/temurin/releases
 On Windows its best to choose to download a version ending with '.msi' 
 so needed system variables are set correctly like, JAVA_HOME.
 
-Much of the needed toolchain will be auto-detected and downloaded dynamically
-but you do need to start with a version of gradle.
-
-download gradle 7.5.1
-https://gradle.org/releases/
-
-Instructions for installation of gradle is available here:
-https://docs.gradle.org/current/userguide/installation.html
-
 Create runnable program:
 
+set JAVA_HOME=C:\jdk-18.0.2.1+1
 gradlew.bat clean jlink
 or 
+export JAVA_HOME=C:/jdk-18.0.2.1+1
 ./gradlew clean jlink
+
 
 Your output will be inside build/tmp and will contain the various 
 runtime images for windows, linux and macos platforms.

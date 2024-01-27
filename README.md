@@ -121,11 +121,21 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancements for 0.17.b26
+Upgraded to FlatLaf 3.3 and Java 18 amd added better support for MacOS.
+
+### Bug Fixes 0.17.b26
+- Bug Fix `250` MACOS (OSX) 13.2 - Fatal error when changing E_PROJECT OPTIONS
+
 ### Enhancements for 0.17.b25
 
 Added support for Arabic fonts using TFT_eFEX library.
 
 Arabic Fonts require using TFT_eSPI SMOOTH_FONTS (.VLW extension) and this in turn needs eFontRefType = GSLC_FONTREF_FNAME and fontRefMode = GSLC_FONTREF_MODE_1.
+
+**WARNING**
+To use Arabic or Hebrew .VLW Fonts you must currently use my forked version of GUIslice API
+[pconti-arabic](https://github.com/Pconti31/GUIslice/tree/pconti-arabic)
 
 The following fonts are shipped with the Builder inside GUIsliceBuilder/fonts/vlw/data:
 
