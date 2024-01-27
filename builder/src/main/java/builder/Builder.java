@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2018-2023 Paul Conti
+ * Copyright (c) 2018-2024 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -79,6 +79,8 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes.FlatIJLookAndFeelInfo;
@@ -114,7 +116,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.17.b24";
+  public static final String VERSION = "0.17.b26";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
@@ -208,10 +210,8 @@ public class Builder  extends JDesktopPane {
       //   - "NSAppearanceNameDarkAqua": use dark appearance
       // (needs to be set on main thread; setting it on AWT thread does not work)
       System.setProperty( "apple.awt.application.appearance", "system" );
-    }
-
-    // Linux
-    if( SystemInfo.isLinux || SystemInfo.isWindows_10_orLater) {
+    } else {
+    // Linux or Windows
       // enable custom window decorations
       JFrame.setDefaultLookAndFeelDecorated( true );
       JDialog.setDefaultLookAndFeelDecorated( true );
@@ -248,15 +248,13 @@ public class Builder  extends JDesktopPane {
           setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
           initUI();
           try {
-            if (isMAC) 
-            {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } else{
-                setLookAndFeel(Controller.generalEditor.getThemeClassName());
-            }            
+            setLookAndFeel(Controller.generalEditor.getThemeClassName());
             SwingUtilities.updateComponentTreeUI(frame);
-          } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+          } catch( Exception ex ) {
+            logger.debug("Failed to initialize LaF Theme" );
           }
+
+          SwingUtilities.updateComponentTreeUI(frame);
           frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
               String title = "Confirm Dialog";
@@ -454,10 +452,20 @@ public class Builder  extends JDesktopPane {
     try {
       // scan themes for a match
       ThemeInfo themeInfo = null;
+      ThemeInfo defInfo = null;
       for (ThemeInfo ti : themes) {
          if (ti.name.equals(selectedLaf)) {
            themeInfo = ti;
          }
+        if( SystemInfo.isMacOS ) {
+          if (ti.name.equals("Flat Mac Dark")) {
+            defInfo = ti;
+          }
+        } else {
+          if (ti.name.equals("Flat Dark")) {
+            defInfo = ti;
+          }
+        }
       }
       if (themeInfo != null) {
         if( themeInfo.lafClassName != null ) {
@@ -465,6 +473,11 @@ public class Builder  extends JDesktopPane {
           ribbon.setRibbonColors();
           return;
         }
+// Issue 250 avoid using system default theme if at all possible
+      } else if (defInfo != null){
+        UIManager.setLookAndFeel( defInfo.lafClassName );
+        ribbon.setRibbonColors();
+        return;
       }
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       ribbon.setRibbonColors();
@@ -506,6 +519,8 @@ public class Builder  extends JDesktopPane {
     // add core themes next
     themes.add( new ThemeInfo( "Flat Light"   , null, FlatLightLaf.class.getName() ) );
     themes.add( new ThemeInfo( "Flat Dark"    , null, FlatDarkLaf.class.getName() ) );
+    themes.add( new ThemeInfo( "Flat Mac Light"   , null, FlatMacLightLaf.class.getName() ) );
+    themes.add( new ThemeInfo( "Flat Mac Dark"    , null, FlatMacDarkLaf.class.getName() ) );
     themes.add( new ThemeInfo( "Flat IntelliJ", null, FlatIntelliJLaf.class.getName() ) );
     themes.add( new ThemeInfo( "Flat Darcula" , null, FlatDarculaLaf.class.getName() ) );
 

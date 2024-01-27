@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2024 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 
 import builder.Builder;
@@ -42,6 +41,8 @@ import builder.common.ThemeInfo;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
 import builder.fonts.FontGraphics;
+
+import com.formdev.flatlaf.util.SystemInfo;
 
 /**
  * The Class GeneralModel implements the model for the builder.
@@ -161,10 +162,7 @@ public class GeneralModel extends WidgetModel {
     data = new Object[28][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
-//    if (Builder.isMAC) {
-//      data[PROP_THEME][PROP_VAL_READONLY]= Boolean.TRUE;
-//    }
+    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"FlatLaf Themes","");
     initProp(PROP_GUISLICE_THEME, String.class, "GEN-097", Boolean.FALSE,"GUIslice API Theme",
         DEF_GUISLICE_DEFAULT_THEME);
     initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);
@@ -213,19 +211,18 @@ public class GeneralModel extends WidgetModel {
    */
   protected void initComboBoxes()
   {
-//    defThemeName = "Flat IntelliJ";
-    defThemeName = "Arc Dark (Material)";
-    
+    if( SystemInfo.isMacOS ) {
+      defThemeName = "Flat Mac Dark";
+    } else {
+      defThemeName = "Arc Dark (Material)";
+    }
+
     cbThemes = new JComboBox<String>();
     for(ThemeInfo ti : Builder.themes) {
       cbThemes.addItem(ti.name);
     }
     themeCellEditor =  new DefaultCellEditor(cbThemes);
 
-    if (Builder.isMAC) {
-      defThemeName = UIManager.getSystemLookAndFeelClassName();
-    }
-    
     cbGUIsliceThemes = new JComboBox<String>();
     for (String s : cf.getListofThemes()) {
       cbGUIsliceThemes.addItem(s);
@@ -314,10 +311,12 @@ public class GeneralModel extends WidgetModel {
    * @return the theme class name
    */
   public String getThemeClassName() {
-    // look-and-feel user setting
-    if (Builder.isMAC) {
-      return defThemeName;
-    }
+// Issue #250 OSX 13.2 - Fatal error when changing E_PROJECT OPTIONS
+// Seems to be caused by using default theme on MACOS
+// look-and-feel user setting
+//    if (Builder.isMAC) {
+//      return defThemeName;
+//    }
     String currentTheme = (String) data[PROP_THEME][PROP_VAL_VALUE];
     if (currentTheme == null || currentTheme.isEmpty())
       return defThemeName;

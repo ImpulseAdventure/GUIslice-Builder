@@ -3,7 +3,6 @@
 // and using gradle like with Intellij IDEA IDE
 // Start by deleting or renaming build.gradle and
 // renaming build.gradle-ide-version to build.gradle
-//
 
 plugins {
     id 'eclipse'
@@ -18,7 +17,7 @@ repositories {
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-project.version = '0.17.b20'
+project.version = '0.17.b26'
 
 processResources { 
      from("src/main/java/") { 
@@ -51,5 +50,7 @@ jar {
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
-} 
+  implementation 'com.formdev:flatlaf:3.3'
+  implementation 'com.formdev:flatlaf-intellij-themes:3.3'
+}
 

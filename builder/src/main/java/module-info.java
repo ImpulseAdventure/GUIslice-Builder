@@ -9,6 +9,8 @@ module builder {
   requires com.google.gson;
   requires org.fife.RSyntaxTextArea;
   requires transitive JRibbonMenu;
+  requires com.formdev.flatlaf;
+  requires com.formdev.flatlaf.intellijthemes;
   exports  builder.clipboard;
   exports  builder.controller;
   exports  builder.commands;
