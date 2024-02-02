@@ -32,6 +32,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
+import javax.swing.UIManager;
 
 import builder.Builder;
 import builder.codegen.PlatformIO;
@@ -162,7 +163,8 @@ public class GeneralModel extends WidgetModel {
     data = new Object[28][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"FlatLaf Themes","");
+    initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
+
     initProp(PROP_GUISLICE_THEME, String.class, "GEN-097", Boolean.FALSE,"GUIslice API Theme",
         DEF_GUISLICE_DEFAULT_THEME);
     initProp(PROP_IDE, String.class, "GEN-098", Boolean.FALSE,"Target IDE",DEF_IDE);

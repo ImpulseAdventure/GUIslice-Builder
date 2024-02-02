@@ -121,10 +121,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
-### Enhancements for 0.17.b26
-Upgraded to FlatLaf 3.3 and Java 18 amd added better support for MacOS.
+### Enhancements for 0.17.b27
+Upgraded to FlatLaf 3.3 and Java 18 and added better support for MacOS.
 
-### Bug Fixes 0.17.b26
+### Bug Fixes 0.17.b27
 - Bug Fix `250` MACOS (OSX) 13.2 - Fatal error when changing E_PROJECT OPTIONS
 
 ### Enhancements for 0.17.b25
