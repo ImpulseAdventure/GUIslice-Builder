@@ -89,19 +89,19 @@ public class ColorCellRenderer extends JLabel
       }
       if (isBordered) {
           if (isSelected) {
-              if (selectedBorder == null) {
-                  selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                      Color.LIGHT_GRAY);
+            if (isBordered) {
+              if (isSelected) {
+                if (selectedBorder == null) {
+                  selectedBorder = BorderFactory.createEmptyBorder(2,5,2,5);
+                }
+                setBorder(selectedBorder);
+              } else {
+                if (unselectedBorder == null) {
+                  unselectedBorder = BorderFactory.createEmptyBorder(2,5,2,5);
+                }
+                setBorder(unselectedBorder);
               }
-                
-              setBorder(selectedBorder);
-          } else {
-              if (unselectedBorder == null) {
-                  unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                                            Color.LIGHT_GRAY);
-              }
-              setBorder(unselectedBorder);
-          }
+            }          }
       }
         
       setToolTipText("RGB value: " + newColor.getRed() + ", "

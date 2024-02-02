@@ -26,14 +26,14 @@ public class CopyPropsColorRender extends JLabel implements TableCellRenderer {
     if (isBordered) {
       if (isSelected) {
         if (selectedBorder == null) {
-          selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5, 
-              Color.LIGHT_GRAY);
+          selectedBorder = BorderFactory.createEmptyBorder(2, 5, 2, 5);
+//              Color.LIGHT_GRAY);
         }
         setBorder(selectedBorder);
       } else {
         if (unselectedBorder == null) {
-          unselectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5, 
-              Color.LIGHT_GRAY);
+          unselectedBorder = BorderFactory.createEmptyBorder(2, 5, 2, 5);
+//              Color.LIGHT_GRAY);
         }
         setBorder(unselectedBorder);
       }

@@ -37,7 +37,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,7 +120,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.17.b26";
+  public static final String VERSION = "0.17.b27";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
@@ -139,7 +143,7 @@ public class Builder  extends JDesktopPane {
   public static int CANVAS_HEIGHT;
   
   /** The frame. */
-  private JFrame frame;
+  public static JFrame frame;
   
   /** The themes. */
   public static List<ThemeInfo> themes;
@@ -172,6 +176,8 @@ public class Builder  extends JDesktopPane {
   /** our logger */
   public static LogManager logger = null;
   
+  public static Builder builder;
+  
   /**
    * The main method.
    *
@@ -190,7 +196,6 @@ public class Builder  extends JDesktopPane {
        }
     }    
     
-    Builder builder = new Builder();
     version = Double.parseDouble(System.getProperty("java.specification.version"));
     // macOS  (see https://www.formdev.com/flatlaf/macos/)
     if( SystemInfo.isMacOS ) {
@@ -228,7 +233,7 @@ public class Builder  extends JDesktopPane {
         " osarc: "  + System.getProperty( "os.arch" ) +
         " osver: " + SystemInfo.osVersion);
     loadThemes();
-    builder.startUp();
+    startUp();
   }
 
   /**
@@ -240,36 +245,22 @@ public class Builder  extends JDesktopPane {
   /**
    * starts the builder program.
    */
-  public void startUp() {
+  public static void startUp() {
 
     EventQueue.invokeLater(new Runnable() {
         @Override
         public void run() {
-          setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-          initUI();
           try {
-            setLookAndFeel(Controller.generalEditor.getThemeClassName());
-            SwingUtilities.updateComponentTreeUI(frame);
+            setLookAndFeel(builderThemeClassName());
           } catch( Exception ex ) {
-            logger.debug("Failed to initialize LaF Theme" );
+            logger.debug("Failed to initialize LaF Theme EX: "+ex.toString());
           }
-
-          SwingUtilities.updateComponentTreeUI(frame);
-          frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent we) {
-              String title = "Confirm Dialog";
-              String message = "You're about to quit the application -- are you sure?";
-              int answer = JOptionPane.showConfirmDialog(null,message,title, JOptionPane.YES_NO_OPTION); 
-              if(answer == JOptionPane.YES_OPTION) {
-                Builder.logger.debug("Builder exit");
-                System.exit(0);
-              } else
-                frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            }
-          });
-          frame.setVisible(true);
-        }
+          Builder builder = new Builder();
+          builder.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+          builder.initUI();
+       }
     });
+    
 
     // NOTE: if running a debugger you might want to comment this thread out
     Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -303,9 +294,52 @@ public class Builder  extends JDesktopPane {
           }
           Builder.logger.debug("Builder crash: " + fileName);
           System.exit(0);
+/*
+          frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+              String title = "Confirm Dialog";
+              String message = "You're about to quit the application -- are you sure?";
+              int answer = JOptionPane.showConfirmDialog(null,message,title, JOptionPane.YES_NO_OPTION); 
+              if(answer == JOptionPane.YES_OPTION) {
+                Builder.logger.debug("Builder exit");
+                System.exit(0);
+              } else
+                frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            }
+          });
+          frame.setVisible(true);
+
+        }
+*/        
      }
     });
 
+  }
+  
+  /**
+   * Gets the theme class name.
+   *
+   * @return the theme class name
+   */
+  public static String builderThemeClassName() {
+  /** The Constant MY_NODE. */
+    String MY_NODE = "com/impulseadventure/builder/general";
+        // get rid of the bugged Preferences warning - not needed in Java 9 and above
+    System.setErr(new PrintStream(new OutputStream() {
+        public void write(int b) throws IOException {}
+    }));
+    String prefNode = MY_NODE + VERSION_NO;
+    Preferences fPrefs = Preferences.userRoot().node(prefNode);
+    String defThemeName;
+    if( SystemInfo.isMacOS ) {
+      defThemeName = "Flat Mac Dark";
+    } else {
+      defThemeName = "Arc Dark (Material)";
+    }
+
+    String currentTheme = fPrefs.get("Java Themes", defThemeName);
+    Builder.logger.debug("User Preference Java Theme: " + currentTheme);
+    return currentTheme;
   }
   
   /**
@@ -352,6 +386,7 @@ public class Builder  extends JDesktopPane {
 
     // create our ribbon
     ribbon = Ribbon.getInstance();
+    ribbon.setRibbonColors();
     ribbon.addListeners(ribbonListener);
     
     frame.getContentPane().add(ribbon,BorderLayout.NORTH);
@@ -429,6 +464,18 @@ public class Builder  extends JDesktopPane {
     });
     timee.start();
     
+    frame.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        String title = "Confirm Dialog";
+        String message = "You're about to quit the application -- are you sure?";
+        int answer = JOptionPane.showConfirmDialog(null,message,title, JOptionPane.YES_NO_OPTION); 
+        if(answer == JOptionPane.YES_OPTION) {
+          Builder.logger.debug("Builder exit");
+          System.exit(0);
+        } else
+          frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+      }
+    });
     frame.pack();
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
@@ -450,6 +497,12 @@ public class Builder  extends JDesktopPane {
 //  @SuppressWarnings("resource")
   public static void setLookAndFeel(String selectedLaf) {
     try {
+      if (selectedLaf.equals(UIManager.getSystemLookAndFeelClassName())) {
+        Builder.logger.debug("LookAndFeel: " + UIManager.getSystemLookAndFeelClassName());
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        return;
+      }
+        
       // scan themes for a match
       ThemeInfo themeInfo = null;
       ThemeInfo defInfo = null;
@@ -457,34 +510,20 @@ public class Builder  extends JDesktopPane {
          if (ti.name.equals(selectedLaf)) {
            themeInfo = ti;
          }
-        if( SystemInfo.isMacOS ) {
-          if (ti.name.equals("Flat Mac Dark")) {
-            defInfo = ti;
-          }
-        } else {
-          if (ti.name.equals("Flat Dark")) {
-            defInfo = ti;
-          }
-        }
       }
       if (themeInfo != null) {
         if( themeInfo.lafClassName != null ) {
+          Builder.logger.debug("LookAndFeel: " + themeInfo.lafClassName);
           UIManager.setLookAndFeel( themeInfo.lafClassName );
-          ribbon.setRibbonColors();
           return;
         }
-// Issue 250 avoid using system default theme if at all possible
-      } else if (defInfo != null){
-        UIManager.setLookAndFeel( defInfo.lafClassName );
-        ribbon.setRibbonColors();
-        return;
       }
+      Builder.logger.debug("LookAndFeel: " + UIManager.getSystemLookAndFeelClassName());
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      ribbon.setRibbonColors();
     } catch (Exception ex) {
       try {
+        Builder.logger.debug("Exception! setLookAndFeel: " + UIManager.getSystemLookAndFeelClassName()+" EX: "+ex.toString());
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        ribbon.setRibbonColors();
       } catch (Exception e) {
         e.printStackTrace();
       }
