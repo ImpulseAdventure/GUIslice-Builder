@@ -34,14 +34,11 @@ You can find Example project files inside GUIslice/examples/builder
 if the Software has errors.</p>
 
 ## Contributing
+
 [Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/blob/master/docs/CONTRIBUTING.md)
 
-Many thanks to Jetbrains.com for supplying development software!
-<a href="url"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" align="left" height="48" width="48" alt="JetBrains Logo (Main) logo."></a>
-
-[Jetbrains Open Source Support](https://jb.gg/OpenSourceSupport)
-
 ## Code of Conduct
+
 [Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/blob/master/docs/code_of_conduct.md)
 
 ## Builder Contents
