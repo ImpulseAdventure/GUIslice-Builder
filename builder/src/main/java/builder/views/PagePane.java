@@ -121,7 +121,7 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The dragging indicator. */
   private boolean bDragging = false;
 
-  private HandleType handleType = HandleType.NONE;
+  /** Used in resizing procedure */
   private Widget widgetUnderCursor = null;
 
   /** The resize indicator. */
@@ -986,22 +986,22 @@ public class PagePane extends JPanel implements iSubscriber {
           donotSelectKey = w.getKey();
         }
       } else if (w != null) {
-        HandleType handleType = w.getResizingHandler(w.toWidgetSpace(e.getPoint()));
+        Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
+        HandleType handleType = w.getResizingHandler(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
             if (w.isSelected()) bDragging = true;
             dragPt = new Point(mousePt.x, mousePt.y);
             break;
           case NONE:
-            // @TODO handle dragging here?
             break;
           default:
-            if (w.isSelected()) {
+            if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
               resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType);
-              resizeCommand.start(e.getPoint());
+              resizeCommand.start(unscaledPoint);
               bResizing = true;
             }
-            return;
+            break;
         }
       }      
     } // end mousePressed
@@ -1040,9 +1040,8 @@ public class PagePane extends JPanel implements iSubscriber {
         return;
       }
 
-      Point widgetSpacePoint = widgetUnderCursor.toWidgetSpace(e.getPoint());
-      
-      handleType = widgetUnderCursor.getResizingHandler(widgetSpacePoint);
+      Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y); 
+      HandleType handleType = widgetUnderCursor.getResizingHandler(widgetUnderCursor.toWidgetSpace(unscaledPoint));
       switch (handleType) {
         case DRAG:
           setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -1073,7 +1072,6 @@ public class PagePane extends JPanel implements iSubscriber {
           break;
         default:
           setCursor(Cursor.getDefaultCursor());
-          widgetSpacePoint = null;  
           break;
       }
     }
@@ -1115,7 +1113,8 @@ public class PagePane extends JPanel implements iSubscriber {
         if (resizeCommand == null) {
           System.out.println("resizeCommand is null");
         } else {
-          resizeCommand.move(e.getPoint());
+          Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
+          resizeCommand.move(unscaledPoint, e.isControlDown());
         }
       }
       repaint();
