@@ -1523,6 +1523,14 @@ public class Controller extends JInternalFrame
     PagePane.zoomOut();
     refreshView();
   }
+
+  /**
+   * zoomReset.
+   */
+  public void zoomReset() {
+    PagePane.zoomReset();
+    refreshView();
+  }
   
   static public void sendRepaint() {
     if (currentPage == null) return;

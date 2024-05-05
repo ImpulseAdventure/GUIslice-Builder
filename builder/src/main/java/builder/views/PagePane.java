@@ -43,6 +43,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -203,7 +204,9 @@ public class PagePane extends JPanel implements iSubscriber {
     model = new PageModel();
     mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
     dragPt = mousePt;
-    this.addMouseListener(new MouseHandler());
+    MouseHandler mouseHandler = new MouseHandler();
+    this.addMouseListener(mouseHandler);
+    this.addMouseWheelListener(mouseHandler);
     this.addMouseMotionListener(new MouseMotionHandler());
     panelAction = new ActionListener() {   
       @Override
@@ -316,13 +319,10 @@ public class PagePane extends JPanel implements iSubscriber {
    * set Zoom factor from open project
    */
   public static void setZoom(double zoom) {
-    if (zoom > 1.0) {
-      ribbon.enableZoom(true);
-      MenuBar.miZoomOut.setEnabled(true);
-    } else {
-      ribbon.enableZoom(false);
-      MenuBar.miZoomOut.setEnabled(false);
-    }
+    ribbon.enableZoom(zoom > 1.0);
+    ribbon.enableZoomReset(zoom != 1.0);
+    MenuBar.miZoomOut.setEnabled(zoom > 1.0);
+    MenuBar.miZoomReset.setEnabled(zoom != 1.0);
     zoomFactor = zoom;
     ZoomTransform();
   }
@@ -354,6 +354,7 @@ public class PagePane extends JPanel implements iSubscriber {
     ZoomTransform();
     ribbon.enableZoom(true);
     MenuBar.miZoomOut.setEnabled(true);
+    updateZoomReset();
   }
   
   /**
@@ -362,10 +363,29 @@ public class PagePane extends JPanel implements iSubscriber {
   public static void zoomOut() {
     zoomFactor /= 1.1;
     if (zoomFactor < 1.1) {
+      zoomFactor = 1.0;
       ribbon.enableZoom(false);
       MenuBar.miZoomOut.setEnabled(false);
     }
+    updateZoomReset();
     ZoomTransform();
+  }
+
+  /** Zoom reset */
+  public static void zoomReset() {
+    zoomFactor = 1.0;
+    ribbon.enableZoom(false);
+    MenuBar.miZoomOut.setEnabled(false);
+    updateZoomReset();
+    ZoomTransform();
+  }
+
+  /**
+   * Update zoom reset button state.
+   */
+  private static void updateZoomReset() {
+    MenuBar.miZoomReset.setEnabled(zoomFactor != 1.0);  
+    ribbon.enableZoomReset(zoomFactor != 1.0);
   }
 
   /**
@@ -984,6 +1004,22 @@ public class PagePane extends JPanel implements iSubscriber {
         }
       }      
     } // end mousePressed
+
+    /*
+     * Handle zooming on mouse wheel.
+     */
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+      if (e.isControlDown()) {
+        int distance = e.getWheelRotation();
+        if (distance < 0) {
+          zoomIn();
+        } else {
+          zoomOut();
+        }
+        refreshView();
+      }
+    }
   } // end MouseHandler
 
   /**

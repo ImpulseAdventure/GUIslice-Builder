@@ -725,6 +725,11 @@ public class RibbonListener implements ActionListener {
       Builder.logger.debug("Menu: zoomout");
       controller.zoomOut();
       break;
+
+    case "zoomreset":
+      Builder.logger.debug("Menu: zoomreset");
+      controller.zoomReset();
+      break;
       
 /*
     case "help":

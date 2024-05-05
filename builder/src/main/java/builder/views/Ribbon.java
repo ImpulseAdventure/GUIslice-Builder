@@ -72,7 +72,7 @@ public class Ribbon extends JPanel {
   private static Button btn_box, btn_line, btn_graph, btn_group;
   
   /** The view buttons. */
-  private static Button btn_grid,btn_zoom_in,btn_zoom_out;
+  private static Button btn_grid,btn_zoom_in,btn_zoom_out,btn_zoom_reset;
   
   private static Tab pageLayout;
   
@@ -418,11 +418,6 @@ public class Ribbon extends JPanel {
    */
   public void initView(Tab band) {
     band.setGroupName("View");
-    btn_grid = band.addSlimButton("Grid");
-    btn_grid.setImage(Utils.getIcon(
-        "resources/icons/view/grid.png"));
-    btn_grid.addToolTip("Toggle Grid ON/OFF");
-    btn_grid.setActionCommand("grid");
 
     btn_zoom_in = band.addSlimButton("Zoom In");
     btn_zoom_in.setImage(Utils.getIcon(
@@ -440,6 +435,19 @@ public class Ribbon extends JPanel {
     btn_zoom_out.addToolTip("Make display smaller.");
     btn_zoom_out.setActionCommand("zoomout");
     btn_zoom_out.setEnabled(false);
+
+    btn_zoom_reset = band.addSlimButton("Zoom Reset");
+    btn_zoom_reset.setImage(Utils.getIcon(
+        "resources/icons/view/zoom_reset.png"));
+    btn_zoom_reset.addToolTip("Reset display to 100%.");
+    btn_zoom_reset.setActionCommand("zoomreset");
+    btn_zoom_reset.setEnabled(false);
+
+    btn_grid = band.addSlimButton("Grid");
+    btn_grid.setImage(Utils.getIcon(
+        "resources/icons/view/grid.png"));
+    btn_grid.addToolTip("Toggle Grid ON/OFF");
+    btn_grid.setActionCommand("grid");    
 
     band.addSeperator();
   }
@@ -618,6 +626,7 @@ public class Ribbon extends JPanel {
     btn_grid.addActionListener(al);
     btn_zoom_in.addActionListener(al);
     btn_zoom_out.addActionListener(al);
+    btn_zoom_reset.addActionListener(al);
 
     btn_aligntop.addActionListener(al);
     btn_alignbottom.addActionListener(al);
@@ -645,6 +654,10 @@ public class Ribbon extends JPanel {
   public void enableZoom(boolean bEnable) {
     btn_zoom_out.setEnabled(bEnable);
   }
+
+  public void enableZoomReset(boolean bEnable) {
+    btn_zoom_reset.setEnabled(bEnable);
+  }  
   
   /**
    * Enable grouping of radiobuttons
