@@ -28,6 +28,7 @@ package builder.commands;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import builder.common.Utils;
 import builder.mementos.ResizeMemento;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
@@ -53,16 +54,24 @@ public class ResizeCommand extends Command {
   private Rectangle initialBounds;
 
   /**
+   * Stores calculated bounds before snapping to grid.
+   */
+  private Rectangle currentBounds;
+
+  /**
    * The corner that is being dragged.
    */
   private HandleType handleType;
 
   private static int MIN_SIZE = 10;
 
+  private Utils utils = Utils.getInstance();
+
   public ResizeCommand(PagePane page, Widget widget, HandleType handleType) {
     this.page = page;
     this.widget = widget;
     this.initialBounds = widget.getWinBounded();
+    this.currentBounds = widget.getWinBounded();
     this.handleType = handleType;
   }
   
@@ -84,38 +93,38 @@ public class ResizeCommand extends Command {
    * @param preserveSize
    *          preserve the size of the widget
    */
-  public void move(Point point, boolean preserveSize) {
+  public void move(Point point, boolean preserveSize, boolean ignoreSnapToGrid) {
     WidgetModel model = widget.getModel();
     boolean updateX = false;
     boolean updateY = false;
     switch (handleType) {
       case TOP: 
-        updateY = handleTop(point, model, preserveSize);
+        updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case TOP_LEFT:
-        updateY = handleTop(point, model, preserveSize);
-        updateX = handleLeft(point, model, preserveSize);
+        updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
+        updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case TOP_RIGHT:
-        updateY = handleTop(point, model, preserveSize);
-        updateX = handleRight(point, model, preserveSize);
+        updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
+        updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case RIGHT: 
-        updateX = handleRight(point, model, preserveSize);
+        updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case BOTTOM: 
-        updateY = handleBottom(point, model, preserveSize);
+        updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case BOTTOM_RIGHT:
-        updateY = handleBottom(point, model, preserveSize);
-        updateX = handleRight(point, model, preserveSize);
+        updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
+        updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case BOTTOM_LEFT:
-        updateY = handleBottom(point, model, preserveSize);
-        updateX = handleLeft(point, model, preserveSize);
+        updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
+        updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case LEFT: 
-        updateX = handleLeft(point, model, preserveSize);
+        updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
         break;
       default:
         break;
@@ -125,63 +134,71 @@ public class ResizeCommand extends Command {
     if (updateY) { lastPoint.y = point.y; }
   }
 
-  public void move(Point point) {
-    move(point, false);
-  }  
-
-  private boolean handleLeft(Point point, WidgetModel model, boolean preserveSize) {
-    int newX = model.getX() + (point.x - lastPoint.x);
-    int newWidth = initialBounds.width - (newX - initialBounds.x);
+  private boolean handleLeft(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    int newPos = currentBounds.x + (point.x - lastPoint.x);
+    int newSnappedPos = ignoreSnapToGrid ? newPos : utils.snapToGrid(newPos);
+    int newSize = initialBounds.width - (newPos - initialBounds.x);
+    newSize -= newSnappedPos - newPos; // adjust width to snapped position
     if (preserveSize) {
-      model.setX(newX);
+      currentBounds.x = newPos;
+      model.setX(newSnappedPos);
       return true;
     }
-    if (newWidth < MIN_SIZE) {
+    if (newSize < MIN_SIZE) {
       return false;
     }
-    model.setX(newX);
-    model.setWidth(newWidth);
+    currentBounds.x = newPos;
+    model.setX(newSnappedPos);
+    model.setWidth(newSize);
     return true;
   }
 
-  private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize) {
+  private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
     if (preserveSize) {
-      return handleTop(point, model, true);
+      return handleTop(point, model, true, true);
     } else {
-      int newHeight = model.getHeight() + (point.y - lastPoint.y);
-      if (newHeight < MIN_SIZE) {
+      int newSize = currentBounds.height + (point.y - lastPoint.y);
+      int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.y + newSize) - currentBounds.y);
+      if (newSnappedSize < MIN_SIZE) {
         return false;
       }
-      model.setHeight(newHeight);
+      currentBounds.height = newSize;
+      model.setHeight(newSnappedSize);
     }
     return true;
   }
 
-  private boolean handleRight(Point point, WidgetModel model, boolean preserveSize) {
+  private boolean handleRight(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
     if (preserveSize) {
-      return handleLeft(point, model, true);
+      return handleLeft(point, model, true, true);
     } else {
-      int newWidth = model.getWidth() + (point.x - lastPoint.x);
-      if (newWidth < MIN_SIZE) {
+      int newSize = currentBounds.width + (point.x - lastPoint.x);
+      int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.x + newSize) - currentBounds.x);
+      if (newSnappedSize < MIN_SIZE) {
         return false;
       }
-      model.setWidth(newWidth);
+      currentBounds.width = newSize;
+      model.setWidth(newSnappedSize);
     }
     return true;
   }
 
-  private boolean handleTop(Point point, WidgetModel model, boolean preserveSize) {
-    int newY = model.getY() + (point.y - lastPoint.y);
-    int newHeight = initialBounds.height - (newY - initialBounds.y);
+  private boolean handleTop(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    int newPos = currentBounds.y + (point.y - lastPoint.y);
+    int newSnappedPos = ignoreSnapToGrid ? newPos : utils.snapToGrid(newPos);
+    int newSize = initialBounds.height - (newPos - initialBounds.y);
+    newSize -= newSnappedPos - newPos; // adjust height to snapped position
     if (preserveSize) {
-      model.setY(newY);
+      currentBounds.y = newPos;
+      model.setY(newSnappedPos);
       return true;
     }    
-    if (newHeight < MIN_SIZE) {
+    if (newSize < MIN_SIZE) {
       return false;
     }
-    model.setY(newY);
-    model.setHeight(newHeight);
+    currentBounds.y = newPos;
+    model.setY(newSnappedPos);
+    model.setHeight(newSize);
     return true;
   }
 }

@@ -1490,8 +1490,17 @@ public class Controller extends JInternalFrame
    * toggleGrid
    * Turn grid on/off.
    */
-  public void toggleGrid() {
-    ((GridModel) gridEditor.getModel()).toggleGrid();
+  public void toggleShowGrid() {
+    ((GridModel) gridEditor.getModel()).toggleShowGrid();
+    refreshView();
+  }
+
+  /**
+   * toggleSnap
+   * Turn snap to grid on/off.
+   */
+  public void toggleSnapToGrid() {
+    ((GridModel) gridEditor.getModel()).toggleSnapToGrid();
     refreshView();
   }
   

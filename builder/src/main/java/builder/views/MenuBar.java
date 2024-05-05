@@ -67,7 +67,7 @@ public class MenuBar extends JMenuBar {
   /** The about menu item. */
   private JMenuItem miAbout;
   
-  public static JMenuItem miZoomIn, miZoomOut, miZoomReset, miGrid;
+  public static JMenuItem miZoomIn, miZoomOut, miZoomReset, miShowGrid;
   
   /**
    * Instantiates a new menu bar.
@@ -150,13 +150,13 @@ public class MenuBar extends JMenuBar {
   public void initViewMenus() {
     mbView = new JMenu("View");
 
-    miGrid = new JMenuItem("Grid",
-      Utils.getIcon("resources/icons/view/grid.png", 24,24));
-    miGrid.setActionCommand("grid");
-    miGrid.setAccelerator(KeyStroke.getKeyStroke(
+    miShowGrid = new JMenuItem("Show grid",
+      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
+    miShowGrid.setActionCommand("showgrid");
+    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
         'L', ActionEvent.CTRL_MASK));
-    miGrid.setToolTipText("Toggle Grid ON/OFF");
-    mbView.add(miGrid);
+    miShowGrid.setToolTipText("Toggle Grid ON/OFF");
+    mbView.add(miShowGrid);
 
     miZoomIn = new JMenuItem("Zoom In",
       Utils.getIcon("resources/icons/view/zoom_in.png", 24,24));
@@ -326,7 +326,7 @@ public class MenuBar extends JMenuBar {
     miAbout.addActionListener(al);
     miClose.addActionListener(al);
     miExit.addActionListener(al);
-    miGrid.addActionListener(al);
+    miShowGrid.addActionListener(al);
     miZoomIn.addActionListener(al);
     miZoomOut.addActionListener(al);
   }

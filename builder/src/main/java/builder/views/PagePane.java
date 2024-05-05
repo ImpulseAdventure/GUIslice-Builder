@@ -1114,7 +1114,7 @@ public class PagePane extends JPanel implements iSubscriber {
           System.out.println("resizeCommand is null");
         } else {
           Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
-          resizeCommand.move(unscaledPoint, e.isControlDown());
+          resizeCommand.move(unscaledPoint, e.isAltDown(), e.isControlDown());
         }
       }
       repaint();

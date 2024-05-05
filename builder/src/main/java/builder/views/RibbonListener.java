@@ -39,6 +39,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import hu.csekme.RibbonMenu.Button;
+
 import builder.Builder;
 import builder.codegen.CodeGenerator;
 import builder.commands.History;
@@ -518,9 +520,16 @@ public class RibbonListener implements ActionListener {
       onExit();
       break;
       
-    case "grid":
-      Builder.logger.debug("Menu: grid");
-      controller.toggleGrid();
+    case "showgrid":
+      Builder.logger.debug("Menu: show grid");
+      controller.toggleShowGrid();
+      ((Button)e.getSource()).setPressed(true);
+      break;
+
+    case "snaptogrid":
+      Builder.logger.debug("Menu: snap to grid");
+      controller.toggleSnapToGrid();
+      ((Button)e.getSource()).setPressed(true);
       break;
       
     case "graph":

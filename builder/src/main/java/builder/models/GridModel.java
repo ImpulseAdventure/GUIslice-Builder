@@ -164,12 +164,19 @@ public class GridModel extends WidgetModel {
   /**
    * Toggle grid.
    */
-  public void toggleGrid() {
+  public void toggleShowGrid() {
     if (getGrid()) {
       bGridState = false;
     } else {
       bGridState = true;
     }
+  }
+
+  /** 
+   * Toggle snap to grid.
+   */
+  public void toggleSnapToGrid() {
+    setGridSnapTo(!getGridSnapTo());
   }
   
   /**
@@ -197,6 +204,15 @@ public class GridModel extends WidgetModel {
    */
   public boolean getGridSnapTo() {
     return (((Boolean) data[GRID_SNAP_TO][PROP_VAL_VALUE]).booleanValue());
+  }
+
+  /**
+   * Sets the grid snap to.
+   *
+   * @param b the new grid snap to
+   */
+  public void setGridSnapTo(boolean b) {
+    data[GRID_SNAP_TO][PROP_VAL_VALUE] = b;
   }
   
   /**
