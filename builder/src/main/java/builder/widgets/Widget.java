@@ -30,7 +30,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -273,6 +272,16 @@ public class Widget {
   }
 
   /**
+   * Convert a point from page space to widget space.
+   * 
+   * @param p page space <code>Point</code> object
+   * @return the widget space <code>Point</code> object
+   */
+  public Point toWidgetSpace(Point p) {
+    return new Point(p.x - model.getX(), p.y - model.getY());
+  }
+
+  /**
    * Return true if this node contains p.
    *
    * @param p
@@ -320,9 +329,15 @@ public class Widget {
   public void draw(Graphics2D g2d) {
     
   }
+
+  public enum HandleType {
+    NONE, DRAG, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP, BOTTOM, LEFT, RIGHT
+  }
+  static final int RESIZE_HANDLE_SIZE = 5;
+  static final int RESIZE_HANDLE_ACTIVE_SIZE = RESIZE_HANDLE_SIZE + 2;
   
   /**
-   * Draw sel rect.
+   * Draw resizing handles for selected widget.
    *
    * @param g2d
    *          the graphics object
@@ -330,14 +345,82 @@ public class Widget {
    *          the bounded <code>Rectangle</code> object
    */
   public void drawSelRect(Graphics2D g2d, Rectangle b) {
-    if (bSelected) {
-      Stroke defaultStroke = g2d.getStroke();
-      g2d.setColor(Color.RED);
-      g2d.setStroke(Widget.dashed);
-      g2d.drawRect(b.x-2, b.y-2, b.width+4, b.height+4);
-      g2d.setStroke(defaultStroke);  
+    if (!bSelected) {
+      return;
     }
+    
+    g2d.setColor(Color.RED);
+
+    // @TODO: optimize calculations
+    // double xMax = b.x + b.width + 2 - HANDLE_SIZE;
+    // double yMax = b.y + b.height + 2 - HANDLE_SIZE;
+
+    // left top corner
+    g2d.fillRect(b.x - 2, b.y-2, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // right top corner
+    g2d.fillRect(b.x+b.width+2-RESIZE_HANDLE_SIZE, b.y-2, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // left bottom corner
+    g2d.fillRect(b.x - 2, b.y+b.height+2 - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // right bottom corner
+    g2d.fillRect(b.x+b.width+2-RESIZE_HANDLE_SIZE, b.y+b.height+2 - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // top center
+    g2d.fillRect(b.x + (b.width / 2) - (RESIZE_HANDLE_SIZE / 2), b.y-2, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // bottom center
+    g2d.fillRect(b.x + (b.width / 2) - (RESIZE_HANDLE_SIZE / 2), b.y + b.height + 2 - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // left center
+    g2d.fillRect(b.x - 2, b.y + (b.height / 2) - (RESIZE_HANDLE_SIZE / 2), RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    // right center
+    g2d.fillRect(b.x + b.width + 2 - RESIZE_HANDLE_SIZE, b.y + (b.height / 2) - (RESIZE_HANDLE_SIZE / 2), RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
   }
+
+  /**
+   * Gets the resizing/dragging handler type.
+   *
+   * @param point
+   *          point in widget space
+   * @return the resizing handler type
+   */
+  public HandleType getResizingHandler(Point point) {
+    double width = model.getWidth();
+    double xCenter = width / 2;
+    double height = model.getHeight();
+    double yCenter = height / 2;
+    
+    if (point.getX() < RESIZE_HANDLE_ACTIVE_SIZE) {
+      if (point.getY() < RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.TOP_LEFT;
+      } else if (point.getY() > height - RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.BOTTOM_LEFT;
+      } else if (point.getY() > yCenter - (RESIZE_HANDLE_ACTIVE_SIZE / 2) && point.getY() < yCenter + (RESIZE_HANDLE_ACTIVE_SIZE / 2)) {
+        return HandleType.LEFT;
+      }
+    } else if (point.getX() > width - RESIZE_HANDLE_ACTIVE_SIZE) {
+      if (point.getY() < RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.TOP_RIGHT;
+      } else if (point.getY() > height - RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.BOTTOM_RIGHT;
+      } else if (point.getY() > yCenter - (RESIZE_HANDLE_ACTIVE_SIZE / 2) && point.getY() < yCenter + (RESIZE_HANDLE_ACTIVE_SIZE / 2)) {
+        return HandleType.RIGHT;
+      }
+    } else if (point.getX() > xCenter - (RESIZE_HANDLE_ACTIVE_SIZE / 2) && point.getX() < xCenter + (RESIZE_HANDLE_ACTIVE_SIZE / 2)) {
+      if (point.getY() < RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.TOP;
+      } else if (point.getY() > height - RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.BOTTOM;
+      }
+    }
+
+    if (
+      point.getX() >= RESIZE_HANDLE_ACTIVE_SIZE && 
+      point.getX() <= width - RESIZE_HANDLE_ACTIVE_SIZE && 
+      point.getY() >= RESIZE_HANDLE_ACTIVE_SIZE && 
+      point.getY() <= height - RESIZE_HANDLE_ACTIVE_SIZE
+    ) {
+      return HandleType.DRAG;
+    }
+
+    return HandleType.NONE;
+  }  
   
   /**
    * Write object serializes this object

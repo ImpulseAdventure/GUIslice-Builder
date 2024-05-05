@@ -64,6 +64,7 @@ import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragByArrowCommand;
 import builder.commands.DragWidgetCommand;
+import builder.commands.ResizeCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
@@ -81,6 +82,7 @@ import builder.models.WidgetModel;
 import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
+import builder.widgets.Widget.HandleType;
 
 /**
  * The Class PagePane provides the view of selected widgets for one page.
@@ -117,6 +119,12 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The dragging indicator. */
   private boolean bDragging = false;
+
+  private HandleType handleType = HandleType.NONE;
+  private Widget widgetUnderCursor = null;
+
+  /** The resize indicator. */
+  private boolean bResizing = false;
   
   /** The paint base widgets indicator. */
   private boolean bPaintBaseWidgets = false;
@@ -137,7 +145,10 @@ public class PagePane extends JPanel implements iSubscriber {
   private static Ribbon ribbon = null;
   
   /** The drag command. */
-  public  DragWidgetCommand dragCommand = null;
+  public DragWidgetCommand dragCommand = null;
+  
+  /** The resize command. */ 
+  public ResizeCommand resizeCommand = null;
   
   /** The drag using arrows command */
   public DragByArrowCommand dragArrowsCommand = null;
@@ -254,7 +265,7 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     if (bRectangularSelectionEn) {
       setCursor(crossHairCursor);
-    } else {
+    } else if (!bDragging && !bResizing) {
       setCursor(Cursor.getDefaultCursor());
     }
     Graphics2D g2d = (Graphics2D) g.create();
@@ -891,6 +902,7 @@ public class PagePane extends JPanel implements iSubscriber {
         } 
         return;
       } 
+      
       // Single Left-click - deselect all widgets then select widget under cursor
       selectNone();
       if (w == null) {
@@ -921,9 +933,15 @@ public class PagePane extends JPanel implements iSubscriber {
         execute(dragCommand);
         dragCommand = null;
       }
+      if (resizeCommand != null) {
+        resizeCommand.stop();
+        execute(resizeCommand);
+        resizeCommand = null;
+      }      
       bMultiSelectionBox = false;
       bRectangularSelectionEn = false;
       bDragging = false;
+      bResizing = false;
       setCursor(Cursor.getDefaultCursor());
       e.getComponent().repaint();
     }  // end mouseReleased
@@ -947,9 +965,24 @@ public class PagePane extends JPanel implements iSubscriber {
           donotSelectKey = w.getKey();
         }
       } else if (w != null) {
-        if (w.isSelected()) bDragging = true;
-        dragPt = new Point(mousePt.x, mousePt.y);
-      }
+        HandleType handleType = w.getResizingHandler(w.toWidgetSpace(e.getPoint()));
+        switch (handleType) {
+          case DRAG:
+            if (w.isSelected()) bDragging = true;
+            dragPt = new Point(mousePt.x, mousePt.y);
+            break;
+          case NONE:
+            // @TODO handle dragging here?
+            break;
+          default:
+            if (w.isSelected()) {
+              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType);
+              resizeCommand.start(e.getPoint());
+              bResizing = true;
+            }
+            return;
+        }
+      }      
     } // end mousePressed
   } // end MouseHandler
 
@@ -957,15 +990,65 @@ public class PagePane extends JPanel implements iSubscriber {
    * The Class MouseMotionHandler.
    */
   private class MouseMotionHandler extends MouseMotionAdapter {
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+      if (bMultiSelectionBox || bDragging || bResizing) {
+        return;
+      }
+
+      widgetUnderCursor = findOne(e.getPoint());
+      if (widgetUnderCursor == null) {
+        setCursor(Cursor.getDefaultCursor());
+        return;
+      }
+
+      Point widgetSpacePoint = widgetUnderCursor.toWidgetSpace(e.getPoint());
+      
+      handleType = widgetUnderCursor.getResizingHandler(widgetSpacePoint);
+      switch (handleType) {
+        case DRAG:
+          setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+          break;
+        case TOP_LEFT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+          break;
+        case TOP:
+          setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+          break;
+        case TOP_RIGHT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
+          break;
+        case RIGHT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+          break;
+        case BOTTOM_RIGHT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
+          break;
+        case BOTTOM:
+          setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+          break;
+        case BOTTOM_LEFT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
+          break;
+        case LEFT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+          break;
+        default:
+          setCursor(Cursor.getDefaultCursor());
+          widgetSpacePoint = null;  
+          break;
+      }
+    }
      
-     /**
-      * mouseDragged.
-      *
-      * @param e
-      *          the e
-      * @see java.awt.event.MouseMotionAdapter#mouseDragged(java.awt.event.MouseEvent)
-      */
-     @Override
+    /**
+     * mouseDragged.
+     *
+     * @param e
+     *          the e
+     * @see java.awt.event.MouseMotionAdapter#mouseDragged(java.awt.event.MouseEvent)
+     */
+    @Override
     public void mouseDragged(MouseEvent e) {
       if (bMultiSelectionBox) {
         // Here I'm working out the size and position of my rubber band
@@ -976,7 +1059,7 @@ public class PagePane extends JPanel implements iSubscriber {
             Math.abs(mousePt.y - e.getY()));
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
-     } else if (bDragging ){
+     } else if (bDragging) {
        if (dragCommand == null) {
           dragCommand = new DragWidgetCommand(instance);
           if (!dragCommand.start(dragPt)) {
@@ -991,6 +1074,12 @@ public class PagePane extends JPanel implements iSubscriber {
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
         dragCommand.move(e.getPoint());
+      } else if (bResizing) {
+        if (resizeCommand == null) {
+          System.out.println("resizeCommand is null");
+        } else {
+          resizeCommand.move(e.getPoint());
+        }
       }
       repaint();
     } // end mouseDragged

@@ -80,7 +80,7 @@ public class DragWidgetCommand extends Command {
   public boolean start(Point mousePt) {
     targets = page.getSelectedList();
     if (targets.size() == 0) {
-      JOptionPane.showMessageDialog(null, 
+      JOptionPane.showMessageDialog(null,  
           "You must select something to drag.", 
           "Warning", JOptionPane.WARNING_MESSAGE);
       page.selectNone(); // turn off all selections
