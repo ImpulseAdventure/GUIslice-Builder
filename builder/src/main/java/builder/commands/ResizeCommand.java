@@ -57,6 +57,8 @@ public class ResizeCommand extends Command {
    */
   private HandleType handleType;
 
+  private static int MIN_SIZE = 10;
+
   public ResizeCommand(PagePane page, Widget widget, HandleType handleType) {
     this.page = page;
     this.widget = widget;
@@ -73,64 +75,113 @@ public class ResizeCommand extends Command {
     page.repaint();
   }
 
-  public void move(Point point) {
+  /**
+   * Moves the widget by the given offset. If preserveSize is true, the widget size will be preserved. 
+   * Thanks to this, the widget can be moved in X or Y direction only.
+   * 
+   * @param point
+   *          the point to move the widget to
+   * @param preserveSize
+   *          preserve the size of the widget
+   */
+  public void move(Point point, boolean preserveSize) {
     WidgetModel model = widget.getModel();
+    boolean updateX = false;
+    boolean updateY = false;
     switch (handleType) {
       case TOP: 
-        handleTop(point, model);
+        updateY = handleTop(point, model, preserveSize);
         break;
       case TOP_LEFT:
-        handleTop(point, model);
-        handleLeft(point, model);
+        updateY = handleTop(point, model, preserveSize);
+        updateX = handleLeft(point, model, preserveSize);
         break;
       case TOP_RIGHT:
-        handleTop(point, model);
-        handleRight(point, model);
+        updateY = handleTop(point, model, preserveSize);
+        updateX = handleRight(point, model, preserveSize);
         break;
       case RIGHT: 
-        handleRight(point, model);
+        updateX = handleRight(point, model, preserveSize);
         break;
       case BOTTOM: 
-        handleBottom(point, model);
+        updateY = handleBottom(point, model, preserveSize);
         break;
       case BOTTOM_RIGHT:
-        handleBottom(point, model);
-        handleRight(point, model);
+        updateY = handleBottom(point, model, preserveSize);
+        updateX = handleRight(point, model, preserveSize);
         break;
       case BOTTOM_LEFT:
-        handleBottom(point, model);
-        handleLeft(point, model);
+        updateY = handleBottom(point, model, preserveSize);
+        updateX = handleLeft(point, model, preserveSize);
         break;
       case LEFT: 
-        handleLeft(point, model);
+        updateX = handleLeft(point, model, preserveSize);
         break;
       default:
         break;
     }
-    lastPoint = point;
+    // do not update the last point if minimum size is reached
+    if (updateX) { lastPoint.x = point.x; }
+    if (updateY) { lastPoint.y = point.y; }
   }
 
-  private void handleLeft(Point point, WidgetModel model) {
+  public void move(Point point) {
+    move(point, false);
+  }  
+
+  private boolean handleLeft(Point point, WidgetModel model, boolean preserveSize) {
     int newX = model.getX() + (point.x - lastPoint.x);
-    model.setX(newX);
     int newWidth = initialBounds.width - (newX - initialBounds.x);
+    if (preserveSize) {
+      model.setX(newX);
+      return true;
+    }
+    if (newWidth < MIN_SIZE) {
+      return false;
+    }
+    model.setX(newX);
     model.setWidth(newWidth);
+    return true;
   }
 
-  private void handleBottom(Point point, WidgetModel model) {
-    int newHeight = model.getHeight() + (point.y - lastPoint.y);
-    model.setHeight(newHeight);
+  private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize) {
+    if (preserveSize) {
+      return handleTop(point, model, true);
+    } else {
+      int newHeight = model.getHeight() + (point.y - lastPoint.y);
+      if (newHeight < MIN_SIZE) {
+        return false;
+      }
+      model.setHeight(newHeight);
+    }
+    return true;
   }
 
-  private void handleRight(Point point, WidgetModel model) {
-    int newWidth = model.getWidth() + (point.x - lastPoint.x);
-    model.setWidth(newWidth);
+  private boolean handleRight(Point point, WidgetModel model, boolean preserveSize) {
+    if (preserveSize) {
+      return handleLeft(point, model, true);
+    } else {
+      int newWidth = model.getWidth() + (point.x - lastPoint.x);
+      if (newWidth < MIN_SIZE) {
+        return false;
+      }
+      model.setWidth(newWidth);
+    }
+    return true;
   }
 
-  private void handleTop(Point point, WidgetModel model) {
+  private boolean handleTop(Point point, WidgetModel model, boolean preserveSize) {
     int newY = model.getY() + (point.y - lastPoint.y);
-    model.setY(newY);
     int newHeight = initialBounds.height - (newY - initialBounds.y);
+    if (preserveSize) {
+      model.setY(newY);
+      return true;
+    }    
+    if (newHeight < MIN_SIZE) {
+      return false;
+    }
+    model.setY(newY);
     model.setHeight(newHeight);
+    return true;
   }
 }
