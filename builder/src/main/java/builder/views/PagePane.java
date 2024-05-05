@@ -841,16 +841,16 @@ public class PagePane extends JPanel implements iSubscriber {
    *          the to idx
    */
   public void changeZOrder(String widgetKey, int fromIdx, int toIdx) {
-  Widget w = widgets.get(fromIdx);
-  widgets.remove(fromIdx);
-  widgets.add(toIdx, w);
-  MsgEvent ev = new MsgEvent();
-  ev.message = w.getModel().getKey();
-  ev.xdata = getKey();
-  ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-  MsgBoard.publish(ev,getKey());
-  repaint();
-}
+    Widget w = widgets.get(fromIdx);
+    widgets.remove(fromIdx);
+    widgets.add(toIdx, w);
+    MsgEvent ev = new MsgEvent();
+    ev.message = w.getModel().getKey();
+    ev.xdata = getKey();
+    ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
+    MsgBoard.publish(ev,getKey());
+    repaint();
+  }
 
   /**
    * Refresh view.

@@ -125,7 +125,7 @@ public class Utils {
     Point p = new Point(x, y);
     return p;
   }
-  
+
   /**
    * snapToGrid() - Remaps coordinates to our nearest grid line.
    *
