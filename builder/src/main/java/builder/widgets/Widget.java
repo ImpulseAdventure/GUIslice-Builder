@@ -410,16 +410,7 @@ public class Widget {
       }
     }
 
-    if (
-      point.getX() >= RESIZE_HANDLE_ACTIVE_SIZE && 
-      point.getX() <= width - RESIZE_HANDLE_ACTIVE_SIZE && 
-      point.getY() >= RESIZE_HANDLE_ACTIVE_SIZE && 
-      point.getY() <= height - RESIZE_HANDLE_ACTIVE_SIZE
-    ) {
-      return HandleType.DRAG;
-    }
-
-    return HandleType.NONE;
+    return HandleType.DRAG;
   }  
   
   /**
