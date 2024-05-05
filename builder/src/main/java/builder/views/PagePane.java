@@ -249,8 +249,9 @@ public class PagePane extends JPanel implements iSubscriber {
     this.setFocusable( true ); 
     this.setBorder(BorderFactory.createLineBorder(Color.black));
     this.setVisible(true);
-    if (at == null)
-      ZoomTransform();
+    if (at == null) {
+      zoomTransform();
+    }
   }
 
   /**
@@ -324,14 +325,13 @@ public class PagePane extends JPanel implements iSubscriber {
     MenuBar.miZoomOut.setEnabled(zoom > 1.0);
     MenuBar.miZoomReset.setEnabled(zoom != 1.0);
     zoomFactor = zoom;
-    ZoomTransform();
+    zoomTransform();
   }
-  
   
   /**
    * create a transform
    */
-  public static void ZoomTransform() {
+  public static void zoomTransform() {
     at = new AffineTransform();
     double xOffset = 0.0;
     double yOffset = 0.0;
@@ -351,7 +351,7 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public static void zoomIn() {
     zoomFactor *= 1.1;
-    ZoomTransform();
+    zoomTransform();
     ribbon.enableZoom(true);
     MenuBar.miZoomOut.setEnabled(true);
     updateZoomReset();
@@ -368,7 +368,7 @@ public class PagePane extends JPanel implements iSubscriber {
       MenuBar.miZoomOut.setEnabled(false);
     }
     updateZoomReset();
-    ZoomTransform();
+    zoomTransform();
   }
 
   /** Zoom reset */
@@ -377,7 +377,7 @@ public class PagePane extends JPanel implements iSubscriber {
     ribbon.enableZoom(false);
     MenuBar.miZoomOut.setEnabled(false);
     updateZoomReset();
-    ZoomTransform();
+    zoomTransform();
   }
 
   /**
@@ -394,7 +394,7 @@ public class PagePane extends JPanel implements iSubscriber {
   public static void zoomOff() {
     zoomFactor = 1.0;
     ribbon.enableZoom(false);
-    ZoomTransform();
+    zoomTransform();
   }
 
   /**
@@ -857,6 +857,7 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void refreshView() {
     ribbon.setEditButtons(selectedGroupCnt); // needed on page changes
+    updateContentSize();
     repaint();
   }
   
@@ -1129,8 +1130,19 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   public Dimension getPreferredSize() {
-//    return new Dimension(gridModel.getWidth(), gridModel.getHeight());
-    return new Dimension(1200, 1200);
+    Dimension scaledSize = new Dimension(
+      (int) (pm.getWidth() * zoomFactor), 
+      (int) (pm.getHeight() * zoomFactor)
+    );    
+    return scaledSize;
+  }
+
+  private void updateContentSize() {
+    Dimension scaledSize = new Dimension(
+      (int) (pm.getWidth() * zoomFactor), 
+      (int) (pm.getHeight() * zoomFactor)
+    );
+    setSize(scaledSize);
   }
 
   /**
@@ -1356,6 +1368,4 @@ public class PagePane extends JPanel implements iSubscriber {
     } // end for (Widget w)
     Builder.postStatusMsg("Scale operation completed!");
   }
-  
 }
-

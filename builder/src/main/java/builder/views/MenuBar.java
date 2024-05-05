@@ -184,7 +184,7 @@ public class MenuBar extends JMenuBar {
     miZoomReset.setAccelerator(KeyStroke.getKeyStroke('0', ActionEvent.CTRL_MASK));
     miZoomReset.setToolTipText("Reset Zoom to 100%");
     mbView.add(miZoomReset);
-    
+
     this.add(mbView);
   }
   

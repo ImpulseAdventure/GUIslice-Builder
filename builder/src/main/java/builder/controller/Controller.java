@@ -410,8 +410,8 @@ public class Controller extends JInternalFrame
    */
   public void addPageToView(PagePane page) {
     scrollPane = new JScrollPane(page,
-        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
-        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     if (page.getPageType().equals(EnumFactory.BASEPAGE)) {
       pages.add(1,page);
       nBasePages++;
@@ -672,6 +672,14 @@ public class Controller extends JInternalFrame
         "Warning",
         JOptionPane.WARNING_MESSAGE);
   }
+
+  // private void refreshViews() {
+  //   for (PagePane p : pages) {
+  //     if (p.getPageType() != EnumFactory.PROJECT) {
+  //       p.refreshView();
+  //     }
+  //   }
+  // }
   
   /**
    * Removes the page, no longer supports undo/redo.
@@ -1101,6 +1109,7 @@ public class Controller extends JInternalFrame
       pm.printModel("Project Options");
       if (strVersion.equals("17")) {
         PagePane.setZoom(in.readDouble());
+        refreshView();
       }
       int cnt = in.readInt();
 //    System.out.println("pages: " + cnt);
@@ -1512,8 +1521,7 @@ public class Controller extends JInternalFrame
    */
   public void zoomIn() {
     PagePane.zoomIn();
-    refreshView();
-    
+    refreshView();    
   }
   
   /**
