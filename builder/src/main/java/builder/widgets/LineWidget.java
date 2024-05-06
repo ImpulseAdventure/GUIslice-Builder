@@ -29,7 +29,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -69,9 +68,9 @@ public class LineWidget extends Widget {
   public void draw(Graphics2D g2d) {
     g2d.setColor(m.getFillColor());
     if (m.isVertical()) {
-      g2d.drawLine(m.getX(), m.getY(), m.getX(), m.getY()+m.getWidth());
+      g2d.drawLine(m.getX(), m.getY(), m.getX(), m.getY() + m.getLength());
     } else {
-      g2d.drawLine(m.getX(), m.getY(), m.getX()+m.getWidth(), m.getY());
+      g2d.drawLine(m.getX(), m.getY(), m.getX() + m.getLength(), m.getY());
     }
     Rectangle b = getWinBounded();
     drawSelRect(g2d, b);
@@ -85,16 +84,14 @@ public class LineWidget extends Widget {
   @Override
   public Rectangle getWinBounded() {
     Rectangle b = new Rectangle();
+    b.x = m.getX();
+    b.y = m.getY();
     if (m.isVertical()) {
-      b.x = m.getX() - 2;
-      b.y = m.getY() - 2;
-      b.width = model.getHeight();
-      b.height = model.getWidth()+4;
+      b.width = 1;
+      b.height = m.getLength();
     } else {
-      b.x = m.getX() - 2;
-      b.y = m.getY() - 2;
-      b.width = m.getWidth()+4;
-      b.height = m.getHeight();
+      b.width = m.getLength();
+      b.height = 1;
     }
     return b;
   }
@@ -109,14 +106,49 @@ public class LineWidget extends Widget {
    */
   @Override
   public void drawSelRect(Graphics2D g2d, Rectangle b) {
-    if (bSelected) {
-      Stroke defaultStroke = g2d.getStroke();
-      g2d.setColor(Color.RED);
-      g2d.setStroke(Widget.dashed);
-      g2d.drawRect(b.x-2, b.y-2, b.width+4, b.height+4);
-      g2d.setStroke(defaultStroke);  
+    if (!bSelected) {
+      return;
     }
+
+    g2d.setColor(Color.RED);
+
+    if (m.isVertical()) {
+      // top center
+      g2d.fillRect(b.x - (RESIZE_HANDLE_SIZE / 2), b.y - (RESIZE_HANDLE_SIZE / 2), RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+      // bottom center
+      g2d.fillRect(b.x - (RESIZE_HANDLE_SIZE / 2), b.y + b.height - (RESIZE_HANDLE_SIZE / 2), RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    } else {
+      // left top corner
+      g2d.fillRect(b.x - (RESIZE_HANDLE_SIZE / 2), b.y - (RESIZE_HANDLE_SIZE / 2), RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+      // right top corner
+      g2d.fillRect(b.x + b.width - (RESIZE_HANDLE_SIZE / 2), b.y - (RESIZE_HANDLE_SIZE / 2), RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE);
+    } 
   }
+
+  /**
+   * @Inherited
+   */
+  @Override
+  public HandleType getResizingHandler(Point point) {
+    double width = model.getWidth();
+    double height = model.getHeight();
+    
+    if (m.isVertical()) {
+      if (point.getY() < RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.TOP;
+      } else if (point.getY() > height - RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.BOTTOM;
+      }
+    } else {
+      if (point.getX() < RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.LEFT;
+      } else if (point.getX() > width - RESIZE_HANDLE_ACTIVE_SIZE) {
+        return HandleType.RIGHT; 
+      }
+    }
+
+    return HandleType.DRAG;
+  }  
   
   /**
    * Return true if this node contains p.
@@ -128,6 +160,11 @@ public class LineWidget extends Widget {
   @Override
   public boolean contains(Point p) {
     Rectangle b = getWinBounded();
+    if (m.isVertical()) {
+      b.grow(RESIZE_HANDLE_SIZE, 1);
+    } else {
+      b.grow(1, RESIZE_HANDLE_SIZE);
+    }
     return b.contains(p);
   }
 
@@ -142,12 +179,11 @@ public class LineWidget extends Widget {
   public boolean contains(Point2D p) {
     Rectangle r = getWinBounded();
     Rectangle2D.Double b = new Rectangle2D.Double();
-    b.x = r.x;
-    b.y = r.y;
-    b.width = r.width;
-    b.height = r.height;
+    boolean isVertical = m.isVertical();
+    b.x = isVertical ? r.x - (RESIZE_HANDLE_SIZE / 2) : r.x;
+    b.y = isVertical ? r.y : r.y - (RESIZE_HANDLE_SIZE / 2);
+    b.width = isVertical ? RESIZE_HANDLE_SIZE : r.width;
+    b.height = isVertical ? r.height : RESIZE_HANDLE_SIZE;
     return b.contains(p);
   }
-
-
 }

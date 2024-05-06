@@ -28,8 +28,10 @@ package builder.mementos;
 import java.util.ArrayList;
 import java.util.List;
 
+import builder.models.LineModel;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
+import builder.widgets.LineWidget;
 import builder.widgets.Widget;
 
 /**
@@ -74,8 +76,13 @@ public class ResizeMemento extends Memento {
   private void saveWidgetProperties(Widget widget) {
     savedProperties.add((Integer) widget.getModel().getValueAt(WidgetModel.PROP_X, 1));
     savedProperties.add((Integer) widget.getModel().getValueAt(WidgetModel.PROP_Y, 1));
-    savedProperties.add((Integer) widget.getModel().getValueAt(WidgetModel.PROP_WIDTH, 1));
-    savedProperties.add((Integer) widget.getModel().getValueAt(WidgetModel.PROP_HEIGHT, 1));
+    // @TODO noo!!! 
+    if (widget instanceof LineWidget) {
+      savedProperties.add((Integer) widget.getModel().getValueAt(LineModel.PROP_LENGTH, 1));
+    } else {
+      savedProperties.add((Integer) widget.getModel().getValueAt(WidgetModel.PROP_WIDTH, 1));
+      savedProperties.add((Integer) widget.getModel().getValueAt(WidgetModel.PROP_HEIGHT, 1));
+    }
   }
   
   /**
@@ -87,8 +94,13 @@ public class ResizeMemento extends Memento {
   public void restore() {
     widget.getModel().restore(savedProperties.get(0), WidgetModel.PROP_X);
     widget.getModel().restore(savedProperties.get(1), WidgetModel.PROP_Y);
-    widget.getModel().restore(savedProperties.get(2), WidgetModel.PROP_WIDTH);
-    widget.getModel().restore(savedProperties.get(3), WidgetModel.PROP_HEIGHT);
+    // @TODO noo!!!
+    if (widget instanceof LineWidget) {
+      widget.getModel().restore(savedProperties.get(2), LineModel.PROP_LENGTH);
+    } else {
+      widget.getModel().restore(savedProperties.get(2), WidgetModel.PROP_WIDTH);
+      widget.getModel().restore(savedProperties.get(3), WidgetModel.PROP_HEIGHT);
+    }
     page.refreshView();
   }
 }
