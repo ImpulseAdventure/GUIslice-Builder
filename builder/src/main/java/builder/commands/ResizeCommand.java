@@ -154,29 +154,33 @@ public class ResizeCommand extends Command {
   }
 
   private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    int newSize = currentBounds.height + (point.y - lastPoint.y);
+    int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.y + newSize) - currentBounds.y);
+    if (newSnappedSize < MIN_SIZE) {
+      return false;
+    }
     if (preserveSize) {
-      return handleTop(point, model, true, true);
+      // order of operations is important!
+      model.setY((currentBounds.y + newSnappedSize) - currentBounds.height);
+      currentBounds.y += (newSize - currentBounds.height);
     } else {
-      int newSize = currentBounds.height + (point.y - lastPoint.y);
-      int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.y + newSize) - currentBounds.y);
-      if (newSnappedSize < MIN_SIZE) {
-        return false;
-      }
       currentBounds.height = newSize;
       model.setHeight(newSnappedSize);
-    }
+    }    
     return true;
   }
 
   private boolean handleRight(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    int newSize = currentBounds.width + (point.x - lastPoint.x);
+    int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.x + newSize) - currentBounds.x);
+    if (newSnappedSize < MIN_SIZE) {
+      return false;
+    }
     if (preserveSize) {
-      return handleLeft(point, model, true, true);
+      // order of operations is important!
+      model.setX((currentBounds.x + newSnappedSize) - currentBounds.width);
+      currentBounds.x += (newSize - currentBounds.width);
     } else {
-      int newSize = currentBounds.width + (point.x - lastPoint.x);
-      int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.x + newSize) - currentBounds.x);
-      if (newSnappedSize < MIN_SIZE) {
-        return false;
-      }
       currentBounds.width = newSize;
       model.setWidth(newSnappedSize);
     }
