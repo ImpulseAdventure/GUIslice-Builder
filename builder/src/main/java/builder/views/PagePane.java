@@ -1039,6 +1039,10 @@ public class PagePane extends JPanel implements iSubscriber {
         setCursor(Cursor.getDefaultCursor());
         return;
       }
+      if (!widgetUnderCursor.isSelected()) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return;
+      }
 
       Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y); 
       HandleType handleType = widgetUnderCursor.getResizingHandler(widgetUnderCursor.toWidgetSpace(unscaledPoint));
