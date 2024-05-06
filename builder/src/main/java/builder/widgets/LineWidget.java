@@ -161,9 +161,9 @@ public class LineWidget extends Widget {
   public boolean contains(Point p) {
     Rectangle b = getWinBounded();
     if (m.isVertical()) {
-      b.grow(RESIZE_HANDLE_SIZE, 1);
+      b.grow(RESIZE_HANDLE_SIZE, 2);
     } else {
-      b.grow(1, RESIZE_HANDLE_SIZE);
+      b.grow(2, RESIZE_HANDLE_SIZE);
     }
     return b.contains(p);
   }
@@ -180,10 +180,10 @@ public class LineWidget extends Widget {
     Rectangle r = getWinBounded();
     Rectangle2D.Double b = new Rectangle2D.Double();
     boolean isVertical = m.isVertical();
-    b.x = isVertical ? r.x - (RESIZE_HANDLE_SIZE / 2) : r.x;
-    b.y = isVertical ? r.y : r.y - (RESIZE_HANDLE_SIZE / 2);
-    b.width = isVertical ? RESIZE_HANDLE_SIZE : r.width;
-    b.height = isVertical ? r.height : RESIZE_HANDLE_SIZE;
+    b.x = r.x - (RESIZE_HANDLE_SIZE / 2);
+    b.y = r.y - (RESIZE_HANDLE_SIZE / 2);
+    b.width = RESIZE_HANDLE_SIZE + (isVertical ? 0 : r.width);
+    b.height = RESIZE_HANDLE_SIZE + (isVertical ? r.height : 0);
     return b.contains(p);
   }
 }
