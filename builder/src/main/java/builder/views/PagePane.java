@@ -783,33 +783,22 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public Widget findOne(Point p) {
     // we may need to deal with scaled points because of zoom feature
+    Point2D pos = p;
     if (zoomFactor > 1) {
       Point2D.Double scaledPos = new Point2D.Double();
-      scaledPos.x = (double)p.x;
-      scaledPos.y = (double)p.y;
+      scaledPos.x = (double) p.x;
+      scaledPos.y = (double) p.y;
       // transforms are only needed in zoom mode
       inv_at.transform(scaledPos, scaledPos);
-//    System.out.println("findOne: Z=" + zoomFactor  + " p=[" + p.x + "," + p.y + "] " 
-//        + " s=[" + scaledPos.getX() + "," + scaledPos.getY() + "]");
-      Widget w = null;
-      for (int i=widgets.size()-1; i>=0; i--) {
-        w = widgets.get(i);
-        //for (Widget w : widgets) {
-        if (w.contains(scaledPos)) {
-//  System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
-          return w;
-        }
-      }
-    } else {
-      Widget w = null;
-      for (int i=widgets.size()-1; i>=0; i--) {
-        w = widgets.get(i);
-        if (w.contains(p)) {
-//  System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
-          return w;
-        }
+      pos = scaledPos;
+    }
+
+    for (Widget w : widgets) {
+      if (w.contains(pos)) {
+        return w;
       }
     }
+    
     return null;
   }
   
