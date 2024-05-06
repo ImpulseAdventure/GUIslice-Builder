@@ -140,14 +140,16 @@ public class DragWidgetCommand extends Command {
   /**
    * Stop ends the drag 
    */
-  public void stop() {
+  public void stop(boolean ignoreSnapToGrid) {
     /* Adjust out drop point to snap to grid
      * Only if we have one object selected
      * Multiple objects get screwed up
      */
     try {
       if (targets.size() == 1) {
-        pt[0] = targets.get(0).drop(pt[0]);
+        if (!ignoreSnapToGrid) {
+          pt[0] = targets.get(0).drop(pt[0]);
+        }
       }
     } catch (NullPointerException e) {
       return;

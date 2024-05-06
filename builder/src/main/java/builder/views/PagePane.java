@@ -939,7 +939,7 @@ public class PagePane extends JPanel implements iSubscriber {
     public void mouseReleased(MouseEvent e) {
       mouseRect.setBounds(0, 0, 0, 0);
       if (dragCommand != null) {
-        dragCommand.stop();
+        dragCommand.stop(e.isControlDown());
         execute(dragCommand);
         dragCommand = null;
       }
