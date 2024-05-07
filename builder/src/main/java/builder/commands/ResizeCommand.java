@@ -27,6 +27,7 @@ package builder.commands;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 
 import builder.common.Utils;
 import builder.mementos.ResizeMemento;
@@ -101,14 +102,16 @@ public class ResizeCommand extends Command {
       case TOP: 
         updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
         break;
-      case TOP_LEFT:
+      case TOP_LEFT: {
         updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
         updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
         break;
-      case TOP_RIGHT:
+      }
+      case TOP_RIGHT: {
         updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
         updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
         break;
+      }
       case RIGHT: 
         updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
         break;
@@ -122,6 +125,18 @@ public class ResizeCommand extends Command {
       case BOTTOM_LEFT:
         updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
         updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
+        break;
+      case BOTTOM_LEFT_PROPORTIONAL:
+        handleBottomLeftProportional(point, model, preserveSize, ignoreSnapToGrid);
+        break;
+      case BOTTOM_RIGHT_PROPORTIONAL:
+        handleBottomRightProportional(point, model, preserveSize, ignoreSnapToGrid);
+        break;
+      case TOP_LEFT_PROPORTIONAL:
+        handleTopLeftProportional(point, model, preserveSize, ignoreSnapToGrid);
+        break;
+      case TOP_RIGHT_PROPORTIONAL:
+        handleTopRightProportional(point, model, preserveSize, ignoreSnapToGrid);
         break;
       case LEFT: 
         updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
@@ -168,6 +183,150 @@ public class ResizeCommand extends Command {
       model.setHeight(newSnappedSize);
     }    
     return true;
+  }
+
+  private void handleBottomLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
+    // y is negated because the y axis is inverted relative to the normal cartesian coordinate system
+    Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x, initialBounds.y + initialBounds.height));
+    Double bParam = getBParam(vertexToCursor, -1);
+    // we need one of the coordinates of the mapped point, preferably with positive value
+    int mappedCoordinate = (int) (-(bParam / 2));
+    //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);
+
+    int newPosX = initialBounds.x - mappedCoordinate;
+    int newSnappedPosX = ignoreSnapToGrid ? newPosX : utils.snapToGrid(newPosX);
+    int newSnappedSizeX = initialBounds.width - (newPosX - initialBounds.x);
+    newSnappedSizeX -= newSnappedPosX - newPosX; // adjust width to snapped position
+    if (newSnappedSizeX < MIN_SIZE) {
+      newSnappedSizeX = MIN_SIZE;
+      newSnappedPosX = initialBounds.x + initialBounds.width - newSnappedSizeX;
+    }
+    int snappedDistanceX = Math.abs(newSnappedPosX - newPosX);
+
+    int newSizeY = initialBounds.height + mappedCoordinate;
+    int newSnappedSizeY = ignoreSnapToGrid ? newSizeY : (utils.snapToGrid(initialBounds.y + newSizeY) - initialBounds.y);
+    if (newSnappedSizeY < MIN_SIZE) { newSnappedSizeY = MIN_SIZE; }
+    int snappedDistanceY = Math.abs(newSnappedSizeY - newSizeY);
+
+    // snap the axis that is closer to the grid
+    if (snappedDistanceX < snappedDistanceY) {
+      model.setX(newSnappedPosX);
+      model.setWidth(newSnappedSizeX);
+    } else {
+      model.setHeight(newSnappedSizeY);
+      model.setX((initialBounds.x + initialBounds.width) - newSnappedSizeY); // adjust y position to maintain aspect ratio
+    }
+  }
+
+  private void handleTopLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
+    Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x, initialBounds.y));
+    Double bParam = getBParam(vertexToCursor, 1);
+    // we need one of the coordinates of the mapped point, preferably with positive value
+    int mappedCoordinate = (int) (bParam / 2);
+    //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);  
+
+    int newPosX = initialBounds.x - mappedCoordinate;
+    int newSnappedPosX = ignoreSnapToGrid ? newPosX : utils.snapToGrid(newPosX);
+    int newSnappedSizeX = initialBounds.width - (newPosX - initialBounds.x);
+    newSnappedSizeX -= newSnappedPosX - newPosX; // adjust width to snapped position
+    if (newSnappedSizeX < MIN_SIZE) {
+      newSnappedSizeX = MIN_SIZE;
+      newSnappedPosX = initialBounds.x + initialBounds.width - newSnappedSizeX;
+    }
+    int snappedDistanceX = Math.abs(newSnappedPosX - newPosX);
+
+    int newPosY = initialBounds.y - mappedCoordinate;
+    int newSnappedPosY = ignoreSnapToGrid ? newPosY : utils.snapToGrid(newPosY);
+    int newSnappedSizeY = initialBounds.height - (newPosY - initialBounds.y);
+    newSnappedSizeY -= newSnappedPosY - newPosY; // adjust height to snapped position
+    if (newSnappedSizeY < MIN_SIZE) {
+      newSnappedSizeY = MIN_SIZE;
+      newSnappedPosY = initialBounds.y + initialBounds.height - newSnappedSizeY;
+    }
+    int snappedDistanceY = Math.abs(newSnappedPosY - newPosY);
+
+    // snap the axis that is closer to the grid
+    if (snappedDistanceX < snappedDistanceY) {
+      model.setX(newSnappedPosX);
+      model.setWidth(newSnappedSizeX);
+      model.setY((initialBounds.y + initialBounds.height) - newSnappedSizeX); // adjust y position to maintain aspect ratio
+    } else {
+      model.setY(newSnappedPosY);
+      model.setHeight(newSnappedSizeY);
+      model.setX((initialBounds.x + initialBounds.width) - newSnappedSizeY); // adjust x position to maintain aspect ratio
+    }
+  }
+
+  private void handleTopRightProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
+    Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x + initialBounds.width, initialBounds.y));
+    Double bParam = getBParam(vertexToCursor, -1);
+    // we need one of the coordinates of the mapped point, preferably with positive value
+    int mappedCoordinate = (int) (bParam / 2);
+    //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate); 
+
+    int newSizeX = initialBounds.width + mappedCoordinate;
+    int newSnappedSizeX = ignoreSnapToGrid ? newSizeX : (utils.snapToGrid(initialBounds.x + newSizeX) - initialBounds.x);
+    if (newSnappedSizeX < MIN_SIZE) { newSnappedSizeX = MIN_SIZE; }
+    int snappedDistanceX = Math.abs(newSnappedSizeX - newSizeX);
+
+    int newPosY = initialBounds.y - mappedCoordinate;
+    int newSnappedPosY = ignoreSnapToGrid ? newPosY : utils.snapToGrid(newPosY);
+    int newSnappedSizeY = initialBounds.height - (newPosY - initialBounds.y);
+    newSnappedSizeY -= newSnappedPosY - newPosY; // adjust height to snapped position
+    if (newSnappedSizeY < MIN_SIZE) {
+      newSnappedSizeY = MIN_SIZE;
+      newSnappedPosY = initialBounds.y + initialBounds.height - newSnappedSizeY;
+    }
+    int snappedDistanceY = Math.abs(newSnappedPosY - newPosY);
+
+    // snap the axis that is closer to the grid
+    if (snappedDistanceX < snappedDistanceY) {
+      model.setWidth(newSnappedSizeX);
+      model.setY((initialBounds.y + initialBounds.height) - newSnappedSizeX); // adjust y position to maintain aspect ratio
+    } else {
+      model.setY(newSnappedPosY);
+      model.setHeight(newSnappedSizeY);
+    }
+  }
+
+  private void handleBottomRightProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+    // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
+    Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x + initialBounds.width, initialBounds.y + initialBounds.height));
+    Double bParam = getBParam(vertexToCursor, 1);
+    // we need one of the coordinates of the mapped point, preferably with positive value
+    int mappedCoordinate = (int) (-(bParam / 2));
+    //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);
+
+    int newSizeX = initialBounds.width + mappedCoordinate;
+    int newSnappedSizeX = ignoreSnapToGrid ? newSizeX : (utils.snapToGrid(initialBounds.x + newSizeX) - initialBounds.x);
+    if (newSnappedSizeX < MIN_SIZE) { newSnappedSizeX = MIN_SIZE; }
+    int snappedDistanceX = Math.abs(newSnappedSizeX - newSizeX);
+
+    int newSizeY = initialBounds.height + mappedCoordinate;
+    int newSnappedSizeY = ignoreSnapToGrid ? newSizeY : (utils.snapToGrid(initialBounds.y + newSizeY) - initialBounds.y);
+    if (newSnappedSizeY < MIN_SIZE) { newSnappedSizeY = MIN_SIZE; }
+    int snappedDistanceY = Math.abs(newSnappedSizeY - newSizeY);
+
+    // snap the axis that is closer to the grid
+    if (snappedDistanceX < snappedDistanceY) {
+      model.setWidth(newSnappedSizeX);
+    } else {
+      model.setHeight(newSnappedSizeY);
+    }
+  }
+
+  // aParam is the slope of the line passing through the center of the object and the dragged vertex:
+  // 1 for the bottom right and top left vertices, -1 for the top right and bottom left vertices
+  private Double getBParam(Point vertexToCursor, int aParam) {
+    int negatedAParam = -aParam; // aParam of the perpendicular line which will be used to map cursor position
+    return Double.valueOf(vertexToCursor.y - (negatedAParam * vertexToCursor.x));
+  }
+
+  private Point getCursorRelativeToVertex(Point cursor, Point vertex) {
+    return new Point(vertex.x - cursor.x, vertex.y - cursor.y);
   }
 
   private boolean handleRight(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {

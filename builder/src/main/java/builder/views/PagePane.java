@@ -1040,24 +1040,28 @@ public class PagePane extends JPanel implements iSubscriber {
           setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
           break;
         case TOP_LEFT:
+        case TOP_LEFT_PROPORTIONAL:
           setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
           break;
         case TOP:
           setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
           break;
         case TOP_RIGHT:
+        case TOP_RIGHT_PROPORTIONAL:
           setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
           break;
         case RIGHT:
           setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
           break;
         case BOTTOM_RIGHT:
+        case BOTTOM_RIGHT_PROPORTIONAL:
           setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
           break;
         case BOTTOM:
           setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
           break;
         case BOTTOM_LEFT:
+        case BOTTOM_LEFT_PROPORTIONAL:
           setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
           break;
         case LEFT:
