@@ -187,7 +187,6 @@ public class ResizeCommand extends Command {
 
   private void handleBottomLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
     // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
-    // y is negated because the y axis is inverted relative to the normal cartesian coordinate system
     Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x, initialBounds.y + initialBounds.height));
     Double bParam = getBParam(vertexToCursor, -1);
     // we need one of the coordinates of the mapped point, preferably with positive value
