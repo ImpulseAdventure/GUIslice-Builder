@@ -27,6 +27,7 @@ package builder.widgets;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 //import builder.common.CommonUtils;
@@ -126,4 +127,21 @@ public class RadioButtonWidget extends Widget {
     super.drawSelRect(pGui, rElem);
   }
 
+  @Override
+  public HandleType getResizingHandler(Point point) {
+    HandleType handleType = super.getResizingHandler(point);
+
+    switch (handleType) {
+      case BOTTOM_LEFT:
+        return HandleType.BOTTOM_LEFT_PROPORTIONAL;
+      case BOTTOM_RIGHT:
+        return HandleType.BOTTOM_RIGHT_PROPORTIONAL;
+      case TOP_LEFT:
+        return HandleType.TOP_LEFT_PROPORTIONAL;
+      case TOP_RIGHT:
+        return HandleType.TOP_RIGHT_PROPORTIONAL;
+      default:
+        return handleType;
+    }
+  }
 }

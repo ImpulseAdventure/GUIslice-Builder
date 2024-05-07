@@ -82,7 +82,7 @@ public class CheckBoxModel extends WidgetModel {
 //  static public  final String  DEF_GROUP             = "GSLC_GROUP_ID_NONE";  
 
   static private final int DEF_WIDTH = 20;
-  static private final int DEF_HEIGHT= 20;
+  static private final int DEF_HEIGHT = 20;
 
   /** The cb style. */
   JComboBox<String> cbStyle;
@@ -120,8 +120,9 @@ public class CheckBoxModel extends WidgetModel {
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
+    // @TODO: what was bug b90 about?
     // bug b90 check boxes and radio buttons should have either width or height.
-    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
+    // data[PROP_HEIGHT][PROP_VAL_READONLY] = Boolean.TRUE;
     
     initProp(PROP_CHECKED, Boolean.class, "CBOX-100", Boolean.FALSE,"Checked?",DEF_CHECKED);
     initProp(PROP_STYLE, String.class, "RBTN-102", Boolean.FALSE,"Check Mark Style",DEF_STYLE);
@@ -136,7 +137,6 @@ public class CheckBoxModel extends WidgetModel {
 
     setElementRef(Utils.createElemName(getKey(), ELEMENTREF_NAME));
 //    initProp(PROP_GROUP, String.class, "RBTN-101", Boolean.FALSE,"Group ID",DEF_GROUP);
-
   }
   
   /**
@@ -168,8 +168,8 @@ public class CheckBoxModel extends WidgetModel {
   public void changeValueAt(Object value, int row) {
     // The test for Integer supports copy and paste from clipboard.
     // Otherwise we get a can't cast class String to Integer fault
-    if ( (getClassAt(row) == Integer.class) && (value instanceof String)) {
-        data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String)value));
+    if ((getClassAt(row) == Integer.class) && (value instanceof String)) {
+      data[row][PROP_VAL_VALUE] = Integer.valueOf(Integer.parseInt((String) value));
     } else {
       data[row][PROP_VAL_VALUE] = value;
     }
@@ -195,6 +195,31 @@ public class CheckBoxModel extends WidgetModel {
         Controller.sendRepaint();
       }
     } 
+  }
+
+  /**
+   * keep width and height the same
+   *
+   * @see builder.models.WidgetModel#setHeight(int)
+   */
+  @Override
+  public void setHeight(int h) {
+    setWidthAndHeight(h);
+  }
+
+  /**
+   * keep width and height the same
+   *
+   * @see builder.models.WidgetModel#setWidth(int)
+   */
+  @Override
+  public void setWidth(int w) {
+    setWidthAndHeight(w);
+  }
+
+  private void setWidthAndHeight(int size) {
+    super.setWidth(size);
+    super.setHeight(size);
   }
 
   /**
@@ -329,5 +354,4 @@ public class CheckBoxModel extends WidgetModel {
 //      data[PROP_GROUP][PROP_VAL_VALUE] = "GSLC_GROUP_ID_NONE";
 //    }
   }
-
 }
