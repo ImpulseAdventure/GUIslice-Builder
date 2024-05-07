@@ -128,8 +128,8 @@ public class RadioButtonWidget extends Widget {
   }
 
   @Override
-  public HandleType getResizingHandler(Point point) {
-    HandleType handleType = super.getResizingHandler(point);
+  public HandleType getActionHandle(Point point) {
+    HandleType handleType = super.getActionHandle(point);
 
     switch (handleType) {
       case BOTTOM_LEFT:

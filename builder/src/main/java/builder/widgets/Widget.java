@@ -381,7 +381,7 @@ public class Widget {
    *          point in widget space
    * @return the resizing handler type
    */
-  public HandleType getResizingHandler(Point point) {
+  public HandleType getActionHandle(Point point) {
     double width = model.getWidth();
     double xCenter = width / 2;
     double height = model.getHeight();

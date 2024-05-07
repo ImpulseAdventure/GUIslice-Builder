@@ -976,7 +976,7 @@ public class PagePane extends JPanel implements iSubscriber {
         }
       } else if (w != null) {
         Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
-        HandleType handleType = w.getResizingHandler(w.toWidgetSpace(unscaledPoint));
+        HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
             if (w.isSelected()) bDragging = true;
@@ -1034,7 +1034,7 @@ public class PagePane extends JPanel implements iSubscriber {
       }
 
       Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y); 
-      HandleType handleType = widgetUnderCursor.getResizingHandler(widgetUnderCursor.toWidgetSpace(unscaledPoint));
+      HandleType handleType = widgetUnderCursor.getActionHandle(widgetUnderCursor.toWidgetSpace(unscaledPoint));
       switch (handleType) {
         case DRAG:
           setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));

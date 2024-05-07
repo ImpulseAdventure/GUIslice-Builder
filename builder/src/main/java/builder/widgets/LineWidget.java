@@ -129,7 +129,7 @@ public class LineWidget extends Widget {
    * @Inherited
    */
   @Override
-  public HandleType getResizingHandler(Point point) {
+  public HandleType getActionHandle(Point point) {
     double width = model.getWidth();
     double height = model.getHeight();
     
