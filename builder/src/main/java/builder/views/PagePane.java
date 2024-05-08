@@ -54,6 +54,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -793,12 +794,15 @@ public class PagePane extends JPanel implements iSubscriber {
       pos = scaledPos;
     }
 
-    for (Widget w : widgets) {
+    // last element is considered the topmost
+    ListIterator<Widget> iterator = widgets.listIterator(widgets.size());
+    while (iterator.hasPrevious()) {
+      Widget w = iterator.previous();
       if (w.contains(pos)) {
         return w;
       }
     }
-    
+
     return null;
   }
   
