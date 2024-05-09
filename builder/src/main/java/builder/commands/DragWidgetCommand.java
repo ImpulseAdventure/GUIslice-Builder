@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.mementos.PositionMemento;
 import builder.views.PagePane;
@@ -56,10 +57,8 @@ public class DragWidgetCommand extends Command {
   
   /** The targets list contains the set of widgets to drag. */
   private List<Widget> targets = new ArrayList<Widget>();
-  private int tft_width = 0;
-  private int tft_height = 0;
-  
-  private boolean bSuccess;
+
+  private Utils utils = Utils.getInstance();
   
   /**
    * Instantiates a new drag widget command.
@@ -69,9 +68,6 @@ public class DragWidgetCommand extends Command {
    */
   public DragWidgetCommand(PagePane page) {
     this.page = page;
-    tft_width = Controller.getProjectModel().getWidth();
-    tft_height = Controller.getProjectModel().getHeight();
-    bSuccess = false;
   }
   
   /**
@@ -112,48 +108,30 @@ public class DragWidgetCommand extends Command {
    * @param m
    *          the <code>m</code> is the new relative position of our dragged widgets. 
    */
-  public void move(Point m) {
-    /* 
-     * Test our drag position to be sure it will fit to our TFT screen.
-     * Simply return if it doesn't.
-     */
+  public void move(Point m, boolean ignoreSnapToGrid) {
     Widget w;
-    Point testPt;
     Point mapPt = PagePane.mapPoint(m.x, m.y);
-    for (int i=0; i<targets.size(); i++) {
-      w = targets.get(i);
-      testPt = new Point(mapPt.x-offsetPt[i].x, mapPt.y-offsetPt[i].y);
-      if(!w.testLocation(testPt.x, testPt.y, tft_width, tft_height)) return;
-    }
 
     for (int i=0; i<targets.size(); i++) {
       /* 
        *  pt[i] will be our new dragged position.
        */
       w = targets.get(i);
-      pt[i] = new Point(mapPt.x-offsetPt[i].x, mapPt.y-offsetPt[i].y);
-      w.updateLocation(pt[i]);
+      pt[i] = new Point(
+        ignoreSnapToGrid ? mapPt.x - offsetPt[i].x : utils.snapToGrid(mapPt.x - offsetPt[i].x),
+        ignoreSnapToGrid ? mapPt.y - offsetPt[i].y : utils.snapToGrid(mapPt.y - offsetPt[i].y)
+      );
+      w.updateLocation(
+        pt[i].x,
+        pt[i].y
+      );
     }
-    bSuccess = true;
   }
 
   /**
    * Stop ends the drag 
    */
   public void stop(boolean ignoreSnapToGrid) {
-    /* Adjust out drop point to snap to grid
-     * Only if we have one object selected
-     * Multiple objects get screwed up
-     */
-    try {
-      if (targets.size() == 1) {
-        if (!ignoreSnapToGrid) {
-          pt[0] = targets.get(0).drop(pt[0]);
-        }
-      }
-    } catch (NullPointerException e) {
-      return;
-    }
   }
 
   /**
@@ -163,14 +141,12 @@ public class DragWidgetCommand extends Command {
    */
   @Override
   public void execute() {
-    if (bSuccess) {
-      try {
-        for (int i=0; i<targets.size(); i++) {
-          targets.get(i).moveBy(pt[i]);
-        }
-      } catch (NullPointerException e) {
-        return;
+    try {
+      for (int i=0; i<targets.size(); i++) {
+        targets.get(i).moveBy(pt[i]);
       }
+    } catch (NullPointerException e) {
+      return;
     }
   }
 
@@ -183,19 +159,14 @@ public class DragWidgetCommand extends Command {
   public String toString() {
     String myEnums = "";
   
-    if (bSuccess) {
-      try {
-        for (int i=0; i<targets.size(); i++) {
-          if (i>0) myEnums = myEnums + ",";  
-          myEnums = myEnums + targets.get(i).getEnum();
-        }
-      } catch (NullPointerException e) {
-        return String.format("Drag page:%s widget:Null pointer",page.getEnum());
+    try {
+      for (int i=0; i<targets.size(); i++) {
+        if (i>0) myEnums = myEnums + ",";  
+        myEnums = myEnums + targets.get(i).getEnum();
       }
-      return String.format("Drag page:%s widget:%s",page.getEnum(),myEnums);
-    } else {
-      return String.format("Drag Failed");
+    } catch (NullPointerException e) {
+      return String.format("Drag page:%s widget:Null pointer",page.getEnum());
     }
+    return String.format("Drag page:%s widget:%s",page.getEnum(),myEnums);
   }
-
 }

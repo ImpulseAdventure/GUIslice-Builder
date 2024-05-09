@@ -278,15 +278,15 @@ public class PagePane extends JPanel implements iSubscriber {
       g2d.fillRect(0, 0, width, height);
       g2d.drawImage(pm.getImage(), 0, 0, null);
     } else {
+      g2d.setColor(gridModel.getGrid() ? gridModel.getBackGroundColor() : pm.getBackgroundColor());
+      g2d.fillRect(0,  0, width, height);
       if (gridModel.getGrid()) {
-        g2d.setColor(gridModel.getBackGroundColor());
-        g2d.fillRect(0, 0, width, height);
-        drawCoordinates(g2d, width, height);
-      } else {
-        g2d.setColor(pm.getBackgroundColor());
-        g2d.fillRect(0,  0, width, height);
+        drawGrid(g2d, width, height);
       }
     }
+    
+    drawMargins(g2d, width, height);
+      
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
     // output this page's widgets
@@ -311,6 +311,12 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     // gets rid of the copy
     g2d.dispose();
+  }
+
+  private void drawMargins(Graphics2D g2d, int width, int height) {
+    int marginSize = pm.getMargins();
+    g2d.setColor(gridModel.getGridMajorColor());
+    g2d.drawRect(marginSize, marginSize, width - 2 * marginSize, height - 2 * marginSize);
   };
 
   /**
@@ -415,7 +421,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * @param h
    *          the height of simulated TFT screen
    */
-  private void drawCoordinates(Graphics2D g2d, int w, int h) {
+  private void drawGrid(Graphics2D g2d, int w, int h) {
     int x, y, dx, dy, dw, dh;
     int minorW = gridModel.getGridMinorWidth();
     int minorH = gridModel.getGridMinorHeight();
@@ -1105,7 +1111,7 @@ public class PagePane extends JPanel implements iSubscriber {
         }
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
-        dragCommand.move(e.getPoint());
+        dragCommand.move(e.getPoint(), e.isControlDown());
       } else if (bResizing) {
         if (resizeCommand == null) {
           System.out.println("resizeCommand is null");
