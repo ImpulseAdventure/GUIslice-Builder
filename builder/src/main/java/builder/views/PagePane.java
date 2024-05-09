@@ -107,11 +107,11 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The mouse rect. */
   private Rectangle mouseRect = new Rectangle();
   
-  /** our cross hair cursor */
-  public static Cursor crossHairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR); 
+  // /** Cursor style will be CROSSHAIR in rectangular selection mode or arrow in default mode */
+  // public static Cursor  = new Cursor(Cursor.CROSSHAIR_CURSOR); 
 
   /** The rectangular selection enabled switch */
-  public static boolean bRectangularSelectionEn = false;
+  public static boolean bRectangularSelectionMode = false;
   
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
@@ -268,11 +268,7 @@ public class PagePane extends JPanel implements iSubscriber {
     if (getPageType().equals(EnumFactory.PROJECT)) {
       return;
     }
-    if (bRectangularSelectionEn) {
-      setCursor(crossHairCursor);
-    } else if (!bDragging && !bResizing) {
-      setCursor(Cursor.getDefaultCursor());
-    }
+
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.transform(at);
     int width = pm.getWidth();
@@ -296,7 +292,7 @@ public class PagePane extends JPanel implements iSubscriber {
     // output this page's widgets
     for (Widget w : widgets) {
       w.draw(g2d);
-    }
+    } 
     /* output any base page widgets unless this is a project
      * base page or popup page.
      */
@@ -402,9 +398,9 @@ public class PagePane extends JPanel implements iSubscriber {
    * rectangularSelection.
    */
   public void rectangularSelection(boolean bValue) {
-    bRectangularSelectionEn = bValue;
+    bRectangularSelectionMode = bValue;
     if (bValue)
-      setCursor(crossHairCursor);
+      setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     else
       setCursor(Cursor.getDefaultCursor());
   }
@@ -953,7 +949,7 @@ public class PagePane extends JPanel implements iSubscriber {
         resizeCommand = null;
       }      
       bMultiSelectionBox = false;
-      bRectangularSelectionEn = false;
+      bRectangularSelectionMode = false;
       bDragging = false;
       bResizing = false;
       setCursor(Cursor.getDefaultCursor());
@@ -972,7 +968,7 @@ public class PagePane extends JPanel implements iSubscriber {
       mousePt = e.getPoint();
       bDragging = false;
       Widget w = findOne(mousePt);
-      if (bRectangularSelectionEn) {
+      if (bRectangularSelectionMode) {
         bMultiSelectionBox = true;
         donotSelectKey = null;
         if (w != null) {
@@ -1023,7 +1019,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      if (bMultiSelectionBox || bDragging || bResizing) {
+      if (bMultiSelectionBox || bRectangularSelectionMode || bDragging || bResizing) {
         return;
       }
 
@@ -1101,7 +1097,7 @@ public class PagePane extends JPanel implements iSubscriber {
           if (!dragCommand.start(dragPt)) {
             bDragging = false;
             bMultiSelectionBox = false;
-            bRectangularSelectionEn = false;
+            bRectangularSelectionMode = false;
             dragCommand = null;
             repaint();
             return;
