@@ -72,7 +72,7 @@ public class Ribbon extends JPanel {
   private static Button btn_box, btn_line, btn_graph, btn_group;
   
   /** The view buttons. */
-  private static Button btn_grid,btn_zoom_in,btn_zoom_out;
+  private static Button btn_show_grid,btn_zoom_in,btn_zoom_out,btn_zoom_reset,btn_snap_grid;
   
   private static Tab pageLayout;
   
@@ -417,12 +417,7 @@ public class Ribbon extends JPanel {
    * Initialize the View Buttons.
    */
   public void initView(Tab band) {
-    band.setGroupName("View");
-    btn_grid = band.addSlimButton("Grid");
-    btn_grid.setImage(Utils.getIcon(
-        "resources/icons/view/grid.png"));
-    btn_grid.addToolTip("Toggle Grid ON/OFF");
-    btn_grid.setActionCommand("grid");
+    band.setGroupName("View\\Editor");
 
     btn_zoom_in = band.addSlimButton("Zoom In");
     btn_zoom_in.setImage(Utils.getIcon(
@@ -440,6 +435,25 @@ public class Ribbon extends JPanel {
     btn_zoom_out.addToolTip("Make display smaller.");
     btn_zoom_out.setActionCommand("zoomout");
     btn_zoom_out.setEnabled(false);
+
+    btn_zoom_reset = band.addSlimButton("Zoom Reset");
+    btn_zoom_reset.setImage(Utils.getIcon(
+        "resources/icons/view/zoom_reset.png"));
+    btn_zoom_reset.addToolTip("Reset display to 100%.");
+    btn_zoom_reset.setActionCommand("zoomreset");
+    btn_zoom_reset.setEnabled(false);
+
+    btn_show_grid = band.addSlimButton("Show grid");
+    btn_show_grid.setImage(Utils.getIcon(
+        "resources/icons/view/show_grid.png"));
+    btn_show_grid.addToolTip("Toggle Grid ON/OFF");
+    btn_show_grid.setActionCommand("showgrid");    
+
+    btn_snap_grid = band.addSlimButton("Snap to grid");
+    btn_snap_grid.setImage(Utils.getIcon(
+        "resources/icons/view/snap_to_grid.png"));
+    btn_snap_grid.addToolTip("Toggle Snap to Grid ON/OFF");
+    btn_snap_grid.setActionCommand("snaptogrid");
 
     band.addSeperator();
   }
@@ -615,9 +629,11 @@ public class Ribbon extends JPanel {
     btn_graph.addActionListener(al); 
     btn_group.addActionListener(al);
 
-    btn_grid.addActionListener(al);
+    btn_show_grid.addActionListener(al);
+    btn_snap_grid.addActionListener(al);
     btn_zoom_in.addActionListener(al);
     btn_zoom_out.addActionListener(al);
+    btn_zoom_reset.addActionListener(al);
 
     btn_aligntop.addActionListener(al);
     btn_alignbottom.addActionListener(al);
@@ -645,6 +661,10 @@ public class Ribbon extends JPanel {
   public void enableZoom(boolean bEnable) {
     btn_zoom_out.setEnabled(bEnable);
   }
+
+  public void enableZoomReset(boolean bEnable) {
+    btn_zoom_reset.setEnabled(bEnable);
+  }  
   
   /**
    * Enable grouping of radiobuttons

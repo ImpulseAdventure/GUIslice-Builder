@@ -518,9 +518,14 @@ public class RibbonListener implements ActionListener {
       onExit();
       break;
       
-    case "grid":
-      Builder.logger.debug("Menu: grid");
-      controller.toggleGrid();
+    case "showgrid":
+      Builder.logger.debug("Menu: show grid");
+      controller.toggleShowGrid();
+      break;
+
+    case "snaptogrid":
+      Builder.logger.debug("Menu: snap to grid");
+      controller.toggleSnapToGrid();
       break;
       
     case "graph":
@@ -724,6 +729,11 @@ public class RibbonListener implements ActionListener {
     case "zoomout":
       Builder.logger.debug("Menu: zoomout");
       controller.zoomOut();
+      break;
+
+    case "zoomreset":
+      Builder.logger.debug("Menu: zoomreset");
+      controller.zoomReset();
       break;
       
 /*

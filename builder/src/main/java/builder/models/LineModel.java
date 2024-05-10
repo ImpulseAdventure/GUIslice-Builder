@@ -41,7 +41,7 @@ public class LineModel extends WidgetModel {
   
   /** The Property Index Constants. */
   private static final long serialVersionUID = 1L;
-  static private final int PROP_LENGTH            = 4;
+  static public final int PROP_LENGTH            = 4;
   static private final int PROP_VERTICAL          = 5;
   static private final int PROP_FILL_COLOR        = 6;
   
@@ -72,7 +72,6 @@ public class LineModel extends WidgetModel {
     initProp(PROP_LENGTH, Integer.class, "LINE-100", Boolean.FALSE,"Line Length",DEF_LENGTH);
     initProp(PROP_VERTICAL, Boolean.class, "LINE-101", Boolean.FALSE,"Vertical?",DEF_VERTICAL);
     initProp(PROP_FILL_COLOR, Color.class, "COL-303", Boolean.FALSE,"Fill Color",DEF_FILL_COLOR);
-
   }
 
   /**
@@ -106,7 +105,7 @@ public class LineModel extends WidgetModel {
    */
   @Override
   public int getWidth() {
-    return (((Integer) (data[PROP_LENGTH][PROP_VAL_VALUE])).intValue());
+    return isVertical() ? 1 : getLength();
   }
 
   /**
@@ -115,7 +114,40 @@ public class LineModel extends WidgetModel {
    * @return the height
    */
   public int getHeight() {
-    return 5;
+    return isVertical() ? getLength() : 1;
+  }
+
+  /**
+   * Gets the length.
+   *
+   * @return the length
+   */
+  public int getLength() {
+    return (((Integer) (data[PROP_LENGTH][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * Sets the length.
+   *
+   * @param len
+   *          the new length
+   */
+  public void setLength(int len) {
+    shortcutValue(Integer.valueOf(len), PROP_LENGTH);
+  }
+
+  @Override
+  public void setHeight(int h) {
+    if (isVertical()) {
+      setLength(h);
+    }
+  }
+
+  @Override
+  public void setWidth(int w) {
+    if (!isVertical()) {
+      setLength(w);
+    }
   }
 
   /**

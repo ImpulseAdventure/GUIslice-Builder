@@ -120,8 +120,9 @@ public class RadioButtonModel extends WidgetModel {
     
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
 
+    // @TODO: what was bug b90 about?
     // bug b90 check boxes and radio buttons should have either width or height.
-    data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
+    // data[PROP_HEIGHT][PROP_VAL_READONLY]=Boolean.TRUE;
     
     initProp(PROP_CHECKED, Boolean.class, "CBOX-100", Boolean.FALSE,"Checked?",DEF_CHECKED);
     initProp(PROP_STYLE, String.class, "RBTN-102", Boolean.FALSE,"Check Mark Style",DEF_STYLE);
@@ -196,6 +197,31 @@ public class RadioButtonModel extends WidgetModel {
         Controller.sendRepaint();
       }
     } 
+  }
+
+  /**
+   * keep width and height the same
+   *
+   * @see builder.models.WidgetModel#setHeight(int)
+   */
+  @Override
+  public void setHeight(int h) {
+    setWidthAndHeight(h);
+  }
+
+  /**
+   * keep width and height the same
+   *
+   * @see builder.models.WidgetModel#setWidth(int)
+   */
+  @Override
+  public void setWidth(int w) {
+    setWidthAndHeight(w);
+  }
+
+  private void setWidthAndHeight(int size) {
+    super.setWidth(size);
+    super.setHeight(size);
   }
 
   /**

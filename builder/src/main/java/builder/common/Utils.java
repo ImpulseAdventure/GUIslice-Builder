@@ -125,7 +125,7 @@ public class Utils {
     Point p = new Point(x, y);
     return p;
   }
-  
+
   /**
    * snapToGrid() - Remaps coordinates to our nearest grid line.
    *
@@ -152,6 +152,26 @@ public class Utils {
     return p;
   }
   
+  /**
+   * snapToGrid() - Remaps coordinate to nearest grid line. 
+   *
+   * @param pos
+   *          position (x or y) to snap to grid
+   * @return pos  
+   */
+  public int snapToGrid(int pos) {
+    GridEditor ed = GridEditor.getInstance();
+    // check for snap to grid
+    if (ed.getGridSnapTo()) {
+      if (ed.getGridMinorWidth() > 0 && ed.getGridMinorHeight() > 0) {
+        pos = (pos / ed.getGridMinorWidth()) * ed.getGridMinorWidth();
+      } else if (ed.getGridMajorWidth() > 0 && ed.getGridMajorHeight() > 0) {
+        pos = (pos / ed.getGridMajorWidth()) * ed.getGridMajorWidth();
+      }
+    }
+    return pos;
+  }
+
   /**
   * createElemName - Create Element Reference Name 
   * strips "$" off of key to find number and adds the

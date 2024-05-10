@@ -67,7 +67,7 @@ public class MenuBar extends JMenuBar {
   /** The about menu item. */
   private JMenuItem miAbout;
   
-  public static JMenuItem miZoomIn, miZoomOut, miGrid;
+  public static JMenuItem miZoomIn, miZoomOut, miZoomReset, miShowGrid;
   
   /**
    * Instantiates a new menu bar.
@@ -149,19 +149,22 @@ public class MenuBar extends JMenuBar {
   
   public void initViewMenus() {
     mbView = new JMenu("View");
-    miGrid = new JMenuItem("Grid",
-      Utils.getIcon("resources/icons/view/grid.png", 24,24));
-    miGrid.setActionCommand("grid");
-    miGrid.setAccelerator(KeyStroke.getKeyStroke(
+
+    miShowGrid = new JMenuItem("Show grid",
+      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
+    miShowGrid.setActionCommand("showgrid");
+    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
         'L', ActionEvent.CTRL_MASK));
-    miGrid.setToolTipText("Toggle Grid ON/OFF");
-    mbView.add(miGrid);
+    miShowGrid.setToolTipText("Toggle Grid ON/OFF");
+    mbView.add(miShowGrid);
+
     miZoomIn = new JMenuItem("Zoom In",
       Utils.getIcon("resources/icons/view/zoom_in.png", 24,24));
     miZoomIn.setActionCommand("zoomin");
     miZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
     miZoomIn.setToolTipText("Zoom In TFT Simulation page");
     mbView.add(miZoomIn);
+
     miZoomOut = new JMenuItem("Zoom Out",
       Utils.getIcon("resources/icons/view/zoom_out.png", 24,24));
     miZoomOut.setDisabledIcon(
@@ -171,6 +174,17 @@ public class MenuBar extends JMenuBar {
     miZoomOut.setAccelerator(KeyStroke.getKeyStroke('-', ActionEvent.CTRL_MASK));
     miZoomOut.setToolTipText("Zoom Out TFT Simulation page");
     mbView.add(miZoomOut);
+
+    miZoomReset = new JMenuItem("Zoom Reset",
+      Utils.getIcon("resources/icons/view/zoom_reset.png", 24,24));
+    miZoomReset.setDisabledIcon(
+      Utils.getIcon("resources/icons/view/disable_zoom_reset.png", 24,24));
+    miZoomReset.setEnabled(false);
+    miZoomReset.setActionCommand("zoomreset");
+    miZoomReset.setAccelerator(KeyStroke.getKeyStroke('0', ActionEvent.CTRL_MASK));
+    miZoomReset.setToolTipText("Reset Zoom to 100%");
+    mbView.add(miZoomReset);
+
     this.add(mbView);
   }
   
@@ -312,7 +326,7 @@ public class MenuBar extends JMenuBar {
     miAbout.addActionListener(al);
     miClose.addActionListener(al);
     miExit.addActionListener(al);
-    miGrid.addActionListener(al);
+    miShowGrid.addActionListener(al);
     miZoomIn.addActionListener(al);
     miZoomOut.addActionListener(al);
   }

@@ -43,6 +43,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,6 +54,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -64,6 +66,7 @@ import builder.Builder;
 import builder.commands.Command;
 import builder.commands.DragByArrowCommand;
 import builder.commands.DragWidgetCommand;
+import builder.commands.ResizeCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
@@ -81,6 +84,7 @@ import builder.models.WidgetModel;
 import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
+import builder.widgets.Widget.HandleType;
 
 /**
  * The Class PagePane provides the view of selected widgets for one page.
@@ -103,11 +107,11 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The mouse rect. */
   private Rectangle mouseRect = new Rectangle();
   
-  /** our cross hair cursor */
-  public static Cursor crossHairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR); 
+  // /** Cursor style will be CROSSHAIR in rectangular selection mode or arrow in default mode */
+  // public static Cursor  = new Cursor(Cursor.CROSSHAIR_CURSOR); 
 
   /** The rectangular selection enabled switch */
-  public static boolean bRectangularSelectionEn = false;
+  public static boolean bRectangularSelectionMode = false;
   
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
@@ -117,6 +121,12 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The dragging indicator. */
   private boolean bDragging = false;
+
+  /** Used in resizing procedure */
+  private Widget widgetUnderCursor = null;
+
+  /** The resize indicator. */
+  private boolean bResizing = false;
   
   /** The paint base widgets indicator. */
   private boolean bPaintBaseWidgets = false;
@@ -137,7 +147,10 @@ public class PagePane extends JPanel implements iSubscriber {
   private static Ribbon ribbon = null;
   
   /** The drag command. */
-  public  DragWidgetCommand dragCommand = null;
+  public DragWidgetCommand dragCommand = null;
+  
+  /** The resize command. */ 
+  public ResizeCommand resizeCommand = null;
   
   /** The drag using arrows command */
   public DragByArrowCommand dragArrowsCommand = null;
@@ -192,7 +205,9 @@ public class PagePane extends JPanel implements iSubscriber {
     model = new PageModel();
     mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
     dragPt = mousePt;
-    this.addMouseListener(new MouseHandler());
+    MouseHandler mouseHandler = new MouseHandler();
+    this.addMouseListener(mouseHandler);
+    this.addMouseWheelListener(mouseHandler);
     this.addMouseMotionListener(new MouseMotionHandler());
     panelAction = new ActionListener() {   
       @Override
@@ -235,8 +250,9 @@ public class PagePane extends JPanel implements iSubscriber {
     this.setFocusable( true ); 
     this.setBorder(BorderFactory.createLineBorder(Color.black));
     this.setVisible(true);
-    if (at == null)
-      ZoomTransform();
+    if (at == null) {
+      zoomTransform();
+    }
   }
 
   /**
@@ -252,11 +268,7 @@ public class PagePane extends JPanel implements iSubscriber {
     if (getPageType().equals(EnumFactory.PROJECT)) {
       return;
     }
-    if (bRectangularSelectionEn) {
-      setCursor(crossHairCursor);
-    } else {
-      setCursor(Cursor.getDefaultCursor());
-    }
+
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.transform(at);
     int width = pm.getWidth();
@@ -280,7 +292,7 @@ public class PagePane extends JPanel implements iSubscriber {
     // output this page's widgets
     for (Widget w : widgets) {
       w.draw(g2d);
-    }
+    } 
     /* output any base page widgets unless this is a project
      * base page or popup page.
      */
@@ -305,22 +317,18 @@ public class PagePane extends JPanel implements iSubscriber {
    * set Zoom factor from open project
    */
   public static void setZoom(double zoom) {
-    if (zoom > 1.0) {
-      ribbon.enableZoom(true);
-      MenuBar.miZoomOut.setEnabled(true);
-    } else {
-      ribbon.enableZoom(false);
-      MenuBar.miZoomOut.setEnabled(false);
-    }
+    ribbon.enableZoom(zoom > 1.0);
+    ribbon.enableZoomReset(zoom != 1.0);
+    MenuBar.miZoomOut.setEnabled(zoom > 1.0);
+    MenuBar.miZoomReset.setEnabled(zoom != 1.0);
     zoomFactor = zoom;
-    ZoomTransform();
+    zoomTransform();
   }
-  
   
   /**
    * create a transform
    */
-  public static void ZoomTransform() {
+  public static void zoomTransform() {
     at = new AffineTransform();
     double xOffset = 0.0;
     double yOffset = 0.0;
@@ -340,9 +348,10 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public static void zoomIn() {
     zoomFactor *= 1.1;
-    ZoomTransform();
+    zoomTransform();
     ribbon.enableZoom(true);
     MenuBar.miZoomOut.setEnabled(true);
+    updateZoomReset();
   }
   
   /**
@@ -351,10 +360,29 @@ public class PagePane extends JPanel implements iSubscriber {
   public static void zoomOut() {
     zoomFactor /= 1.1;
     if (zoomFactor < 1.1) {
+      zoomFactor = 1.0;
       ribbon.enableZoom(false);
       MenuBar.miZoomOut.setEnabled(false);
     }
-    ZoomTransform();
+    updateZoomReset();
+    zoomTransform();
+  }
+
+  /** Zoom reset */
+  public static void zoomReset() {
+    zoomFactor = 1.0;
+    ribbon.enableZoom(false);
+    MenuBar.miZoomOut.setEnabled(false);
+    updateZoomReset();
+    zoomTransform();
+  }
+
+  /**
+   * Update zoom reset button state.
+   */
+  private static void updateZoomReset() {
+    MenuBar.miZoomReset.setEnabled(zoomFactor != 1.0);  
+    ribbon.enableZoomReset(zoomFactor != 1.0);
   }
 
   /**
@@ -363,16 +391,16 @@ public class PagePane extends JPanel implements iSubscriber {
   public static void zoomOff() {
     zoomFactor = 1.0;
     ribbon.enableZoom(false);
-    ZoomTransform();
+    zoomTransform();
   }
 
   /**
    * rectangularSelection.
    */
   public void rectangularSelection(boolean bValue) {
-    bRectangularSelectionEn = bValue;
+    bRectangularSelectionMode = bValue;
     if (bValue)
-      setCursor(crossHairCursor);
+      setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     else
       setCursor(Cursor.getDefaultCursor());
   }
@@ -752,33 +780,25 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public Widget findOne(Point p) {
     // we may need to deal with scaled points because of zoom feature
+    Point2D pos = p;
     if (zoomFactor > 1) {
       Point2D.Double scaledPos = new Point2D.Double();
-      scaledPos.x = (double)p.x;
-      scaledPos.y = (double)p.y;
+      scaledPos.x = (double) p.x;
+      scaledPos.y = (double) p.y;
       // transforms are only needed in zoom mode
       inv_at.transform(scaledPos, scaledPos);
-//    System.out.println("findOne: Z=" + zoomFactor  + " p=[" + p.x + "," + p.y + "] " 
-//        + " s=[" + scaledPos.getX() + "," + scaledPos.getY() + "]");
-      Widget w = null;
-      for (int i=widgets.size()-1; i>=0; i--) {
-        w = widgets.get(i);
-        //for (Widget w : widgets) {
-        if (w.contains(scaledPos)) {
-//  System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
-          return w;
-        }
-      }
-    } else {
-      Widget w = null;
-      for (int i=widgets.size()-1; i>=0; i--) {
-        w = widgets.get(i);
-        if (w.contains(p)) {
-//  System.out.println("found: " + w.getKey() + " p= " + p + w.getBounded());
-          return w;
-        }
+      pos = scaledPos;
+    }
+
+    // last element is considered the topmost
+    ListIterator<Widget> iterator = widgets.listIterator(widgets.size());
+    while (iterator.hasPrevious()) {
+      Widget w = iterator.previous();
+      if (w.contains(pos)) {
+        return w;
       }
     }
+
     return null;
   }
   
@@ -810,22 +830,23 @@ public class PagePane extends JPanel implements iSubscriber {
    *          the to idx
    */
   public void changeZOrder(String widgetKey, int fromIdx, int toIdx) {
-  Widget w = widgets.get(fromIdx);
-  widgets.remove(fromIdx);
-  widgets.add(toIdx, w);
-  MsgEvent ev = new MsgEvent();
-  ev.message = w.getModel().getKey();
-  ev.xdata = getKey();
-  ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
-  MsgBoard.publish(ev,getKey());
-  repaint();
-}
+    Widget w = widgets.get(fromIdx);
+    widgets.remove(fromIdx);
+    widgets.add(toIdx, w);
+    MsgEvent ev = new MsgEvent();
+    ev.message = w.getModel().getKey();
+    ev.xdata = getKey();
+    ev.code = MsgEvent.OBJECT_SELECTED_PAGEPANE;
+    MsgBoard.publish(ev,getKey());
+    repaint();
+  }
 
   /**
    * Refresh view.
    */
   public void refreshView() {
     ribbon.setEditButtons(selectedGroupCnt); // needed on page changes
+    updateContentSize();
     repaint();
   }
   
@@ -891,6 +912,7 @@ public class PagePane extends JPanel implements iSubscriber {
         } 
         return;
       } 
+      
       // Single Left-click - deselect all widgets then select widget under cursor
       selectNone();
       if (w == null) {
@@ -917,13 +939,19 @@ public class PagePane extends JPanel implements iSubscriber {
     public void mouseReleased(MouseEvent e) {
       mouseRect.setBounds(0, 0, 0, 0);
       if (dragCommand != null) {
-        dragCommand.stop();
+        dragCommand.stop(e.isControlDown());
         execute(dragCommand);
         dragCommand = null;
       }
+      if (resizeCommand != null) {
+        resizeCommand.stop();
+        execute(resizeCommand);
+        resizeCommand = null;
+      }      
       bMultiSelectionBox = false;
-      bRectangularSelectionEn = false;
+      bRectangularSelectionMode = false;
       bDragging = false;
+      bResizing = false;
       setCursor(Cursor.getDefaultCursor());
       e.getComponent().repaint();
     }  // end mouseReleased
@@ -940,32 +968,119 @@ public class PagePane extends JPanel implements iSubscriber {
       mousePt = e.getPoint();
       bDragging = false;
       Widget w = findOne(mousePt);
-      if (bRectangularSelectionEn) {
+      if (bRectangularSelectionMode) {
         bMultiSelectionBox = true;
         donotSelectKey = null;
         if (w != null) {
           donotSelectKey = w.getKey();
         }
       } else if (w != null) {
-        if (w.isSelected()) bDragging = true;
-        dragPt = new Point(mousePt.x, mousePt.y);
-      }
+        Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
+        HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
+        switch (handleType) {
+          case DRAG:
+            if (w.isSelected()) bDragging = true;
+            dragPt = new Point(mousePt.x, mousePt.y);
+            break;
+          case NONE:
+            break;
+          default:
+            if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
+              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType);
+              resizeCommand.start(unscaledPoint);
+              bResizing = true;
+            }
+            break;
+        }
+      }      
     } // end mousePressed
+
+    /*
+     * Handle zooming on mouse wheel.
+     */
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+      if (e.isControlDown()) {
+        int distance = e.getWheelRotation();
+        if (distance < 0) {
+          zoomIn();
+        } else {
+          zoomOut();
+        }
+        refreshView();
+      }
+    }
   } // end MouseHandler
 
   /**
    * The Class MouseMotionHandler.
    */
   private class MouseMotionHandler extends MouseMotionAdapter {
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+      if (bMultiSelectionBox || bRectangularSelectionMode || bDragging || bResizing) {
+        return;
+      }
+
+      widgetUnderCursor = findOne(e.getPoint());
+      if (widgetUnderCursor == null) {
+        setCursor(Cursor.getDefaultCursor());
+        return;
+      }
+      if (!widgetUnderCursor.isSelected()) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return;
+      }
+
+      Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y); 
+      HandleType handleType = widgetUnderCursor.getActionHandle(widgetUnderCursor.toWidgetSpace(unscaledPoint));
+      switch (handleType) {
+        case DRAG:
+          setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+          break;
+        case TOP_LEFT:
+        case TOP_LEFT_PROPORTIONAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+          break;
+        case TOP:
+          setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+          break;
+        case TOP_RIGHT:
+        case TOP_RIGHT_PROPORTIONAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
+          break;
+        case RIGHT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+          break;
+        case BOTTOM_RIGHT:
+        case BOTTOM_RIGHT_PROPORTIONAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
+          break;
+        case BOTTOM:
+          setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+          break;
+        case BOTTOM_LEFT:
+        case BOTTOM_LEFT_PROPORTIONAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
+          break;
+        case LEFT:
+          setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+          break;
+        default:
+          setCursor(Cursor.getDefaultCursor());
+          break;
+      }
+    }
      
-     /**
-      * mouseDragged.
-      *
-      * @param e
-      *          the e
-      * @see java.awt.event.MouseMotionAdapter#mouseDragged(java.awt.event.MouseEvent)
-      */
-     @Override
+    /**
+     * mouseDragged.
+     *
+     * @param e
+     *          the e
+     * @see java.awt.event.MouseMotionAdapter#mouseDragged(java.awt.event.MouseEvent)
+     */
+    @Override
     public void mouseDragged(MouseEvent e) {
       if (bMultiSelectionBox) {
         // Here I'm working out the size and position of my rubber band
@@ -976,13 +1091,13 @@ public class PagePane extends JPanel implements iSubscriber {
             Math.abs(mousePt.y - e.getY()));
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
-     } else if (bDragging ){
+     } else if (bDragging) {
        if (dragCommand == null) {
           dragCommand = new DragWidgetCommand(instance);
           if (!dragCommand.start(dragPt)) {
             bDragging = false;
             bMultiSelectionBox = false;
-            bRectangularSelectionEn = false;
+            bRectangularSelectionMode = false;
             dragCommand = null;
             repaint();
             return;
@@ -991,6 +1106,13 @@ public class PagePane extends JPanel implements iSubscriber {
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
         dragCommand.move(e.getPoint());
+      } else if (bResizing) {
+        if (resizeCommand == null) {
+          System.out.println("resizeCommand is null");
+        } else {
+          Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
+          resizeCommand.move(unscaledPoint, e.isAltDown(), e.isControlDown());
+        }
       }
       repaint();
     } // end mouseDragged
@@ -1004,8 +1126,19 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   @Override
   public Dimension getPreferredSize() {
-//    return new Dimension(gridModel.getWidth(), gridModel.getHeight());
-    return new Dimension(1200, 1200);
+    Dimension scaledSize = new Dimension(
+      (int) (pm.getWidth() * zoomFactor), 
+      (int) (pm.getHeight() * zoomFactor)
+    );    
+    return scaledSize;
+  }
+
+  private void updateContentSize() {
+    Dimension scaledSize = new Dimension(
+      (int) (pm.getWidth() * zoomFactor), 
+      (int) (pm.getHeight() * zoomFactor)
+    );
+    setSize(scaledSize);
   }
 
   /**
@@ -1231,6 +1364,4 @@ public class PagePane extends JPanel implements iSubscriber {
     } // end for (Widget w)
     Builder.postStatusMsg("Scale operation completed!");
   }
-  
 }
-
