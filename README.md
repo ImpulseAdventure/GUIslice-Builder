@@ -154,6 +154,18 @@ Generated Code Example:
 //<Load_Fonts !End!>
 ```
 
+### Enhancement for 0.17.b28
+
+Thanks to the effort of etet100 Andrzej the Builder now supports resizing UI Elements using your mouse.
+You simply need to click on the UI Eement and then place your cursor over one of the red handles and drag
+while holding down your left mouse button.
+
+The View pull-down and View\Editor panel now has Zoom Reset and SNAP TO GRID.
+If SNAP TO GRID enabled, then by holding the Left mouse button and CTRL button you can temporarily disable grid snapping. 
+
+Also while If SNAP TO GRID enabled, holding the ALT button, you change resizing to dragging. 
+This way we can drag in one axis (only vertical or only horizontal).
+
 ### Bug Fixes 0.17.b24
 - Issue `233` Using TFT_eSPI with gfx freefonts created include 'NULLFreeSans12pt7b.h'
 - Bug Fix Now the Builder tests that your enums start with a capital letter A to Z to fix compile time issues.
