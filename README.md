@@ -118,6 +118,18 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancement for 0.17.b28
+
+Thanks to the effort of etet100 Andrzej the Builder now supports resizing UI Elements using your mouse.
+You simply need to click on the UI Eement and then place your cursor over one of the red handles and drag
+while holding down your left mouse button.
+
+The View pull-down and View\Editor panel now has Zoom Reset and SNAP TO GRID.
+If SNAP TO GRID enabled, then by holding the Left mouse button and CTRL button you can temporarily disable grid snapping. 
+
+Also while If SNAP TO GRID enabled, holding the ALT button, you change resizing to dragging. 
+This way we can drag in one axis (only vertical or only horizontal).
+
 ### Enhancements for 0.17.b27
 Upgraded to FlatLaf 3.3 and Java 18 and added better support for MacOS.
 
@@ -153,18 +165,6 @@ Generated Code Example:
     gslc_FontSetMode(&m_gui, E_CAIROBOLD16, GSLC_FONTREF_MODE_1);
 //<Load_Fonts !End!>
 ```
-
-### Enhancement for 0.17.b28
-
-Thanks to the effort of etet100 Andrzej the Builder now supports resizing UI Elements using your mouse.
-You simply need to click on the UI Eement and then place your cursor over one of the red handles and drag
-while holding down your left mouse button.
-
-The View pull-down and View\Editor panel now has Zoom Reset and SNAP TO GRID.
-If SNAP TO GRID enabled, then by holding the Left mouse button and CTRL button you can temporarily disable grid snapping. 
-
-Also while If SNAP TO GRID enabled, holding the ALT button, you change resizing to dragging. 
-This way we can drag in one axis (only vertical or only horizontal).
 
 ### Bug Fixes 0.17.b24
 - Issue `233` Using TFT_eSPI with gfx freefonts created include 'NULLFreeSans12pt7b.h'
