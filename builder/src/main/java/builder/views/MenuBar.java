@@ -67,7 +67,7 @@ public class MenuBar extends JMenuBar {
   /** The about menu item. */
   private JMenuItem miAbout;
   
-  public static JMenuItem miZoomIn, miZoomOut, miZoomReset, miShowGrid;
+  public static JMenuItem miZoomIn, miZoomOut, miZoomReset, miShowGrid, miSnapGrid;
   
   /**
    * Instantiates a new menu bar.
@@ -150,14 +150,6 @@ public class MenuBar extends JMenuBar {
   public void initViewMenus() {
     mbView = new JMenu("View");
 
-    miShowGrid = new JMenuItem("Show grid",
-      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
-    miShowGrid.setActionCommand("showgrid");
-    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
-        'L', ActionEvent.CTRL_MASK));
-    miShowGrid.setToolTipText("Toggle Grid ON/OFF");
-    mbView.add(miShowGrid);
-
     miZoomIn = new JMenuItem("Zoom In",
       Utils.getIcon("resources/icons/view/zoom_in.png", 24,24));
     miZoomIn.setActionCommand("zoomin");
@@ -184,6 +176,20 @@ public class MenuBar extends JMenuBar {
     miZoomReset.setAccelerator(KeyStroke.getKeyStroke('0', ActionEvent.CTRL_MASK));
     miZoomReset.setToolTipText("Reset Zoom to 100%");
     mbView.add(miZoomReset);
+
+    miShowGrid = new JMenuItem("Show grid",
+      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
+    miShowGrid.setActionCommand("showgrid");
+    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
+        'L', ActionEvent.CTRL_MASK));
+    miShowGrid.setToolTipText("Toggle Grid ON/OFF");
+    mbView.add(miShowGrid);
+
+    miSnapGrid = new JMenuItem("Snap to grid",
+      Utils.getIcon("resources/icons/view/snap_to_grid.png", 24,24));
+    miSnapGrid.setActionCommand("snaptogrid");
+    miSnapGrid.setToolTipText("Toggle Snap to Grid ON/OFF");
+    mbView.add(miSnapGrid);
 
     this.add(mbView);
   }
@@ -329,6 +335,7 @@ public class MenuBar extends JMenuBar {
     miShowGrid.addActionListener(al);
     miZoomIn.addActionListener(al);
     miZoomOut.addActionListener(al);
+    miZoomReset.addActionListener(al);
   }
   
   @SuppressWarnings("serial")
