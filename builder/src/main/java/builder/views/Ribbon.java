@@ -439,6 +439,8 @@ public class Ribbon extends JPanel {
     btn_zoom_reset = band.addSlimButton("Zoom Reset");
     btn_zoom_reset.setImage(Utils.getIcon(
         "resources/icons/view/zoom_reset.png"));
+    btn_zoom_reset.setDisabledImage(Utils.getIcon(
+        "resources/icons/view/disable_zoom_reset.png"));
     btn_zoom_reset.addToolTip("Reset display to 100%.");
     btn_zoom_reset.setActionCommand("zoomreset");
     btn_zoom_reset.setEnabled(false);
@@ -447,7 +449,7 @@ public class Ribbon extends JPanel {
     btn_show_grid.setImage(Utils.getIcon(
         "resources/icons/view/show_grid.png"));
     btn_show_grid.addToolTip("Toggle Grid ON/OFF");
-    btn_show_grid.setActionCommand("showgrid");    
+    btn_show_grid.setActionCommand("showgrid");
 
     btn_snap_grid = band.addSlimButton("Snap to grid");
     btn_snap_grid.setImage(Utils.getIcon(
@@ -665,6 +667,14 @@ public class Ribbon extends JPanel {
   public void enableZoomReset(boolean bEnable) {
     btn_zoom_reset.setEnabled(bEnable);
   }  
+  
+  public void enableShowGrid(boolean bEnable) {
+    btn_show_grid.setEnabled(bEnable);
+  }  
+  
+  public void enableSnapGrid(boolean bEnable) {
+    btn_snap_grid.setEnabled(bEnable);
+  }
   
   /**
    * Enable grouping of radiobuttons
