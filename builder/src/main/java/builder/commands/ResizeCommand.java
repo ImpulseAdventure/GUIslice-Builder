@@ -27,9 +27,8 @@ package builder.commands;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 
-import builder.common.Utils;
+import builder.common.Snapper;
 import builder.mementos.ResizeMemento;
 import builder.models.WidgetModel;
 import builder.views.PagePane;
@@ -66,14 +65,28 @@ public class ResizeCommand extends Command {
 
   private static int MIN_SIZE = 10;
 
-  private Utils utils = Utils.getInstance();
+  /**
+   * Services used to find the best matching snapping to snap to.
+   */
+  private Snapper hSnapper;
+  private Snapper vSnapper;
 
-  public ResizeCommand(PagePane page, Widget widget, HandleType handleType) {
+  public ResizeCommand(PagePane page, Widget widget, HandleType handleType, Snapper hSnapper, Snapper vSnapper) {
     this.page = page;
     this.widget = widget;
     this.initialBounds = widget.getWinBounded();
     this.currentBounds = widget.getWinBounded();
     this.handleType = handleType;
+    this.hSnapper = hSnapper;
+    this.vSnapper = vSnapper;
+  }
+
+  public Snapper getHorizontalSnapper() {
+    return hSnapper;
+  }
+
+  public Snapper getVerticalSnapper() {
+    return vSnapper;
   }
   
   public void start(Point point) {
@@ -94,52 +107,52 @@ public class ResizeCommand extends Command {
    * @param preserveSize
    *          preserve the size of the widget
    */
-  public void move(Point point, boolean preserveSize, boolean ignoreSnapToGrid) {
+  public void move(Point point, boolean preserveSize, boolean doNotSnap) {
     WidgetModel model = widget.getModel();
     boolean updateX = false;
     boolean updateY = false;
     switch (handleType) {
       case TOP: 
-        updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
+        updateY = handleTop(point, model, preserveSize, doNotSnap);
         break;
       case TOP_LEFT: {
-        updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
-        updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
+        updateY = handleTop(point, model, preserveSize, doNotSnap);
+        updateX = handleLeft(point, model, preserveSize, doNotSnap);
         break;
       }
       case TOP_RIGHT: {
-        updateY = handleTop(point, model, preserveSize, ignoreSnapToGrid);
-        updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
+        updateY = handleTop(point, model, preserveSize, doNotSnap);
+        updateX = handleRight(point, model, preserveSize, doNotSnap);
         break;
       }
       case RIGHT: 
-        updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
+        updateX = handleRight(point, model, preserveSize, doNotSnap);
         break;
       case BOTTOM: 
-        updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
+        updateY = handleBottom(point, model, preserveSize, doNotSnap);
         break;
       case BOTTOM_RIGHT:
-        updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
-        updateX = handleRight(point, model, preserveSize, ignoreSnapToGrid);
+        updateY = handleBottom(point, model, preserveSize, doNotSnap);
+        updateX = handleRight(point, model, preserveSize, doNotSnap);
         break;
       case BOTTOM_LEFT:
-        updateY = handleBottom(point, model, preserveSize, ignoreSnapToGrid);
-        updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
+        updateY = handleBottom(point, model, preserveSize, doNotSnap);
+        updateX = handleLeft(point, model, preserveSize, doNotSnap);
         break;
       case BOTTOM_LEFT_PROPORTIONAL:
-        handleBottomLeftProportional(point, model, preserveSize, ignoreSnapToGrid);
+        handleBottomLeftProportional(point, model, preserveSize, doNotSnap);
         break;
       case BOTTOM_RIGHT_PROPORTIONAL:
-        handleBottomRightProportional(point, model, preserveSize, ignoreSnapToGrid);
+        handleBottomRightProportional(point, model, preserveSize, doNotSnap);
         break;
       case TOP_LEFT_PROPORTIONAL:
-        handleTopLeftProportional(point, model, preserveSize, ignoreSnapToGrid);
+        handleTopLeftProportional(point, model, preserveSize, doNotSnap);
         break;
       case TOP_RIGHT_PROPORTIONAL:
-        handleTopRightProportional(point, model, preserveSize, ignoreSnapToGrid);
+        handleTopRightProportional(point, model, preserveSize, doNotSnap);
         break;
       case LEFT: 
-        updateX = handleLeft(point, model, preserveSize, ignoreSnapToGrid);
+        updateX = handleLeft(point, model, preserveSize, doNotSnap);
         break;
       default:
         break;
@@ -149,9 +162,9 @@ public class ResizeCommand extends Command {
     if (updateY) { lastPoint.y = point.y; }
   }
 
-  private boolean handleLeft(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private boolean handleLeft(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newPos = currentBounds.x + (point.x - lastPoint.x);
-    int newSnappedPos = ignoreSnapToGrid ? newPos : utils.snapToGrid(newPos);
+    int newSnappedPos = doNotSnap ? newPos : vSnapper.snap(newPos, Snapper.SourceEdge.MIN);
     int newSize = initialBounds.width - (newPos - initialBounds.x);
     newSize -= newSnappedPos - newPos; // adjust width to snapped position
     if (preserveSize) {
@@ -168,9 +181,9 @@ public class ResizeCommand extends Command {
     return true;
   }
 
-  private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newSize = currentBounds.height + (point.y - lastPoint.y);
-    int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.y + newSize) - currentBounds.y);
+    int newSnappedSize = doNotSnap ? newSize : (hSnapper.snap(currentBounds.y + newSize, Snapper.SourceEdge.MAX) - currentBounds.y);
     if (newSnappedSize < MIN_SIZE) {
       return false;
     }
@@ -185,7 +198,7 @@ public class ResizeCommand extends Command {
     return true;
   }
 
-  private void handleBottomLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private void handleBottomLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
     Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x, initialBounds.y + initialBounds.height));
     Double bParam = getBParam(vertexToCursor, -1);
@@ -194,7 +207,7 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);
 
     int newPosX = initialBounds.x - mappedCoordinate;
-    int newSnappedPosX = ignoreSnapToGrid ? newPosX : utils.snapToGrid(newPosX);
+    int newSnappedPosX = doNotSnap ? newPosX : vSnapper.snap(newPosX, Snapper.SourceEdge.MIN);
     int newSnappedSizeX = initialBounds.width - (newPosX - initialBounds.x);
     newSnappedSizeX -= newSnappedPosX - newPosX; // adjust width to snapped position
     if (newSnappedSizeX < MIN_SIZE) {
@@ -204,7 +217,7 @@ public class ResizeCommand extends Command {
     int snappedDistanceX = Math.abs(newSnappedPosX - newPosX);
 
     int newSizeY = initialBounds.height + mappedCoordinate;
-    int newSnappedSizeY = ignoreSnapToGrid ? newSizeY : (utils.snapToGrid(initialBounds.y + newSizeY) - initialBounds.y);
+    int newSnappedSizeY = doNotSnap ? newSizeY : (hSnapper.snap(initialBounds.y + newSizeY, Snapper.SourceEdge.MAX) - initialBounds.y);
     if (newSnappedSizeY < MIN_SIZE) { newSnappedSizeY = MIN_SIZE; }
     int snappedDistanceY = Math.abs(newSnappedSizeY - newSizeY);
 
@@ -218,7 +231,7 @@ public class ResizeCommand extends Command {
     }
   }
 
-  private void handleTopLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private void handleTopLeftProportional(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
     Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x, initialBounds.y));
     Double bParam = getBParam(vertexToCursor, 1);
@@ -227,7 +240,7 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);  
 
     int newPosX = initialBounds.x - mappedCoordinate;
-    int newSnappedPosX = ignoreSnapToGrid ? newPosX : utils.snapToGrid(newPosX);
+    int newSnappedPosX = doNotSnap ? newPosX : vSnapper.snap(newPosX, Snapper.SourceEdge.MIN);
     int newSnappedSizeX = initialBounds.width - (newPosX - initialBounds.x);
     newSnappedSizeX -= newSnappedPosX - newPosX; // adjust width to snapped position
     if (newSnappedSizeX < MIN_SIZE) {
@@ -237,7 +250,7 @@ public class ResizeCommand extends Command {
     int snappedDistanceX = Math.abs(newSnappedPosX - newPosX);
 
     int newPosY = initialBounds.y - mappedCoordinate;
-    int newSnappedPosY = ignoreSnapToGrid ? newPosY : utils.snapToGrid(newPosY);
+    int newSnappedPosY = doNotSnap ? newPosY : hSnapper.snap(newPosY, Snapper.SourceEdge.MIN);
     int newSnappedSizeY = initialBounds.height - (newPosY - initialBounds.y);
     newSnappedSizeY -= newSnappedPosY - newPosY; // adjust height to snapped position
     if (newSnappedSizeY < MIN_SIZE) {
@@ -258,7 +271,7 @@ public class ResizeCommand extends Command {
     }
   }
 
-  private void handleTopRightProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private void handleTopRightProportional(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
     Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x + initialBounds.width, initialBounds.y));
     Double bParam = getBParam(vertexToCursor, -1);
@@ -267,12 +280,12 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate); 
 
     int newSizeX = initialBounds.width + mappedCoordinate;
-    int newSnappedSizeX = ignoreSnapToGrid ? newSizeX : (utils.snapToGrid(initialBounds.x + newSizeX) - initialBounds.x);
+    int newSnappedSizeX = doNotSnap ? newSizeX : (vSnapper.snap(initialBounds.x + newSizeX, Snapper.SourceEdge.MAX) - initialBounds.x);
     if (newSnappedSizeX < MIN_SIZE) { newSnappedSizeX = MIN_SIZE; }
     int snappedDistanceX = Math.abs(newSnappedSizeX - newSizeX);
 
     int newPosY = initialBounds.y - mappedCoordinate;
-    int newSnappedPosY = ignoreSnapToGrid ? newPosY : utils.snapToGrid(newPosY);
+    int newSnappedPosY = doNotSnap ? newPosY : hSnapper.snap(newPosY, Snapper.SourceEdge.MIN);
     int newSnappedSizeY = initialBounds.height - (newPosY - initialBounds.y);
     newSnappedSizeY -= newSnappedPosY - newPosY; // adjust height to snapped position
     if (newSnappedSizeY < MIN_SIZE) {
@@ -291,7 +304,7 @@ public class ResizeCommand extends Command {
     }
   }
 
-  private void handleBottomRightProportional(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private void handleBottomRightProportional(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     // calculate the projection of the cursor position on a line passing through the center of the object and the dragged vertex
     Point vertexToCursor = getCursorRelativeToVertex(point, new Point(initialBounds.x + initialBounds.width, initialBounds.y + initialBounds.height));
     Double bParam = getBParam(vertexToCursor, 1);
@@ -300,12 +313,12 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);
 
     int newSizeX = initialBounds.width + mappedCoordinate;
-    int newSnappedSizeX = ignoreSnapToGrid ? newSizeX : (utils.snapToGrid(initialBounds.x + newSizeX) - initialBounds.x);
+    int newSnappedSizeX = doNotSnap ? newSizeX : (vSnapper.snap(initialBounds.x + newSizeX, Snapper.SourceEdge.MAX) - initialBounds.x);
     if (newSnappedSizeX < MIN_SIZE) { newSnappedSizeX = MIN_SIZE; }
     int snappedDistanceX = Math.abs(newSnappedSizeX - newSizeX);
 
     int newSizeY = initialBounds.height + mappedCoordinate;
-    int newSnappedSizeY = ignoreSnapToGrid ? newSizeY : (utils.snapToGrid(initialBounds.y + newSizeY) - initialBounds.y);
+    int newSnappedSizeY = doNotSnap ? newSizeY : (hSnapper.snap(initialBounds.y + newSizeY, Snapper.SourceEdge.MAX) - initialBounds.y);
     if (newSnappedSizeY < MIN_SIZE) { newSnappedSizeY = MIN_SIZE; }
     int snappedDistanceY = Math.abs(newSnappedSizeY - newSizeY);
 
@@ -328,9 +341,9 @@ public class ResizeCommand extends Command {
     return new Point(vertex.x - cursor.x, vertex.y - cursor.y);
   }
 
-  private boolean handleRight(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private boolean handleRight(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newSize = currentBounds.width + (point.x - lastPoint.x);
-    int newSnappedSize = ignoreSnapToGrid ? newSize : (utils.snapToGrid(currentBounds.x + newSize) - currentBounds.x);
+    int newSnappedSize = doNotSnap ? newSize : (vSnapper.snap(currentBounds.x + newSize, Snapper.SourceEdge.MAX) - currentBounds.x);
     if (newSnappedSize < MIN_SIZE) {
       return false;
     }
@@ -345,9 +358,9 @@ public class ResizeCommand extends Command {
     return true;
   }
 
-  private boolean handleTop(Point point, WidgetModel model, boolean preserveSize, boolean ignoreSnapToGrid) {
+  private boolean handleTop(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newPos = currentBounds.y + (point.y - lastPoint.y);
-    int newSnappedPos = ignoreSnapToGrid ? newPos : utils.snapToGrid(newPos);
+    int newSnappedPos = doNotSnap ? newPos : hSnapper.snap(newPos, Snapper.SourceEdge.MIN);
     int newSize = initialBounds.height - (newPos - initialBounds.y);
     newSize -= newSnappedPos - newPos; // adjust height to snapped position
     if (preserveSize) {

@@ -26,6 +26,7 @@
 package builder.views;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -69,6 +70,9 @@ import builder.commands.DragWidgetCommand;
 import builder.commands.ResizeCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
+import builder.common.Guidelines;
+import builder.common.Snapper;
+import builder.common.Snapper.Type;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.events.MsgBoard;
@@ -154,6 +158,10 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The drag using arrows command */
   public DragByArrowCommand dragArrowsCommand = null;
+
+  /** Guidelines used by resizing and snapping commands */
+  private Guidelines guidelines = new Guidelines();
+  private SnapperBuilder snapperBuilder = new SnapperBuilder();
 
   /** the number of selected widgets. */
   private int selectedCnt = 0;
@@ -253,6 +261,11 @@ public class PagePane extends JPanel implements iSubscriber {
     if (at == null) {
       zoomTransform();
     }
+
+    guidelines.createGuideline(Guidelines.Type.HORIZONTAL, 53);
+    guidelines.createGuideline(Guidelines.Type.HORIZONTAL, 106);
+    guidelines.createGuideline(Guidelines.Type.VERTICAL, 81);
+    guidelines.createGuideline(Guidelines.Type.VERTICAL, 212);
   }
 
   /**
@@ -284,8 +297,6 @@ public class PagePane extends JPanel implements iSubscriber {
         drawGrid(g2d, width, height);
       }
     }
-    
-    drawMargins(g2d, width, height);
       
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
@@ -311,12 +322,44 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     // gets rid of the copy
     g2d.dispose();
+
+    if ((bResizing && resizeCommand != null) || (bDragging && dragCommand != null)) {
+      final Graphics2D g2d_ = (Graphics2D) g.create();
+      //g2d_.setComposite(AlphaComposite.Xor);
+      g2d_.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
+
+      g2d_.setColor(Color.RED);
+      drawMargins(g2d_, width, height);
+
+      g2d_.setColor(Color.WHITE);
+      guidelines.getGuidelines(Guidelines.Type.HORIZONTAL).forEach(guideline -> {
+        g2d_.drawLine(0, (int) (guideline.getPos() * zoomFactor), (int) (width * zoomFactor), (int) (guideline.getPos() * zoomFactor));
+      });
+      guidelines.getGuidelines(Guidelines.Type.VERTICAL).forEach(guideline -> {
+        g2d_.drawLine((int) (guideline.getPos() * zoomFactor), 0, (int) (guideline.getPos() * zoomFactor), (int) (height * zoomFactor));
+      });
+
+      g2d_.setColor(Color.ORANGE);
+
+      Snapper snapper;
+      snapper = bResizing ? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
+      for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
+        g2d_.drawLine(0, (int) (marker.position * zoomFactor), (int) (width * zoomFactor), (int) (marker.position * zoomFactor));
+      }
+
+      snapper = bResizing ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
+      for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
+        g2d_.drawLine((int) (marker.position * zoomFactor), 0, (int) (marker.position * zoomFactor), (int) (height * zoomFactor));
+      }
+
+      g2d_.dispose();
+    }
   }
 
   private void drawMargins(Graphics2D g2d, int width, int height) {
     int marginSize = pm.getMargins();
-    g2d.setColor(gridModel.getGridMajorColor());
-    g2d.drawRect(marginSize, marginSize, width - 2 * marginSize, height - 2 * marginSize);
+    //g2d.setColor(gridModel.getGridMajorColor());
+    g2d.drawRect((int) (marginSize * zoomFactor), (int) (marginSize * zoomFactor), (int) ((width - 2 * marginSize)  * zoomFactor), (int) ((height - 2 * marginSize) * zoomFactor));
   };
 
   /**
@@ -992,14 +1035,36 @@ public class PagePane extends JPanel implements iSubscriber {
             break;
           default:
             if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
-              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType);
+              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType, snapperBuilder.buildHSnapper(), snapperBuilder.buildVSnapper());
               resizeCommand.start(unscaledPoint);
               bResizing = true;
             }
             break;
         }
-      }      
+      }
     } // end mousePressed
+
+    // private Snapper buildHSnapper() {
+    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
+    //   snapper.addGrid(gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
+    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
+    //   snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
+    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
+    //     snapper.addGuideline(g);
+    //   }
+    //   return snapper;
+    // }
+
+    // private Snapper buildVSnapper() {
+    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
+    //   snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
+    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
+    //   snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);
+    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
+    //     snapper.addGuideline(g);
+    //   }
+    //   return snapper;
+    // }
 
     /*
      * Handle zooming on mouse wheel.
@@ -1078,6 +1143,31 @@ public class PagePane extends JPanel implements iSubscriber {
           break;
       }
     }
+
+    // private Snapper buildHSnapper() {
+    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
+    //   snapper.addGrid(gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
+    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
+    //   snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
+    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
+    //     snapper.addGuideline(g);
+    //   }
+    //   return snapper;
+    // }
+
+    // private Snapper buildVSnapper() {
+    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
+    //   snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
+    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
+    //   snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);
+    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
+    //     snapper.addGuideline(g);
+    //   }
+    //   for (Widget w : widgets) {
+    //     snapper.addWidget(w, pm.getHSpacing());
+    //   }
+    //   return snapper;
+    // }
      
     /**
      * mouseDragged.
@@ -1099,7 +1189,7 @@ public class PagePane extends JPanel implements iSubscriber {
         selectRect(mouseRect);
      } else if (bDragging) {
        if (dragCommand == null) {
-          dragCommand = new DragWidgetCommand(instance);
+          dragCommand = new DragWidgetCommand(instance, snapperBuilder.buildHSnapper(), snapperBuilder.buildVSnapper());
           if (!dragCommand.start(dragPt)) {
             bDragging = false;
             bMultiSelectionBox = false;
@@ -1123,6 +1213,36 @@ public class PagePane extends JPanel implements iSubscriber {
       repaint();
     } // end mouseDragged
   }  // end MouseMotionHandler
+
+  private class SnapperBuilder {
+    private Snapper buildHSnapper() {
+      Snapper snapper = new Snapper(Type.HORIZONTAL, GridEditor.getInstance().getGridSnapTo(), true, true, true);
+      snapper.addGrid(PagePane.this.gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
+      snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
+      snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
+      for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
+        snapper.addGuideline(g);
+      }
+      for (Widget w : widgets) {
+        snapper.addWidget(w, pm.getVSpacing());
+      }
+      return snapper;
+    }
+
+    private Snapper buildVSnapper() {
+      Snapper snapper = new Snapper(Type.VERTICAL, GridEditor.getInstance().getGridSnapTo(), true, true, true);
+      snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
+      snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
+      snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);
+      for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
+        snapper.addGuideline(g);
+      }
+      for (Widget w : widgets) {
+        snapper.addWidget(w, pm.getHSpacing());
+      }
+      return snapper;
+    }
+  }
   
   /**
    * getPreferredSize.

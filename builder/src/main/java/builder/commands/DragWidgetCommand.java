@@ -31,8 +31,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import builder.common.Utils;
-import builder.controller.Controller;
+import builder.common.Snapper;
 import builder.mementos.PositionMemento;
 import builder.views.PagePane;
 import builder.widgets.Widget;
@@ -58,7 +57,11 @@ public class DragWidgetCommand extends Command {
   /** The targets list contains the set of widgets to drag. */
   private List<Widget> targets = new ArrayList<Widget>();
 
-  private Utils utils = Utils.getInstance();
+  /**
+   * Services used to find the best matching snapping to snap to.
+   */
+  private Snapper hSnapper;
+  private Snapper vSnapper;
   
   /**
    * Instantiates a new drag widget command.
@@ -66,8 +69,18 @@ public class DragWidgetCommand extends Command {
    * @param page
    *          the <code>page</code> object that contains the widgets to drag.
    */
-  public DragWidgetCommand(PagePane page) {
+  public DragWidgetCommand(PagePane page, Snapper hSnapper, Snapper vSnapper) {
     this.page = page;
+    this.hSnapper = hSnapper;
+    this.vSnapper = vSnapper;
+  }
+
+  public Snapper getHorizontalSnapper() {
+    return hSnapper;
+  }
+
+  public Snapper getVerticalSnapper() {
+    return vSnapper;
   }
   
   /**
@@ -108,7 +121,7 @@ public class DragWidgetCommand extends Command {
    * @param m
    *          the <code>m</code> is the new relative position of our dragged widgets. 
    */
-  public void move(Point m, boolean ignoreSnapToGrid) {
+  public void move(Point m, boolean doNotSnap) {
     Widget w;
     Point mapPt = PagePane.mapPoint(m.x, m.y);
 
@@ -118,8 +131,8 @@ public class DragWidgetCommand extends Command {
        */
       w = targets.get(i);
       pt[i] = new Point(
-        ignoreSnapToGrid ? mapPt.x - offsetPt[i].x : utils.snapToGrid(mapPt.x - offsetPt[i].x),
-        ignoreSnapToGrid ? mapPt.y - offsetPt[i].y : utils.snapToGrid(mapPt.y - offsetPt[i].y)
+        doNotSnap ? mapPt.x - offsetPt[i].x : vSnapper.snap(mapPt.x - offsetPt[i].x, Snapper.SourceEdge.MIN),
+        doNotSnap ? mapPt.y - offsetPt[i].y : hSnapper.snap(mapPt.y - offsetPt[i].y, Snapper.SourceEdge.MIN)
       );
       w.updateLocation(
         pt[i].x,
@@ -131,7 +144,7 @@ public class DragWidgetCommand extends Command {
   /**
    * Stop ends the drag 
    */
-  public void stop(boolean ignoreSnapToGrid) {
+  public void stop(boolean doNotSnap) {
   }
 
   /**

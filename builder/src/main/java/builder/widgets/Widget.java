@@ -109,6 +109,14 @@ public class Widget {
   public int getY() {
     return model.getY();
   }
+
+  public int getWidth() {
+    return model.getWidth();
+  }
+
+  public int getHeight() {
+    return model.getHeight();
+  }
   
   public void setXY(WidgetModel m, int x, int y) {
     // if x and y are set to -1 we will position widget later (paste operation)
