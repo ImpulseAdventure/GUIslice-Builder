@@ -219,6 +219,7 @@ your cursor will change to one of these arrows. This indicates you acn resize yo
 ![](images/resize.png)
 
 For example, resizing to the east like so:
+
 ![](images/resize_east.png)
 
 Off to the right of the TFT Simulation screen you will see all of the properties for this element.  
