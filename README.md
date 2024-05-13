@@ -131,9 +131,7 @@ The View pull-down and View\Editor panel now has Zoom Reset and SNAP TO GRID.
 </p>
 
 <p>
-If SNAP TO GRID enabled, then by holding the Left mouse button and CTRL button you can temporarily disable grid snapping.
-Also while If SNAP TO GRID enabled, holding the ALT button, you change resizing to dragging.
-This way we can drag in one axis (only vertical or only horizontal).
+For further details check out sections 2.3 Creating your UI and 3.1 Main Parts/View Band of our User Guide.
 </p>
 
 ### Enhancements for 0.17.b27
