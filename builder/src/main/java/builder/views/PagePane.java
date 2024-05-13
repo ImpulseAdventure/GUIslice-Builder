@@ -113,24 +113,22 @@ public class PagePane extends JPanel implements iSubscriber {
   
   // /** Cursor style will be CROSSHAIR in rectangular selection mode or arrow in default mode */
   // public static Cursor  = new Cursor(Cursor.CROSSHAIR_CURSOR); 
-
-  /** The rectangular selection enabled switch */
-  public static boolean bRectangularSelectionMode = false;
   
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
   
   /** The donotSelectKey */
   private String donotSelectKey = null;
-  
-  /** The dragging indicator. */
-  private boolean bDragging = false;
+
+  private enum CurrentAction {
+    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION
+  }
+
+  /** The current action. */
+  private CurrentAction currentAction = CurrentAction.NONE;
 
   /** Used in resizing procedure */
   private Widget widgetUnderCursor = null;
-
-  /** The resize indicator. */
-  private boolean bResizing = false;
   
   /** The paint base widgets indicator. */
   private boolean bPaintBaseWidgets = false;
@@ -323,7 +321,7 @@ public class PagePane extends JPanel implements iSubscriber {
     // gets rid of the copy
     g2d.dispose();
 
-    if ((bResizing && resizeCommand != null) || (bDragging && dragCommand != null)) {
+    if ((currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) || (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null)) {
       final Graphics2D g2d_ = (Graphics2D) g.create();
       //g2d_.setComposite(AlphaComposite.Xor);
       g2d_.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
@@ -342,12 +340,12 @@ public class PagePane extends JPanel implements iSubscriber {
       g2d_.setColor(Color.ORANGE);
 
       Snapper snapper;
-      snapper = bResizing ? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
+      snapper = currentAction == CurrentAction.RESIZING_WIDGET? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
       for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
         g2d_.drawLine(0, (int) (marker.position * zoomFactor), (int) (width * zoomFactor), (int) (marker.position * zoomFactor));
       }
 
-      snapper = bResizing ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
+      snapper = currentAction == CurrentAction.RESIZING_WIDGET ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
       for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
         g2d_.drawLine((int) (marker.position * zoomFactor), 0, (int) (marker.position * zoomFactor), (int) (height * zoomFactor));
       }
@@ -447,11 +445,14 @@ public class PagePane extends JPanel implements iSubscriber {
    * rectangularSelection.
    */
   public void rectangularSelection(boolean bValue) {
-    bRectangularSelectionMode = bValue;
-    if (bValue)
+    if (currentAction != CurrentAction.NONE) return;
+    if (bValue) {
       setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-    else
+      currentAction = CurrentAction.RECTANGULAR_SELECTION;
+    } else {
       setCursor(Cursor.getDefaultCursor());
+      currentAction = CurrentAction.NONE;
+    }
   }
   
   /**
@@ -998,9 +999,10 @@ public class PagePane extends JPanel implements iSubscriber {
         resizeCommand = null;
       }      
       bMultiSelectionBox = false;
-      bRectangularSelectionMode = false;
-      bDragging = false;
-      bResizing = false;
+      currentAction = CurrentAction.NONE;
+      // bRectangularSelectionMode = false;
+      // bDragging = false;
+      // bResizing = false;
       setCursor(Cursor.getDefaultCursor());
       e.getComponent().repaint();
     }  // end mouseReleased
@@ -1015,9 +1017,11 @@ public class PagePane extends JPanel implements iSubscriber {
     @Override
     public void mousePressed(MouseEvent e) {
       mousePt = e.getPoint();
-      bDragging = false;
+      if (currentAction == CurrentAction.DRAGGING_WIDGET) {
+        currentAction = CurrentAction.NONE;
+      }
       Widget w = findOne(mousePt);
-      if (bRectangularSelectionMode) {
+      if (currentAction == CurrentAction.RECTANGULAR_SELECTION) {
         bMultiSelectionBox = true;
         donotSelectKey = null;
         if (w != null) {
@@ -1028,7 +1032,9 @@ public class PagePane extends JPanel implements iSubscriber {
         HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
-            if (w.isSelected()) bDragging = true;
+            if (w.isSelected()) {
+              currentAction = CurrentAction.NONE;
+            }
             dragPt = new Point(mousePt.x, mousePt.y);
             break;
           case NONE:
@@ -1037,7 +1043,7 @@ public class PagePane extends JPanel implements iSubscriber {
             if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
               resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType, snapperBuilder.buildHSnapper(widgetUnderCursor), snapperBuilder.buildVSnapper(widgetUnderCursor));
               resizeCommand.start(unscaledPoint);
-              bResizing = true;
+              currentAction = CurrentAction.RESIZING_WIDGET;
             }
             break;
         }
@@ -1090,7 +1096,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      if (bMultiSelectionBox || bRectangularSelectionMode || bDragging || bResizing) {
+      if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
         return;
       }
 
@@ -1187,13 +1193,13 @@ public class PagePane extends JPanel implements iSubscriber {
             Math.abs(mousePt.y - e.getY()));
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
-     } else if (bDragging) {
+     } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
        if (dragCommand == null) {
           dragCommand = new DragWidgetCommand(instance, snapperBuilder.buildHSnapper(null), snapperBuilder.buildVSnapper(null));
           if (!dragCommand.start(dragPt)) {
-            bDragging = false;
+            currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
-            bRectangularSelectionMode = false;
+            // bRectangularSelectionMode = false;
             dragCommand = null;
             repaint();
             return;
@@ -1202,7 +1208,7 @@ public class PagePane extends JPanel implements iSubscriber {
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
         dragCommand.move(e.getPoint(), e.isControlDown());
-      } else if (bResizing) {
+      } else if (currentAction == CurrentAction.RESIZING_WIDGET) {
         if (resizeCommand == null) {
           System.out.println("resizeCommand is null");
         } else {
