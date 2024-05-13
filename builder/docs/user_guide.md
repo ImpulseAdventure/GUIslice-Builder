@@ -215,7 +215,8 @@ In addition, If Snap to Grid is enabled your drag will cause the UI Widget to sn
 <div style="page-break-after: always;"></div>
 
 You will also notice that as you move your cursor over your text button that when you pass over one of the red handles
-your cursor will change to one of these arrows. This indicates you acn resize your button in the direction inidicated by the arrow.
+your cursor will change to one of these arrows. This indicates you cann resize your button in the direction inidicated by the arrow.
+
 ![](images/resize.png)
 
 For example, resizing to the east like so:
