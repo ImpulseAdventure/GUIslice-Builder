@@ -28,12 +28,15 @@ package builder.views;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import builder.Builder;
 import builder.common.Utils;
-
+import builder.models.AdvancedSnappingModel;
+import builder.models.RibbonModel;
 import hu.csekme.RibbonMenu.Button;
 import hu.csekme.RibbonMenu.QuickAccessBar;
 import hu.csekme.RibbonMenu.QuickButton;
@@ -72,7 +75,10 @@ public class Ribbon extends JPanel {
   private static Button btn_box, btn_line, btn_graph, btn_group;
   
   /** The view buttons. */
-  private static Button btn_show_grid,btn_zoom_in,btn_zoom_out,btn_zoom_reset,btn_snap_grid;
+  private static Button btn_zoom_in,btn_zoom_out,btn_zoom_reset;
+
+  /** Snapping buttons */
+  private static Button btn_show_grid, btn_show_grid_bg, btn_snap_grid, btn_show_guidelines, btn_snap_guidelines, btn_show_margins, btn_snap_margins, btn_edit_guidelines, btn_snap_widgets;
   
   private static Tab pageLayout;
   
@@ -115,6 +121,7 @@ public class Ribbon extends JPanel {
     initPages(toolBox);
     initMisc(toolBox);
     initView(toolBox);
+    initAdvancedSnapping(toolBox);
     
     pageLayout = RibbonBar.addTab("Page Layout");
     initLayout(pageLayout);
@@ -417,7 +424,7 @@ public class Ribbon extends JPanel {
    * Initialize the View Buttons.
    */
   public void initView(Tab band) {
-    band.setGroupName("View\\Editor");
+    band.setGroupName("View");
 
     btn_zoom_in = band.addSlimButton("Zoom In");
     btn_zoom_in.setImage(Utils.getIcon(
@@ -443,17 +450,68 @@ public class Ribbon extends JPanel {
     btn_zoom_reset.setActionCommand("zoomreset");
     btn_zoom_reset.setEnabled(false);
 
-    btn_show_grid = band.addSlimButton("Show grid");
-    btn_show_grid.setImage(Utils.getIcon(
-        "resources/icons/view/show_grid.png"));
-    btn_show_grid.addToolTip("Toggle Grid ON/OFF");
-    btn_show_grid.setActionCommand("showgrid");    
+    band.addSeperator();
+  }
 
-    btn_snap_grid = band.addSlimButton("Snap to grid");
+  /**
+   * Initializes the Advanced Snapping buttons.
+   */
+  public void initAdvancedSnapping(Tab band) {
+    band.setGroupName("Advanced Snapping");
+
+    btn_show_grid = band.addSlimSwitchButton("Show grid");
+    btn_show_grid.setImage(Utils.getIcon(
+        "resources/icons/snapping/show_grid.png"));
+    btn_show_grid.addToolTip("Toggle Grid ON/OFF");
+    btn_show_grid.setActionCommand(AdvancedSnappingModel.ACTION_SHOW_GRID);
+
+    btn_show_grid_bg = band.addSlimSwitchButton("Show grid background");
+    btn_show_grid_bg.setImage(Utils.getIcon(
+        "resources/icons/snapping/show_grid_bg.png"));
+    btn_show_grid_bg.addToolTip("Toggle Grid Background ON/OFF");
+    btn_show_grid_bg.setActionCommand(AdvancedSnappingModel.ACTION_SHOW_GRID_BG);
+
+    btn_snap_grid = band.addSlimSwitchButton("Snap to grid");
     btn_snap_grid.setImage(Utils.getIcon(
-        "resources/icons/view/snap_to_grid.png"));
+        "resources/icons/snapping/snap_to_grid.png"));
     btn_snap_grid.addToolTip("Toggle Snap to Grid ON/OFF");
-    btn_snap_grid.setActionCommand("snaptogrid");
+    btn_snap_grid.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_GRID);
+
+    btn_show_guidelines = band.addSlimSwitchButton("Show guidelines");
+    btn_show_guidelines.setImage(Utils.getIcon(
+        "resources/icons/snapping/show_guidelines.png"));
+    btn_show_guidelines.addToolTip("Toggle Guidelines ON/OFF");
+    btn_show_guidelines.setActionCommand(AdvancedSnappingModel.ACTION_SHOW_GUIDELINES);
+
+    btn_snap_guidelines = band.addSlimSwitchButton("Snap to guidelines");
+    btn_snap_guidelines.setImage(Utils.getIcon(
+        "resources/icons/snapping/snap_to_guidelines.png"));
+    btn_snap_guidelines.addToolTip("Toggle Snap to Guidelines ON/OFF");
+    btn_snap_guidelines.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_GUIDELINES);
+
+    btn_show_margins = band.addSlimSwitchButton("Show margins");
+    btn_show_margins.setImage(Utils.getIcon(
+        "resources/icons/snapping/show_margins.png"));
+    btn_show_margins.addToolTip("Toggle Margins ON/OFF");
+    btn_show_margins.setActionCommand(AdvancedSnappingModel.ACTION_SHOW_MARGINS);
+
+    btn_snap_margins = band.addSlimSwitchButton("Snap to margins");
+    btn_snap_margins.setImage(Utils.getIcon(
+        "resources/icons/snapping/snap_to_margins.png"));
+    btn_snap_margins.addToolTip("Toggle Snap to Margins ON/OFF");
+    btn_snap_margins.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_MARGINS);
+
+    btn_edit_guidelines = band.addSlimButton("Edit guidelines");
+    btn_edit_guidelines.setImage(Utils.getIcon(
+        "resources/icons/snapping/edit_guidelines.png"));
+    btn_edit_guidelines.addToolTip("Edit Guidelines");
+    btn_edit_guidelines.setActionCommand(AdvancedSnappingModel.ACTION_EDIT_GUIDELINES);
+
+    btn_snap_widgets = band.addSlimSwitchButton("Snap to widgets");
+    btn_snap_widgets.setImage(Utils.getIcon(
+        "resources/icons/snapping/snap_to_widgets.png"));
+    btn_snap_widgets.addToolTip("Toggle Snap to Widgets ON/OFF");
+    btn_snap_widgets.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_WIDGETS);
 
     band.addSeperator();
   }
@@ -629,8 +687,6 @@ public class Ribbon extends JPanel {
     btn_graph.addActionListener(al); 
     btn_group.addActionListener(al);
 
-    btn_show_grid.addActionListener(al);
-    btn_snap_grid.addActionListener(al);
     btn_zoom_in.addActionListener(al);
     btn_zoom_out.addActionListener(al);
     btn_zoom_reset.addActionListener(al);
@@ -645,9 +701,19 @@ public class Ribbon extends JPanel {
     btn_alignwidth.addActionListener(al);
     btn_alignheight.addActionListener(al);
     btn_scale.addActionListener(al);
+  }
 
-//    btn_selection.addActionListener(al);
+  public void setAdvancedSnappingModel(AdvancedSnappingModel model) {
+    ActionListener actionListener = model.getIncomingActionListener();
 
+    btn_show_grid.addActionListener(actionListener);
+    btn_snap_grid.addActionListener(actionListener);
+    btn_show_guidelines.addActionListener(actionListener);
+    btn_snap_guidelines.addActionListener(actionListener);
+    btn_show_margins.addActionListener(actionListener);
+    btn_snap_margins.addActionListener(actionListener);
+    btn_edit_guidelines.addActionListener(actionListener);
+    btn_snap_widgets.addActionListener(actionListener);
   }
   
   /**

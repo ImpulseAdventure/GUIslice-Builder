@@ -70,6 +70,7 @@ import builder.controller.LogManager;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
 import builder.fonts.FontFactory;
+import builder.models.AdvancedSnappingModel;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
@@ -388,6 +389,7 @@ public class Builder  extends JDesktopPane {
     ribbon = Ribbon.getInstance();
     ribbon.setRibbonColors();
     ribbon.addListeners(ribbonListener);
+    ribbon.setAdvancedSnappingModel(AdvancedSnappingModel.getInstance());
     
     frame.getContentPane().add(ribbon,BorderLayout.NORTH);
 
