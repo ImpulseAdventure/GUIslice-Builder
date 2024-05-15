@@ -42,6 +42,7 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import builder.common.Utils;
+import builder.models.AdvancedSnappingModel;
 
 /**
  * The Class MenuBar.
@@ -152,7 +153,7 @@ public class MenuBar extends JMenuBar {
 
     miShowGrid = new JMenuItem("Show grid",
       Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
-    miShowGrid.setActionCommand("showgrid");
+    miShowGrid.setActionCommand(AdvancedSnappingModel.ACTION_SHOW_GRID);
     miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
         'L', ActionEvent.CTRL_MASK));
     miShowGrid.setToolTipText("Toggle Grid ON/OFF");
@@ -326,9 +327,14 @@ public class MenuBar extends JMenuBar {
     miAbout.addActionListener(al);
     miClose.addActionListener(al);
     miExit.addActionListener(al);
-    miShowGrid.addActionListener(al);
     miZoomIn.addActionListener(al);
     miZoomOut.addActionListener(al);
+  }
+
+  public void setAdvancedSnappingModel(AdvancedSnappingModel model) {
+    ActionListener actionListener = model.getIncomingActionListener();
+
+    miShowGrid.addActionListener(actionListener);
   }
   
   @SuppressWarnings("serial")

@@ -371,14 +371,15 @@ public class Builder  extends JDesktopPane {
     RibbonListener ribbonListener = new RibbonListener();
     
     // create our menu bar
-    MenuBar mb = new MenuBar();
-    mb.addListeners(ribbonListener);
+    MenuBar menuBar = new MenuBar();
+    menuBar.addListeners(ribbonListener);
+    menuBar.setAdvancedSnappingModel(AdvancedSnappingModel.getInstance());
 
     // set a listener to capture resize window events
     frame.addComponentListener(new FrameListen());
     
     frame.setTitle(frameTitle);
-    frame.setJMenuBar(mb);
+    frame.setJMenuBar(menuBar);
 
 //    ToolBar toolbar = ToolBar.getInstance();
 

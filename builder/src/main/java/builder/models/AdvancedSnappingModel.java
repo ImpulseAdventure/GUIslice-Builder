@@ -53,7 +53,7 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
   private EventListenerList listenerList = new EventListenerList();
   private ActionListener actionListener = null;
 
-  public interface AdvancedSnappingModelListenerInterface extends EventListener {
+  public static interface AdvancedSnappingModelListenerInterface extends EventListener {
     public void showGridChanged(boolean showGrid);
     public void showGridBgChanged(boolean showGridBg);
     public void snapToGridChanged(boolean snapToGrid);
@@ -66,7 +66,7 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
   }
 
   // helper class to avoid having to implement all methods in the interface
-  public class AdvancedSnappingModelListener implements AdvancedSnappingModelListenerInterface {
+  public static class AdvancedSnappingModelListener implements AdvancedSnappingModelListenerInterface {
     public void showGridChanged(boolean showGrid) {};
     public void showGridBgChanged(boolean showGridBg) {};
     public void snapToGridChanged(boolean snapToGrid) {};
@@ -86,6 +86,9 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
         public void actionPerformed(ActionEvent e) {
           System.out.println("AdvancedSnappingModel received action: " + e.getActionCommand());
           switch (e.getActionCommand()) {
+            case ACTION_SHOW_GRID:
+              setShowGrid(!isShowGrid());
+              break;
             case ACTION_SHOW_GRID_ON:
             case ACTION_SHOW_GRID_OFF:
               setShowGrid(e.getActionCommand() == ACTION_SHOW_GRID_ON);
@@ -129,7 +132,10 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
   }
 
   @Override
-  public void addActionListener(ActionListener listener) {
+  /**
+   * @param AdvancedSnappingModelListenerInterface listener
+   */
+  public void addEventListener(EventListener listener) {
     assert(listener instanceof AdvancedSnappingModelListenerInterface);
     listenerList.add(AdvancedSnappingModelListenerInterface.class, (AdvancedSnappingModelListenerInterface) listener);
   }

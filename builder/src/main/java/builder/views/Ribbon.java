@@ -704,6 +704,22 @@ public class Ribbon extends JPanel {
   }
 
   public void setAdvancedSnappingModel(AdvancedSnappingModel model) {
+    if (model.isShowGrid() && !btn_show_grid.isPressed()) btn_show_grid.setPressed(true);
+    if (model.isShowGridBg() && !btn_show_grid_bg.isPressed()) btn_show_grid_bg.setPressed(true);
+    if (model.isSnapToGrid() && !btn_snap_grid.isPressed()) btn_snap_grid.setPressed(true);
+    if (model.isShowGuidelines() && !btn_show_guidelines.isPressed()) btn_show_guidelines.setPressed(true);
+    if (model.isSnapToGuidelines() && !btn_snap_guidelines.isPressed()) btn_snap_guidelines.setPressed(true);
+    if (model.isShowMargins() && !btn_show_margins.isPressed()) btn_show_margins.setPressed(true);
+    if (model.isSnapToMargins() && !btn_snap_margins.isPressed()) btn_snap_margins.setPressed(true);
+    if (model.isSnapToWidgets() && !btn_snap_widgets.isPressed()) btn_snap_widgets.setPressed(true);
+
+    model.addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
+      public void showGridChanged(boolean showGrid) {
+        if (btn_show_grid.isPressed() != showGrid) btn_show_grid.setPressed(true);
+        repaint();
+      }
+    });
+
     ActionListener actionListener = model.getIncomingActionListener();
 
     btn_show_grid.addActionListener(actionListener);
