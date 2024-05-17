@@ -29,19 +29,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
+import javax.swing.*;
 //import javax.swing.ImageIcon;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JSeparator;
-import javax.swing.KeyStroke;
 
 import builder.common.Utils;
+import builder.swing.MyToggleButton;
 
 /**
  * The Class MenuBar.
@@ -58,16 +50,16 @@ public class MenuBar extends JMenuBar {
   JMenu mbFile, mbView, mbEdit, mbHelp;
   
   /** The exit menu item. */
-  private JMenuItem miNew, miOpen, miSave, 
-    miSaveAs, miCode, miClose, miExit;
+  private JMenuItem miNew, miOpen, miSave, miSaveAs, miCode, miClose, miExit;
   
   /** The edit menu item. */
   private JMenuItem miUndo,miRedo,miCopy,miCut,miPaste, miOptions, miDelete;
   
   /** The about menu item. */
   private JMenuItem miAbout;
-  
-  public static JMenuItem miZoomIn, miZoomOut, miZoomReset, miShowGrid, miSnapGrid;
+
+  public static JMenuItem miZoomIn, miZoomOut, miZoomReset;
+  public static MyToggleButton miShowGrid, miSnapGrid;
   
   /**
    * Instantiates a new menu bar.
@@ -177,16 +169,25 @@ public class MenuBar extends JMenuBar {
     miZoomReset.setToolTipText("Reset Zoom to 100%");
     mbView.add(miZoomReset);
 
-    miShowGrid = new JMenuItem("Show grid",
-      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
+//    miShowGrid = new JMenuItem("Show grid",
+//      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
+
+    miShowGrid = new MyToggleButton("Show grid",
+      Utils.getIcon("resources/icons/view/invisible.png", 24,24));
+    miShowGrid.setOffImage(Utils.getIcon("resources/icons/view/show_grid_off.png", 24,24));
+    miShowGrid.setOnImage(Utils.getIcon("resources/icons/view/show_grid_on.png", 24,24));
     miShowGrid.setActionCommand("showgrid");
-    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
-        'L', ActionEvent.CTRL_MASK));
+//    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
+//        'L', ActionEvent.CTRL_MASK));
     miShowGrid.setToolTipText("Toggle Grid ON/OFF");
     mbView.add(miShowGrid);
 
-    miSnapGrid = new JMenuItem("Snap to grid",
-      Utils.getIcon("resources/icons/view/snap_to_grid.png", 24,24));
+//    miSnapGrid = new JMenuItem("Snap to grid",
+//    Utils.getIcon("resources/icons/view/snap_to_grid.png", 24,24));
+    miSnapGrid = new MyToggleButton("Snap to grid",
+      Utils.getIcon("resources/icons/view/invisible.png", 24,24));
+    miSnapGrid.setOffImage(Utils.getIcon("resources/icons/view/snap_to_grid_off.png", 24,24));
+    miSnapGrid.setOnImage (Utils.getIcon("resources/icons/view/snap_to_grid_on.png", 24,24));
     miSnapGrid.setActionCommand("snaptogrid");
     miSnapGrid.setToolTipText("Toggle Snap to Grid ON/OFF");
     mbView.add(miSnapGrid);
@@ -333,6 +334,7 @@ public class MenuBar extends JMenuBar {
     miClose.addActionListener(al);
     miExit.addActionListener(al);
     miShowGrid.addActionListener(al);
+    miSnapGrid.addActionListener(al);
     miZoomIn.addActionListener(al);
     miZoomOut.addActionListener(al);
     miZoomReset.addActionListener(al);

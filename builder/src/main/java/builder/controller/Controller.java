@@ -98,7 +98,9 @@ import builder.prefs.ModelEditor;
 import builder.prefs.NumKeyPadEditor;
 import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeFactory;
+import builder.views.MenuBar;
 import builder.views.PagePane;
+import builder.views.Ribbon;
 import builder.views.TreeView;
 import builder.widgets.Widget;
 
@@ -1491,7 +1493,12 @@ public class Controller extends JInternalFrame
    * Turn grid on/off.
    */
   public void toggleShowGrid() {
-    ((GridModel) gridEditor.getModel()).toggleShowGrid();
+    boolean bEnable = ((GridModel) gridEditor.getModel()).getGrid();
+    bEnable = !bEnable;
+    ((GridModel) gridEditor.getModel()).setGrid(bEnable);
+    Ribbon.getInstance().enableShowGrid(bEnable);
+    MenuBar.miShowGrid.setSelected(bEnable);
+    Ribbon.getInstance().repaint();
     refreshView();
   }
 
@@ -1500,7 +1507,12 @@ public class Controller extends JInternalFrame
    * Turn snap to grid on/off.
    */
   public void toggleSnapToGrid() {
-    ((GridModel) gridEditor.getModel()).toggleSnapToGrid();
+    boolean bEnable = ((GridModel) gridEditor.getModel()).getGridSnapTo();
+    bEnable = !bEnable;
+    Ribbon.getInstance().enableSnapGrid(bEnable);
+    ((GridModel) gridEditor.getModel()).setGridSnapTo(bEnable);
+    MenuBar.miSnapGrid.setSelected(bEnable);
+    Ribbon.getInstance().repaint();
     refreshView();
   }
   
@@ -1593,7 +1605,7 @@ public class Controller extends JInternalFrame
   /**
    * updateEvent
    *
-   * @see builder.events.iSubscriber#updateEvent(builder.events.MsgEvent)
+   * @see iSubscriber#updateEvent(MsgEvent)
    */
   @Override
   public void updateEvent(MsgEvent e) {

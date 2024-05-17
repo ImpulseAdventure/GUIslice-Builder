@@ -39,6 +39,7 @@ import hu.csekme.RibbonMenu.QuickAccessBar;
 import hu.csekme.RibbonMenu.QuickButton;
 import hu.csekme.RibbonMenu.RibbonBar;
 import hu.csekme.RibbonMenu.Tab;
+import hu.csekme.RibbonMenu.ToggleButton;
 
 public class Ribbon extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -72,8 +73,9 @@ public class Ribbon extends JPanel {
   private static Button btn_box, btn_line, btn_graph, btn_group;
   
   /** The view buttons. */
-  private static Button btn_show_grid,btn_zoom_in,btn_zoom_out,btn_zoom_reset,btn_snap_grid;
-  
+  private static Button btn_zoom_in,btn_zoom_out,btn_zoom_reset;
+  private static ToggleButton btn_show_grid,btn_snap_grid;
+
   private static Tab pageLayout;
   
   /** The alignment buttons. */
@@ -445,15 +447,19 @@ public class Ribbon extends JPanel {
     btn_zoom_reset.setActionCommand("zoomreset");
     btn_zoom_reset.setEnabled(false);
 
-    btn_show_grid = band.addSlimButton("Show grid");
+    btn_show_grid = band.addSlimToggleButton("Show grid");
     btn_show_grid.setImage(Utils.getIcon(
-        "resources/icons/view/show_grid.png"));
+      "resources/icons/view/show_grid_off.png"));
+    btn_show_grid.setOnImage(Utils.getIcon(
+      "resources/icons/view/show_grid_on.png"));
     btn_show_grid.addToolTip("Toggle Grid ON/OFF");
     btn_show_grid.setActionCommand("showgrid");
 
-    btn_snap_grid = band.addSlimButton("Snap to grid");
+    btn_snap_grid = band.addSlimToggleButton("Snap to grid");
     btn_snap_grid.setImage(Utils.getIcon(
-        "resources/icons/view/snap_to_grid.png"));
+      "resources/icons/view/snap_to_grid_off.png"));
+    btn_snap_grid.setOnImage(Utils.getIcon(
+      "resources/icons/view/snap_to_grid_on.png"));
     btn_snap_grid.addToolTip("Toggle Snap to Grid ON/OFF");
     btn_snap_grid.setActionCommand("snaptogrid");
 
@@ -669,11 +675,11 @@ public class Ribbon extends JPanel {
   }  
   
   public void enableShowGrid(boolean bEnable) {
-    btn_show_grid.setEnabled(bEnable);
+    btn_show_grid.setToggle(bEnable);
   }  
   
   public void enableSnapGrid(boolean bEnable) {
-    btn_snap_grid.setEnabled(bEnable);
+    btn_snap_grid.setToggle(bEnable);
   }
   
   /**

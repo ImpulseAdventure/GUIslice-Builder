@@ -21,6 +21,7 @@ module builder {
   exports  builder.models;
   exports  builder.parser;
   exports  builder.prefs;
+  exports  builder.swing;
   exports  builder.tables;
   exports  builder.themes;
   exports  builder.views;
