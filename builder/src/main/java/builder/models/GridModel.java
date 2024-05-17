@@ -45,17 +45,15 @@ public class GridModel extends WidgetModel {
   private static final long serialVersionUID = 1L;
   
   /** The Property Index Constants. */
-  public static final int GRID_SNAP_TO      = 1;
-  public static final int GRID_WIDTH        = 2;
-  public static final int GRID_HEIGHT       = 3;
-  public static final int GRID_MAJOR_WIDTH  = 4;
-  public static final int GRID_MAJOR_HEIGHT = 5;
-  public static final int GRID_MAJOR_COLOR  = 6;
-  public static final int GRID_MINOR_COLOR  = 7;
-  public static final int GRID_BACKGROUND_COLOR  = 8;
+  public static final int GRID_WIDTH        = 1;
+  public static final int GRID_HEIGHT       = 2;
+  public static final int GRID_MAJOR_WIDTH  = 3;
+  public static final int GRID_MAJOR_HEIGHT = 4;
+  public static final int GRID_MAJOR_COLOR  = 5;
+  public static final int GRID_MINOR_COLOR  = 6;
+  public static final int GRID_BACKGROUND_COLOR  = 7;
   
   /** The Property Defaults */
-  static public  final Boolean DEF_SNAP_TO            = Boolean.TRUE;
   static public  final Integer DEF_WIDTH              = Integer.valueOf(10);
   static public  final Integer DEF_HEIGHT             = Integer.valueOf(10);
   static public  final Integer DEF_MAJOR_WIDTH        = Integer.valueOf(50);
@@ -65,7 +63,8 @@ public class GridModel extends WidgetModel {
   static public  final Color   DEF_BACKGROUND         = Color.WHITE;
 
   private boolean bGridState;
-  
+  private boolean bGridSnapState;
+
   /**
    * Instantiates a new grid model.
    */
@@ -79,10 +78,9 @@ public class GridModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GRID;
-    data = new Object[9][5];
+    data = new Object[8][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
-    initProp(GRID_SNAP_TO, Boolean.class, "GRID-101", Boolean.FALSE,"Grid Snap To",DEF_SNAP_TO);
     initProp(GRID_WIDTH, Integer.class, "GRID-102", Boolean.FALSE,"Grid Minor Width",DEF_WIDTH);
     initProp(GRID_HEIGHT, Integer.class, "GRID-103", Boolean.FALSE,"Grid Minor Height",DEF_HEIGHT);
     initProp(GRID_MAJOR_WIDTH, Integer.class, "GRID-104", Boolean.FALSE,
@@ -95,6 +93,7 @@ public class GridModel extends WidgetModel {
     initProp(GRID_BACKGROUND_COLOR, Color.class, "COL-313", Boolean.FALSE,
         "Grid Background Color",DEF_BACKGROUND);
     bGridState = false;
+    bGridSnapState = false;
   }
   
   /**
@@ -106,7 +105,7 @@ public class GridModel extends WidgetModel {
    *          the row
    * @param col
    *          the col
-   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
+   * @see javax.swing.table.AbstractTableModel#setValueAt(Object, int,
    *      int)
    */
   @SuppressWarnings("unused")
@@ -154,31 +153,13 @@ public class GridModel extends WidgetModel {
  /**
    * getEditorAt
    *
-   * @see builder.models.WidgetModel#getEditorAt(int)
+   * @see WidgetModel#getEditorAt(int)
    */
   @Override
   public TableCellEditor getEditorAt(int rowIndex) {
     return null;
   }
 
-  /**
-   * Toggle grid.
-   */
-  public void toggleShowGrid() {
-    if (getGrid()) {
-      bGridState = false;
-    } else {
-      bGridState = true;
-    }
-  }
-
-  /** 
-   * Toggle snap to grid.
-   */
-  public void toggleSnapToGrid() {
-    setGridSnapTo(!getGridSnapTo());
-  }
-  
   /**
    * Gets the grid.
    *
@@ -202,9 +183,7 @@ public class GridModel extends WidgetModel {
    *
    * @return the grid snap to
    */
-  public boolean getGridSnapTo() {
-    return (((Boolean) data[GRID_SNAP_TO][PROP_VAL_VALUE]).booleanValue());
-  }
+  public boolean getGridSnapTo() { return bGridSnapState; }
 
   /**
    * Sets the grid snap to.
@@ -212,7 +191,7 @@ public class GridModel extends WidgetModel {
    * @param b the new grid snap to
    */
   public void setGridSnapTo(boolean b) {
-    data[GRID_SNAP_TO][PROP_VAL_VALUE] = b;
+    bGridSnapState = b;
   }
   
   /**
@@ -283,7 +262,7 @@ public class GridModel extends WidgetModel {
   /**
    * isCellEditable
    *
-   * @see builder.models.WidgetModel#isCellEditable(int, int)
+   * @see WidgetModel#isCellEditable(int, int)
    */
   @Override
   public boolean isCellEditable(int row, int col) {

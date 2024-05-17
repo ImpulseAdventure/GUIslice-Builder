@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b25
+        Ver: 0.17.b28
     </H3>
 </center>
 
@@ -14,11 +14,11 @@
 
 **Publication date and software version**
 
-Published October 2023. Based on GUIslice API Library 0.17.0
+Published May 2024. Based on GUIslice API Library 0.17.1.6
 
 **Copyright**
 
-This document is Copyright © 2018-2022 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
+This document is Copyright © 2018-2024 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
 
 GUIslice Copyright (c) Calvin Hass 2016-2021
 
@@ -194,10 +194,36 @@ For finer control over moving selected objects you can use the arrow keys pressi
 
 Now start by picking your first UI piece on the Toolbox. I suggest you first turn on the GRID using Ctrl-L. I also suggest not starting with a box that takes up your whole screen or the grid lines will be useless.  Besides setting the background color has the same effect without interfering with UI design.  If you want a preview of the UI without grid lines simply use Cntl-L again or the Page Layout tab's Grid control to toggle the grid on/off.
 
-Say you start with a Text Button, you will notice its been randomly placed on the canvas. Using your mouse select this Text Button by moving the mouse pointer over the Text Button and clicking the left key. It will now have a dashed red rectangle around it to indicate its been selected.  Now press and hold the mouse left key and drag the Button approximately where you want it. You can refer to section 3.4 Layout Band for using the various alignment controls for further alignment.   
+Say you start with a Text Button, you will notice its been randomly 
+placed on the canvas. Using your mouse select this Text Button by moving 
+the mouse pointer over the Text Button and clicking the left key.
+ 
+You will notice your cursor will now look like this.
+![](images/drag.png)
+
+Now press and hold the mouse left key and drag the Button 
+approximately where you want it. You can refer to section 3.4 Layout 
+Band for using the various alignment controls for further alignment. 
+
+One futher refinement is when you drag with holding the ALT button, 
+you can drag in one axis (only vertical or only horizontal).
+
+In addition, If Snap to Grid is enabled your drag will cause the UI Widget to snap to the closest line
+(vertical or horizontal).
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
+
+You will also notice that as you move your cursor over your text button that when you pass over one of the red handles
+your cursor will change to one of these arrows. 
+
+![](images/resize.png)
+
+This indicates you can resize your button in the direction indicated by the arrow.
+
+For example, resizing to the east like so:
+
+![](images/resize_east.png)
 
 Off to the right of the TFT Simulation screen you will see all of the properties for this element.  
 Anything with a rose color is something you can't edit.  When you were dragging your button you might have noticed the x and y coordinates changing dynamically.  Then when you released the mouse a slight jump occurred snapping  the UI Button to the grid's snapTo points.  Instead of dragging the Text Button around you could also have  simply typed in the new x and y positions within the properties table. Modifying the x or y coordinates directly will also override the Grid's SnapTo and its Margin setting.
@@ -256,11 +282,18 @@ For Bands Text,Controls, Gauges and Misc See Section 4.0 for details of each UI 
 
 ![](images/layout/view_band.png)
 
-The Grid button allows you to turn on/off the grid. 
-
 The Zoom In button will enlarge the size of the TFT Simulation.
 
 The Zoom Out button will reduce your view of the TFT Simulation.  Note: You can't make it smaller than your Target Platform's Screen Dimensions.
+
+The Zoom Reset restores your view back to its original size.
+
+The Show Grid button allows you to turn on/off the grid. Ctrl-L can also turn toggel this On/Off.
+
+The Snap to Grid toggles ON/Off.
+When enabled it will adjust a UI Widget position to align to the line (vertical or horizontal) that is closest.
+If Snap to Grid enabled, then by holding the CTRL button you can temporarily disable grid snapping.
+
 
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
