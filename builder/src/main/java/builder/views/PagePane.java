@@ -79,6 +79,7 @@ import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.fonts.FontFactory;
+import builder.models.AdvancedSnappingModel;
 import builder.models.GridModel;
 import builder.models.LineModel;
 import builder.models.PageModel;
@@ -121,7 +122,7 @@ public class PagePane extends JPanel implements iSubscriber {
   private String donotSelectKey = null;
 
   private enum CurrentAction {
-    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION
+    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION, EDITING_GUIDELINES
   }
 
   /** The current action. */
@@ -160,6 +161,8 @@ public class PagePane extends JPanel implements iSubscriber {
   /** Guidelines used by resizing and snapping commands */
   private Guidelines guidelines = new Guidelines();
   private SnapperBuilder snapperBuilder = new SnapperBuilder();
+
+  private AdvancedSnappingModel advancedSnappingModel = AdvancedSnappingModel.getInstance();
 
   /** the number of selected widgets. */
   private int selectedCnt = 0;
@@ -260,6 +263,29 @@ public class PagePane extends JPanel implements iSubscriber {
       zoomTransform();
     }
 
+    AdvancedSnappingModel.getInstance().addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
+      public void editGuidelinesChanged(boolean editGuidelines) {
+        if (editGuidelines) {
+          currentAction = CurrentAction.EDITING_GUIDELINES;
+        } else if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+          currentAction = CurrentAction.NONE;
+        }
+        repaint();
+      }
+      public void showMarginsChanged(boolean showMargins) {
+        repaint();
+      }
+      public void showGuidelinesChanged(boolean showGuidelines) {
+        repaint();
+      }
+      public void showGridChanged(boolean showGrid) {
+        repaint();
+      }
+      public void showGridBgChanged(boolean showGridBg) {
+        repaint();
+      }
+    });
+
     guidelines.createGuideline(Guidelines.Type.HORIZONTAL, 53);
     guidelines.createGuideline(Guidelines.Type.HORIZONTAL, 106);
     guidelines.createGuideline(Guidelines.Type.VERTICAL, 81);
@@ -284,14 +310,14 @@ public class PagePane extends JPanel implements iSubscriber {
     g2d.transform(at);
     int width = pm.getWidth();
     int height = pm.getHeight();
-    if (pm.useBackgroundImage() && !gridModel.getGrid()) {
+    if (pm.useBackgroundImage() && (!advancedSnappingModel.isShowGrid() || !advancedSnappingModel.isShowGridBg())) {
       g2d.setColor(Color.BLACK);
       g2d.fillRect(0, 0, width, height);
       g2d.drawImage(pm.getImage(), 0, 0, null);
     } else {
-      g2d.setColor(gridModel.getGrid() ? gridModel.getBackGroundColor() : pm.getBackgroundColor());
+      g2d.setColor((advancedSnappingModel.isShowGrid() && advancedSnappingModel.isShowGridBg()) ? gridModel.getBackGroundColor() : pm.getBackgroundColor());
       g2d.fillRect(0,  0, width, height);
-      if (gridModel.getGrid()) {
+      if (advancedSnappingModel.isShowGrid()) {
         drawGrid(g2d, width, height);
       }
     }
@@ -321,42 +347,60 @@ public class PagePane extends JPanel implements iSubscriber {
     // gets rid of the copy
     g2d.dispose();
 
-    if ((currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) || (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null)) {
+    boolean widgetActionInProgress = (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
+        (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null);
+    if (widgetActionInProgress || currentAction == CurrentAction.EDITING_GUIDELINES || advancedSnappingModel.isShowMargins() || advancedSnappingModel.isShowGuidelines()) {
       final Graphics2D g2d_ = (Graphics2D) g.create();
-      //g2d_.setComposite(AlphaComposite.Xor);
+
       g2d_.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
 
-      g2d_.setColor(Color.RED);
-      drawMargins(g2d_, width, height);
-
-      g2d_.setColor(Color.WHITE);
-      guidelines.getGuidelines(Guidelines.Type.HORIZONTAL).forEach(guideline -> {
-        g2d_.drawLine(0, (int) (guideline.getPos() * zoomFactor), (int) (width * zoomFactor), (int) (guideline.getPos() * zoomFactor));
-      });
-      guidelines.getGuidelines(Guidelines.Type.VERTICAL).forEach(guideline -> {
-        g2d_.drawLine((int) (guideline.getPos() * zoomFactor), 0, (int) (guideline.getPos() * zoomFactor), (int) (height * zoomFactor));
-      });
-
-      g2d_.setColor(Color.ORANGE);
-
-      Snapper snapper;
-      snapper = currentAction == CurrentAction.RESIZING_WIDGET? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
-      for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
-        g2d_.drawLine(0, (int) (marker.position * zoomFactor), (int) (width * zoomFactor), (int) (marker.position * zoomFactor));
+      if (widgetActionInProgress || advancedSnappingModel.isShowMargins()) {
+        drawMargins(g2d_, width, height);
+      }
+      if (widgetActionInProgress || advancedSnappingModel.isShowGuidelines() || currentAction == CurrentAction.EDITING_GUIDELINES) {
+        drawGuidelines(g2d_, width, height);
       }
 
-      snapper = currentAction == CurrentAction.RESIZING_WIDGET ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
-      for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
-        g2d_.drawLine((int) (marker.position * zoomFactor), 0, (int) (marker.position * zoomFactor), (int) (height * zoomFactor));
+      if (
+        (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
+        (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null)
+      ) {
+        drawSnappingMarkers(g2d_, width, height);
       }
 
       g2d_.dispose();
     }
   }
 
+  private void drawGuidelines(final Graphics2D g2d, int width, int height) {
+    g2d.setColor(Color.WHITE);
+    guidelines.getGuidelines(Guidelines.Type.HORIZONTAL).forEach(guideline -> {
+      g2d.drawLine(0, (int) (guideline.getPos() * zoomFactor), (int) (width * zoomFactor), (int) (guideline.getPos() * zoomFactor));
+    });
+    guidelines.getGuidelines(Guidelines.Type.VERTICAL).forEach(guideline -> {
+      g2d.drawLine((int) (guideline.getPos() * zoomFactor), 0, (int) (guideline.getPos() * zoomFactor), (int) (height * zoomFactor));
+    });
+  }
+
+  private void drawSnappingMarkers(final Graphics2D g2d, int width, int height) {
+    g2d.setColor(Color.ORANGE);
+
+    Snapper snapper;
+    snapper = currentAction == CurrentAction.RESIZING_WIDGET  ? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
+    for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
+      g2d.drawLine(0, (int) (marker.position * zoomFactor), (int) (width * zoomFactor), (int) (marker.position * zoomFactor));
+    }
+
+    snapper = currentAction == CurrentAction.RESIZING_WIDGET ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
+    for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
+      g2d.drawLine((int) (marker.position * zoomFactor), 0, (int) (marker.position * zoomFactor), (int) (height * zoomFactor));
+    }
+  }
+
   private void drawMargins(Graphics2D g2d, int width, int height) {
     int marginSize = pm.getMargins();
-    //g2d.setColor(gridModel.getGridMajorColor());
+
+    g2d.setColor(Color.RED);
     g2d.drawRect((int) (marginSize * zoomFactor), (int) (marginSize * zoomFactor), (int) ((width - 2 * marginSize)  * zoomFactor), (int) ((height - 2 * marginSize) * zoomFactor));
   };
 
@@ -915,7 +959,6 @@ public class PagePane extends JPanel implements iSubscriber {
     @Override
     public void mouseClicked(MouseEvent e) {
       mousePt = e.getPoint();
-      Widget w = findOne(mousePt);
       int button = e.getButton();
       if (button != MouseEvent.BUTTON1) {
 //    System.out.println("button != MouseEvent.BUTTON1");
@@ -924,6 +967,18 @@ public class PagePane extends JPanel implements iSubscriber {
       if (e.isShiftDown() && e.isControlDown()) {
         return;
       }
+      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+        Guidelines.Guideline guideline = guidelines.getOne(mapPoint(mousePt.x, mousePt.y));
+        if (guideline != null) {
+          System.out.println(guideline);
+          MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, "abc", getKey());
+        } else {
+          //guidelines.createGuideline(Guidelines.Type.HORIZONTAL, mapPoint(mousePt.x, mousePt.y).y);
+        }
+        return;
+      }
+
+      Widget w = findOne(mousePt);
       if (e.isControlDown()) {
         // Single Left-click + Ctrl means to toggle select under cursor
         if (w != null) {
@@ -987,6 +1042,9 @@ public class PagePane extends JPanel implements iSubscriber {
      */
     @Override
     public void mouseReleased(MouseEvent e) {
+      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+        return;
+      }
       mouseRect.setBounds(0, 0, 0, 0);
       if (dragCommand != null) {
         dragCommand.stop(e.isControlDown());
@@ -1020,6 +1078,11 @@ public class PagePane extends JPanel implements iSubscriber {
       if (currentAction == CurrentAction.DRAGGING_WIDGET) {
         currentAction = CurrentAction.NONE;
       }
+      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+        Point unscaledPoint = PagePane.mapPoint(mousePt.x, mousePt.y);
+        //guidelines.getOne(unscaledPoint);
+        return;
+      }
       Widget w = findOne(mousePt);
       if (currentAction == CurrentAction.RECTANGULAR_SELECTION) {
         bMultiSelectionBox = true;
@@ -1041,7 +1104,7 @@ public class PagePane extends JPanel implements iSubscriber {
             break;
           default:
             if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
-              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType, snapperBuilder.buildHSnapper(widgetUnderCursor), snapperBuilder.buildVSnapper(widgetUnderCursor));
+              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType, snapperBuilder.buildHSnapper(widgetUnderCursor, advancedSnappingModel), snapperBuilder.buildVSnapper(widgetUnderCursor, advancedSnappingModel));
               resizeCommand.start(unscaledPoint);
               currentAction = CurrentAction.RESIZING_WIDGET;
             }
@@ -1096,6 +1159,16 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
+      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+        Guidelines.Guideline guideline = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
+        if (guideline != null) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else {
+          setCursor(Cursor.getDefaultCursor());
+        }
+        return;
+      }
+
       if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
         return;
       }
@@ -1195,7 +1268,7 @@ public class PagePane extends JPanel implements iSubscriber {
         selectRect(mouseRect);
      } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
        if (dragCommand == null) {
-          dragCommand = new DragWidgetCommand(instance, snapperBuilder.buildHSnapper(null), snapperBuilder.buildVSnapper(null));
+          dragCommand = new DragWidgetCommand(instance, snapperBuilder.buildHSnapper(null, advancedSnappingModel), snapperBuilder.buildVSnapper(null, advancedSnappingModel));
           if (!dragCommand.start(dragPt)) {
             currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
@@ -1221,8 +1294,8 @@ public class PagePane extends JPanel implements iSubscriber {
   }  // end MouseMotionHandler
 
   private class SnapperBuilder {
-    private Snapper buildHSnapper(Widget currentWidget) {
-      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), true, true, true);
+    private Snapper buildHSnapper(Widget currentWidget, AdvancedSnappingModel snappingModel) {
+      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
       snapper.addGrid(PagePane.this.gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
       snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
       snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
@@ -1235,8 +1308,8 @@ public class PagePane extends JPanel implements iSubscriber {
       return snapper;
     }
 
-    private Snapper buildVSnapper(Widget currentWidget) {
-      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), true, true, true);
+    private Snapper buildVSnapper(Widget currentWidget, AdvancedSnappingModel snappingModel) {
+      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
       snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
       snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
       snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);

@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -501,10 +502,10 @@ public class Ribbon extends JPanel {
     btn_snap_margins.addToolTip("Toggle Snap to Margins ON/OFF");
     btn_snap_margins.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_MARGINS);
 
-    btn_edit_guidelines = band.addSlimButton("Edit guidelines");
+    btn_edit_guidelines = band.addSlimSwitchButton("Edit guidelines");
     btn_edit_guidelines.setImage(Utils.getIcon(
         "resources/icons/snapping/edit_guidelines.png"));
-    btn_edit_guidelines.addToolTip("Edit Guidelines");
+    btn_edit_guidelines.addToolTip("Toggle Edit Guidelines mode ON/OFF");
     btn_edit_guidelines.setActionCommand(AdvancedSnappingModel.ACTION_EDIT_GUIDELINES);
 
     btn_snap_widgets = band.addSlimSwitchButton("Snap to widgets");
@@ -704,18 +705,18 @@ public class Ribbon extends JPanel {
   }
 
   public void setAdvancedSnappingModel(AdvancedSnappingModel model) {
-    if (model.isShowGrid() && !btn_show_grid.isPressed()) btn_show_grid.setPressed(true);
-    if (model.isShowGridBg() && !btn_show_grid_bg.isPressed()) btn_show_grid_bg.setPressed(true);
-    if (model.isSnapToGrid() && !btn_snap_grid.isPressed()) btn_snap_grid.setPressed(true);
-    if (model.isShowGuidelines() && !btn_show_guidelines.isPressed()) btn_show_guidelines.setPressed(true);
-    if (model.isSnapToGuidelines() && !btn_snap_guidelines.isPressed()) btn_snap_guidelines.setPressed(true);
-    if (model.isShowMargins() && !btn_show_margins.isPressed()) btn_show_margins.setPressed(true);
-    if (model.isSnapToMargins() && !btn_snap_margins.isPressed()) btn_snap_margins.setPressed(true);
-    if (model.isSnapToWidgets() && !btn_snap_widgets.isPressed()) btn_snap_widgets.setPressed(true);
+    btn_show_grid.setPressed(model.isShowGrid());
+    btn_show_grid_bg.setPressed(model.isShowGridBg());
+    btn_snap_grid.setPressed(model.isSnapToGrid());
+    btn_show_guidelines.setPressed(model.isShowGuidelines());
+    btn_snap_guidelines.setPressed(model.isSnapToGuidelines());
+    btn_show_margins.setPressed(model.isShowMargins());
+    btn_snap_margins.setPressed(model.isSnapToMargins());
+    btn_snap_widgets.setPressed(model.isSnapToWidgets());
 
     model.addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
       public void showGridChanged(boolean showGrid) {
-        if (btn_show_grid.isPressed() != showGrid) btn_show_grid.setPressed(true);
+        btn_show_grid.setPressed(showGrid);
         repaint();
       }
     });
@@ -723,6 +724,7 @@ public class Ribbon extends JPanel {
     ActionListener actionListener = model.getIncomingActionListener();
 
     btn_show_grid.addActionListener(actionListener);
+    btn_show_grid_bg.addActionListener(actionListener);
     btn_snap_grid.addActionListener(actionListener);
     btn_show_guidelines.addActionListener(actionListener);
     btn_snap_guidelines.addActionListener(actionListener);

@@ -23,6 +23,8 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
   public static final String ACTION_SNAP_TO_GUIDELINES_ON = ACTION_SNAP_TO_GUIDELINES + "_on";
   public static final String ACTION_SNAP_TO_GUIDELINES_OFF = ACTION_SNAP_TO_GUIDELINES + "_off";
   public static final String ACTION_EDIT_GUIDELINES = "editguidelines";
+  public static final String ACTION_EDIT_GUIDELINES_ON = ACTION_EDIT_GUIDELINES + "_on";
+  public static final String ACTION_EDIT_GUIDELINES_OFF = ACTION_EDIT_GUIDELINES + "_off";
   public static final String ACTION_SHOW_MARGINS = "showmargins";
   public static final String ACTION_SHOW_MARGINS_ON = ACTION_SHOW_MARGINS + "_on";
   public static final String ACTION_SHOW_MARGINS_OFF = ACTION_SHOW_MARGINS + "_off";
@@ -50,6 +52,7 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
   private boolean showMargins = false;
   private boolean snapToMargins = false;
   private boolean snapToWidgets = false;
+  private boolean editGuidelines = false;
   private EventListenerList listenerList = new EventListenerList();
   private ActionListener actionListener = null;
 
@@ -59,7 +62,7 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     public void snapToGridChanged(boolean snapToGrid);
     public void showGuidelinesChanged(boolean showGuidelines);
     public void snapToGuidelinesChanged(boolean snapToGuidelines);
-    public void editGuidelinesCalled();
+    public void editGuidelinesChanged(boolean editGuidelines);
     public void showMarginsChanged(boolean showMargins);
     public void snapToMarginsChanged(boolean snapToMargins);
     public void snapToWidgetsChanged(boolean snapToWidgets);
@@ -72,7 +75,7 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     public void snapToGridChanged(boolean snapToGrid) {};
     public void showGuidelinesChanged(boolean showGuidelines) {};
     public void snapToGuidelinesChanged(boolean snapToGuidelines) {};
-    public void editGuidelinesCalled() {};
+    public void editGuidelinesChanged(boolean editGuidelines) {};
     public void showMarginsChanged(boolean showMargins) {};
     public void snapToMarginsChanged(boolean snapToMargins) {};
     public void snapToWidgetsChanged(boolean snapToWidgets) {};
@@ -91,38 +94,39 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
               break;
             case ACTION_SHOW_GRID_ON:
             case ACTION_SHOW_GRID_OFF:
-              setShowGrid(e.getActionCommand() == ACTION_SHOW_GRID_ON);
+              setShowGrid(e.getActionCommand().equals(ACTION_SHOW_GRID_ON));
               break;
             case ACTION_SHOW_GRID_BG_ON:
             case ACTION_SHOW_GRID_BG_OFF:
-              setShowGridBg(e.getActionCommand() == ACTION_SHOW_GRID_BG_ON);
+              setShowGridBg(e.getActionCommand().equals(ACTION_SHOW_GRID_BG_ON));
               break;
             case ACTION_SNAP_TO_GRID_ON:
             case ACTION_SNAP_TO_GRID_OFF:
-              setSnapToGrid(e.getActionCommand() == ACTION_SNAP_TO_GRID_ON);
+              setSnapToGrid(e.getActionCommand().equals(ACTION_SNAP_TO_GRID_ON));
               break;
             case ACTION_SHOW_GUIDELINES_ON:
             case ACTION_SHOW_GUIDELINES_OFF:
-              setShowGuidelines(e.getActionCommand() == ACTION_SHOW_GUIDELINES_ON);
+              setShowGuidelines(e.getActionCommand().equals(ACTION_SHOW_GUIDELINES_ON));
               break;
             case ACTION_SNAP_TO_GUIDELINES_ON:
             case ACTION_SNAP_TO_GUIDELINES_OFF:
-              setSnapToGuidelines(e.getActionCommand() == ACTION_SNAP_TO_GUIDELINES_ON);
+              setSnapToGuidelines(e.getActionCommand().equals(ACTION_SNAP_TO_GUIDELINES_ON));
               break;
             case ACTION_SHOW_MARGINS_ON:
             case ACTION_SHOW_MARGINS_OFF:
-              setShowMargins(e.getActionCommand() == ACTION_SHOW_MARGINS_ON);
+              setShowMargins(e.getActionCommand().equals(ACTION_SHOW_MARGINS_ON));
               break;
             case ACTION_SNAP_TO_MARGINS_ON:
             case ACTION_SNAP_TO_MARGINS_OFF:
-              setSnapToMargins(e.getActionCommand() == ACTION_SNAP_TO_MARGINS_ON);
+              setSnapToMargins(e.getActionCommand().equals(ACTION_SNAP_TO_MARGINS_ON));
               break;
-            case ACTION_EDIT_GUIDELINES:
-              callEditGuidelines();
+            case ACTION_EDIT_GUIDELINES_ON:
+            case ACTION_EDIT_GUIDELINES_OFF:
+              setEditGuidelines(e.getActionCommand().equals(ACTION_EDIT_GUIDELINES_ON));
               break;
             case ACTION_SNAP_TO_WIDGETS_ON:
             case ACTION_SNAP_TO_WIDGETS_OFF:
-              setSnapToWidgets(e.getActionCommand() == ACTION_SNAP_TO_WIDGETS_ON);
+              setSnapToWidgets(e.getActionCommand().equals(ACTION_SNAP_TO_WIDGETS_ON));
               break;
           }
         }
@@ -174,6 +178,10 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     return snapToWidgets;
   }
 
+  public boolean isEditGuidelines() {
+    return editGuidelines;
+  }
+
   //
 
   public void setShowGrid(boolean showGrid) {
@@ -201,8 +209,8 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.snapToGuidelinesChanged(snapToGuidelines); }});
   }
 
-  public void setShowMargins(boolean showMargins) {
-    this.showMargins = showMargins;
+  public void setShowMargins(boolean showMargins_) {
+    this.showMargins = showMargins_;
     fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.showMarginsChanged(showMargins); }});
   }
 
@@ -216,8 +224,9 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.snapToWidgetsChanged(snapToWidgets); }});
   }
 
-  public void callEditGuidelines() {
-    fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.editGuidelinesCalled(); }});
+  public void setEditGuidelines(boolean editGuidelines) {
+    this.editGuidelines = editGuidelines;
+    fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.editGuidelinesChanged(editGuidelines); }});
   }
 
   //
