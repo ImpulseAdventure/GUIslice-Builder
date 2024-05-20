@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.EnumSet;
 
 import builder.models.AdvancedSnappingModel;
+import builder.models.GuidelineModel;
 import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 
@@ -63,7 +64,7 @@ public class Snapper {
       this(type, SourceEdge.ALL, pos, null, null);
     }
 
-    public Item(ItemType type, EnumSet<SourceEdge> sourceEdge, int pos, Widget widget, Guidelines.Guideline guideline) {
+    public Item(ItemType type, EnumSet<SourceEdge> sourceEdge, int pos, Widget widget, GuidelineModel guideline) {
       this.type = type;
       this.sourceEdge = sourceEdge;
       this.pos = pos;
@@ -75,7 +76,7 @@ public class Snapper {
       this(ItemType.WIDGET, sourceEdge, pos, widget, null);
     }
 
-    public Item(int pos, Guidelines.Guideline guideline) {
+    public Item(int pos, GuidelineModel guideline) {
       this(ItemType.GUIDELINE, SourceEdge.ALL, pos, null, guideline);
     }
   }
@@ -187,8 +188,8 @@ public class Snapper {
   }
 
   // position relative to the left or top edge of the widget
-  public void addGuideline(Guidelines.Guideline guideline) {
-    items.add(new Item(guideline.getPos(), guideline));
+  public void addGuideline(GuidelineModel guidelineModel) {
+    items.add(new Item(guidelineModel.getPos(), guidelineModel));
     sortItems();
   }
 
@@ -241,14 +242,14 @@ public class Snapper {
       Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
       snapper.addGrid(gridMajorSpacing, gridMinorSpacing, pageSize);
       addMargins(pageSize, marginSize, snapper);
-      addGuidelines(guidelines, Guidelines.Type.HORIZONTAL, snapper);
+      addGuidelines(guidelines, GuidelineModel.Orientation.HORIZONTAL, snapper);
       addWidgets(widgets, widgetsSpacing, snapper);
       return snapper;
     }
 
-    private static void addGuidelines(Guidelines guidelines, Guidelines.Type type, Snapper snapper) {
-      for (Guidelines.Guideline guideline : guidelines.getGuidelines(type)) {
-        snapper.addGuideline(guideline);
+    private static void addGuidelines(Guidelines guidelines, GuidelineModel.Orientation orientation, Snapper snapper) {
+      for (Guidelines.Guideline guideline : guidelines.getGuidelines(orientation)) {
+        snapper.addGuideline(guideline.getModel());
       }
     }
 
@@ -277,7 +278,7 @@ public class Snapper {
       Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
       snapper.addGrid(gridMajorSpacing, gridMinorSpacing, pageSize);
       addMargins(pageSize, marginSize, snapper);
-      addGuidelines(guidelines, Guidelines.Type.VERTICAL, snapper);
+      addGuidelines(guidelines, GuidelineModel.Orientation.VERTICAL, snapper);
       addWidgets(widgets, widgetsSpacing, snapper);
       return snapper;
     }

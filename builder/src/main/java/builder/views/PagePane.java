@@ -72,7 +72,7 @@ import builder.commands.History;
 import builder.common.EnumFactory;
 import builder.common.Guidelines;
 import builder.common.Snapper;
-import builder.common.Snapper.Type;
+import builder.common.ScaledGraphics;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.events.MsgBoard;
@@ -81,12 +81,14 @@ import builder.events.iSubscriber;
 import builder.fonts.FontFactory;
 import builder.models.AdvancedSnappingModel;
 import builder.models.GridModel;
+import builder.models.GuidelineModel;
 import builder.models.LineModel;
 import builder.models.PageModel;
 import builder.models.ProjectModel;
 import builder.models.SpinnerModel;
 import builder.models.WidgetModel;
 import builder.prefs.GridEditor;
+import builder.widgets.GuidelineWidget;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
 import builder.widgets.Widget.HandleType;
@@ -160,7 +162,6 @@ public class PagePane extends JPanel implements iSubscriber {
 
   /** Guidelines used by resizing and snapping commands */
   private Guidelines guidelines = new Guidelines();
-//  private SnapperBuilder snapperBuilder = new SnapperBuilder();
 
   private AdvancedSnappingModel advancedSnappingModel = AdvancedSnappingModel.getInstance();
 
@@ -286,10 +287,10 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     });
 
-    guidelines.createGuideline(Guidelines.Type.HORIZONTAL, 53);
-    guidelines.createGuideline(Guidelines.Type.HORIZONTAL, 106);
-    guidelines.createGuideline(Guidelines.Type.VERTICAL, 81);
-    guidelines.createGuideline(Guidelines.Type.VERTICAL, 212);
+    guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 53);
+    guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 106);
+    guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 81);
+    guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 212);
   }
 
   /**
@@ -969,10 +970,10 @@ public class PagePane extends JPanel implements iSubscriber {
         return;
       }
       if (currentAction == CurrentAction.EDITING_GUIDELINES) {
-        Guidelines.Guideline guideline = guidelines.getOne(mapPoint(mousePt.x, mousePt.y));
-        if (guideline != null) {
-          System.out.println(guideline);
-          MsgBoard.sendEvent(getKey(),MsgEvent.OBJECT_SELECTED_PAGEPANE, "abc", getKey());
+        GuidelineWidget guidelineWidget = guidelines.getOne(mapPoint(mousePt.x, mousePt.y));
+        if (guidelineWidget != null) {
+          System.out.println(guidelineWidget);
+          MsgBoard.sendEvent(getKey(), MsgEvent.OBJECT_SELECTED_PAGEPANE, "abc", getKey());
         } else {
           //guidelines.createGuideline(Guidelines.Type.HORIZONTAL, mapPoint(mousePt.x, mousePt.y).y);
         }
@@ -1120,28 +1121,6 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     } // end mousePressed
 
-    // private Snapper buildHSnapper() {
-    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
-    //   snapper.addGrid(gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
-    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
-    //   snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
-    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
-    //     snapper.addGuideline(g);
-    //   }
-    //   return snapper;
-    // }
-
-    // private Snapper buildVSnapper() {
-    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
-    //   snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
-    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
-    //   snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);
-    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
-    //     snapper.addGuideline(g);
-    //   }
-    //   return snapper;
-    // }
-
     /*
      * Handle zooming on mouse wheel.
      */
@@ -1167,8 +1146,8 @@ public class PagePane extends JPanel implements iSubscriber {
     @Override
     public void mouseMoved(MouseEvent e) {
       if (currentAction == CurrentAction.EDITING_GUIDELINES) {
-        Guidelines.Guideline guideline = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
-        if (guideline != null) {
+        GuidelineWidget guidelineWidget = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
+        if (guidelineWidget != null) {
           setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         } else {
           setCursor(Cursor.getDefaultCursor());
