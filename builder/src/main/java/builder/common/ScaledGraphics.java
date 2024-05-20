@@ -28,6 +28,10 @@ public class ScaledGraphics {
     graphics.setColor(color);
   }
 
+  public Color getColor() {
+    return graphics.getColor();
+  }
+
   public void setStroke(Stroke s) {
     graphics.setStroke(s);
   }

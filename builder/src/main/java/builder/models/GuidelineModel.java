@@ -1,6 +1,8 @@
 package builder.models;
 
-import builder.common.Guidelines;
+import java.awt.Point;
+
+//import builder.common.Guidelines;
 
 public class GuidelineModel extends LineModel {
   public enum Orientation {
@@ -21,11 +23,22 @@ public class GuidelineModel extends LineModel {
     return pos;
   }
 
+  public void setPos(int pos) {
+    this.pos = pos;
+  }
+
+  public int getX() {
+    return orientation == Orientation.VERTICAL ? pos : 0;
+  }
+
+  public int getY() {
+    return orientation == Orientation.HORIZONTAL ? pos : 0;
+  }
+
   public Orientation getOrientation() {
     return orientation;
   }
 
-  @Override
   public boolean isVertical() {
     return orientation == Orientation.VERTICAL;
   }

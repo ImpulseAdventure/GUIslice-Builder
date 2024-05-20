@@ -11,8 +11,6 @@ import builder.widgets.GuidelineWidget;
  * Guideline is a visual guide to help you align widgets.
  */
 public class Guidelines {
-  private static final int SNAPPING_DISTANCE = 3;
-
   private GuidelinesList hGuidelines = new GuidelinesList();
   private GuidelinesList vGuidelines = new GuidelinesList();
 
@@ -38,12 +36,14 @@ public class Guidelines {
     }
   }
 
-  public void createGuideline(GuidelineModel.Orientation orientation, int pos) {
+  public GuidelineWidget createGuideline(GuidelineModel.Orientation orientation, int pos) {
+    GuidelineWidget widget = new GuidelineWidget(orientation, pos);
     if (orientation == GuidelineModel.Orientation.HORIZONTAL) {
-      hGuidelines.add(new Guideline(new GuidelineWidget(orientation, pos)));
+      hGuidelines.add(new Guideline(widget));
     } else {
-      vGuidelines.add(new Guideline(new GuidelineWidget(orientation, pos)));
+      vGuidelines.add(new Guideline(widget));
     }
+    return widget;
   }
 
   public GuidelinesList getGuidelines(GuidelineModel.Orientation orientation) {
@@ -58,19 +58,19 @@ public class Guidelines {
     return !hGuidelines.isEmpty() || !vGuidelines.isEmpty();
   }
 
-  public GuidelineWidget getOne(Point mapPoint) {
-    for (Guideline guideline : hGuidelines) {
-      if (!guideline.model.isVertical() && mapPoint.y >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.y <= guideline.model.getPos() + SNAPPING_DISTANCE) {
-        return guideline.widget;
-      }
-    }
+  // public GuidelineWidget getOne(Point mapPoint) {
+  //   for (Guideline guideline : hGuidelines) {
+  //     if (!guideline.model.isVertical() && mapPoint.y >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.y <= guideline.model.getPos() + SNAPPING_DISTANCE) {
+  //       return guideline.widget;
+  //     }
+  //   }
 
-    for (Guideline guideline : vGuidelines) {
-      if (guideline.model.isVertical() && mapPoint.x >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.x <= guideline.model.getPos() + SNAPPING_DISTANCE) {
-        return guideline.widget;
-      }
-    }
+  //   for (Guideline guideline : vGuidelines) {
+  //     if (guideline.model.isVertical() && mapPoint.x >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.x <= guideline.model.getPos() + SNAPPING_DISTANCE) {
+  //       return guideline.widget;
+  //     }
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 }

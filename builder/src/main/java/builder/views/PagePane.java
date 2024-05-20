@@ -266,11 +266,6 @@ public class PagePane extends JPanel implements iSubscriber {
 
     AdvancedSnappingModel.getInstance().addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
       public void editGuidelinesChanged(boolean editGuidelines) {
-        if (editGuidelines) {
-          currentAction = CurrentAction.EDITING_GUIDELINES;
-        } else if (currentAction == CurrentAction.EDITING_GUIDELINES) {
-          currentAction = CurrentAction.NONE;
-        }
         repaint();
       }
       public void showMarginsChanged(boolean showMargins) {
@@ -287,10 +282,11 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     });
 
-    guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 53);
-    guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 106);
-    guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 81);
-    guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 212);
+    widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 53));
+    widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 106));
+    widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 176));
+    widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 81));
+    widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 212));
   }
 
   /**
@@ -326,8 +322,10 @@ public class PagePane extends JPanel implements iSubscriber {
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
     // output this page's widgets
-    for (Widget w : widgets) {
-      w.draw(g2d);
+    for (Widget widget : widgets) {
+      if (!(widget instanceof GuidelineWidget)) {
+        widget.draw(g2d);
+      }
     }
     /* output any base page widgets unless this is a project
      * base page or popup page.
@@ -350,7 +348,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
     boolean widgetActionInProgress = (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
         (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null);
-    if (widgetActionInProgress || currentAction == CurrentAction.EDITING_GUIDELINES || advancedSnappingModel.isShowMargins() || advancedSnappingModel.isShowGuidelines()) {
+    if (widgetActionInProgress || advancedSnappingModel.isEditGuidelines() || advancedSnappingModel.isShowMargins() || advancedSnappingModel.isShowGuidelines()) {
       final ScaledGraphics graphics = new ScaledGraphics((Graphics2D) g.create(), zoomFactor);
 
       // dashed stroke for all features
@@ -359,7 +357,7 @@ public class PagePane extends JPanel implements iSubscriber {
       if ((widgetActionInProgress && advancedSnappingModel.isSnapToMargins()) || advancedSnappingModel.isShowMargins()) {
         drawMargins(graphics, width, height);
       }
-      if ((widgetActionInProgress && advancedSnappingModel.isSnapToGuidelines()) || advancedSnappingModel.isShowGuidelines() || currentAction == CurrentAction.EDITING_GUIDELINES) {
+      if ((widgetActionInProgress && advancedSnappingModel.isSnapToGuidelines()) || advancedSnappingModel.isShowGuidelines() || advancedSnappingModel.isEditGuidelines()) {
         drawGuidelines(graphics, width, height);
       }
 
@@ -832,6 +830,10 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public List<Widget> getSelectedList() {
     List<Widget> selected = new ArrayList<Widget>();
+    if (widgetUnderCursor instanceof GuidelineWidget) {
+      selected.add(widgetUnderCursor);
+      return selected;
+    }
     for (Widget w : widgets) {
       if (w.isSelected()) {
         selected.add(w);
@@ -970,16 +972,19 @@ public class PagePane extends JPanel implements iSubscriber {
       if (e.isShiftDown() && e.isControlDown()) {
         return;
       }
-      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
-        GuidelineWidget guidelineWidget = guidelines.getOne(mapPoint(mousePt.x, mousePt.y));
-        if (guidelineWidget != null) {
-          System.out.println(guidelineWidget);
-          MsgBoard.sendEvent(getKey(), MsgEvent.OBJECT_SELECTED_PAGEPANE, "abc", getKey());
-        } else {
-          //guidelines.createGuideline(Guidelines.Type.HORIZONTAL, mapPoint(mousePt.x, mousePt.y).y);
-        }
-        return;
-      }
+      // if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+      //   GuidelineWidget guidelineWidget = guidelines.getOne(mapPoint(mousePt.x, mousePt.y));
+      //   if (guidelineWidget != null) {
+      //     guidelineWidget.select();
+      //     repaint();
+
+      //     System.out.println(guidelineWidget);
+      //     MsgBoard.sendEvent(getKey(), MsgEvent.OBJECT_SELECTED_PAGEPANE, "abc", getKey());
+      //   } else {
+      //     //guidelines.createGuideline(Guidelines.Type.HORIZONTAL, mapPoint(mousePt.x, mousePt.y).y);
+      //   }
+      //   return;
+      // }
 
       Widget w = findOne(mousePt);
       if (e.isControlDown()) {
@@ -1081,11 +1086,11 @@ public class PagePane extends JPanel implements iSubscriber {
       if (currentAction == CurrentAction.DRAGGING_WIDGET) {
         currentAction = CurrentAction.NONE;
       }
-      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
-        Point unscaledPoint = PagePane.mapPoint(mousePt.x, mousePt.y);
-        //guidelines.getOne(unscaledPoint);
-        return;
-      }
+      // if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+      //   Point unscaledPoint = PagePane.mapPoint(mousePt.x, mousePt.y);
+      //   //guidelines.getOne(unscaledPoint);
+      //   return;
+      // }
       Widget w = findOne(mousePt);
       if (currentAction == CurrentAction.RECTANGULAR_SELECTION) {
         bMultiSelectionBox = true;
@@ -1098,8 +1103,10 @@ public class PagePane extends JPanel implements iSubscriber {
         HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
-            if (w.isSelected()) {
-              currentAction = CurrentAction.NONE;
+          case DRAG_VERTICAL:
+          case DRAG_HORIZONTAL:
+            if (w.isSelected() || w instanceof GuidelineWidget) {
+              currentAction = CurrentAction.DRAGGING_WIDGET;
             }
             dragPt = new Point(mousePt.x, mousePt.y);
             break;
@@ -1146,26 +1153,28 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
-        GuidelineWidget guidelineWidget = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
-        if (guidelineWidget != null) {
-          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        } else {
-          setCursor(Cursor.getDefaultCursor());
+      // widgetUnderCursor = null;
+      // if (advancedSnappingModel.isEditGuidelines()) {
+      //   widgetUnderCursor = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
+      // };
+
+      // if (widgetUnderCursor == null) {
+        if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
+          return;
         }
-        return;
+
+        widgetUnderCursor = findOne(e.getPoint());
+      // }
+
+      if (widgetUnderCursor instanceof GuidelineWidget && !advancedSnappingModel.isEditGuidelines()) {
+        widgetUnderCursor = null;
       }
 
-      if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
-        return;
-      }
-
-      widgetUnderCursor = findOne(e.getPoint());
       if (widgetUnderCursor == null) {
         setCursor(Cursor.getDefaultCursor());
         return;
       }
-      if (!widgetUnderCursor.isSelected()) {
+      if (!(widgetUnderCursor instanceof GuidelineWidget) && !widgetUnderCursor.isSelected()) {
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return;
       }
@@ -1175,6 +1184,12 @@ public class PagePane extends JPanel implements iSubscriber {
       switch (handleType) {
         case DRAG:
           setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+          break;
+        case DRAG_VERTICAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+          break;
+        case DRAG_HORIZONTAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
           break;
         case TOP_LEFT:
         case TOP_LEFT_PROPORTIONAL:
