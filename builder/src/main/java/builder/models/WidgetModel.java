@@ -60,7 +60,7 @@ import builder.themes.GUIsliceThemeFactory;
  * @author Paul Conti
  * 
  */
-public class WidgetModel extends AbstractTableModel {
+abstract public class WidgetModel extends AbstractTableModel {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;

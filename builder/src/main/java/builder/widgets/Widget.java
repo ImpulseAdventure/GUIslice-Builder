@@ -47,7 +47,7 @@ import builder.models.WidgetModel;
  * @author Paul Conti
  * 
  */
-public class Widget {
+abstract public class Widget {
   
   /** The Constant dashed. */
   final static public  BasicStroke dashed = new BasicStroke(3.0f, 
@@ -64,7 +64,7 @@ public class Widget {
   FontFactory ff;
   
   /** The model. */
-  WidgetModel model;
+  WidgetModel model = null;
   
   /** The b selected. */
   boolean bSelected = false;
@@ -334,9 +334,7 @@ public class Widget {
    * @param g2d
    *          the graphics object
    */
-  public void draw(Graphics2D g2d) {
-    
-  }
+  abstract public void draw(Graphics2D g2d);
 
   public enum HandleType {
     NONE, DRAG, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP, BOTTOM, LEFT, RIGHT,
