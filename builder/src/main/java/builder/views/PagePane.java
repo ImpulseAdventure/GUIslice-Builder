@@ -160,7 +160,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
   /** Guidelines used by resizing and snapping commands */
   private Guidelines guidelines = new Guidelines();
-  private SnapperBuilder snapperBuilder = new SnapperBuilder();
+//  private SnapperBuilder snapperBuilder = new SnapperBuilder();
 
   private AdvancedSnappingModel advancedSnappingModel = AdvancedSnappingModel.getInstance();
 
@@ -1104,7 +1104,13 @@ public class PagePane extends JPanel implements iSubscriber {
             break;
           default:
             if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
-              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType, snapperBuilder.buildHSnapper(widgetUnderCursor, advancedSnappingModel), snapperBuilder.buildVSnapper(widgetUnderCursor, advancedSnappingModel));
+              resizeCommand = new ResizeCommand(
+                instance,
+                widgetUnderCursor,
+                handleType,
+                Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth()),
+                Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight())
+              );
               resizeCommand.start(unscaledPoint);
               currentAction = CurrentAction.RESIZING_WIDGET;
             }
@@ -1223,31 +1229,6 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     }
 
-    // private Snapper buildHSnapper() {
-    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
-    //   snapper.addGrid(gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
-    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
-    //   snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
-    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
-    //     snapper.addGuideline(g);
-    //   }
-    //   return snapper;
-    // }
-
-    // private Snapper buildVSnapper() {
-    //   Snapper snapper = new Snapper(GridEditor.getInstance().getGridSnapTo(), true, true, true);
-    //   snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
-    //   snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
-    //   snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);
-    //   for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
-    //     snapper.addGuideline(g);
-    //   }
-    //   for (Widget w : widgets) {
-    //     snapper.addWidget(w, pm.getHSpacing());
-    //   }
-    //   return snapper;
-    // }
-     
     /**
      * mouseDragged.
      *
@@ -1268,7 +1249,11 @@ public class PagePane extends JPanel implements iSubscriber {
         selectRect(mouseRect);
      } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
        if (dragCommand == null) {
-          dragCommand = new DragWidgetCommand(instance, snapperBuilder.buildHSnapper(null, advancedSnappingModel), snapperBuilder.buildVSnapper(null, advancedSnappingModel));
+          dragCommand = new DragWidgetCommand(
+            instance,
+            Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth()),
+            Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight())
+          );
           if (!dragCommand.start(dragPt)) {
             currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
@@ -1293,36 +1278,6 @@ public class PagePane extends JPanel implements iSubscriber {
     } // end mouseDragged
   }  // end MouseMotionHandler
 
-  private class SnapperBuilder {
-    private Snapper buildHSnapper(Widget currentWidget, AdvancedSnappingModel snappingModel) {
-      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
-      snapper.addGrid(PagePane.this.gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), pm.getWidth());
-      snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
-      snapper.addMargin(pm.getHeight() - pm.getMargins(), Snapper.SourceEdge.MAX);
-      for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
-        snapper.addGuideline(g);
-      }
-      for (Widget w : widgets) {
-        snapper.addWidget(w, pm.getVSpacing());
-      }
-      return snapper;
-    }
-
-    private Snapper buildVSnapper(Widget currentWidget, AdvancedSnappingModel snappingModel) {
-      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
-      snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), pm.getHeight());
-      snapper.addMargin(pm.getMargins(), Snapper.SourceEdge.MIN);
-      snapper.addMargin(pm.getWidth() - pm.getMargins(), Snapper.SourceEdge.MAX);
-      for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
-        snapper.addGuideline(g);
-      }
-      for (Widget w : widgets) {
-        snapper.addWidget(w, pm.getHSpacing());
-      }
-      return snapper;
-    }
-  }
-  
   /**
    * getPreferredSize.
    *

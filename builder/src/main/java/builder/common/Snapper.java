@@ -1,13 +1,10 @@
 package builder.common;
 
-import java.awt.Rectangle;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.EnumSet;
 
-import builder.models.GridModel;
-import builder.models.ProjectModel;
+import builder.models.AdvancedSnappingModel;
 import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 
@@ -60,7 +57,7 @@ public class Snapper {
     public final EnumSet<SourceEdge> sourceEdge;
     public final int pos;
     public final Widget widget;
-    public final Guidelines.Guideline guideline;
+    //public final Guidelines.Guideline guideline;
 
     public Item(ItemType type, int pos) {
       this(type, SourceEdge.ALL, pos, null, null);
@@ -71,7 +68,7 @@ public class Snapper {
       this.sourceEdge = sourceEdge;
       this.pos = pos;
       this.widget = widget;
-      this.guideline = guideline;
+      //this.guideline = guideline;
     }
 
     public Item(EnumSet<SourceEdge> sourceEdge, int pos, Widget widget) {
@@ -229,35 +226,59 @@ public class Snapper {
     sortItems();
   }
 
-  public class Builder {
-    private GridModel gridModel;
-    private ProjectModel projectModel;
-
-    private Snapper buildHorizontal(Widget currentWidget, Guidelines guidelines, List<Widget> widgets) {
-      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), true, true, true);
-      snapper.addGrid(gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth(), projectModel.getWidth());
-      snapper.addMargin(projectModel.getMargins(), Snapper.SourceEdge.MIN);
-      snapper.addMargin(projectModel.getHeight() - projectModel.getMargins(), Snapper.SourceEdge.MAX);
-      for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.HORIZONTAL)) {
-        snapper.addGuideline(g);
-      }
-      for (Widget w : widgets) {
-        snapper.addWidget(w, projectModel.getVSpacing());
-      }
+  public static class Builder {
+    public static Snapper buildHSnapper(
+      Widget currentWidget,
+      AdvancedSnappingModel snappingModel,
+      Guidelines guidelines,
+      List<Widget> widgets,
+      int pageSize,
+      int marginSize,
+      int widgetsSpacing,
+      int gridMajorSpacing,
+      int gridMinorSpacing
+    ) {
+      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
+      snapper.addGrid(gridMajorSpacing, gridMinorSpacing, pageSize);
+      addMargins(pageSize, marginSize, snapper);
+      addGuidelines(guidelines, Guidelines.Type.HORIZONTAL, snapper);
+      addWidgets(widgets, widgetsSpacing, snapper);
       return snapper;
     }
 
-    private Snapper buildVertical(Widget currentWidget, Guidelines guidelines, List<Widget> widgets) {
-      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), true, true, true);
-      snapper.addGrid(gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight(), projectModel.getHeight());
-      snapper.addMargin(projectModel.getMargins(), Snapper.SourceEdge.MIN);
-      snapper.addMargin(projectModel.getWidth() - projectModel.getMargins(), Snapper.SourceEdge.MAX);
-      for (Guidelines.Guideline g : guidelines.getGuidelines(Guidelines.Type.VERTICAL)) {
-        snapper.addGuideline(g);
+    private static void addGuidelines(Guidelines guidelines, Guidelines.Type type, Snapper snapper) {
+      for (Guidelines.Guideline guideline : guidelines.getGuidelines(type)) {
+        snapper.addGuideline(guideline);
       }
-      for (Widget w : widgets) {
-        snapper.addWidget(w, projectModel.getHSpacing());
+    }
+
+    private static void addWidgets(List<Widget> widgets, int widgetsSpacing, Snapper snapper) {
+      for (Widget widget : widgets) {
+        snapper.addWidget(widget, widgetsSpacing);
       }
+    }
+
+    private static void addMargins(int pageSize, int marginSize, Snapper snapper) {
+      snapper.addMargin(marginSize, Snapper.SourceEdge.MIN);
+      snapper.addMargin(pageSize - marginSize, Snapper.SourceEdge.MAX);
+    }
+
+    public static Snapper buildVSnapper(
+      Widget currentWidget,
+      AdvancedSnappingModel snappingModel,
+      Guidelines guidelines,
+      List<Widget> widgets,
+      int pageSize,
+      int marginSize,
+      int widgetsSpacing,
+      int gridMajorSpacing,
+      int gridMinorSpacing
+    ) {
+      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
+      snapper.addGrid(gridMajorSpacing, gridMinorSpacing, pageSize);
+      addMargins(pageSize, marginSize, snapper);
+      addGuidelines(guidelines, Guidelines.Type.VERTICAL, snapper);
+      addWidgets(widgets, widgetsSpacing, snapper);
       return snapper;
     }
   }
