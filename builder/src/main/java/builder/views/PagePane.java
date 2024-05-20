@@ -350,58 +350,59 @@ public class PagePane extends JPanel implements iSubscriber {
     boolean widgetActionInProgress = (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
         (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null);
     if (widgetActionInProgress || currentAction == CurrentAction.EDITING_GUIDELINES || advancedSnappingModel.isShowMargins() || advancedSnappingModel.isShowGuidelines()) {
-      final Graphics2D g2d_ = (Graphics2D) g.create();
+      final ScaledGraphics graphics = new ScaledGraphics((Graphics2D) g.create(), zoomFactor);
 
-      g2d_.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
+      // dashed stroke for all features
+      graphics.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
 
       if (widgetActionInProgress || advancedSnappingModel.isShowMargins()) {
-        drawMargins(g2d_, width, height);
+        drawMargins(graphics, width, height);
       }
       if (widgetActionInProgress || advancedSnappingModel.isShowGuidelines() || currentAction == CurrentAction.EDITING_GUIDELINES) {
-        drawGuidelines(g2d_, width, height);
+        drawGuidelines(graphics, width, height);
       }
 
       if (
         (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
         (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null)
       ) {
-        drawSnappingMarkers(g2d_, width, height);
+        drawSnappingMarkers(graphics, width, height);
       }
 
-      g2d_.dispose();
+      graphics.dispose();
     }
   }
 
-  private void drawGuidelines(final Graphics2D g2d, int width, int height) {
-    g2d.setColor(Color.WHITE);
-    guidelines.getGuidelines(Guidelines.Type.HORIZONTAL).forEach(guideline -> {
-      g2d.drawLine(0, (int) (guideline.getPos() * zoomFactor), (int) (width * zoomFactor), (int) (guideline.getPos() * zoomFactor));
+  private void drawGuidelines(final ScaledGraphics graphics, int width, int height) {
+    graphics.setColor(Color.WHITE);
+    guidelines.getGuidelines(GuidelineModel.Orientation.HORIZONTAL).forEachWidget(guidelineWidget -> {
+      guidelineWidget.draw(graphics, width, height);
     });
-    guidelines.getGuidelines(Guidelines.Type.VERTICAL).forEach(guideline -> {
-      g2d.drawLine((int) (guideline.getPos() * zoomFactor), 0, (int) (guideline.getPos() * zoomFactor), (int) (height * zoomFactor));
+    guidelines.getGuidelines(GuidelineModel.Orientation.VERTICAL).forEachWidget(guidelineWidget -> {
+      guidelineWidget.draw(graphics, width, height);
     });
   }
 
-  private void drawSnappingMarkers(final Graphics2D g2d, int width, int height) {
-    g2d.setColor(Color.ORANGE);
+  private void drawSnappingMarkers(final ScaledGraphics graphics, int width, int height) {
+    graphics.setColor(Color.ORANGE);
 
     Snapper snapper;
     snapper = currentAction == CurrentAction.RESIZING_WIDGET  ? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
     for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
-      g2d.drawLine(0, (int) (marker.position * zoomFactor), (int) (width * zoomFactor), (int) (marker.position * zoomFactor));
+      graphics.drawLine(0, marker.position, width, marker.position);
     }
 
     snapper = currentAction == CurrentAction.RESIZING_WIDGET ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
     for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
-      g2d.drawLine((int) (marker.position * zoomFactor), 0, (int) (marker.position * zoomFactor), (int) (height * zoomFactor));
+      graphics.drawLine(marker.position, 0, marker.position, height);
     }
   }
 
-  private void drawMargins(Graphics2D g2d, int width, int height) {
+  private void drawMargins(ScaledGraphics graphics, int width, int height) {
     int marginSize = pm.getMargins();
 
-    g2d.setColor(Color.RED);
-    g2d.drawRect((int) (marginSize * zoomFactor), (int) (marginSize * zoomFactor), (int) ((width - 2 * marginSize)  * zoomFactor), (int) ((height - 2 * marginSize) * zoomFactor));
+    graphics.setColor(Color.RED);
+    graphics.drawRect(marginSize, marginSize, width - (2 * marginSize), height - (2 * marginSize));
   };
 
   /**
