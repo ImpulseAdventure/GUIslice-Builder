@@ -26,12 +26,10 @@ public class GuidelineWidget extends Widget {
     }
 
     if (model.isVertical()) {
-      g2d.drawLine(0, model.getPos(), pageWidth, model.getPos());
-    } else {
       g2d.drawLine(model.getPos(), 0, model.getPos(), pageHeight);
+    } else {
+      g2d.drawLine(0, model.getPos(), pageWidth, model.getPos());
     }
-
-   // getType() == Guidelines.Type.HORIZONTAL ? g2d.drawLine(0, model.getPos(), u.width, model.getPos()) : g2d.drawLine(model.getPos(), 0, model.getPos(), u.height);
   }
 
   @Override

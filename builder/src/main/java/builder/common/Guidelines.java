@@ -11,6 +11,8 @@ import builder.widgets.GuidelineWidget;
  * Guideline is a visual guide to help you align widgets.
  */
 public class Guidelines {
+  private static final int SNAPPING_DISTANCE = 3;
+
   private GuidelinesList hGuidelines = new GuidelinesList();
   private GuidelinesList vGuidelines = new GuidelinesList();
 
@@ -45,7 +47,6 @@ public class Guidelines {
   }
 
   public GuidelinesList getGuidelines(GuidelineModel.Orientation orientation) {
-    // vGuidelines.f
     if (orientation == GuidelineModel.Orientation.HORIZONTAL) {
       return hGuidelines;
     } else {
@@ -59,25 +60,17 @@ public class Guidelines {
 
   public GuidelineWidget getOne(Point mapPoint) {
     for (Guideline guideline : hGuidelines) {
-      if (!guideline.model.isVertical() && mapPoint.y >= guideline.model.getPos() -3 && mapPoint.y <= guideline.model.getPos() + 3) {
+      if (!guideline.model.isVertical() && mapPoint.y >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.y <= guideline.model.getPos() + SNAPPING_DISTANCE) {
         return guideline.widget;
       }
     }
 
     for (Guideline guideline : vGuidelines) {
-      if (guideline.model.isVertical() && mapPoint.x >= guideline.model.getPos() -3 && mapPoint.x <= guideline.model.getPos() + 3) {
+      if (guideline.model.isVertical() && mapPoint.x >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.x <= guideline.model.getPos() + SNAPPING_DISTANCE) {
         return guideline.widget;
       }
     }
 
     return null;
   }
-
-  // public void draw(Graphics2D g2d, int pageWidth, int pageHeight) {
-  //   for (Guideline guideline : hGuidelines) {
-  //     guideline.draw(g2d, pageWidth);
-  //     g2d.setColor(u.GUIDELINE_COLOR);
-  //     g2d.drawLine(0, guideline.getPos(), u.width, guideline.getPos());
-  //   }
-  // }
 }

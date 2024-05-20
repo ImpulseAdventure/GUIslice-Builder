@@ -322,13 +322,13 @@ public class PagePane extends JPanel implements iSubscriber {
         drawGrid(g2d, width, height);
       }
     }
-      
+
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
     // output this page's widgets
     for (Widget w : widgets) {
       w.draw(g2d);
-    } 
+    }
     /* output any base page widgets unless this is a project
      * base page or popup page.
      */
@@ -339,7 +339,7 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     }
     if (bMultiSelectionBox) {
-      // draw our selection rubber band 
+      // draw our selection rubber band
       g2d.setColor(Color.RED);
       g2d.setStroke(Widget.dashed);
       g2d.drawRect(mouseRect.x, mouseRect.y,
@@ -356,10 +356,10 @@ public class PagePane extends JPanel implements iSubscriber {
       // dashed stroke for all features
       graphics.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
 
-      if (widgetActionInProgress || advancedSnappingModel.isShowMargins()) {
+      if ((widgetActionInProgress && advancedSnappingModel.isSnapToMargins()) || advancedSnappingModel.isShowMargins()) {
         drawMargins(graphics, width, height);
       }
-      if (widgetActionInProgress || advancedSnappingModel.isShowGuidelines() || currentAction == CurrentAction.EDITING_GUIDELINES) {
+      if ((widgetActionInProgress && advancedSnappingModel.isSnapToGuidelines()) || advancedSnappingModel.isShowGuidelines() || currentAction == CurrentAction.EDITING_GUIDELINES) {
         drawGuidelines(graphics, width, height);
       }
 
@@ -388,14 +388,15 @@ public class PagePane extends JPanel implements iSubscriber {
     graphics.setColor(Color.ORANGE);
 
     Snapper snapper;
+
     snapper = currentAction == CurrentAction.RESIZING_WIDGET  ? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
     for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
-      graphics.drawLine(0, marker.position, width, marker.position);
+      graphics.drawLine(marker.position, 0, marker.position, height);
     }
 
     snapper = currentAction == CurrentAction.RESIZING_WIDGET ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
     for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
-      graphics.drawLine(marker.position, 0, marker.position, height);
+      graphics.drawLine(0, marker.position, width, marker.position);
     }
   }
 

@@ -6,12 +6,11 @@ import java.util.EnumSet;
 
 import builder.models.AdvancedSnappingModel;
 import builder.models.GuidelineModel;
-import builder.prefs.GridEditor;
 import builder.widgets.Widget;
 
 /**
- * Snapper lets you find the nearest point to span dragged vertice. 
- * 
+ * Snapper lets you find the nearest point to span dragged vertice.
+ *
  * @author etet100
  */
 public class Snapper {
@@ -80,7 +79,7 @@ public class Snapper {
       this(ItemType.GUIDELINE, SourceEdge.ALL, pos, null, guideline);
     }
   }
-  
+
   private List<Item> items = new ArrayList<Item>();
 
   private final int SNAP_DISTANCE = 5;
@@ -194,20 +193,21 @@ public class Snapper {
   }
 
   public void addWidget(Widget widget, int margin) {
+    // horizontal: snap to left and right edges, vertical: snap to top and bottom edges
     if (type == Type.HORIZONTAL) {
-      // edge
-      items.add(new Item(EnumSet.of(SourceEdge.MIN), widget.getY(), widget));
-      items.add(new Item(EnumSet.of(SourceEdge.MAX), widget.getY() + widget.getHeight(), widget));
-      // edge with margin
-      items.add(new Item(EnumSet.of(SourceEdge.MAX), widget.getY() - margin, widget));
-      items.add(new Item(EnumSet.of(SourceEdge.MIN), widget.getY() + widget.getHeight() + margin, widget));
-    } else {
       // edge
       items.add(new Item(EnumSet.of(SourceEdge.MIN), widget.getX(), widget));
       items.add(new Item(EnumSet.of(SourceEdge.MAX), widget.getX() + widget.getWidth(), widget));
       // edge with margin
       items.add(new Item(EnumSet.of(SourceEdge.MAX), widget.getX() - margin, widget));
       items.add(new Item(EnumSet.of(SourceEdge.MIN), widget.getX() + widget.getWidth() + margin, widget));
+    } else {
+      // edge
+      items.add(new Item(EnumSet.of(SourceEdge.MIN), widget.getY(), widget));
+      items.add(new Item(EnumSet.of(SourceEdge.MAX), widget.getY() + widget.getHeight(), widget));
+      // edge with margin
+      items.add(new Item(EnumSet.of(SourceEdge.MAX), widget.getY() - margin, widget));
+      items.add(new Item(EnumSet.of(SourceEdge.MIN), widget.getY() + widget.getHeight() + margin, widget));
     }
 
     sortItems();
@@ -239,10 +239,10 @@ public class Snapper {
       int gridMajorSpacing,
       int gridMinorSpacing
     ) {
-      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
+      Snapper snapper = new Snapper(Type.HORIZONTAL, currentWidget, snappingModel.isSnapToGrid(), snappingModel.isSnapToMargins(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
       snapper.addGrid(gridMajorSpacing, gridMinorSpacing, pageSize);
       addMargins(pageSize, marginSize, snapper);
-      addGuidelines(guidelines, GuidelineModel.Orientation.HORIZONTAL, snapper);
+      addGuidelines(guidelines, GuidelineModel.Orientation.VERTICAL, snapper); // horizontal snaps to vertical lines
       addWidgets(widgets, widgetsSpacing, snapper);
       return snapper;
     }
@@ -275,10 +275,10 @@ public class Snapper {
       int gridMajorSpacing,
       int gridMinorSpacing
     ) {
-      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, GridEditor.getInstance().getGridSnapTo(), snappingModel.isSnapToGrid(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
+      Snapper snapper = new Snapper(Type.VERTICAL, currentWidget, snappingModel.isSnapToGrid(), snappingModel.isSnapToMargins(), snappingModel.isSnapToGuidelines(), snappingModel.isSnapToWidgets());
       snapper.addGrid(gridMajorSpacing, gridMinorSpacing, pageSize);
       addMargins(pageSize, marginSize, snapper);
-      addGuidelines(guidelines, GuidelineModel.Orientation.VERTICAL, snapper);
+      addGuidelines(guidelines, GuidelineModel.Orientation.HORIZONTAL, snapper); // vertical snaps to horizontal lines
       addWidgets(widgets, widgetsSpacing, snapper);
       return snapper;
     }

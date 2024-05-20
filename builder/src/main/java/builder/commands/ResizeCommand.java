@@ -125,10 +125,10 @@ public class ResizeCommand extends Command {
         updateX = handleRight(point, model, preserveSize, doNotSnap);
         break;
       }
-      case RIGHT: 
+      case RIGHT:
         updateX = handleRight(point, model, preserveSize, doNotSnap);
         break;
-      case BOTTOM: 
+      case BOTTOM:
         updateY = handleBottom(point, model, preserveSize, doNotSnap);
         break;
       case BOTTOM_RIGHT:
@@ -164,7 +164,7 @@ public class ResizeCommand extends Command {
 
   private boolean handleLeft(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newPos = currentBounds.x + (point.x - lastPoint.x);
-    int newSnappedPos = doNotSnap ? newPos : vSnapper.snap(newPos, Snapper.SourceEdge.MIN);
+    int newSnappedPos = doNotSnap ? newPos : hSnapper.snap(newPos, Snapper.SourceEdge.MIN);
     int newSize = initialBounds.width - (newPos - initialBounds.x);
     newSize -= newSnappedPos - newPos; // adjust width to snapped position
     if (preserveSize) {
@@ -183,7 +183,7 @@ public class ResizeCommand extends Command {
 
   private boolean handleBottom(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newSize = currentBounds.height + (point.y - lastPoint.y);
-    int newSnappedSize = doNotSnap ? newSize : (hSnapper.snap(currentBounds.y + newSize, Snapper.SourceEdge.MAX) - currentBounds.y);
+    int newSnappedSize = doNotSnap ? newSize : (vSnapper.snap(currentBounds.y + newSize, Snapper.SourceEdge.MAX) - currentBounds.y);
     if (newSnappedSize < MIN_SIZE) {
       return false;
     }
@@ -207,7 +207,7 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);
 
     int newPosX = initialBounds.x - mappedCoordinate;
-    int newSnappedPosX = doNotSnap ? newPosX : vSnapper.snap(newPosX, Snapper.SourceEdge.MIN);
+    int newSnappedPosX = doNotSnap ? newPosX : hSnapper.snap(newPosX, Snapper.SourceEdge.MIN);
     int newSnappedSizeX = initialBounds.width - (newPosX - initialBounds.x);
     newSnappedSizeX -= newSnappedPosX - newPosX; // adjust width to snapped position
     if (newSnappedSizeX < MIN_SIZE) {
@@ -217,7 +217,7 @@ public class ResizeCommand extends Command {
     int snappedDistanceX = Math.abs(newSnappedPosX - newPosX);
 
     int newSizeY = initialBounds.height + mappedCoordinate;
-    int newSnappedSizeY = doNotSnap ? newSizeY : (hSnapper.snap(initialBounds.y + newSizeY, Snapper.SourceEdge.MAX) - initialBounds.y);
+    int newSnappedSizeY = doNotSnap ? newSizeY : (vSnapper.snap(initialBounds.y + newSizeY, Snapper.SourceEdge.MAX) - initialBounds.y);
     if (newSnappedSizeY < MIN_SIZE) { newSnappedSizeY = MIN_SIZE; }
     int snappedDistanceY = Math.abs(newSnappedSizeY - newSizeY);
 
@@ -240,7 +240,7 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);  
 
     int newPosX = initialBounds.x - mappedCoordinate;
-    int newSnappedPosX = doNotSnap ? newPosX : vSnapper.snap(newPosX, Snapper.SourceEdge.MIN);
+    int newSnappedPosX = doNotSnap ? newPosX : hSnapper.snap(newPosX, Snapper.SourceEdge.MIN);
     int newSnappedSizeX = initialBounds.width - (newPosX - initialBounds.x);
     newSnappedSizeX -= newSnappedPosX - newPosX; // adjust width to snapped position
     if (newSnappedSizeX < MIN_SIZE) {
@@ -250,7 +250,7 @@ public class ResizeCommand extends Command {
     int snappedDistanceX = Math.abs(newSnappedPosX - newPosX);
 
     int newPosY = initialBounds.y - mappedCoordinate;
-    int newSnappedPosY = doNotSnap ? newPosY : hSnapper.snap(newPosY, Snapper.SourceEdge.MIN);
+    int newSnappedPosY = doNotSnap ? newPosY : vSnapper.snap(newPosY, Snapper.SourceEdge.MIN);
     int newSnappedSizeY = initialBounds.height - (newPosY - initialBounds.y);
     newSnappedSizeY -= newSnappedPosY - newPosY; // adjust height to snapped position
     if (newSnappedSizeY < MIN_SIZE) {
@@ -280,12 +280,12 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate); 
 
     int newSizeX = initialBounds.width + mappedCoordinate;
-    int newSnappedSizeX = doNotSnap ? newSizeX : (vSnapper.snap(initialBounds.x + newSizeX, Snapper.SourceEdge.MAX) - initialBounds.x);
+    int newSnappedSizeX = doNotSnap ? newSizeX : (hSnapper.snap(initialBounds.x + newSizeX, Snapper.SourceEdge.MAX) - initialBounds.x);
     if (newSnappedSizeX < MIN_SIZE) { newSnappedSizeX = MIN_SIZE; }
     int snappedDistanceX = Math.abs(newSnappedSizeX - newSizeX);
 
     int newPosY = initialBounds.y - mappedCoordinate;
-    int newSnappedPosY = doNotSnap ? newPosY : hSnapper.snap(newPosY, Snapper.SourceEdge.MIN);
+    int newSnappedPosY = doNotSnap ? newPosY : vSnapper.snap(newPosY, Snapper.SourceEdge.MIN);
     int newSnappedSizeY = initialBounds.height - (newPosY - initialBounds.y);
     newSnappedSizeY -= newSnappedPosY - newPosY; // adjust height to snapped position
     if (newSnappedSizeY < MIN_SIZE) {
@@ -313,12 +313,12 @@ public class ResizeCommand extends Command {
     //System.out.println("vertexToCursor: " + vertexToCursor + ",bParam: " + bParam + ", mappedCoordinate: " + mappedCoordinate);
 
     int newSizeX = initialBounds.width + mappedCoordinate;
-    int newSnappedSizeX = doNotSnap ? newSizeX : (vSnapper.snap(initialBounds.x + newSizeX, Snapper.SourceEdge.MAX) - initialBounds.x);
+    int newSnappedSizeX = doNotSnap ? newSizeX : (hSnapper.snap(initialBounds.x + newSizeX, Snapper.SourceEdge.MAX) - initialBounds.x);
     if (newSnappedSizeX < MIN_SIZE) { newSnappedSizeX = MIN_SIZE; }
     int snappedDistanceX = Math.abs(newSnappedSizeX - newSizeX);
 
     int newSizeY = initialBounds.height + mappedCoordinate;
-    int newSnappedSizeY = doNotSnap ? newSizeY : (hSnapper.snap(initialBounds.y + newSizeY, Snapper.SourceEdge.MAX) - initialBounds.y);
+    int newSnappedSizeY = doNotSnap ? newSizeY : (vSnapper.snap(initialBounds.y + newSizeY, Snapper.SourceEdge.MAX) - initialBounds.y);
     if (newSnappedSizeY < MIN_SIZE) { newSnappedSizeY = MIN_SIZE; }
     int snappedDistanceY = Math.abs(newSnappedSizeY - newSizeY);
 
@@ -343,7 +343,7 @@ public class ResizeCommand extends Command {
 
   private boolean handleRight(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newSize = currentBounds.width + (point.x - lastPoint.x);
-    int newSnappedSize = doNotSnap ? newSize : (vSnapper.snap(currentBounds.x + newSize, Snapper.SourceEdge.MAX) - currentBounds.x);
+    int newSnappedSize = doNotSnap ? newSize : (hSnapper.snap(currentBounds.x + newSize, Snapper.SourceEdge.MAX) - currentBounds.x);
     if (newSnappedSize < MIN_SIZE) {
       return false;
     }
@@ -360,14 +360,14 @@ public class ResizeCommand extends Command {
 
   private boolean handleTop(Point point, WidgetModel model, boolean preserveSize, boolean doNotSnap) {
     int newPos = currentBounds.y + (point.y - lastPoint.y);
-    int newSnappedPos = doNotSnap ? newPos : hSnapper.snap(newPos, Snapper.SourceEdge.MIN);
+    int newSnappedPos = doNotSnap ? newPos : vSnapper.snap(newPos, Snapper.SourceEdge.MIN);
     int newSize = initialBounds.height - (newPos - initialBounds.y);
     newSize -= newSnappedPos - newPos; // adjust height to snapped position
     if (preserveSize) {
       currentBounds.y = newPos;
       model.setY(newSnappedPos);
       return true;
-    }    
+    }
     if (newSize < MIN_SIZE) {
       return false;
     }
