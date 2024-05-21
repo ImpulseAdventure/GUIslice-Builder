@@ -118,6 +118,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancement for 0.17.b29
+
+Minor UI changes to Grid.
+
 ### Enhancement for 0.17.b28
 
 <p>
