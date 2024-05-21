@@ -59,7 +59,7 @@ public class GridModel extends WidgetModel {
   static public  final Integer DEF_MAJOR_WIDTH        = Integer.valueOf(50);
   static public  final Integer DEF_MAJOR_HEIGHT       = Integer.valueOf(50);
   static public  final Color   DEF_MAJOR_COLOR        = Color.BLACK;
-  static public  final Color   DEF_MINOR_COLOR        = new Color(128,128,128);
+  static public  final Color   DEF_MINOR_COLOR        = new Color(224,224,224);
   static public  final Color   DEF_BACKGROUND         = Color.WHITE;
 
   private boolean bGridState;
@@ -89,7 +89,7 @@ public class GridModel extends WidgetModel {
         "Grid Major Height",DEF_MAJOR_HEIGHT);
 
     initProp(GRID_MAJOR_COLOR, Color.class, "COL-311", Boolean.FALSE,"Grid Major Line Color", DEF_MAJOR_COLOR);
-    initProp(GRID_MINOR_COLOR, Color.class, "COL-312", Boolean.FALSE,"Grid Minor Line Color",DEF_MINOR_COLOR);
+    initProp(GRID_MINOR_COLOR, Color.class, "COL-321", Boolean.FALSE,"Grid Minor Line Color",DEF_MINOR_COLOR);
     initProp(GRID_BACKGROUND_COLOR, Color.class, "COL-313", Boolean.FALSE,
         "Grid Background Color",DEF_BACKGROUND);
     bGridState = false;

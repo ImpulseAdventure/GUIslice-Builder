@@ -35,7 +35,7 @@ COL_308,Gauge Color
 COL-309,Graph Color
 COL-310,Background Color
 COL-311,Grid Major Color
-COL-312,Grid Minor Color
+COL-312,Grid Minor Color (old not used)
 COL-313,Grid Background Color
 COL-314,Transparency Color
 COL-315,Progress Color
@@ -44,6 +44,7 @@ COL-317,Thumb Color
 COL-318,Thumb Frame Color
 COL-319,On State
 COL-320,Off State
+COL-321,Grid Minor Color
 COM-000,Page Enum
 COM-001,Key
 COM-002,ENUM

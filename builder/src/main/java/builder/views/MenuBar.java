@@ -34,6 +34,7 @@ import javax.swing.*;
 
 import builder.common.Utils;
 import builder.swing.MyToggleButton;
+import builder.swing.MyToggleButtonMenuItem;
 
 /**
  * The Class MenuBar.
@@ -59,7 +60,8 @@ public class MenuBar extends JMenuBar {
   private JMenuItem miAbout;
 
   public static JMenuItem miZoomIn, miZoomOut, miZoomReset;
-  public static MyToggleButton miShowGrid, miSnapGrid;
+  public static MyToggleButtonMenuItem miShowGrid;
+  public static MyToggleButton miSnapGrid;
   
   /**
    * Instantiates a new menu bar.
@@ -172,13 +174,13 @@ public class MenuBar extends JMenuBar {
 //    miShowGrid = new JMenuItem("Show grid",
 //      Utils.getIcon("resources/icons/view/show_grid.png", 24,24));
 
-    miShowGrid = new MyToggleButton("Show grid",
+    miShowGrid = new MyToggleButtonMenuItem("Show grid",
       Utils.getIcon("resources/icons/view/invisible.png", 24,24));
     miShowGrid.setOffImage(Utils.getIcon("resources/icons/view/show_grid_off.png", 24,24));
     miShowGrid.setOnImage(Utils.getIcon("resources/icons/view/show_grid_on.png", 24,24));
     miShowGrid.setActionCommand("showgrid");
-//    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
-//        'L', ActionEvent.CTRL_MASK));
+    miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
+        'L', ActionEvent.CTRL_MASK));
     miShowGrid.setToolTipText("Toggle Grid ON/OFF");
     mbView.add(miShowGrid);
 
