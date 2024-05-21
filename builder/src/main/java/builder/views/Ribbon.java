@@ -79,7 +79,8 @@ public class Ribbon extends JPanel {
   private static Button btn_zoom_in,btn_zoom_out,btn_zoom_reset;
 
   /** Snapping buttons */
-  private static Button btn_show_grid, btn_show_grid_bg, btn_snap_grid, btn_show_guidelines, btn_snap_guidelines, btn_show_margins, btn_snap_margins, btn_edit_guidelines, btn_snap_widgets;
+  private static Button btn_show_grid, btn_show_grid_bg, btn_snap_grid, btn_show_guidelines, btn_snap_guidelines, btn_show_margins, btn_snap_margins,
+    btn_edit_guidelines, btn_snap_widgets, btn_add_v_guideline, btn_add_h_guideline;
   
   private static Tab pageLayout;
   
@@ -514,6 +515,18 @@ public class Ribbon extends JPanel {
     btn_snap_widgets.addToolTip("Toggle Snap to Widgets ON/OFF");
     btn_snap_widgets.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_WIDGETS);
 
+    btn_add_v_guideline = band.addSlimButton("Add vertical guideline");
+    // btn_add_v_guideline.setImage(Utils.getIcon(
+    //     "resources/icons/snapping/add_v_guideline.png"));
+    btn_add_v_guideline.addToolTip("Add a vertical guideline");
+    btn_add_v_guideline.setActionCommand(AdvancedSnappingModel.ACTION_ADD_V_GUIDELINE);
+
+    btn_add_h_guideline = band.addSlimButton("Add horizontal guideline");
+    // btn_add_h_guideline.setImage(Utils.getIcon(
+    //     "resources/icons/snapping/add_h_guideline.png"));
+    btn_add_h_guideline.addToolTip("Add a horizontal guideline");
+    btn_add_h_guideline.setActionCommand(AdvancedSnappingModel.ACTION_ADD_H_GUIDELINE);
+
     band.addSeperator();
   }
     
@@ -732,6 +745,8 @@ public class Ribbon extends JPanel {
     btn_snap_margins.addActionListener(actionListener);
     btn_edit_guidelines.addActionListener(actionListener);
     btn_snap_widgets.addActionListener(actionListener);
+    btn_add_v_guideline.addActionListener(actionListener);
+    btn_add_h_guideline.addActionListener(actionListener);
   }
   
   /**

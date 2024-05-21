@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+import builder.models.AdvancedSnappingModel;
 import builder.models.GuidelineModel;
 import builder.widgets.GuidelineWidget;
 
@@ -13,6 +14,18 @@ import builder.widgets.GuidelineWidget;
 public class Guidelines {
   private GuidelinesList hGuidelines = new GuidelinesList();
   private GuidelinesList vGuidelines = new GuidelinesList();
+
+  public Guidelines() {
+    AdvancedSnappingModel.getInstance().addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
+      public void addHGuidelinePressed() {
+        Guidelines.this.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 10);
+      }
+
+      public void addVGuidelinePressed() {
+        Guidelines.this.createGuideline(GuidelineModel.Orientation.VERTICAL, 10);
+      }
+    });
+  }
 
   public class Guideline {
     private GuidelineModel model;

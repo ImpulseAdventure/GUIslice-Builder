@@ -161,7 +161,7 @@ public class PagePane extends JPanel implements iSubscriber {
   public DragByArrowCommand dragArrowsCommand = null;
 
   /** Guidelines used by resizing and snapping commands */
-  private Guidelines guidelines = new Guidelines();
+  private static Guidelines guidelines = new Guidelines();
 
   private AdvancedSnappingModel advancedSnappingModel = AdvancedSnappingModel.getInstance();
 

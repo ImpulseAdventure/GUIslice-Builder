@@ -34,6 +34,8 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
   public static final String ACTION_SNAP_TO_WIDGETS = "snaptowidgets";
   public static final String ACTION_SNAP_TO_WIDGETS_ON = ACTION_SNAP_TO_WIDGETS + "_on";
   public static final String ACTION_SNAP_TO_WIDGETS_OFF = ACTION_SNAP_TO_WIDGETS + "_off";
+  public static final String ACTION_ADD_V_GUIDELINE = "addvguideline";
+  public static final String ACTION_ADD_H_GUIDELINE = "addhguideline";
 
   private static AdvancedSnappingModel instance = null;
 
@@ -66,6 +68,8 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     public void showMarginsChanged(boolean showMargins);
     public void snapToMarginsChanged(boolean snapToMargins);
     public void snapToWidgetsChanged(boolean snapToWidgets);
+    public void addVGuidelinePressed();
+    public void addHGuidelinePressed();
   }
 
   // helper class to avoid having to implement all methods in the interface
@@ -79,6 +83,8 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
     public void showMarginsChanged(boolean showMargins) {};
     public void snapToMarginsChanged(boolean snapToMargins) {};
     public void snapToWidgetsChanged(boolean snapToWidgets) {};
+    public void addVGuidelinePressed() {};
+    public void addHGuidelinePressed() {};
   }
 
   @Override
@@ -127,6 +133,12 @@ public class AdvancedSnappingModel implements RibbonModel, Serializable {
             case ACTION_SNAP_TO_WIDGETS_ON:
             case ACTION_SNAP_TO_WIDGETS_OFF:
               setSnapToWidgets(e.getActionCommand().equals(ACTION_SNAP_TO_WIDGETS_ON));
+              break;
+            case ACTION_ADD_V_GUIDELINE:
+              fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.addVGuidelinePressed(); }});
+              break;
+            case ACTION_ADD_H_GUIDELINE:
+              fireEvent(new FireEventCallback() { public void call(AdvancedSnappingModelListenerInterface listener) { listener.addHGuidelinePressed(); }});
               break;
           }
         }
