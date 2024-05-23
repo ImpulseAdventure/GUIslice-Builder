@@ -10,8 +10,19 @@ import builder.widgets.GuidelineWidget;
 
 /**
  * Guideline is a visual guide to help you align widgets.
+ *
+ * @author etet100
  */
 public class Guidelines {
+  private static Guidelines instance = null;
+
+  public static Guidelines getInstance() {
+    if (instance == null) {
+      instance = new Guidelines();
+    }
+    return instance;
+  }
+
   private GuidelinesList hGuidelines = new GuidelinesList();
   private GuidelinesList vGuidelines = new GuidelinesList();
 
