@@ -1,8 +1,12 @@
 package builder.models;
 
+import java.lang.reflect.Type;
 import java.awt.Point;
 
-//import builder.common.Guidelines;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 public class GuidelineModel extends LineModel {
   public enum Orientation {
@@ -41,5 +45,15 @@ public class GuidelineModel extends LineModel {
 
   public boolean isVertical() {
     return orientation == Orientation.VERTICAL;
+  }
+
+  public static class Serializer implements JsonSerializer<GuidelineModel> {
+    @Override
+    public JsonElement serialize(GuidelineModel object, Type type, JsonSerializationContext context) {
+      JsonObject result = new JsonObject();
+      result.addProperty("orientation", object.orientation.toString());
+      result.addProperty("pos", String.valueOf(object.pos));
+      return result;
+    }
   }
 }

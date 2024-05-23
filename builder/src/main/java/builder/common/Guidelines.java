@@ -1,8 +1,14 @@
 package builder.common;
 
-import java.awt.Point;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import builder.models.AdvancedSnappingModel;
 import builder.models.GuidelineModel;
@@ -38,7 +44,7 @@ public class Guidelines {
     });
   }
 
-  public class Guideline {
+  public class Guideline  {
     private GuidelineModel model;
     private GuidelineWidget widget;
 
@@ -56,6 +62,17 @@ public class Guidelines {
     public void forEachWidget(Consumer<GuidelineWidget> action) {
       for (Guideline guideline : this) {
         action.accept(guideline.widget);
+      }
+    }
+
+    public static class Serializer implements JsonSerializer<GuidelinesList> {
+      @Override
+      public JsonArray serialize(GuidelinesList object, Type type, JsonSerializationContext context) {
+        JsonArray result = new JsonArray();
+        for (Guideline guideline : object) {
+          result.add(context.serialize(guideline.getModel()));
+        }
+        return result;
       }
     }
   }
@@ -82,19 +99,13 @@ public class Guidelines {
     return !hGuidelines.isEmpty() || !vGuidelines.isEmpty();
   }
 
-  // public GuidelineWidget getOne(Point mapPoint) {
-  //   for (Guideline guideline : hGuidelines) {
-  //     if (!guideline.model.isVertical() && mapPoint.y >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.y <= guideline.model.getPos() + SNAPPING_DISTANCE) {
-  //       return guideline.widget;
-  //     }
-  //   }
-
-  //   for (Guideline guideline : vGuidelines) {
-  //     if (guideline.model.isVertical() && mapPoint.x >= guideline.model.getPos() - SNAPPING_DISTANCE && mapPoint.x <= guideline.model.getPos() + SNAPPING_DISTANCE) {
-  //       return guideline.widget;
-  //     }
-  //   }
-
-  //   return null;
-  // }
+  public static class Serializer implements JsonSerializer<Guidelines> {
+    @Override
+    public JsonElement serialize(Guidelines object, Type type, JsonSerializationContext context) {
+      JsonObject result = new JsonObject();
+      result.add("horizontal", context.serialize(object.hGuidelines));
+      result.add("vertical", context.serialize(object.vGuidelines));
+      return result;
+    }
+  }
 }
