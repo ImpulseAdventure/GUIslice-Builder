@@ -516,14 +516,14 @@ public class Ribbon extends JPanel {
     btn_snap_widgets.setActionCommand(AdvancedSnappingModel.ACTION_SNAP_TO_WIDGETS);
 
     btn_add_v_guideline = band.addSlimButton("Add vertical guideline");
-    // btn_add_v_guideline.setImage(Utils.getIcon(
-    //     "resources/icons/snapping/add_v_guideline.png"));
+    btn_add_v_guideline.setImage(Utils.getIcon(
+        "resources/icons/snapping/add_v_guideline.png"));
     btn_add_v_guideline.addToolTip("Add a vertical guideline");
     btn_add_v_guideline.setActionCommand(AdvancedSnappingModel.ACTION_ADD_V_GUIDELINE);
 
     btn_add_h_guideline = band.addSlimButton("Add horizontal guideline");
-    // btn_add_h_guideline.setImage(Utils.getIcon(
-    //     "resources/icons/snapping/add_h_guideline.png"));
+    btn_add_h_guideline.setImage(Utils.getIcon(
+        "resources/icons/snapping/add_h_guideline.png"));
     btn_add_h_guideline.addToolTip("Add a horizontal guideline");
     btn_add_h_guideline.setActionCommand(AdvancedSnappingModel.ACTION_ADD_H_GUIDELINE);
 
