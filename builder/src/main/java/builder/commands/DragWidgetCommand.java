@@ -131,8 +131,8 @@ public class DragWidgetCommand extends Command {
        */
       w = targets.get(i);
       pt[i] = new Point(
-        doNotSnap ? mapPt.x - offsetPt[i].x : vSnapper.snap(mapPt.x - offsetPt[i].x, Snapper.SourceEdge.MIN),
-        doNotSnap ? mapPt.y - offsetPt[i].y : hSnapper.snap(mapPt.y - offsetPt[i].y, Snapper.SourceEdge.MIN)
+        doNotSnap ? mapPt.x - offsetPt[i].x : hSnapper.snap(mapPt.x - offsetPt[i].x, Snapper.SourceEdge.MIN),
+        doNotSnap ? mapPt.y - offsetPt[i].y : vSnapper.snap(mapPt.y - offsetPt[i].y, Snapper.SourceEdge.MIN)
       );
       w.updateLocation(
         pt[i].x,

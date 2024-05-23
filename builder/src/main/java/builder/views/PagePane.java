@@ -1245,10 +1245,14 @@ public class PagePane extends JPanel implements iSubscriber {
         selectRect(mouseRect);
      } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
        if (dragCommand == null) {
-          dragCommand = new DragWidgetCommand(
-            instance,
-            Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth()),
-            Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight())
+         dragCommand = new DragWidgetCommand(
+             instance,
+             Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
+                 pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(),
+                 gridModel.getGridMinorWidth()),
+             Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
+                 pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(),
+                 gridModel.getGridMinorHeight())
           );
           if (!dragCommand.start(dragPt)) {
             currentAction = CurrentAction.NONE;
