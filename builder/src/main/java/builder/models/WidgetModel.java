@@ -109,7 +109,7 @@ abstract public class WidgetModel extends AbstractTableModel {
    *  Column 3 is the Property Name exposed to users.
    *  Column 4 is the cells Property value, also exposed to users. 
    */
-  Object[][] data;
+  protected Object[][] data;
   
   /** The JTable column names. */
   String[] columnNames = {"Name", "Value"};

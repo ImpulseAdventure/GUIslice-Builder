@@ -897,12 +897,19 @@ public class PagePane extends JPanel implements iSubscriber {
       pos = scaledPos;
     }
 
+    if (advancedSnappingModel.isEditGuidelines()) {
+      Widget guideline = guidelines.findOne(p);
+      if (guideline != null) {
+        return guideline;
+      }
+    }
+
     // last element is considered the topmost
     ListIterator<Widget> iterator = widgets.listIterator(widgets.size());
     while (iterator.hasPrevious()) {
-      Widget w = iterator.previous();
-      if (w.contains(pos)) {
-        return w;
+      Widget widget = iterator.previous();
+      if (widget.contains(pos)) {
+        return widget;
       }
     }
 
@@ -1531,5 +1538,13 @@ public class PagePane extends JPanel implements iSubscriber {
       } // end key != null
     } // end for (Widget w)
     Builder.postStatusMsg("Scale operation completed!");
+  }
+
+  public void setActive(boolean state) {
+    if (state) {
+      refreshView();
+    } else {
+      selectNone();
+    }
   }
 }

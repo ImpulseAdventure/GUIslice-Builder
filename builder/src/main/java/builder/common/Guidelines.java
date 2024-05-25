@@ -1,5 +1,6 @@
 package builder.common;
 
+import java.awt.Point;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import builder.controller.Controller;
+import builder.controller.PropManager;
 import builder.models.AdvancedSnappingModel;
 import builder.models.AdvancedSnappingModel.AdvancedSnappingModelListenerInterface;
 import builder.models.GuidelineModel;
@@ -23,6 +25,7 @@ import builder.models.PageModel;
 import builder.models.ProjectModel;
 import builder.models.GuidelineModel.Orientation;
 import builder.widgets.GuidelineWidget;
+import builder.widgets.Widget;
 
 /**
  * Guideline is a visual guide to help you align widgets.
@@ -145,14 +148,18 @@ public class Guidelines {
   }
 
   public GuidelineWidget createGuideline(GuidelineModel.Orientation orientation, int pos) {
+    Guideline guideline = null;
     GuidelineWidget widget = null;
     if (orientation == GuidelineModel.Orientation.HORIZONTAL) {
       widget = new GuidelineWidget(orientation, pos);
-      hGuidelines.add(new Guideline(widget));
+      guideline = new Guideline(widget);
+      hGuidelines.add(guideline);
     } else {
       widget = new GuidelineWidget(orientation, pos);
-      vGuidelines.add(new Guideline(widget));
+      guideline = new Guideline(widget);
+      vGuidelines.add(guideline);
     }
+    PropManager.getInstance().addPropEditor(guideline.getModel());
     return widget;
   }
 
@@ -166,6 +173,20 @@ public class Guidelines {
 
   public boolean hasGuidelines() {
     return !hGuidelines.isEmpty() || !vGuidelines.isEmpty();
+  }
+
+  public Widget findOne(Point p) {
+    for (Guideline guideline : hGuidelines) {
+      if (guideline.widget.contains(p)) {
+        return guideline.widget;
+      }
+    }
+    for (Guideline guideline : vGuidelines) {
+      if (guideline.widget.contains(p)) {
+        return guideline.widget;
+      }
+    }
+    return null;
   }
 
   public static class Serializer implements JsonSerializer<Guidelines> {

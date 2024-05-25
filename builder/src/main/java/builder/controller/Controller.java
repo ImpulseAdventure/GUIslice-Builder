@@ -432,8 +432,11 @@ public class Controller extends JInternalFrame
       tabbedPane.setSelectedIndex(tabPages.size()-1);
     }
     tabbedPane.repaint();
+    if (currentPage != null) {
+      currentPage.setActive(false);
+    }
     currentPage = page;
-    currentPage.refreshView();
+    currentPage.setActive(true);
   }
 
   /**
@@ -446,12 +449,13 @@ public class Controller extends JInternalFrame
     PagePane page = findPage(pageKey);
     if (page != null) {
       int idx = findPageIdx(pageKey);
-      if (currentPage != null)
-        currentPage.selectNone();  // turn off all selections
+      if (currentPage != null) {
+        currentPage.selectNone();
+      }
       currentPage = page;
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
-      currentPage.refreshView();
+      currentPage.setActive(true);
       PropManager.getInstance().showPropEditor(pageKey);
     }
   }
@@ -466,12 +470,13 @@ public class Controller extends JInternalFrame
     PagePane page = findPage(pageKey);
     if (page != null) {
       int idx = findPageIdx(pageKey);
-      if (currentPage != null)
-        currentPage.selectNone();  // turn off all selections
+      if (currentPage != null) {
+        currentPage.setActive(false);
+      }
       currentPage = page;
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
-      currentPage.refreshView();
+      currentPage.setActive(true);
 // commented out for  [Selecting Items on Other Pages Doesn't Show Selected Widget Properties #118] 
 //      PropManager.getInstance().showPropEditor(pageKey);
     }
@@ -491,11 +496,11 @@ public class Controller extends JInternalFrame
       PagePane page = findPage(pageKey);
       if (page != null) {
         if (currentPage != null && currentPage != page) {
-          currentPage.selectNone();  // turn off all selections
+          currentPage.setActive(false);
           currentPage = page;
           tabbedPane.setSelectedIndex(idx);
           tabbedPane.repaint();
-          currentPage.refreshView();
+          currentPage.setActive(true);
           PropManager.getInstance().showPropEditor(page.getKey());
           // notify treeview
           MsgBoard.sendEvent("Controller",MsgEvent.PAGE_TAB_CHANGE, pageKey);

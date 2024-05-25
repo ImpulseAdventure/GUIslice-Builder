@@ -145,6 +145,8 @@ public class EnumFactory {
   
   /** The Constant GROUPID. */
   static final public String GROUPID     = "E_GROUP";
+
+  static final public String GUIDELINE   = "Guideline";
   
   /** The Constant WIDGET. */
   static final public String WIDGET      = "Widget";  // used as a key to find our models
