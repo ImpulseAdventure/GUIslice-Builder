@@ -118,16 +118,17 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The donotSelectKey */
   private String donotSelectKey = null;
-  
-  /** The dragging indicator. */
-  private boolean bDragging = false;
+
+  private enum CurrentAction {
+    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION, EDITING_GUIDELINES
+  }
+
+  /** The current action. */
+  private CurrentAction currentAction = CurrentAction.NONE;
 
   /** Used in resizing procedure */
   private Widget widgetUnderCursor = null;
 
-  /** The resize indicator. */
-  private boolean bResizing = false;
-  
   /** The paint base widgets indicator. */
   private boolean bPaintBaseWidgets = false;
 
@@ -260,7 +261,7 @@ public class PagePane extends JPanel implements iSubscriber {
    *
    * @param g
    *          the g
-   * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+   * @see JComponent#paintComponent(Graphics)
    */
   @Override
   protected void paintComponent(Graphics g) {
@@ -860,7 +861,7 @@ public class PagePane extends JPanel implements iSubscriber {
      *
      * @param e
      *          the e
-     * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+     * @see MouseAdapter#mouseClicked(MouseEvent)
      */
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -933,7 +934,7 @@ public class PagePane extends JPanel implements iSubscriber {
      *
      * @param e
      *          the e
-     * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
+     * @see MouseAdapter#mouseReleased(MouseEvent)
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -949,9 +950,7 @@ public class PagePane extends JPanel implements iSubscriber {
         resizeCommand = null;
       }      
       bMultiSelectionBox = false;
-      bRectangularSelectionMode = false;
-      bDragging = false;
-      bResizing = false;
+      currentAction = CurrentAction.NONE;
       setCursor(Cursor.getDefaultCursor());
       e.getComponent().repaint();
     }  // end mouseReleased
@@ -961,14 +960,16 @@ public class PagePane extends JPanel implements iSubscriber {
      *
      * @param e
      *          the e
-     * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
+     * @see MouseAdapter#mousePressed(MouseEvent)
      */
     @Override
     public void mousePressed(MouseEvent e) {
       mousePt = e.getPoint();
-      bDragging = false;
+      if (currentAction == CurrentAction.DRAGGING_WIDGET) {
+        currentAction = CurrentAction.NONE;
+      }
       Widget w = findOne(mousePt);
-      if (bRectangularSelectionMode) {
+      if (currentAction == CurrentAction.RECTANGULAR_SELECTION) {
         bMultiSelectionBox = true;
         donotSelectKey = null;
         if (w != null) {
@@ -979,7 +980,9 @@ public class PagePane extends JPanel implements iSubscriber {
         HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
-            if (w.isSelected()) bDragging = true;
+            if (w.isSelected()) {
+              currentAction = CurrentAction.DRAGGING_WIDGET;
+            }
             dragPt = new Point(mousePt.x, mousePt.y);
             break;
           case NONE:
@@ -988,7 +991,7 @@ public class PagePane extends JPanel implements iSubscriber {
             if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
               resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType);
               resizeCommand.start(unscaledPoint);
-              bResizing = true;
+              currentAction = CurrentAction.RESIZING_WIDGET;
             }
             break;
         }
@@ -1019,7 +1022,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      if (bMultiSelectionBox || bRectangularSelectionMode || bDragging || bResizing) {
+      if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
         return;
       }
 
@@ -1078,7 +1081,7 @@ public class PagePane extends JPanel implements iSubscriber {
      *
      * @param e
      *          the e
-     * @see java.awt.event.MouseMotionAdapter#mouseDragged(java.awt.event.MouseEvent)
+     * @see MouseMotionAdapter#mouseDragged(MouseEvent)
      */
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -1091,13 +1094,12 @@ public class PagePane extends JPanel implements iSubscriber {
             Math.abs(mousePt.y - e.getY()));
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
-     } else if (bDragging) {
+      } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
        if (dragCommand == null) {
           dragCommand = new DragWidgetCommand(instance);
           if (!dragCommand.start(dragPt)) {
-            bDragging = false;
+            currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
-            bRectangularSelectionMode = false;
             dragCommand = null;
             repaint();
             return;
@@ -1106,7 +1108,7 @@ public class PagePane extends JPanel implements iSubscriber {
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
         dragCommand.move(e.getPoint());
-      } else if (bResizing) {
+      } else if (currentAction == CurrentAction.RESIZING_WIDGET) {
         if (resizeCommand == null) {
           System.out.println("resizeCommand is null");
         } else {
@@ -1122,7 +1124,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * getPreferredSize.
    *
    * @return the preferred size
-   * @see javax.swing.JComponent#getPreferredSize()
+   * @see JComponent#getPreferredSize()
    */
   @Override
   public Dimension getPreferredSize() {
@@ -1146,7 +1148,7 @@ public class PagePane extends JPanel implements iSubscriber {
    *
    * @param c
    *          the <code>Command</code> object
-   * @see builder.commands.Command#execute()
+   * @see Command#execute()
    */
   public void execute(Command c) {
     c.execute();
@@ -1168,7 +1170,7 @@ public class PagePane extends JPanel implements iSubscriber {
    *
    * @param e
    *          the e
-   * @see builder.events.iSubscriber#updateEvent(builder.events.MsgEvent)
+   * @see iSubscriber#updateEvent(MsgEvent)
    */
   @Override
   public void updateEvent(MsgEvent e) {
