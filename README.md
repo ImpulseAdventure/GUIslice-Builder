@@ -118,6 +118,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes 0.17.b30
+
+Fixes for dragging UI Elements.
+
 ### Enhancement for 0.17.b29
 
 Minor UI changes to Grid.
