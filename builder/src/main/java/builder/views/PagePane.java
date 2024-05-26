@@ -898,7 +898,7 @@ public class PagePane extends JPanel implements iSubscriber {
     }
 
     if (advancedSnappingModel.isEditGuidelines()) {
-      Widget guideline = guidelines.findOne(p);
+      Widget guideline = guidelines.findOne(pos);
       if (guideline != null) {
         return guideline;
       }

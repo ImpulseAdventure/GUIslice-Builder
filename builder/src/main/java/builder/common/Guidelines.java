@@ -1,6 +1,7 @@
 package builder.common;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -183,7 +184,7 @@ public class Guidelines {
     return !hGuidelines.isEmpty() || !vGuidelines.isEmpty();
   }
 
-  public Widget findOne(Point p) {
+  public Widget findOne(Point2D p) {
     for (Guideline guideline : hGuidelines) {
       if (guideline.widget.contains(p)) {
         return guideline.widget;
