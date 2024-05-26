@@ -405,6 +405,7 @@ public class TreeView extends JInternalFrame implements iSubscriber {
       parent = root;
     }
     DefaultMutableTreeNode childNode = findNode(child);
+    if (childNode == null) return;
     // It is key to invoke this on the TreeModel, and NOT DefaultMutableTreeNode
     treeModel.removeNodeFromParent(childNode);
   }
