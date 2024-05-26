@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2022 Paul Conti
+ * Copyright 2018-2024 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -120,7 +120,7 @@ public class PagePane extends JPanel implements iSubscriber {
   private String donotSelectKey = null;
 
   private enum CurrentAction {
-    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION, EDITING_GUIDELINES
+    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION
   }
 
   /** The current action. */
