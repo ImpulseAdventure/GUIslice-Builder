@@ -20,11 +20,13 @@ public class GuidelineModel extends WidgetModel {
   }
 
   private int pos;
+  private int index; // unique index of the guideline
   private Orientation orientation;
 
-  public GuidelineModel(Orientation orientation, int pos) {
+  public GuidelineModel(Orientation orientation, int pos, int index) {
     super();
     this.pos = pos;
+    this.index = index;
     this.orientation = orientation;
   }
 
@@ -33,9 +35,18 @@ public class GuidelineModel extends WidgetModel {
   static public final int PROP_ORIENTATION = 4;
   static public final int PROP_MAX = PROP_ORIENTATION;
 
+  public int getIndex() {
+    return index;
+  }
+
   @Override
   public String getKey() {
-    return EnumFactory.GUIDELINE;
+    return String.format("%s%s$%d", EnumFactory.GUIDELINE, orientation.toString(), index);
+  }
+
+  @Override
+  public String getEnum() {
+    return String.format("%s_%s_%d", EnumFactory.GUIDELINE, orientation.toString(), index);
   }
 
   @Override
@@ -89,7 +100,7 @@ public class GuidelineModel extends WidgetModel {
       case PROP_KEY:
         return getKey();
       case PROP_ENUM:
-        return getKey();
+        return getEnum();
       case PROP_POS_H:
         return orientation == Orientation.HORIZONTAL ? Integer.valueOf(pos) : 0;
       case PROP_POS_V:
@@ -161,7 +172,7 @@ public class GuidelineModel extends WidgetModel {
   }
 
   public int getX() {
-    return orientation == Orientation.VERTICAL ? pos : 0;
+      return orientation == Orientation.VERTICAL ? pos : 0;
   }
 
   public int getY() {
@@ -181,6 +192,7 @@ public class GuidelineModel extends WidgetModel {
     public JsonElement serialize(GuidelineModel object, Type type, JsonSerializationContext context) {
       JsonObject result = new JsonObject();
       result.addProperty("orientation", object.orientation.toString());
+      result.addProperty("index", String.valueOf(object.index));
       result.addProperty("pos", String.valueOf(object.pos));
       return result;
     }

@@ -129,6 +129,20 @@ public class Guidelines {
         return result;
       }
     }
+
+    public int getFreeIndex() {
+      // @TODO this is not the best way to find a free index
+      findexistingindex:
+      for (int index = 0; index < Integer.MAX_VALUE; index++) {
+        for (Guideline guideline : this) {
+          if (guideline.getModel().getIndex() == index) {
+            continue findexistingindex;
+          }
+        }
+        return index;
+      }
+      return -1;
+    }
   }
 
   protected void createGuidelineOnTheBestPosition(GuidelineModel.Orientation orientation) {
@@ -148,17 +162,11 @@ public class Guidelines {
   }
 
   public GuidelineWidget createGuideline(GuidelineModel.Orientation orientation, int pos) {
-    Guideline guideline = null;
-    GuidelineWidget widget = null;
-    if (orientation == GuidelineModel.Orientation.HORIZONTAL) {
-      widget = new GuidelineWidget(orientation, pos);
-      guideline = new Guideline(widget);
-      hGuidelines.add(guideline);
-    } else {
-      widget = new GuidelineWidget(orientation, pos);
-      guideline = new Guideline(widget);
-      vGuidelines.add(guideline);
-    }
+    GuidelinesList guidelines = getGuidelines(orientation);
+    GuidelineModel model = new GuidelineModel(orientation, pos, guidelines.getFreeIndex());
+    GuidelineWidget widget = new GuidelineWidget(model);
+    Guideline guideline = new Guideline(widget);
+    guidelines.add(guideline);
     PropManager.getInstance().addPropEditor(guideline.getModel());
     return widget;
   }

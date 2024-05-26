@@ -15,8 +15,8 @@ public class GuidelineWidget extends Widget {
 
   private GuidelineModel model = null;
 
-  public GuidelineWidget(GuidelineModel.Orientation orientation, int pos) {
-    super.model = model = new GuidelineModel(orientation, pos);
+  public GuidelineWidget(GuidelineModel model) {
+    super.model = this.model = model;
   }
 
   @Override
