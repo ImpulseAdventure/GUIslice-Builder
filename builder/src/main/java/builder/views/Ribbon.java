@@ -726,10 +726,20 @@ public class Ribbon extends JPanel {
     btn_show_margins.setPressed(model.isShowMargins());
     btn_snap_margins.setPressed(model.isSnapToMargins());
     btn_snap_widgets.setPressed(model.isSnapToWidgets());
+    btn_add_h_guideline.setEnabled(model.isEditGuidelines());
+    btn_add_v_guideline.setEnabled(model.isEditGuidelines());
 
     model.addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
+      @Override
       public void showGridChanged(boolean showGrid) {
         btn_show_grid.setPressed(showGrid);
+        repaint();
+      }
+
+      @Override
+      public void editGuidelinesChanged(boolean editingGuidelines) {
+        btn_add_v_guideline.setEnabled(editingGuidelines);
+        btn_add_h_guideline.setEnabled(editingGuidelines);
         repaint();
       }
     });

@@ -198,6 +198,11 @@ public class Guidelines {
     return null;
   }
 
+  public void unselectAll() {
+    hGuidelines.forEachWidget((GuidelineWidget widget) -> widget.unSelect());
+    vGuidelines.forEachWidget((GuidelineWidget widget) -> widget.unSelect());
+  }
+
   public static class Serializer implements JsonSerializer<Guidelines> {
     @Override
     public JsonElement serialize(Guidelines object, Type type, JsonSerializationContext context) {

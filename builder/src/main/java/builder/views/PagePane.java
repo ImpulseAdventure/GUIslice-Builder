@@ -266,6 +266,9 @@ public class PagePane extends JPanel implements iSubscriber {
 
     AdvancedSnappingModel.getInstance().addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
       public void editGuidelinesChanged(boolean editGuidelines) {
+        if (!editGuidelines) {
+          guidelines.unselectAll();
+        }
         repaint();
       }
       public void showMarginsChanged(boolean showMargins) {
@@ -661,6 +664,9 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void selectWidget(Widget w) {
     if (w.isSelected()) return;
+    if (w instanceof GuidelineWidget) {
+      guidelines.unselectAll();
+    }
     w.select();
     doSelectedCount(w);
     ribbon.setEditButtons(selectedGroupCnt);
