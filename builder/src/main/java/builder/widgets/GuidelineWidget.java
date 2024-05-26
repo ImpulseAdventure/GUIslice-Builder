@@ -75,13 +75,5 @@ public class GuidelineWidget extends Widget {
     } else {
       return (point.getY() >= model.getPos() - SNAPPING_DISTANCE && point.getY() <= model.getPos() + SNAPPING_DISTANCE);
     }
-    // Rectangle r = getWinBounded();
-    // Rectangle2D.Double rectangle = new Rectangle2D.Double();
-    // boolean isVertical = model.isVertical();
-    // rectangle.x = r.x - (RESIZE_HANDLE_SIZE / 2);
-    // rectangle.y = r.y - (RESIZE_HANDLE_SIZE / 2);
-    // rectangle.width = RESIZE_HANDLE_SIZE + (isVertical ? 0 : r.width);
-    // rectangle.height = RESIZE_HANDLE_SIZE + (isVertical ? r.height : 0);
-    // return rectangle.contains(point);
   }
 }

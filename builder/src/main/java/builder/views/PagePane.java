@@ -1272,7 +1272,6 @@ public class PagePane extends JPanel implements iSubscriber {
           if (!dragCommand.start(dragPt)) {
             currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
-            // bRectangularSelectionMode = false;
             dragCommand = null;
             repaint();
             return;
