@@ -142,21 +142,21 @@ public class GuidelineModel extends WidgetModel {
 
   @Override
   public void setX(int x) {
-    if (orientation == Orientation.HORIZONTAL) {
+    if (orientation == Orientation.VERTICAL) {
       pos = x;
     }
   }
 
   @Override
   public void setY(int y) {
-    if (orientation == Orientation.VERTICAL) {
+    if (orientation == Orientation.HORIZONTAL) {
       pos = y;
     }
   }
 
   @Override
   public int getRowCount() {
-    return 4;
+    return PROP_MAX;
   }
 
   public int getPos() {

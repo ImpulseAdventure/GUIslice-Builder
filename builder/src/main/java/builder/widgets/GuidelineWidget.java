@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.Color;
 
 import builder.common.ScaledGraphics;
@@ -24,36 +23,9 @@ public class GuidelineWidget extends Widget {
     return model;
   }
 
-  // @Override
-  // public Rectangle getWinBounded() {
-  //   Rectangle b = new Rectangle();
-  //   if (model.isVertical()) {
-  //     b.x = model.getPos() - 1;
-  //     b.y = 0;
-  //     b.width = 3;
-  //     b.height = u.getWinHeight();
-  //   } else {
-  //     b.x = 0;
-  //     b.y = model.getPos() - 1;
-  //     b.width = u.getWinWidth();
-  //     b.height = 3;
-  //   }
-  //   b.x = model.getX() - 1;
-  //   b.y = model.getY() - 1;
-  //   if (model.isVertical()) {
-  //     b.width = 3;
-  //     b.height = model.getLength();
-  //   } else {
-  //     b.width = model.getLength();
-  //     b.height = 3;
-  //   }
-  //   return b;
-  // }
-
   public void draw(ScaledGraphics graphics, int pageWidth, int pageHeight) {
     Color currentColor = graphics.getColor();
     if (bSelected) {
-      //drawSelRect(graphics, getWinBounded());
       graphics.setColor(Color.RED);
     }
 
@@ -90,14 +62,10 @@ public class GuidelineWidget extends Widget {
     return contains(new Point2D.Double(point.x, point.y));
   }
 
-  public void updateLocation(int x, int y) {
-    if (model.isVertical()) {
-      model.setPos(x);
-    } else {
-      model.setPos(y);
-    }
-    model.setX(x);
-    model.setY(y);
+  @Override
+  public void moveBy(Point destination) { // moveBy means move TO
+    model.setX(destination.x);
+    model.setY(destination.y);
   }
 
   @Override
