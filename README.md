@@ -5,7 +5,7 @@ Please refer to the wiki page for installation and usage details:
 
 [GUIslice Builder - Documentation](https://github.com/ImpulseAdventure/GUIslice/wiki/GUIslice-Builder)
 
-![image](https://user-images.githubusercontent.com/8510097/90728338-9a8be100-e279-11ea-969e-cbd8bb0ac6c6.png)
+![](builder/docs/images/title_demo_control.png)
 
 ## Brief Overview
 <p>
@@ -35,11 +35,11 @@ if the Software has errors.</p>
 
 ## Contributing
 
-[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/blob/master/docs/CONTRIBUTING.md)
+[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/docs/CONTRIBUTING.md)
 
 ## Code of Conduct
 
-[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/blob/master/docs/code_of_conduct.md)
+[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/docs/code_of_conduct.md)
 
 ## Builder Contents
 
