@@ -35,11 +35,7 @@ if the Software has errors.</p>
 
 ## Contributing
 
-[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/docs/CONTRIBUTING.md)
-
-## Code of Conduct
-
-[Code of Conduct](https://github.com/ImpulseAdventure/GUIslice-Builder/docs/code_of_conduct.md)
+Contributing Guidelines: https://github.com/ImpulseAdventure/GUIslice-Builder/docs/CONTRIBUTING.md
 
 ## Builder Contents
 
