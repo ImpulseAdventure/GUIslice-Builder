@@ -116,8 +116,7 @@ public class GuidelineModel extends WidgetModel {
   public void changeValueAt(Object value, int row) {
     if (row == PROP_POS_H) {
       setPos(value.toString());
-    }
-    if (row == PROP_POS_V) {
+    } else if (row == PROP_POS_V) {
       setPos(value.toString());
     }
   }
@@ -185,6 +184,20 @@ public class GuidelineModel extends WidgetModel {
 
   public boolean isVertical() {
     return orientation == Orientation.VERTICAL;
+  }
+
+  @Override
+  public void restore(Object oldValue, int row) {
+    if (row == PROP_POS_V) {
+      setX(Integer.valueOf(oldValue.toString()));
+    } else if (row == PROP_POS_H) {
+      setY(Integer.valueOf(oldValue.toString()));
+    }
+  }
+
+  @Override
+  public void restore(String oldValue) {
+    // Not supported, sorry
   }
 
   public static class Serializer implements JsonSerializer<GuidelineModel> {
