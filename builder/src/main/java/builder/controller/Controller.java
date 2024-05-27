@@ -57,6 +57,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
+
+import com.google.gson.GsonBuilder;
+
 import javax.swing.SwingWorker;
 
 import builder.Builder;
@@ -82,12 +85,14 @@ import builder.commands.GroupCommand;
 import builder.commands.History;
 import builder.commands.PasteCommand;
 import builder.common.EnumFactory;
+import builder.common.Guidelines;
 import builder.common.Utils;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.models.GeneralModel;
 import builder.models.GridModel;
+import builder.models.GuidelineModel;
 import builder.models.PageModel;
 import builder.models.ProjectModel;
 import builder.models.WidgetModel;
@@ -96,6 +101,7 @@ import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 import builder.prefs.ModelEditor;
 import builder.prefs.NumKeyPadEditor;
+import builder.project.Project;
 import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeFactory;
 import builder.views.PagePane;
@@ -580,7 +586,6 @@ public class Controller extends JInternalFrame
     addPageToView(page);
     PropManager.getInstance().addPropEditor(page.getModel());
     TreeView.getInstance().addPage(page.getKey(), pageEnum);
-    currentPage.refreshView();
   }
   
   /**
@@ -902,6 +907,30 @@ public class Controller extends JInternalFrame
       String frameTitle = Builder.PROGRAM_TITLE + " - " + projectFile.getName();
       topFrame.setTitle(frameTitle);
     }
+
+    com.google.gson.Gson gson = new com.google.gson.GsonBuilder()
+      .setPrettyPrinting()
+      .excludeFieldsWithoutExposeAnnotation()
+      .serializeNulls()
+      .registerTypeAdapter(ProjectModel.class, new ProjectModel.Serializer())
+      .registerTypeAdapter(GuidelineModel.class, new GuidelineModel.Serializer())
+      .registerTypeAdapter(Guidelines.class, new Guidelines.Serializer())
+      .registerTypeAdapter(Guidelines.GuidelinesList.class, new Guidelines.GuidelinesList.Serializer())
+      .create();
+
+    Project project = new Project(
+      Builder.FILE_VERSION_NO,
+      Guidelines.getInstance()
+    );
+
+    try {
+      FileOutputStream fos = new FileOutputStream(file.getPath() + ".json");
+      fos.write(gson.toJson(project).getBytes());
+      fos.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     Utils.backupFile(projectFile);
     ObjectOutputStream out =  new ObjectOutputStream(new FileOutputStream(projectFile));
     // output current version so we can make changes on future updates

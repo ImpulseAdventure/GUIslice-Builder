@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,6 +41,14 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.Expose;
 
 import builder.Builder;
 import builder.codegen.PlatformIO;
@@ -969,4 +978,17 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
     fontsListCell.setData((String[])data[PROP_FONT_LIST][PROP_VAL_VALUE]);
   }
 
+  public static class Serializer implements JsonSerializer<ProjectModel> {
+    public JsonElement serialize(final ProjectModel model, final Type type, final JsonSerializationContext context) {
+      JsonObject result = new JsonObject();
+      result.add("width", new JsonPrimitive(model.getWidth()));
+      result.add("height", new JsonPrimitive(model.getHeight()));
+      // result.add("name", new JsonPrimitive(person.getName()));
+      // Person parent = person.getParent();
+      // if (parent != null) {
+      //   result.add("parent", new JsonPrimitive(parent.getId()));
+      // }
+      return result;
+    }
+  }
 }
