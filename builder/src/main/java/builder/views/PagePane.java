@@ -292,11 +292,11 @@ public class PagePane extends JPanel implements iSubscriber {
     });
 
     if (!guidelines.hasGuidelines()) {
-      widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 53));
-      widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 106));
-      widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 176));
-      widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 81));
-      widgets.add(guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 212));
+      guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 53);
+      guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 106);
+      guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 176);
+      guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 81);
+      guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 212);
     }
   }
 
