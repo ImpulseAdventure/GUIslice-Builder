@@ -991,4 +991,8 @@ public class ProjectModel extends PageModel implements MultipeLineCellListener {
       return result;
     }
   }
+
+  public boolean isCenterPageEditor() {
+    return true;
+  }
 }

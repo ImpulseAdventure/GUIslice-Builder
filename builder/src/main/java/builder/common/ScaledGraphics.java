@@ -1,6 +1,7 @@
 package builder.common;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Color;
 import java.awt.Stroke;
 
@@ -11,9 +12,10 @@ public class ScaledGraphics {
   private Graphics2D graphics;
   private double zoomFactor;
 
-  public ScaledGraphics(final Graphics2D graphics, double zoomFactor) {
+  public ScaledGraphics(final Graphics2D graphics, double zoomFactor, Point offset) {
     this.graphics = graphics;
     this.zoomFactor = zoomFactor;
+    graphics.translate(offset.x, offset.y);
   }
 
   public Graphics2D getWrapped() {

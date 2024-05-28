@@ -61,7 +61,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+import com.formdev.flatlaf.util.Animator;
+import com.formdev.flatlaf.util.Animator.TimingTarget;
 
 import builder.Builder;
 import builder.commands.Command;
@@ -175,12 +181,19 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The zoom factor. */
   public static double zoomFactor = 1;
+
+  /**
+   * Distance from the top-left corner of the viewport to the top-left corner of
+   * the page. We want our page to be centered in the viewport
+   * (only of page is smaller than viewport)
+   */
+  private static Point pageOffset = new Point(0, 0);
   
   /** The zoom AffineTransform at. */
   private static AffineTransform at = null;
   
   /** The inverse AffineTransform at. */
-  public static AffineTransform inv_at;
+  public static AffineTransform invertedAt;
   
   private String[] commands = {
                                   "UP",
@@ -219,6 +232,21 @@ public class PagePane extends JPanel implements iSubscriber {
     this.addMouseListener(mouseHandler);
     this.addMouseWheelListener(mouseHandler);
     this.addMouseMotionListener(new MouseMotionHandler());
+    // listen for PagePane parent (JViewport)
+    this.addAncestorListener(new AncestorListener() {
+      @Override
+      public void ancestorMoved(javax.swing.event.AncestorEvent e) {
+        if (e.getComponent() == PagePane.this && e.getAncestor() instanceof JViewport) {
+          PagePane.this.addViewportChangeListener((JViewport) e.getAncestor());
+          // page cannot be moved so we don't need to listen for ancestorMoved events anymore
+          PagePane.this.removeAncestorListener(this);
+        }
+      }
+
+      public void ancestorAdded(AncestorEvent event) { /* nothing to do here */ }
+
+      public void ancestorRemoved(AncestorEvent event) { /* nothing to do here */ }
+    });
     panelAction = new ActionListener() {   
       @Override
       public void actionPerformed(ActionEvent ae)
@@ -360,7 +388,7 @@ public class PagePane extends JPanel implements iSubscriber {
     boolean widgetActionInProgress = (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
         (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null);
     if (widgetActionInProgress || advancedSnappingModel.isEditGuidelines() || advancedSnappingModel.isShowMargins() || advancedSnappingModel.isShowGuidelines()) {
-      final ScaledGraphics graphics = new ScaledGraphics((Graphics2D) g.create(), zoomFactor);
+      final ScaledGraphics graphics = new ScaledGraphics((Graphics2D) g.create(), zoomFactor, pageOffset);
 
       // dashed stroke for all features
       graphics.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
@@ -433,13 +461,10 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public static void zoomTransform() {
     at = new AffineTransform();
-    double xOffset = 0.0;
-    double yOffset = 0.0;
-    
-    at.translate(xOffset, yOffset);
+    at.translate(pageOffset.getX(), pageOffset.getY());
     at.scale(zoomFactor, zoomFactor);
     try {
-      inv_at = at.createInverse();
+      invertedAt = at.createInverse();
     } catch (NoninvertibleTransformException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -899,7 +924,7 @@ public class PagePane extends JPanel implements iSubscriber {
       scaledPos.x = (double) p.x;
       scaledPos.y = (double) p.y;
       // transforms are only needed in zoom mode
-      inv_at.transform(scaledPos, scaledPos);
+      invertedAt.transform(scaledPos, scaledPos);
       pos = scaledPos;
     }
 
@@ -923,20 +948,20 @@ public class PagePane extends JPanel implements iSubscriber {
   }
   
   static public Point mapPoint(int x, int y) {
-    // we may need to deal with scaled points because of zoom feature
-    if (zoomFactor > 1) {
-      Point2D.Double scaledPos = new Point2D.Double();
-      scaledPos.x = (double)x;
-      scaledPos.y = (double)y;
-      // transforms are only needed in zoom mode
-      inv_at.transform(scaledPos, scaledPos);
-//    System.out.println("map: Z=" + zoomFactor  + 
-//        " [" + x + "," + y + "] "  + " s=["  +
-//        scaledPos.x + "," + scaledPos.y + "]");
-      return new Point((int)scaledPos.x, (int)scaledPos.y);
-    } else {
-      return new Point(x,y);
+    // do nothing if no transformation is done
+    if (zoomFactor == 1 && pageOffset.x == 0 && pageOffset.y == 0) {
+      return new Point(x, y);
     }
+
+    Point2D.Double scaledPos = new Point2D.Double((double) x, (double) y);
+
+    invertedAt.transform(scaledPos, scaledPos);
+
+    return new Point((int) scaledPos.x, (int) scaledPos.y);
+  }
+
+  static public Point mapPoint(Point p) {
+    return mapPoint(p.x, p.y);
   }
   
   /**
@@ -967,6 +992,10 @@ public class PagePane extends JPanel implements iSubscriber {
   public void refreshView() {
     ribbon.setEditButtons(selectedGroupCnt); // needed on page changes
     updateContentSize();
+    if (getParent() instanceof JViewport) {
+      // affine transform may require update in order to set connect page offset
+      updatePageOffset(((JViewport) getParent()).getSize());
+    }
     repaint();
   }
   
@@ -1155,15 +1184,62 @@ public class PagePane extends JPanel implements iSubscriber {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-      if (e.isControlDown()) {
-        int distance = e.getWheelRotation();
-        if (distance < 0) {
-          zoomIn();
-        } else {
-          zoomOut();
-        }
-        refreshView();
+      if (!e.isControlDown()) {
+        return;
       }
+
+      // we don't use mapPoint here because we don't want result to be cast to int
+      Point2D.Double pointAtCursorBeforeZoom = new Point2D.Double();
+      invertedAt.transform(e.getPoint(), pointAtCursorBeforeZoom);
+
+      JViewport viewPort = (JViewport) (PagePane.this.getParent());
+      Point viewPortMousePos = viewPort.getMousePosition();
+
+      int distance = e.getWheelRotation();
+
+      // double zoomFactor = PagePane.zoomFactor;
+      // double destZoomFactor = distance < 0 ? zoomFactor * 1.1 : zoomFactor / 1.1;
+      // final Animator animator = new Animator(200, new TimingTarget() {
+
+      //   @Override
+      //   public void end() {
+      //     //animator = null;
+      //     PagePane.zoomFactor = destZoomFactor;
+      //     zoomTransform();
+      //     ribbon.enableZoom(true);
+      //     MenuBar.miZoomOut.setEnabled(true);
+      //     updateZoomReset();
+      //   }
+
+      //   @Override
+      //   public void timingEvent(float fraction) {
+      //     PagePane.zoomFactor = zoomFactor + ((destZoomFactor - zoomFactor) * fraction);
+      //     zoomTransform();
+      //     Point newPosition = new Point(
+      //       (int) ((pointAtCursorBeforeZoom.getX() * zoomFactor) - viewPortMousePos.x),
+      //       (int) ((pointAtCursorBeforeZoom.getY() * zoomFactor) - viewPortMousePos.y));
+
+      //     viewPort.setViewPosition(newPosition);
+      //     System.out.println("a");
+      //   }
+
+      // });
+      // animator.setResolution(50);
+      // animator.start();
+
+      if (distance < 0) {
+        zoomIn();
+      } else {
+        zoomOut();
+      }
+
+      refreshView();
+
+      Point newPosition = new Point(
+          (int) ((pointAtCursorBeforeZoom.getX() * zoomFactor) - viewPortMousePos.x),
+          (int) ((pointAtCursorBeforeZoom.getY() * zoomFactor) - viewPortMousePos.y));
+
+      viewPort.setViewPosition(newPosition);
     }
   } // end MouseHandler
 
@@ -1299,26 +1375,23 @@ public class PagePane extends JPanel implements iSubscriber {
   }  // end MouseMotionHandler
 
   /**
-   * getPreferredSize.
-   *
    * @return the preferred size
    * @see javax.swing.JComponent#getPreferredSize()
    */
   @Override
   public Dimension getPreferredSize() {
-    Dimension scaledSize = new Dimension(
-      (int) (pm.getWidth() * zoomFactor), 
-      (int) (pm.getHeight() * zoomFactor)
-    );    
-    return scaledSize;
+    return getScaledPageSize();
+  }
+
+  private Dimension getScaledPageSize() {
+    return new Dimension(
+      (int) (pm.getWidth() * zoomFactor),
+      (int) (pm.getHeight() * zoomFactor + 10) // small padding
+    );
   }
 
   private void updateContentSize() {
-    Dimension scaledSize = new Dimension(
-      (int) (pm.getWidth() * zoomFactor), 
-      (int) (pm.getHeight() * zoomFactor)
-    );
-    setSize(scaledSize);
+    setSize(getScaledPageSize());
   }
 
   /**
@@ -1543,6 +1616,34 @@ public class PagePane extends JPanel implements iSubscriber {
       } // end key != null
     } // end for (Widget w)
     Builder.postStatusMsg("Scale operation completed!");
+  }
+
+
+  /**
+   * Listener for parent viewport will be used to detect changes in viewport size. It is necessary to make sure that the page is always
+   * centered in the viewport.
+   */
+  private void addViewportChangeListener(JViewport viewport) {
+    viewport.addChangeListener((javax.swing.event.ChangeEvent e) -> {
+      updatePageOffset(((JViewport) e.getSource()).getSize());
+    });
+  }
+
+  private void updatePageOffset(Dimension viewportSize) {
+    Dimension scaledPageSize = getScaledPageSize();
+
+    Point newPageOffset = new Point(0, 0);
+    if (pm.isCenterPageEditor()) {
+      newPageOffset = new Point(
+          scaledPageSize.width < viewportSize.width ? (viewportSize.width - scaledPageSize.width) / 2 : 0,
+          scaledPageSize.height < viewportSize.height ? (viewportSize.height - scaledPageSize.height) / 2 : 5);
+    }
+
+    if (newPageOffset != pageOffset) {
+      pageOffset = newPageOffset;
+
+      zoomTransform();
+    }
   }
 
   public void setActive(boolean state) {
