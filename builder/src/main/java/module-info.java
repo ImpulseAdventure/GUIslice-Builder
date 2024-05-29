@@ -6,7 +6,7 @@ module builder {
   requires transitive java.desktop;
   requires transitive java.prefs;
   requires transitive java.logging;
-  requires com.google.gson;
+  requires transitive com.google.gson;
   requires transitive JRibbonMenu;
   requires com.formdev.flatlaf;
   requires com.formdev.flatlaf.intellijthemes;

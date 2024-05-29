@@ -4,12 +4,15 @@ plugins {
     id 'eclipse'
     id 'application'
     id 'java-library'
-    id 'org.javamodularity.moduleplugin' version "1.8.12"
     id 'org.beryx.jlink' version "3.0.1"
 }
 
 repositories {
-    mavenCentral()
+    flatDir {
+       dirs "libs"
+    }
+    mavenCentral(
+    )
 }
 
 mainClassName = "builder.Builder"
@@ -18,14 +21,27 @@ archivesBaseName = 'builder'
 project.version = '0.17.b27'
  
 processResources { 
-     from("src/main/java/") { 
-         include 'resources/**' 
-     } 
+     from("src/main/java/") {
+         include 'resources/**'
+     }
 }
+
+// sourceSets {
+//     main {
+//         java {
+//             srcDirs = ['src']
+//         }
+//     }
+//  }
 
 application {
     mainClass = 'builder.Builder'
     mainModule = 'builder'
+    File runningDir = new File("$buildDir/run")
+    runningDir.mkdirs()
+    print runningDir.getAbsolutePath()
+    tasks.run.workingDir = runningDir
+    //tasks.run.get().workingDir = runningDir
 }
 
 def compiler = javaToolchains.compilerFor {
@@ -135,7 +151,7 @@ tasks.jlink.doLast {
   
   copy {
       from "${projectDir}/scripts/GUIslice.sh"
-      into TARGET_LINUX_AARCH64 
+      into TARGET_LINUX_AARCH64
   }
   copy {
       from JLINK_LINUX_AARCH64
@@ -163,7 +179,7 @@ tasks.jlink.doLast {
 
   copy {
       from "${projectDir}/scripts/GUIslice.sh"
-      into TARGET_MAC_AARCH64 
+      into TARGET_MAC_AARCH64
   }
   copy {
       from JLINK_MAC_AARCH64
@@ -175,8 +191,8 @@ tasks.jlink.doLast {
       into TARGET_MAC_AARCH64
   }
 
-  delete innoSetupDir  
-  innoSetupDir.mkdir();  
+  delete innoSetupDir
+  innoSetupDir.mkdir();
 
   copy {
     from("${projectDir}/scripts/setup_template.iss")
@@ -207,7 +223,7 @@ task pack_WIN(type: Zip) {
     exec {
       workingDir projectDir
       commandLine "${INNO_PROGRAM} ${innoSetupDir}/setup.iss /q".split()
-    }  
+    }
 //    delete "${innoSetupDir}/setup.iss"
   }
   from innoSetupDir
@@ -232,7 +248,7 @@ task pack_LINUX_X64(type: Tar) {
   archiveBaseName = "builder-" + "linux-x64"
   destinationDirectory = file("${buildDir}/disp")
   archiveExtension = "tgz"
-  compression = Compression.GZIP  
+  compression = Compression.GZIP
 }
 
 task pack_LINUX_AARCH64(type: Tar) {
@@ -251,7 +267,7 @@ task pack_LINUX_AARCH64(type: Tar) {
   archiveBaseName = "builder-" + "linux-aarch64"
   destinationDirectory = file("${buildDir}/disp")
   archiveExtension = "tgz"
-  compression = Compression.GZIP  
+  compression = Compression.GZIP
 }
 
 task pack_MAC_X64(type: Tar) {
@@ -270,7 +286,7 @@ task pack_MAC_X64(type: Tar) {
   archiveBaseName = "builder-" + "mac-x64"
   destinationDirectory = file("${buildDir}/disp")
   archiveExtension = "tgz"
-  compression = Compression.GZIP  
+  compression = Compression.GZIP
 }
 
 task pack_MAC_AARCH64(type: Tar) {
@@ -289,7 +305,7 @@ task pack_MAC_AARCH64(type: Tar) {
   archiveBaseName = "builder-" + "mac-aarch64"
   destinationDirectory = file("${buildDir}/disp")
   archiveExtension = "tgz"
-  compression = Compression.GZIP  
+  compression = Compression.GZIP
 }
 
 task packageAll() {
@@ -299,8 +315,14 @@ task packageAll() {
 }
 
 dependencies {
-  implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation 'com.formdev:flatlaf:3.3'
-  implementation 'com.formdev:flatlaf-intellij-themes:3.3'
-} 
-
+//   //implementation project(':libs:RibbonMenu')
+  // implementation 'com.google.inject:guice:6.0.0'
+    //implementation files('./libs/gson-2.8.6.jar')
+    // implementation fileTree(include: ['*.jar'], dir: './libs')
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'hu.csekme:RibbonMenu:1.0.6'
+    implementation 'com.formdev:flatlaf:3.3'
+    implementation 'org.fife:RSyntaxTextArea:3.2.0'
+    implementation 'com.formdev:flatlaf-intellij-themes:3.3'
+//   // runtimeOnly (runtime)
+}
