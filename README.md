@@ -1,5 +1,16 @@
 
-# GUIslice Builder
+# GUIslice Builder (fork)
+
+In this repository, I will put my changes that will most likely not be in the main branch of the application. These are fixes that upgrade the interface, such as improved editing with the mouse, but also many general code fixes. I am not able to guarantee backward compatibility. I will say more - there will practically certainly be no such compatibility. The application has many bugs and problems that cannot be fixed with complete compatibility.
+
+---
+
+Elements that are being worked on now:
+- advanced snapping, a mechanism to simplify the positioning of widgets - snap to grid, snap to margins, snap to guidelines....
+- saving application settings in a file (json)
+- new project file format (json)
+
+---
 
 Please refer to the wiki page for installation and usage details:
 
@@ -483,4 +494,3 @@ GUISlice crashing after clicking generate code issue `#134`
  - Bug No. 189 Add shortcut ctrl+z for UnDo
  - Bug No. 187 App window not controllable with Java built-in themes issue `#112`
  - Bug No.  98 Text element "Fill Enabled=false" doesn't render with transparency
-
