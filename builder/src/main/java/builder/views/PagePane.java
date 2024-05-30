@@ -291,14 +291,7 @@ public class PagePane extends JPanel implements iSubscriber {
     return bActive;
   }
 
-  public void setActive(boolean bActive) {
-    if (bActive) {
-      Builder.logger.debug("bActive==true");
-    } else {
-      Builder.logger.debug("bActive==false");
-    }
-    this.bActive = bActive;
-  }
+  public void setActive(boolean bActive) { this.bActive = bActive; }
 
   /**
    * paintComponent.
