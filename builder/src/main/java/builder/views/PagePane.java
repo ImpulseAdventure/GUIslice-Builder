@@ -26,6 +26,7 @@
 package builder.views;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -60,7 +61,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+// import com.formdev.flatlaf.util.Animator;
+// import com.formdev.flatlaf.util.Animator.TimingTarget;
 
 import builder.Builder;
 import builder.commands.Command;
@@ -69,19 +76,25 @@ import builder.commands.DragWidgetCommand;
 import builder.commands.ResizeCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
+import builder.common.Guidelines;
+import builder.common.Snapper;
+import builder.common.ScaledGraphics;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.events.MsgBoard;
 import builder.events.MsgEvent;
 import builder.events.iSubscriber;
 import builder.fonts.FontFactory;
+import builder.models.AdvancedSnappingModel;
 import builder.models.GridModel;
+import builder.models.GuidelineModel;
 import builder.models.LineModel;
 import builder.models.PageModel;
 import builder.models.ProjectModel;
 import builder.models.SpinnerModel;
 import builder.models.WidgetModel;
 import builder.prefs.GridEditor;
+import builder.widgets.GuidelineWidget;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
 import builder.widgets.Widget.HandleType;
@@ -109,24 +122,22 @@ public class PagePane extends JPanel implements iSubscriber {
   
   // /** Cursor style will be CROSSHAIR in rectangular selection mode or arrow in default mode */
   // public static Cursor  = new Cursor(Cursor.CROSSHAIR_CURSOR); 
-
-  /** The rectangular selection enabled switch */
-  public static boolean bRectangularSelectionMode = false;
   
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
   
   /** The donotSelectKey */
   private String donotSelectKey = null;
-  
-  /** The dragging indicator. */
-  private boolean bDragging = false;
+
+  private enum CurrentAction {
+    NONE, DRAGGING_WIDGET, RESIZING_WIDGET, RECTANGULAR_SELECTION, EDITING_GUIDELINES
+  }
+
+  /** The current action. */
+  private CurrentAction currentAction = CurrentAction.NONE;
 
   /** Used in resizing procedure */
   private Widget widgetUnderCursor = null;
-
-  /** The resize indicator. */
-  private boolean bResizing = false;
   
   /** The paint base widgets indicator. */
   private boolean bPaintBaseWidgets = false;
@@ -155,6 +166,11 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The drag using arrows command */
   public DragByArrowCommand dragArrowsCommand = null;
 
+  /** Guidelines used by resizing and snapping commands */
+  private static Guidelines guidelines = Guidelines.getInstance();
+
+  private AdvancedSnappingModel advancedSnappingModel = AdvancedSnappingModel.getInstance();
+
   /** the number of selected widgets. */
   private int selectedCnt = 0;
   
@@ -165,12 +181,19 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The zoom factor. */
   public static double zoomFactor = 1;
+
+  /**
+   * Distance from the top-left corner of the viewport to the top-left corner of
+   * the page. We want our page to be centered in the viewport
+   * (only of page is smaller than viewport)
+   */
+  private static Point pageOffset = new Point(0, 0);
   
   /** The zoom AffineTransform at. */
   private static AffineTransform at = null;
   
   /** The inverse AffineTransform at. */
-  public static AffineTransform inv_at;
+  public static AffineTransform invertedAt;
   
   private String[] commands = {
                                   "UP",
@@ -209,6 +232,21 @@ public class PagePane extends JPanel implements iSubscriber {
     this.addMouseListener(mouseHandler);
     this.addMouseWheelListener(mouseHandler);
     this.addMouseMotionListener(new MouseMotionHandler());
+    // listen for PagePane parent (JViewport)
+    this.addAncestorListener(new AncestorListener() {
+      @Override
+      public void ancestorMoved(javax.swing.event.AncestorEvent e) {
+        if (e.getComponent() == PagePane.this && e.getAncestor() instanceof JViewport) {
+          PagePane.this.addViewportChangeListener((JViewport) e.getAncestor());
+          // page cannot be moved so we don't need to listen for ancestorMoved events anymore
+          PagePane.this.removeAncestorListener(this);
+        }
+      }
+
+      public void ancestorAdded(AncestorEvent event) { /* nothing to do here */ }
+
+      public void ancestorRemoved(AncestorEvent event) { /* nothing to do here */ }
+    });
     panelAction = new ActionListener() {   
       @Override
       public void actionPerformed(ActionEvent ae)
@@ -253,6 +291,41 @@ public class PagePane extends JPanel implements iSubscriber {
     if (at == null) {
       zoomTransform();
     }
+
+    AdvancedSnappingModel.getInstance().addEventListener(new AdvancedSnappingModel.AdvancedSnappingModelListener() {
+      public void editGuidelinesChanged(boolean editGuidelines) {
+        if (!editGuidelines) {
+          guidelines.unselectAll();
+        }
+        repaint();
+      }
+      public void showMarginsChanged(boolean showMargins) {
+        repaint();
+      }
+      public void showGuidelinesChanged(boolean showGuidelines) {
+        repaint();
+      }
+      public void showGridChanged(boolean showGrid) {
+        repaint();
+      }
+      public void showGridBgChanged(boolean showGridBg) {
+        repaint();
+      }
+    });
+
+    guidelines.addEventListener(new Guidelines.ActionListener() {
+      public void updated() {
+        repaint();
+      }
+    });
+
+    if (!guidelines.hasGuidelines()) {
+      guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 53);
+      guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 106);
+      guidelines.createGuideline(GuidelineModel.Orientation.HORIZONTAL, 176);
+      guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 81);
+      guidelines.createGuideline(GuidelineModel.Orientation.VERTICAL, 212);
+    }
   }
 
   /**
@@ -273,26 +346,26 @@ public class PagePane extends JPanel implements iSubscriber {
     g2d.transform(at);
     int width = pm.getWidth();
     int height = pm.getHeight();
-    if (pm.useBackgroundImage() && !gridModel.getGrid()) {
+    if (pm.useBackgroundImage() && (!advancedSnappingModel.isShowGrid() || !advancedSnappingModel.isShowGridBg())) {
       g2d.setColor(Color.BLACK);
       g2d.fillRect(0, 0, width, height);
       g2d.drawImage(pm.getImage(), 0, 0, null);
     } else {
-      if (gridModel.getGrid()) {
-        g2d.setColor(gridModel.getBackGroundColor());
-        g2d.fillRect(0, 0, width, height);
-        drawCoordinates(g2d, width, height);
-      } else {
-        g2d.setColor(pm.getBackgroundColor());
-        g2d.fillRect(0,  0, width, height);
+      g2d.setColor((advancedSnappingModel.isShowGrid() && advancedSnappingModel.isShowGridBg()) ? gridModel.getBackGroundColor() : pm.getBackgroundColor());
+      g2d.fillRect(0,  0, width, height);
+      if (advancedSnappingModel.isShowGrid()) {
+        drawGrid(g2d, width, height);
       }
     }
+
     // Now set to overwrite
     g2d.setComposite(AlphaComposite.SrcOver);
     // output this page's widgets
-    for (Widget w : widgets) {
-      w.draw(g2d);
-    } 
+    for (Widget widget : widgets) {
+      if (!(widget instanceof GuidelineWidget)) {
+        widget.draw(g2d);
+      }
+    }
     /* output any base page widgets unless this is a project
      * base page or popup page.
      */
@@ -303,7 +376,7 @@ public class PagePane extends JPanel implements iSubscriber {
       }
     }
     if (bMultiSelectionBox) {
-      // draw our selection rubber band 
+      // draw our selection rubber band
       g2d.setColor(Color.RED);
       g2d.setStroke(Widget.dashed);
       g2d.drawRect(mouseRect.x, mouseRect.y,
@@ -311,6 +384,64 @@ public class PagePane extends JPanel implements iSubscriber {
     }
     // gets rid of the copy
     g2d.dispose();
+
+    boolean widgetActionInProgress = (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
+        (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null);
+    if (widgetActionInProgress || advancedSnappingModel.isEditGuidelines() || advancedSnappingModel.isShowMargins() || advancedSnappingModel.isShowGuidelines()) {
+      final ScaledGraphics graphics = new ScaledGraphics((Graphics2D) g.create(), zoomFactor, pageOffset);
+
+      // dashed stroke for all features
+      graphics.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 5.0f, new float[]{5.0f}, 0));
+
+      if ((widgetActionInProgress && advancedSnappingModel.isSnapToMargins()) || advancedSnappingModel.isShowMargins()) {
+        drawMargins(graphics, width, height);
+      }
+      if ((widgetActionInProgress && advancedSnappingModel.isSnapToGuidelines()) || advancedSnappingModel.isShowGuidelines() || advancedSnappingModel.isEditGuidelines()) {
+        drawGuidelines(graphics, width, height);
+      }
+
+      if (
+        (currentAction == CurrentAction.RESIZING_WIDGET && resizeCommand != null) ||
+        (currentAction == CurrentAction.DRAGGING_WIDGET && dragCommand != null)
+      ) {
+        drawSnappingMarkers(graphics, width, height);
+      }
+
+      graphics.dispose();
+    }
+  }
+
+  private void drawGuidelines(final ScaledGraphics graphics, int width, int height) {
+    graphics.setColor(Color.WHITE);
+    guidelines.getGuidelines(GuidelineModel.Orientation.HORIZONTAL).forEachWidget(guidelineWidget -> {
+      guidelineWidget.draw(graphics, width, height);
+    });
+    guidelines.getGuidelines(GuidelineModel.Orientation.VERTICAL).forEachWidget(guidelineWidget -> {
+      guidelineWidget.draw(graphics, width, height);
+    });
+  }
+
+  private void drawSnappingMarkers(final ScaledGraphics graphics, int width, int height) {
+    graphics.setColor(Color.ORANGE);
+
+    Snapper snapper;
+
+    snapper = currentAction == CurrentAction.RESIZING_WIDGET  ? resizeCommand.getHorizontalSnapper() : dragCommand.getHorizontalSnapper();
+    for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
+      graphics.drawLine(marker.position, 0, marker.position, height);
+    }
+
+    snapper = currentAction == CurrentAction.RESIZING_WIDGET ? resizeCommand.getVerticalSnapper() : dragCommand.getVerticalSnapper();
+    for (Snapper.SnappingMarker marker : snapper.getSnappingMarkers()) {
+      graphics.drawLine(0, marker.position, width, marker.position);
+    }
+  }
+
+  private void drawMargins(ScaledGraphics graphics, int width, int height) {
+    int marginSize = pm.getMargins();
+
+    graphics.setColor(Color.RED);
+    graphics.drawRect(marginSize, marginSize, width - (2 * marginSize), height - (2 * marginSize));
   };
 
   /**
@@ -330,13 +461,10 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public static void zoomTransform() {
     at = new AffineTransform();
-    double xOffset = 0.0;
-    double yOffset = 0.0;
-    
-    at.translate(xOffset, yOffset);
+    at.translate(pageOffset.getX(), pageOffset.getY());
     at.scale(zoomFactor, zoomFactor);
     try {
-      inv_at = at.createInverse();
+      invertedAt = at.createInverse();
     } catch (NoninvertibleTransformException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -398,11 +526,14 @@ public class PagePane extends JPanel implements iSubscriber {
    * rectangularSelection.
    */
   public void rectangularSelection(boolean bValue) {
-    bRectangularSelectionMode = bValue;
-    if (bValue)
+    if (currentAction != CurrentAction.NONE) return;
+    if (bValue) {
       setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-    else
+      currentAction = CurrentAction.RECTANGULAR_SELECTION;
+    } else {
       setCursor(Cursor.getDefaultCursor());
+      currentAction = CurrentAction.NONE;
+    }
   }
   
   /**
@@ -415,7 +546,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * @param h
    *          the height of simulated TFT screen
    */
-  private void drawCoordinates(Graphics2D g2d, int w, int h) {
+  private void drawGrid(Graphics2D g2d, int w, int h) {
     int x, y, dx, dy, dw, dh;
     int minorW = gridModel.getGridMinorWidth();
     int minorH = gridModel.getGridMinorHeight();
@@ -558,6 +689,9 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void selectWidget(Widget w) {
     if (w.isSelected()) return;
+    if (w instanceof GuidelineWidget) {
+      guidelines.unselectAll();
+    }
     w.select();
     doSelectedCount(w);
     ribbon.setEditButtons(selectedGroupCnt);
@@ -735,6 +869,10 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public List<Widget> getSelectedList() {
     List<Widget> selected = new ArrayList<Widget>();
+    if (widgetUnderCursor instanceof GuidelineWidget) {
+      selected.add(widgetUnderCursor);
+      return selected;
+    }
     for (Widget w : widgets) {
       if (w.isSelected()) {
         selected.add(w);
@@ -786,16 +924,23 @@ public class PagePane extends JPanel implements iSubscriber {
       scaledPos.x = (double) p.x;
       scaledPos.y = (double) p.y;
       // transforms are only needed in zoom mode
-      inv_at.transform(scaledPos, scaledPos);
+      invertedAt.transform(scaledPos, scaledPos);
       pos = scaledPos;
+    }
+
+    if (advancedSnappingModel.isEditGuidelines()) {
+      Widget guideline = guidelines.findOne(pos);
+      if (guideline != null) {
+        return guideline;
+      }
     }
 
     // last element is considered the topmost
     ListIterator<Widget> iterator = widgets.listIterator(widgets.size());
     while (iterator.hasPrevious()) {
-      Widget w = iterator.previous();
-      if (w.contains(pos)) {
-        return w;
+      Widget widget = iterator.previous();
+      if (widget.contains(pos)) {
+        return widget;
       }
     }
 
@@ -803,20 +948,20 @@ public class PagePane extends JPanel implements iSubscriber {
   }
   
   static public Point mapPoint(int x, int y) {
-    // we may need to deal with scaled points because of zoom feature
-    if (zoomFactor > 1) {
-      Point2D.Double scaledPos = new Point2D.Double();
-      scaledPos.x = (double)x;
-      scaledPos.y = (double)y;
-      // transforms are only needed in zoom mode
-      inv_at.transform(scaledPos, scaledPos);
-//    System.out.println("map: Z=" + zoomFactor  + 
-//        " [" + x + "," + y + "] "  + " s=["  +
-//        scaledPos.x + "," + scaledPos.y + "]");
-      return new Point((int)scaledPos.x, (int)scaledPos.y);
-    } else {
-      return new Point(x,y);
+    // do nothing if no transformation is done
+    if (zoomFactor == 1 && pageOffset.x == 0 && pageOffset.y == 0) {
+      return new Point(x, y);
     }
+
+    Point2D.Double scaledPos = new Point2D.Double((double) x, (double) y);
+
+    invertedAt.transform(scaledPos, scaledPos);
+
+    return new Point((int) scaledPos.x, (int) scaledPos.y);
+  }
+
+  static public Point mapPoint(Point p) {
+    return mapPoint(p.x, p.y);
   }
   
   /**
@@ -847,6 +992,10 @@ public class PagePane extends JPanel implements iSubscriber {
   public void refreshView() {
     ribbon.setEditButtons(selectedGroupCnt); // needed on page changes
     updateContentSize();
+    if (getParent() instanceof JViewport) {
+      // affine transform may require update in order to set connect page offset
+      updatePageOffset(((JViewport) getParent()).getSize());
+    }
     repaint();
   }
   
@@ -865,7 +1014,6 @@ public class PagePane extends JPanel implements iSubscriber {
     @Override
     public void mouseClicked(MouseEvent e) {
       mousePt = e.getPoint();
-      Widget w = findOne(mousePt);
       int button = e.getButton();
       if (button != MouseEvent.BUTTON1) {
 //    System.out.println("button != MouseEvent.BUTTON1");
@@ -874,6 +1022,21 @@ public class PagePane extends JPanel implements iSubscriber {
       if (e.isShiftDown() && e.isControlDown()) {
         return;
       }
+      // if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+      //   GuidelineWidget guidelineWidget = guidelines.getOne(mapPoint(mousePt.x, mousePt.y));
+      //   if (guidelineWidget != null) {
+      //     guidelineWidget.select();
+      //     repaint();
+
+      //     System.out.println(guidelineWidget);
+      //     MsgBoard.sendEvent(getKey(), MsgEvent.OBJECT_SELECTED_PAGEPANE, "abc", getKey());
+      //   } else {
+      //     //guidelines.createGuideline(Guidelines.Type.HORIZONTAL, mapPoint(mousePt.x, mousePt.y).y);
+      //   }
+      //   return;
+      // }
+
+      Widget w = findOne(mousePt);
       if (e.isControlDown()) {
         // Single Left-click + Ctrl means to toggle select under cursor
         if (w != null) {
@@ -937,6 +1100,9 @@ public class PagePane extends JPanel implements iSubscriber {
      */
     @Override
     public void mouseReleased(MouseEvent e) {
+      if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+        return;
+      }
       mouseRect.setBounds(0, 0, 0, 0);
       if (dragCommand != null) {
         dragCommand.stop(e.isControlDown());
@@ -949,9 +1115,10 @@ public class PagePane extends JPanel implements iSubscriber {
         resizeCommand = null;
       }      
       bMultiSelectionBox = false;
-      bRectangularSelectionMode = false;
-      bDragging = false;
-      bResizing = false;
+      currentAction = CurrentAction.NONE;
+      // bRectangularSelectionMode = false;
+      // bDragging = false;
+      // bResizing = false;
       setCursor(Cursor.getDefaultCursor());
       e.getComponent().repaint();
     }  // end mouseReleased
@@ -966,9 +1133,16 @@ public class PagePane extends JPanel implements iSubscriber {
     @Override
     public void mousePressed(MouseEvent e) {
       mousePt = e.getPoint();
-      bDragging = false;
+      if (currentAction == CurrentAction.DRAGGING_WIDGET) {
+        currentAction = CurrentAction.NONE;
+      }
+      // if (currentAction == CurrentAction.EDITING_GUIDELINES) {
+      //   Point unscaledPoint = PagePane.mapPoint(mousePt.x, mousePt.y);
+      //   //guidelines.getOne(unscaledPoint);
+      //   return;
+      // }
       Widget w = findOne(mousePt);
-      if (bRectangularSelectionMode) {
+      if (currentAction == CurrentAction.RECTANGULAR_SELECTION) {
         bMultiSelectionBox = true;
         donotSelectKey = null;
         if (w != null) {
@@ -979,20 +1153,30 @@ public class PagePane extends JPanel implements iSubscriber {
         HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
-            if (w.isSelected()) bDragging = true;
+          case DRAG_VERTICAL:
+          case DRAG_HORIZONTAL:
+            if (w.isSelected() || w instanceof GuidelineWidget) {
+              currentAction = CurrentAction.DRAGGING_WIDGET;
+            }
             dragPt = new Point(mousePt.x, mousePt.y);
             break;
           case NONE:
             break;
           default:
             if (widgetUnderCursor != null && widgetUnderCursor.isSelected()) {
-              resizeCommand = new ResizeCommand(instance, widgetUnderCursor, handleType);
+              resizeCommand = new ResizeCommand(
+                instance,
+                widgetUnderCursor,
+                handleType,
+                Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(), gridModel.getGridMinorWidth()),
+                Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets, pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(), gridModel.getGridMinorHeight())
+              );
               resizeCommand.start(unscaledPoint);
-              bResizing = true;
+              currentAction = CurrentAction.RESIZING_WIDGET;
             }
             break;
         }
-      }      
+      }
     } // end mousePressed
 
     /*
@@ -1000,15 +1184,62 @@ public class PagePane extends JPanel implements iSubscriber {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-      if (e.isControlDown()) {
-        int distance = e.getWheelRotation();
-        if (distance < 0) {
-          zoomIn();
-        } else {
-          zoomOut();
-        }
-        refreshView();
+      if (!e.isControlDown()) {
+        return;
       }
+
+      // we don't use mapPoint here because we don't want result to be cast to int
+      Point2D.Double pointAtCursorBeforeZoom = new Point2D.Double();
+      invertedAt.transform(e.getPoint(), pointAtCursorBeforeZoom);
+
+      JViewport viewPort = (JViewport) (PagePane.this.getParent());
+      Point viewPortMousePos = viewPort.getMousePosition();
+
+      int distance = e.getWheelRotation();
+
+      // double zoomFactor = PagePane.zoomFactor;
+      // double destZoomFactor = distance < 0 ? zoomFactor * 1.1 : zoomFactor / 1.1;
+      // final Animator animator = new Animator(200, new TimingTarget() {
+
+      //   @Override
+      //   public void end() {
+      //     //animator = null;
+      //     PagePane.zoomFactor = destZoomFactor;
+      //     zoomTransform();
+      //     ribbon.enableZoom(true);
+      //     MenuBar.miZoomOut.setEnabled(true);
+      //     updateZoomReset();
+      //   }
+
+      //   @Override
+      //   public void timingEvent(float fraction) {
+      //     PagePane.zoomFactor = zoomFactor + ((destZoomFactor - zoomFactor) * fraction);
+      //     zoomTransform();
+      //     Point newPosition = new Point(
+      //       (int) ((pointAtCursorBeforeZoom.getX() * zoomFactor) - viewPortMousePos.x),
+      //       (int) ((pointAtCursorBeforeZoom.getY() * zoomFactor) - viewPortMousePos.y));
+
+      //     viewPort.setViewPosition(newPosition);
+      //     System.out.println("a");
+      //   }
+
+      // });
+      // animator.setResolution(50);
+      // animator.start();
+
+      if (distance < 0) {
+        zoomIn();
+      } else {
+        zoomOut();
+      }
+
+      refreshView();
+
+      Point newPosition = new Point(
+          (int) ((pointAtCursorBeforeZoom.getX() * zoomFactor) - viewPortMousePos.x),
+          (int) ((pointAtCursorBeforeZoom.getY() * zoomFactor) - viewPortMousePos.y));
+
+      viewPort.setViewPosition(newPosition);
     }
   } // end MouseHandler
 
@@ -1019,16 +1250,28 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      if (bMultiSelectionBox || bRectangularSelectionMode || bDragging || bResizing) {
-        return;
+      // widgetUnderCursor = null;
+      // if (advancedSnappingModel.isEditGuidelines()) {
+      //   widgetUnderCursor = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
+      // };
+
+      // if (widgetUnderCursor == null) {
+        if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
+          return;
+        }
+
+        widgetUnderCursor = findOne(e.getPoint());
+      // }
+
+      if (widgetUnderCursor instanceof GuidelineWidget && !advancedSnappingModel.isEditGuidelines()) {
+        widgetUnderCursor = null;
       }
 
-      widgetUnderCursor = findOne(e.getPoint());
       if (widgetUnderCursor == null) {
         setCursor(Cursor.getDefaultCursor());
         return;
       }
-      if (!widgetUnderCursor.isSelected()) {
+      if (!(widgetUnderCursor instanceof GuidelineWidget) && !widgetUnderCursor.isSelected()) {
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return;
       }
@@ -1038,6 +1281,12 @@ public class PagePane extends JPanel implements iSubscriber {
       switch (handleType) {
         case DRAG:
           setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+          break;
+        case DRAG_VERTICAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+          break;
+        case DRAG_HORIZONTAL:
+          setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
           break;
         case TOP_LEFT:
         case TOP_LEFT_PROPORTIONAL:
@@ -1072,7 +1321,7 @@ public class PagePane extends JPanel implements iSubscriber {
           break;
       }
     }
-     
+
     /**
      * mouseDragged.
      *
@@ -1091,13 +1340,20 @@ public class PagePane extends JPanel implements iSubscriber {
             Math.abs(mousePt.y - e.getY()));
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
-     } else if (bDragging) {
+     } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
        if (dragCommand == null) {
-          dragCommand = new DragWidgetCommand(instance);
+         dragCommand = new DragWidgetCommand(
+             instance,
+             Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
+                 pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(),
+                 gridModel.getGridMinorWidth()),
+             Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
+                 pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(),
+                 gridModel.getGridMinorHeight())
+          );
           if (!dragCommand.start(dragPt)) {
-            bDragging = false;
+            currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
-            bRectangularSelectionMode = false;
             dragCommand = null;
             repaint();
             return;
@@ -1105,8 +1361,8 @@ public class PagePane extends JPanel implements iSubscriber {
         }
         // No need to adjust our points using u.fromWinPoint() 
         // because here we are calculating offsets not absolute points.
-        dragCommand.move(e.getPoint());
-      } else if (bResizing) {
+        dragCommand.move(e.getPoint(), e.isControlDown());
+      } else if (currentAction == CurrentAction.RESIZING_WIDGET) {
         if (resizeCommand == null) {
           System.out.println("resizeCommand is null");
         } else {
@@ -1117,28 +1373,25 @@ public class PagePane extends JPanel implements iSubscriber {
       repaint();
     } // end mouseDragged
   }  // end MouseMotionHandler
-  
+
   /**
-   * getPreferredSize.
-   *
    * @return the preferred size
    * @see javax.swing.JComponent#getPreferredSize()
    */
   @Override
   public Dimension getPreferredSize() {
-    Dimension scaledSize = new Dimension(
-      (int) (pm.getWidth() * zoomFactor), 
-      (int) (pm.getHeight() * zoomFactor)
-    );    
-    return scaledSize;
+    return getScaledPageSize();
+  }
+
+  private Dimension getScaledPageSize() {
+    return new Dimension(
+      (int) (pm.getWidth() * zoomFactor),
+      (int) (pm.getHeight() * zoomFactor + 10) // small padding
+    );
   }
 
   private void updateContentSize() {
-    Dimension scaledSize = new Dimension(
-      (int) (pm.getWidth() * zoomFactor), 
-      (int) (pm.getHeight() * zoomFactor)
-    );
-    setSize(scaledSize);
+    setSize(getScaledPageSize());
   }
 
   /**
@@ -1363,5 +1616,41 @@ public class PagePane extends JPanel implements iSubscriber {
       } // end key != null
     } // end for (Widget w)
     Builder.postStatusMsg("Scale operation completed!");
+  }
+
+
+  /**
+   * Listener for parent viewport will be used to detect changes in viewport size. It is necessary to make sure that the page is always
+   * centered in the viewport.
+   */
+  private void addViewportChangeListener(JViewport viewport) {
+    viewport.addChangeListener((javax.swing.event.ChangeEvent e) -> {
+      updatePageOffset(((JViewport) e.getSource()).getSize());
+    });
+  }
+
+  private void updatePageOffset(Dimension viewportSize) {
+    Dimension scaledPageSize = getScaledPageSize();
+
+    Point newPageOffset = new Point(0, 0);
+    if (pm.isCenterPageEditor()) {
+      newPageOffset = new Point(
+          scaledPageSize.width < viewportSize.width ? (viewportSize.width - scaledPageSize.width) / 2 : 0,
+          scaledPageSize.height < viewportSize.height ? (viewportSize.height - scaledPageSize.height) / 2 : 5);
+    }
+
+    if (newPageOffset != pageOffset) {
+      pageOffset = newPageOffset;
+
+      zoomTransform();
+    }
+  }
+
+  public void setActive(boolean state) {
+    if (state) {
+      refreshView();
+    } else {
+      selectNone();
+    }
   }
 }

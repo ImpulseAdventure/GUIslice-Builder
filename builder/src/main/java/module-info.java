@@ -6,11 +6,11 @@ module builder {
   requires transitive java.desktop;
   requires transitive java.prefs;
   requires transitive java.logging;
-  requires com.google.gson;
-  requires org.fife.RSyntaxTextArea;
+  requires transitive com.google.gson;
   requires transitive JRibbonMenu;
   requires com.formdev.flatlaf;
   requires com.formdev.flatlaf.intellijthemes;
+  requires org.fife.RSyntaxTextArea;
   exports  builder.clipboard;
   exports  builder.controller;
   exports  builder.commands;
@@ -25,5 +25,6 @@ module builder {
   exports  builder.themes;
   exports  builder.views;
   exports  builder.widgets;
-
+  exports  builder.project;
+  opens    builder.project to com.google.gson;
 }

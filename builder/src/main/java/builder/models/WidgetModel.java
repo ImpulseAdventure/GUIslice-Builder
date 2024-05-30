@@ -53,14 +53,13 @@ import builder.fonts.FontFactory;
 import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class WidgetModel is the base class for all of our models.
  * 
  * @author Paul Conti
  * 
  */
-public class WidgetModel extends AbstractTableModel {
+abstract public class WidgetModel extends AbstractTableModel {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
@@ -109,7 +108,7 @@ public class WidgetModel extends AbstractTableModel {
    *  Column 3 is the Property Name exposed to users.
    *  Column 4 is the cells Property value, also exposed to users. 
    */
-  Object[][] data;
+  protected Object[][] data;
   
   /** The JTable column names. */
   String[] columnNames = {"Name", "Value"};

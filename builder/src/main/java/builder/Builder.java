@@ -38,9 +38,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,11 +54,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import builder.common.Utils;
@@ -70,6 +66,7 @@ import builder.controller.LogManager;
 import builder.controller.PropManager;
 import builder.controller.UserPrefsManager;
 import builder.fonts.FontFactory;
+import builder.models.AdvancedSnappingModel;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
 import builder.views.MenuBar;
@@ -370,14 +367,15 @@ public class Builder  extends JDesktopPane {
     RibbonListener ribbonListener = new RibbonListener();
     
     // create our menu bar
-    MenuBar mb = new MenuBar();
-    mb.addListeners(ribbonListener);
+    MenuBar menuBar = new MenuBar();
+    menuBar.addListeners(ribbonListener);
+    menuBar.setAdvancedSnappingModel(AdvancedSnappingModel.getInstance());
 
     // set a listener to capture resize window events
     frame.addComponentListener(new FrameListen());
     
     frame.setTitle(frameTitle);
-    frame.setJMenuBar(mb);
+    frame.setJMenuBar(menuBar);
 
 //    ToolBar toolbar = ToolBar.getInstance();
 
@@ -388,6 +386,7 @@ public class Builder  extends JDesktopPane {
     ribbon = Ribbon.getInstance();
     ribbon.setRibbonColors();
     ribbon.addListeners(ribbonListener);
+    ribbon.setAdvancedSnappingModel(AdvancedSnappingModel.getInstance());
     
     frame.getContentPane().add(ribbon,BorderLayout.NORTH);
 
@@ -505,7 +504,6 @@ public class Builder  extends JDesktopPane {
         
       // scan themes for a match
       ThemeInfo themeInfo = null;
-      ThemeInfo defInfo = null;
       for (ThemeInfo ti : themes) {
          if (ti.name.equals(selectedLaf)) {
            themeInfo = ti;

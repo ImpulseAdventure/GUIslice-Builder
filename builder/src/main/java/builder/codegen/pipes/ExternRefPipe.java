@@ -49,7 +49,6 @@ import builder.models.WidgetModel;
 import builder.prefs.AlphaKeyPadEditor;
 import builder.prefs.NumKeyPadEditor;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ExternRefPipe handles code generation
  * within the "Save_References" tag of our source code.

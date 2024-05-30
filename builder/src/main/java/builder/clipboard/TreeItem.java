@@ -25,8 +25,6 @@
  */
 package builder.clipboard;
 
-
-// TODO: Auto-generated Javadoc
 /**
 * The Class TreeItem used to store widget key and enum.
 * Used by TreeView to hold key and enum data for widgets
@@ -158,4 +156,3 @@ public class TreeItem implements java.io.Serializable {
    return getEnum();
  }
 }
-

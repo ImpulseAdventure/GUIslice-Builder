@@ -25,7 +25,6 @@
  */
 package builder.common;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestException.
  * 

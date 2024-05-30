@@ -47,7 +47,7 @@ import builder.models.WidgetModel;
  * @author Paul Conti
  * 
  */
-public class Widget {
+abstract public class Widget {
   
   /** The Constant dashed. */
   final static public  BasicStroke dashed = new BasicStroke(3.0f, 
@@ -64,7 +64,7 @@ public class Widget {
   FontFactory ff;
   
   /** The model. */
-  WidgetModel model;
+  WidgetModel model = null;
   
   /** The b selected. */
   boolean bSelected = false;
@@ -108,6 +108,14 @@ public class Widget {
   
   public int getY() {
     return model.getY();
+  }
+
+  public int getWidth() {
+    return model.getWidth();
+  }
+
+  public int getHeight() {
+    return model.getHeight();
   }
   
   public void setXY(WidgetModel m, int x, int y) {
@@ -326,12 +334,10 @@ public class Widget {
    * @param g2d
    *          the graphics object
    */
-  public void draw(Graphics2D g2d) {
-    
-  }
+  abstract public void draw(Graphics2D g2d);
 
   public enum HandleType {
-    NONE, DRAG, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP, BOTTOM, LEFT, RIGHT,
+    NONE, DRAG, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP, BOTTOM, LEFT, RIGHT, DRAG_VERTICAL, DRAG_HORIZONTAL,
     TOP_RIGHT_PROPORTIONAL, BOTTOM_LEFT_PROPORTIONAL, TOP_LEFT_PROPORTIONAL, BOTTOM_RIGHT_PROPORTIONAL
   }
   static final int RESIZE_HANDLE_SIZE = 5;

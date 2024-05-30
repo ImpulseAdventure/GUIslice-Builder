@@ -32,7 +32,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableCellEditor;
-import javax.swing.UIManager;
 
 import builder.Builder;
 import builder.codegen.PlatformIO;
@@ -77,7 +76,6 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_PRESERVE_BTN_CALLBACKS = 18;
 
   // The following properties are hidden from users
-  // TODO - remove hidden props and create a new model RuntimeModel
   //        to hold these values
   public static final int PROP_NUM_HIDDEN           = 9;  // must be set to number hidden props
   
