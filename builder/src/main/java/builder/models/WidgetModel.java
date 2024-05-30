@@ -53,7 +53,6 @@ import builder.fonts.FontFactory;
 import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class WidgetModel is the base class for all of our models.
  * 

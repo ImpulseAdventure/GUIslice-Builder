@@ -35,7 +35,6 @@ import builder.events.MsgBoard;
 import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeElement;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProgressBarModel implements the model for the Progress Bar widget.
  * 

@@ -3,7 +3,6 @@ package builder.project;
 import com.google.gson.annotations.Expose;
 
 import builder.common.Guidelines;
-import java.util.List;
 
 public class Project {
 

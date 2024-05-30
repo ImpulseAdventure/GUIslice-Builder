@@ -2,10 +2,6 @@ package builder.models;
 
 import java.lang.reflect.Type;
 
-import javax.swing.event.TableModelListener;
-
-import java.awt.Point;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;

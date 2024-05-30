@@ -38,9 +38,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,11 +54,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import builder.common.Utils;
@@ -508,7 +504,6 @@ public class Builder  extends JDesktopPane {
         
       // scan themes for a match
       ThemeInfo themeInfo = null;
-      ThemeInfo defInfo = null;
       for (ThemeInfo ti : themes) {
          if (ti.name.equals(selectedLaf)) {
            themeInfo = ti;

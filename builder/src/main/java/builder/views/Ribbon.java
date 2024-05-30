@@ -26,18 +26,13 @@
 package builder.views;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import builder.Builder;
 import builder.common.Utils;
 import builder.models.AdvancedSnappingModel;
-import builder.models.RibbonModel;
 import hu.csekme.RibbonMenu.Button;
 import hu.csekme.RibbonMenu.QuickAccessBar;
 import hu.csekme.RibbonMenu.QuickButton;

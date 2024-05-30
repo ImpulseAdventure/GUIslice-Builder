@@ -58,8 +58,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
 
-import com.google.gson.GsonBuilder;
-
 import javax.swing.SwingWorker;
 
 import builder.Builder;

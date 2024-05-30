@@ -48,7 +48,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.annotations.Expose;
 
 import builder.Builder;
 import builder.codegen.PlatformIO;

@@ -38,7 +38,6 @@ import builder.codegen.TemplateManager;
 import builder.common.EnumFactory;
 import builder.models.WidgetModel;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SaveRefPipe handles code generation
  * within the "Save_References" tag of our source code.

@@ -1,13 +1,10 @@
 package builder.common;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EventListener;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import javax.swing.event.EventListenerList;
 
@@ -20,11 +17,8 @@ import com.google.gson.JsonSerializer;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.models.AdvancedSnappingModel;
-import builder.models.AdvancedSnappingModel.AdvancedSnappingModelListenerInterface;
 import builder.models.GuidelineModel;
-import builder.models.PageModel;
 import builder.models.ProjectModel;
-import builder.models.GuidelineModel.Orientation;
 import builder.widgets.GuidelineWidget;
 import builder.widgets.Widget;
 

@@ -66,8 +66,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import com.formdev.flatlaf.util.Animator;
-import com.formdev.flatlaf.util.Animator.TimingTarget;
+// import com.formdev.flatlaf.util.Animator;
+// import com.formdev.flatlaf.util.Animator.TimingTarget;
 
 import builder.Builder;
 import builder.commands.Command;
