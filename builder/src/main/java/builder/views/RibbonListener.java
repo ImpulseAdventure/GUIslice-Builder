@@ -136,70 +136,6 @@ public class RibbonListener implements ActionListener {
     recentFileList.add(project);
     return project;
   }
-  
-  /**
-   * Creates the image widget.
-   */
-  public void createImageWidget() {
-    int  x = getRandomX(50);
-    int  y = getRandomY(50);
-    ImageWidget w = (ImageWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGE, x, y);
-    File file = showImageDialog("Choose your Image file");
-    if (file != null) {
-      if (w.setImage(file, x, y)) {
-        controller.addWidget(w);
-      } else {
-        JOptionPane.showMessageDialog(null, "Adding Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
-      }
-    }
-  }
-
-  /**
-   * Creates the img button widget.
-   */
-  public void createImgButtonWidget() {
-    int  x = getRandomX(50);
-    int  y = getRandomY(50);
-    ImgButtonWidget w = (ImgButtonWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGEBUTTON, x, y);
-    File file = showImageDialog("Choose your Button's Image");
-    if (file != null) {
-      if (w.setImage(file, x, y)) {
-        file = showImageDialog("Choose your Disabled Button's Image");
-        if (file != null) {
-          if (w.setImageSelected(file)) {
-            controller.addWidget(w);
-          } else {
-            JOptionPane.showMessageDialog(null, "Adding Disabled Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
-          }
-        }
-      }
-    } else {
-      JOptionPane.showMessageDialog(null, "Adding Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-  }
-
-  /**
-   * Creates the widget.
-   *
-   * @param name
-   *          the name
-   */
-  public void createWidget(String name) {
-    int  x = getRandomX(25);
-    int  y = getRandomY(25);
-    Widget w = WidgetFactory.getInstance().createWidget(name, x, y);
-    if (w != null) {
-      controller.addWidget(w);
-    }
-  }
-  
-  public int getRandomX(int n) {
-    return rand.nextInt(Controller.getProjectModel().getWidth()-n);
-  }
-
-  public int getRandomY(int n) {
-    return rand.nextInt(Controller.getProjectModel().getHeight()-n);
-  }
 
   /**
    * Show file dialog.
@@ -275,77 +211,6 @@ public class RibbonListener implements ActionListener {
     return file;
   }
 
-  /**
-   * Show image dialog.
-   *
-   * @param title
-   *          the title
-   * @return the <code>file</code> object
-   */
-  public File showImageDialog(String title) {
-    String target = Controller.getTargetPlatform();
-    File file = null;
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle(title);
-    fileChooser.setAcceptAllFileFilterUsed(false);
-    fileChooser.addChoosableFileFilter(new FileFilter() {
-      public String getDescription() {
-        if (target.equals(ProjectModel.PLATFORM_LINUX))
-          return "16 or 24 Bit Depth Bitmap (*.bmp), C File with extern image (*.c)";
-        else if (target.equals("tft_espi"))
-          return "24 Bit Depth Bitmap (*.bmp), Jpeg (*jpg), C File with extern image (*.c)";
-        else
-          return "24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
-      }
-
-      public boolean accept(File f) {
-        if (f.isDirectory()) {
-          return true;
-        } else {
-          if (f.getName().toLowerCase().endsWith(".c")) {
-            return true;
-          }
-          if (f.getName().toLowerCase().endsWith(".bmp")) {
-            return true;
-          } 
-          if (f.getName().toLowerCase().endsWith(".jpg") &&
-                     target.equals("tft_espi")) {
-            return true;
-          }
-          return false;
-        }
-      }
-    });
-    ImagePreviewPanel preview = new ImagePreviewPanel();
-    fileChooser.setAccessory(preview);
-    fileChooser.setFileView(new FileViewWithIcons());
-    fileChooser.addPropertyChangeListener(preview);
-
-    File currentDirectory = null;
-    // look for images in the last folder accessed
-    String resDir = generalModel.getImageDir();
-    if (resDir.isEmpty()) {
-      if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) {
-        resDir = CodeGenerator.LINUX_RES;
-      } else {
-        resDir = CodeGenerator.ARDUINO_RES;
-      }
-      String workingDir = Utils.getWorkingDir();
-      currentDirectory = new File(workingDir + resDir);
-    } else {
-      currentDirectory = new File(resDir);
-    }
-    fileChooser.setCurrentDirectory(currentDirectory);
-    int option = fileChooser.showDialog(new JFrame(), "Select");
-    if (option == JFileChooser.APPROVE_OPTION) {
-      file = fileChooser.getSelectedFile();
-      generalModel.setImageDir(file.getParent());
-      GeneralEditor.getInstance().savePreferences();
-    } 
-    return file;
-  }
-  
- 
   /**
    * onExit
    */
@@ -447,16 +312,7 @@ public class RibbonListener implements ActionListener {
       Builder.logger.debug("Toolbar: basepage");
       controller.createPage(EnumFactory.BASEPAGE);
       break;
-    
-    case "box":
-      Builder.logger.debug("Toolbar: box");
-      createWidget(EnumFactory.BOX);
-      break;
-    case "checkbox":
-      Builder.logger.debug("Toolbar: checkbox");
-      createWidget(EnumFactory.CHECKBOX);
-      break;
-    
+
     case "close":
       Builder.logger.debug("Toolbar: close");
       if (History.getInstance().size() > 0) {
@@ -528,46 +384,16 @@ public class RibbonListener implements ActionListener {
       controller.toggleSnapToGrid();
       break;
       
-    case "graph":
-      Builder.logger.debug("Toolbar: graph");
-      createWidget(EnumFactory.GRAPH);
-      break;
-    
     case "group":
       Builder.logger.debug("Toolbar: group");
       controller.groupButtons();
       break;
       
-    case "image":
-      Builder.logger.debug("Toolbar: image");
-      createImageWidget();
-      break;
-    
-    case "imagebutton":
-      Builder.logger.debug("Toolbar: imagebutton");
-      createImgButtonWidget();
-      break;
-    
-    case "line":
-      Builder.logger.debug("Toolbar: line");
-      createWidget(EnumFactory.LINE);
-      break;
-    
-    case "listbox":
-      Builder.logger.debug("Toolbar: listbox");
-      createWidget(EnumFactory.LISTBOX);
-      break;
-    
     case "new":
       Builder.logger.debug("Menu: new");
       controller.newProject();
       break;
       
-    case "numinput":
-      Builder.logger.debug("Toolbar: numinput");
-      createWidget(EnumFactory.NUMINPUT);
-      break;
-    
     case "open":
       Builder.logger.debug("Toolbar: open");
       String [] fileExtPrj = new String[1];
@@ -602,34 +428,9 @@ public class RibbonListener implements ActionListener {
       controller.createPage(EnumFactory.POPUP);
       break;
     
-    case "progressbar":
-      Builder.logger.debug("Toolbar: progressbar");
-      createWidget(EnumFactory.PROGRESSBAR);
-      break;
-      
-    case "radiobutton":
-      Builder.logger.debug("Toolbar: radiobutton");
-      createWidget(EnumFactory.RADIOBUTTON);
-      break;
-    
     case "redo":
       Builder.logger.debug("Toolbar: redo");
       History.getInstance().redo();
-      break;
-      
-    case "ramp":
-      Builder.logger.debug("Toolbar: ramp");
-      createWidget(EnumFactory.RAMPGAUGE);
-      break;
-      
-    case "radial":
-      Builder.logger.debug("Toolbar: radial");
-      createWidget(EnumFactory.RADIALGAUGE);
-      break;
-      
-    case "ringgauge":
-      Builder.logger.debug("Toolbar: ringgauge");
-      createWidget(EnumFactory.RINGGAUGE);
       break;
       
     case "save":
@@ -671,51 +472,11 @@ public class RibbonListener implements ActionListener {
       controller.scale();
       break;
   
-    case "seekbar":
-      Builder.logger.debug("Toolbar: seekbar");
-      createWidget(EnumFactory.SEEKBAR);
-    break;
-  
     case "selection":
       Builder.logger.debug("Toolbar: rectangle selection");
       controller.rectangularSelection();
       break;
       
-    case "slider":
-      Builder.logger.debug("Toolbar: slider");
-      createWidget(EnumFactory.SLIDER);
-      break;
-      
-    case "spinner":
-      Builder.logger.debug("Toolbar: spinner");
-      createWidget(EnumFactory.SPINNER);
-      break;
-      
-    case "text":
-      Builder.logger.debug("Toolbar: text");
-      createWidget(EnumFactory.TEXT);
-      break;
-    
-    case "textbox":
-      Builder.logger.debug("Toolbar: textbox");
-      createWidget(EnumFactory.TEXTBOX);
-      break;
-    
-    case "textbutton":
-      Builder.logger.debug("Toolbar: textbutton");
-      createWidget(EnumFactory.TEXTBUTTON);
-      break;
-    
-    case "textinput":
-      Builder.logger.debug("Toolbar: textinput");
-      createWidget(EnumFactory.TEXTINPUT);
-      break;
-    
-    case "toggle":
-      Builder.logger.debug("Toolbar: toggle");
-      createWidget(EnumFactory.TOGGLEBUTTON);
-      break;
-    
     case "undo":
       Builder.logger.debug("Toolbar: undo");
       History.getInstance().undo();

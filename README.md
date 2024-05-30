@@ -114,9 +114,14 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancement for 0.17.b30
+
+Drag and Drop of UI Elements from the RibbonBar is now supported.  This allows you to place your UI pieces
+where you want them to appear.
+
 ### Bug Fixes 0.17.b30
 
-Fixes for dragging UI Elements.
+Fixes for dragging UI Elements. Also, you can no longer place UI Elements outside of your TFT screen.
 
 ### Enhancement for 0.17.b29
 

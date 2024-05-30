@@ -29,6 +29,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.dnd.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -36,6 +37,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -56,11 +59,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
+import builder.RibbonMenu.RibbonBar;
+
+import javax.swing.*;
 
 import builder.Builder;
 import builder.commands.Command;
@@ -69,6 +70,7 @@ import builder.commands.DragWidgetCommand;
 import builder.commands.ResizeCommand;
 import builder.commands.History;
 import builder.common.EnumFactory;
+import builder.common.Utils;
 import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.events.MsgBoard;
@@ -82,6 +84,7 @@ import builder.models.ProjectModel;
 import builder.models.SpinnerModel;
 import builder.models.WidgetModel;
 import builder.prefs.GridEditor;
+import builder.views.Ribbon;
 import builder.widgets.Widget;
 import builder.widgets.WidgetFactory;
 import builder.widgets.Widget.HandleType;
@@ -96,7 +99,16 @@ public class PagePane extends JPanel implements iSubscriber {
 
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
-  
+
+  /** bActive is only to allow Drag and Drop
+   * Since we use card layout if we setup DnD for each pagepane
+   * we get multipe startDrag() operations and that would give an error
+   * class java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
+   * The bActive boolean allows RibbonBar to ignore pages without focus.
+   * Also note that adding addFocusListener doesn't work either.
+   */
+  private boolean bActive = false;
+
   /** The widgets. */
   private List<Widget> widgets = new ArrayList<Widget>();
   
@@ -133,17 +145,26 @@ public class PagePane extends JPanel implements iSubscriber {
   private boolean bPaintBaseWidgets = false;
 
   /** The project model. */
-  private ProjectModel pm = null;
+  private ProjectModel pm_model = null;
   
   /** The grid model. */
   private GridModel gridModel;
   
   /** The page model */
-  PageModel model = null;
-  
+  PageModel page_model = null;
+
+  /** The type of page, project, base, popup, or normal page */
+  String current_type = null;
+
+  /** The key for current page */
+  String current_key = null;
+
+  /** the ENUM for our current page */
+  String current_enum = null;
+
   /** The instance. */
   private PagePane instance = null;
-  
+
   /** The Ribbon. */
   private static Ribbon ribbon = null;
   
@@ -201,10 +222,10 @@ public class PagePane extends JPanel implements iSubscriber {
   public PagePane() {
     instance = this;
     ribbon = Ribbon.getInstance();
-    pm = Controller.getProjectModel();
+    pm_model = Controller.getProjectModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
-    model = new PageModel();
-    mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
+//    page_model = new PageModel();
+    mousePt = new Point(pm_model.getWidth() / 2, pm_model.getHeight() / 2);
     dragPt = mousePt;
     MouseHandler mouseHandler = new MouseHandler();
     this.addMouseListener(mouseHandler);
@@ -246,14 +267,37 @@ public class PagePane extends JPanel implements iSubscriber {
                       KeyStroke.getKeyStroke(keys[i+4], InputEvent.ALT_DOWN_MASK),
                       JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
+    // setup for drag and drop
+    Ribbon.getInstance().getRibbonBar().createDragSource(this);
+
+    MyTransferHandler dnd = new MyTransferHandler();
+    this.setTransferHandler(dnd);
+    // finish off setting up panel
     this.setLocation(0, 0);
     this.setOpaque(true);
-    this.setFocusable( true ); 
+    this.setFocusable( true );
     this.setBorder(BorderFactory.createLineBorder(Color.black));
     this.setVisible(true);
     if (at == null) {
       zoomTransform();
     }
+  }
+
+  /**
+   * We use this instead of the JComponent hasfocus because JPanel has no such function
+   * @return true if page is active
+   */
+  public boolean isActive() {
+    return bActive;
+  }
+
+  public void setActive(boolean bActive) {
+    if (bActive) {
+      Builder.logger.debug("bActive==true");
+    } else {
+      Builder.logger.debug("bActive==false");
+    }
+    this.bActive = bActive;
   }
 
   /**
@@ -272,19 +316,19 @@ public class PagePane extends JPanel implements iSubscriber {
 
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.transform(at);
-    int width = pm.getWidth();
-    int height = pm.getHeight();
-    if (pm.useBackgroundImage() && !gridModel.getGrid()) {
+    int width = pm_model.getWidth();
+    int height = pm_model.getHeight();
+    if (pm_model.useBackgroundImage() && !gridModel.getGrid()) {
       g2d.setColor(Color.BLACK);
       g2d.fillRect(0, 0, width, height);
-      g2d.drawImage(pm.getImage(), 0, 0, null);
+      g2d.drawImage(pm_model.getImage(), 0, 0, null);
     } else {
       if (gridModel.getGrid()) {
         g2d.setColor(gridModel.getBackGroundColor());
         g2d.fillRect(0, 0, width, height);
         drawCoordinates(g2d, width, height);
       } else {
-        g2d.setColor(pm.getBackgroundColor());
+        g2d.setColor(pm_model.getBackgroundColor());
         g2d.fillRect(0,  0, width, height);
       }
     }
@@ -494,8 +538,41 @@ public class PagePane extends JPanel implements iSubscriber {
    *
    * @return the <code>PageModel</code> object
    */
-  public void setModel(PageModel model) {
-    this.model = model;
+  public void setPage_model(PageModel page_model) {
+    this.page_model = page_model;
+    current_key = this.page_model.getKey();
+    current_type = this.page_model.getType();
+    current_enum = this.page_model.getEnum();
+    MsgBoard.subscribe(this, current_key);
+    if (current_type.equals(EnumFactory.BASEPAGE) ||
+      current_type.equals(EnumFactory.POPUP)) {
+      bPaintBaseWidgets=false;
+    } else {
+      bPaintBaseWidgets=true;
+    }
+  }
+
+  /**
+   * sets the project model.
+   *
+   * @return the <code>PageModel</code> object
+   */
+  public void setPM_Model(ProjectModel pm_model) {
+    this.pm_model = pm_model;
+    current_key = this.pm_model.getKey();
+    current_type = this.pm_model.getType();
+    current_enum = this.pm_model.getEnum();
+    MsgBoard.subscribe(this, current_key);
+    bPaintBaseWidgets=false;
+  }
+
+  /**
+   * Gets the type of Page.
+   *
+   * @return the Page Type
+   */
+  public String getPageType() {
+    return current_type;
   }
 
   /**
@@ -503,28 +580,29 @@ public class PagePane extends JPanel implements iSubscriber {
    *
    * @return the <code>PageModel</code> object
    */
-  public PageModel getModel() {
-    return model;
+  public PageModel getPage_model() {
+    return page_model;
   }
 
   /**
-   * Gets the key for this page.
+   * Gets the key for this tab.
    *
    * @return the key
    */
   public String getKey() {
-    return model.getKey();
+    return current_key;
   }
   
   /**
-   * Gets this page's GUIslice enum.
+   * Gets this tab's GUIslice enum.
    *
    * @return the enum
    */
   public String getEnum() {
-    return model.getEnum();
+    return current_enum;
   }
-  
+
+
   /**
    * Gets the count of widgets on this page.
    *
@@ -1119,7 +1197,43 @@ public class PagePane extends JPanel implements iSubscriber {
       repaint();
     } // end mouseDragged
   }  // end MouseMotionHandler
-  
+
+
+  class MyTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
+    @Override
+    public boolean canImport(TransferSupport support) {
+      if (!support.isDrop()) {
+        return false;
+      }
+      if (support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        return true;
+      }
+      return false;
+    }
+
+    @Override
+    public boolean importData(TransferSupport support) {
+      if (!canImport(support)) {
+        return false;
+      }
+
+      Transferable t = support.getTransferable();
+      DropLocation dropLocation = support.getDropLocation();
+      Point dropPoint = dropLocation.getDropPoint();
+      //only Strings
+      String enum_str = null;
+      try {
+        enum_str = (String) t.getTransferData(DataFlavor.stringFlavor);
+        Controller.getInstance().dropWidget(enum_str, dropPoint.x, dropPoint.y);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+//        this.dropString(str, dropPoint);
+      return true;
+    }
+  };
+
   /**
    * getPreferredSize.
    *
@@ -1129,16 +1243,16 @@ public class PagePane extends JPanel implements iSubscriber {
   @Override
   public Dimension getPreferredSize() {
     Dimension scaledSize = new Dimension(
-      (int) (pm.getWidth() * zoomFactor), 
-      (int) (pm.getHeight() * zoomFactor)
+      (int) (pm_model.getWidth() * zoomFactor),
+      (int) (pm_model.getHeight() * zoomFactor)
     );    
     return scaledSize;
   }
 
   private void updateContentSize() {
     Dimension scaledSize = new Dimension(
-      (int) (pm.getWidth() * zoomFactor), 
-      (int) (pm.getHeight() * zoomFactor)
+      (int) (pm_model.getWidth() * zoomFactor),
+      (int) (pm_model.getHeight() * zoomFactor)
     );
     setSize(scaledSize);
   }
@@ -1274,32 +1388,6 @@ public class PagePane extends JPanel implements iSubscriber {
     }
   }
 
-  /**
-   * Gets the type of Page.
-   *
-   * @return the Page Type
-   */
-  public String getPageType() {
-    return model.getType();
-  }
-
-  /**
-   * Sets the type of Page.
-   *
-   * @param the pageType
-   */
-  public void setPageType(String pageType) {
-    model.setType(pageType);
-    MsgBoard.subscribe(this, model.getKey());
-    if (pageType.equals(EnumFactory.PROJECT)  ||
-        pageType.equals(EnumFactory.BASEPAGE) ||
-        pageType.equals(EnumFactory.POPUP)) {
-      bPaintBaseWidgets=false;
-    } else {
-      bPaintBaseWidgets=true;
-    }
-  }
-  
   /**
    * scale
    * scale each element acccording to the supplied ratios

@@ -64,8 +64,8 @@ public class BoxModel extends WidgetModel {
   static public  final Color   DEF_FILL_COLOR        = Color.BLACK;
   static public  final Color   DEF_SELECTED_COLOR    = Color.BLACK;
 
-  static private final int DEF_WIDTH = 300;
-  static private final int DEF_HEIGHT= 150;
+  static private final int DEF_WIDTH = 50;
+  static private final int DEF_HEIGHT= 50;
 
   /**
    * Instantiates a new box model.

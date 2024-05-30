@@ -47,7 +47,7 @@ public class FileViewWithIcons extends FileView
     * Create FileViewWithIcons for a JFileChooser so it can display
     * file type (formats) icons for supported files.
     */
-   FileViewWithIcons() {
+   public FileViewWithIcons() {
      prj_icon = new ImageIcon(Builder.class.getResource("/resources/icons/file/PRJ.png"));
      bmp_icon = new ImageIcon(Builder.class.getResource("/resources/icons/file/BMP.png"));
      jpg_icon = new ImageIcon(Builder.class.getResource("/resources/icons/file/JPG.png"));

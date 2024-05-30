@@ -46,18 +46,12 @@ import java.util.ListIterator;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 //import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.NumberFormatter;
-import javax.swing.SwingWorker;
 
 import builder.Builder;
 import builder.codegen.CodeGenerator;
@@ -100,9 +94,14 @@ import builder.themes.GUIsliceTheme;
 import builder.themes.GUIsliceThemeFactory;
 import builder.views.MenuBar;
 import builder.views.PagePane;
+import builder.views.FileViewWithIcons;
+import builder.views.ImagePreviewPanel;
 import builder.views.Ribbon;
 import builder.views.TreeView;
+import builder.widgets.ImageWidget;
+import builder.widgets.ImgButtonWidget;
 import builder.widgets.Widget;
+import builder.widgets.WidgetFactory;
 
 /**
  * The Class Controller of the Model View Controller Pattern.
@@ -309,6 +308,7 @@ public class Controller extends JInternalFrame
     GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
     Object[][] gmData = gm.getData();
     pm = new ProjectModel();
+    pm.setType(EnumFactory.PROJECT);
     Object[][] pmData = pm.getData();
     pm.TurnOffEvents();
     int rows = gm.getRowCount();
@@ -327,10 +327,10 @@ public class Controller extends JInternalFrame
     pm.TurnOnEvents();
     PagePane p = new PagePane();
     p.setLayout(null);
-    p.setModel(pm);
-    p.setPageType(EnumFactory.PROJECT);
+    p.setPM_Model(pm);
     projectPage = p;
     addPage(p);
+    p.setActive(false);
   }
   
   
@@ -433,8 +433,10 @@ public class Controller extends JInternalFrame
       }
       tabbedPane.setSelectedIndex(tabPages.size()-1);
     }
+    resetActivePages();
     tabbedPane.repaint();
     currentPage = page;
+    currentPage.setActive(true);
     currentPage.refreshView();
   }
 
@@ -448,9 +450,12 @@ public class Controller extends JInternalFrame
     PagePane page = findPage(pageKey);
     if (page != null) {
       int idx = findPageIdx(pageKey);
-      if (currentPage != null)
+      if (currentPage != null) {
         currentPage.selectNone();  // turn off all selections
+        currentPage.setActive(false);
+      }
       currentPage = page;
+      currentPage.setActive(true);
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
@@ -468,9 +473,12 @@ public class Controller extends JInternalFrame
     PagePane page = findPage(pageKey);
     if (page != null) {
       int idx = findPageIdx(pageKey);
-      if (currentPage != null)
+      if (currentPage != null) {
         currentPage.selectNone();  // turn off all selections
+        currentPage.setActive(false);
+      }
       currentPage = page;
+      currentPage.setActive(true);
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
@@ -568,14 +576,14 @@ public class Controller extends JInternalFrame
     createProjectModel();
     PagePane page = new PagePane();
     page.setLayout(null);
-    PageModel m = page.getModel();
+    PageModel m = new PageModel();
     String pageKey = EnumFactory.getInstance().createKey(EnumFactory.PAGE);
     m.setKey(pageKey);
     String pageEnum = EnumFactory.getInstance().createEnum(EnumFactory.PAGE);
     m.setEnum(pageEnum);
-    page.setPageType(EnumFactory.PAGE);
+    page.setPage_model(m);
     addPageToView(page);
-    PropManager.getInstance().addPropEditor(page.getModel());
+    PropManager.getInstance().addPropEditor(page.getPage_model());
     TreeView.getInstance().addPage(page.getKey(), pageEnum);
     currentPage.refreshView();
   }
@@ -589,14 +597,12 @@ public class Controller extends JInternalFrame
 //    AddPageCommand c = new AddPageCommand(this);
     PagePane p = new PagePane();
     p.setLayout(null);
-    PageModel m = (PageModel) p.getModel();
+    PageModel m = new PageModel();
     String pageKey = null;
     if (sWidgetType.equals(EnumFactory.PAGE)) {
       pageKey = EnumFactory.getInstance().createKey(EnumFactory.PAGE);
       m.setKey(pageKey);
       m.setEnum(EnumFactory.getInstance().createEnum(EnumFactory.PAGE));
-      // NOTE: must set type on page pane not model or messages will be lost!
-      p.setPageType(EnumFactory.PAGE);
     } else  if (sWidgetType.equals(EnumFactory.BASEPAGE)) {
       if (nBasePages > 0) {
         JOptionPane.showMessageDialog(topFrame, 
@@ -608,15 +614,14 @@ public class Controller extends JInternalFrame
       pageKey = EnumFactory.getInstance().createKey(EnumFactory.BASEPAGE);
       m.setKey(pageKey);
       m.setEnum(EnumFactory.getInstance().createEnum(EnumFactory.BASEPAGE));
-      // NOTE: must set type on page pane not model or messages will be lost!
-      p.setPageType(EnumFactory.BASEPAGE);
+      m.setType(EnumFactory.BASEPAGE);
     } else {
       pageKey = EnumFactory.getInstance().createKey(EnumFactory.POPUP);
       m.setKey(pageKey);
       m.setEnum(EnumFactory.getInstance().createEnum(EnumFactory.POPUP));
-      // NOTE: must set type on page pane not model or messages will be lost!
-      p.setPageType(EnumFactory.POPUP);
+      m.setType(EnumFactory.POPUP);
     }
+    p.setPage_model(m);
 /* 
  * undo of adding pages is too complex to support correctly at the moment
     c.add(p);
@@ -635,7 +640,11 @@ public class Controller extends JInternalFrame
   // this function is called by AddPageCommand
   public void addPage(PagePane page) {
     addPageToView(page);
-    PropManager.getInstance().addPropEditor(page.getModel());
+    if (page.getPageType().equals(EnumFactory.PROJECT)) {
+      PropManager.getInstance().addPropEditor(pm);
+    } else {
+      PropManager.getInstance().addPropEditor(page.getPage_model());
+    }
     TreeView.getInstance().addPage(page.getKey(), page.getEnum());
   }
   
@@ -675,13 +684,11 @@ public class Controller extends JInternalFrame
         JOptionPane.WARNING_MESSAGE);
   }
 
-  // private void refreshViews() {
-  //   for (PagePane p : pages) {
-  //     if (p.getPageType() != EnumFactory.PROJECT) {
-  //       p.refreshView();
-  //     }
-  //   }
-  // }
+   private void resetActivePages() {
+     for (PagePane p : pages) {
+        p.setActive(false);
+     }
+   }
   
   /**
    * Removes the page, no longer supports undo/redo.
@@ -789,10 +796,14 @@ public class Controller extends JInternalFrame
   private PagePane restorePage(String pageKey, String pageEnum, String pageType){
     PagePane page = new PagePane();
     page.setLayout(null);
-    PageModel m = (PageModel) page.getModel();
+    PageModel m = (PageModel) page.getPage_model();
+    if (m == null) {
+      m = new PageModel();
+    }
     m.setKey(pageKey);
     m.setEnum(pageEnum);
-    page.setPageType(pageType);
+    m.setType(pageType);
+    page.setPage_model(m);
     addPageToView(page);
     PropManager.getInstance().addPropEditor(m);
     return page;
@@ -801,14 +812,79 @@ public class Controller extends JInternalFrame
   private PagePane restoreProject(){
     PagePane p = new PagePane();
     p.setLayout(null);
-    p.setModel(pm);
-    p.setPageType(EnumFactory.PROJECT);
+    p.setPM_Model(pm);
     projectPage = p;
     addPageToView(p);
     PropManager.getInstance().addPropEditor(pm);
     return p;
   }
-  
+
+  /**
+   * drop widget on our panel
+   * @param x
+   * @param y
+   */
+  public void dropWidget(String name, int x, int y) {
+    if (name.equals(EnumFactory.IMAGE)) {
+      dropImageWidget(x, y);
+    } else if (name.equals(EnumFactory.IMAGEBUTTON)) {
+      dropImgButtonWidget(x, y);
+    } else {
+      dropNormalWidget(name, x, y);
+    }
+  }
+
+  /**
+   * Creates the image widget.
+   */
+  public void dropImageWidget(int x, int y) {
+    ImageWidget w = (ImageWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGE, x, y);
+    File file = showImageDialog("Choose your Image file");
+    if (file != null) {
+      if (w.setImage(file, x, y)) {
+        addWidget(w);
+      } else {
+        JOptionPane.showMessageDialog(null, "Adding Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
+
+  /**
+   * Creates the img button widget.
+   */
+  public void dropImgButtonWidget(int x, int y) {
+    ImgButtonWidget w = (ImgButtonWidget) WidgetFactory.getInstance().createWidget(EnumFactory.IMAGEBUTTON, x, y);
+    File file = showImageDialog("Choose your Button's Image");
+    if (file != null) {
+      if (w.setImage(file, x, y)) {
+        file = showImageDialog("Choose your Disabled Button's Image");
+        if (file != null) {
+          if (w.setImageSelected(file)) {
+            addWidget(w);
+          } else {
+            JOptionPane.showMessageDialog(null, "Adding Disabled Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
+          }
+        }
+      }
+    } else {
+      JOptionPane.showMessageDialog(null, "Adding Image Failed-Check builder.log", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  /**
+   * Creates the widget.
+   *
+   * @param name
+   *          the name
+   */
+  public void dropNormalWidget(String name, int x, int y) {
+    Widget w = WidgetFactory.getInstance().createWidget(name, x, y);
+    if (w != null) {
+      Builder.logger.debug("Controller add: "+name);
+      addWidget(w);
+    }
+  }
+
   /**
    * Adds the widget.
    *
@@ -1135,16 +1211,16 @@ public class Controller extends JInternalFrame
         }
         p.restore((String)in.readObject(), false);
         p.selectNone();
-        if (pageType != null) p.setPageType(pageType);
+//        if (pageType != null) p.setPageType(pageType);
       }
       if (strVersion.equals("1.01")) {
         @SuppressWarnings("unused")
         String tree_backup = (String)in.readObject();
 //        TreeView.getInstance().restore(tree_backup);
       }
-      if (strVersion.equals("1.01") || 
-          strVersion.equals("1.02") ||
-          strVersion.equals("-13")) {
+      if (strVersion.equals("1.01") ||
+        strVersion.equals("1.02") ||
+        strVersion.equals("-13")) {
         @SuppressWarnings("unused")
         String enum_backup = (String)in.readObject();
       }
@@ -1179,7 +1255,77 @@ public class Controller extends JInternalFrame
           JOptionPane.WARNING_MESSAGE);
     }
   }
-  
+
+  /**
+   * Show image dialog.
+   *
+   * @param title
+   *          the title
+   * @return the <code>file</code> object
+   */
+  public File showImageDialog(String title) {
+    String target = Controller.getTargetPlatform();
+    File file = null;
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle(title);
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    fileChooser.addChoosableFileFilter(new FileFilter() {
+      public String getDescription() {
+        if (target.equals(ProjectModel.PLATFORM_LINUX))
+          return "16 or 24 Bit Depth Bitmap (*.bmp), C File with extern image (*.c)";
+        else if (target.equals("tft_espi"))
+          return "24 Bit Depth Bitmap (*.bmp), Jpeg (*jpg), C File with extern image (*.c)";
+        else
+          return "24 Bit Depth BMP Images (*.bmp), C File with extern image (*.c)";
+      }
+
+      public boolean accept(File f) {
+        if (f.isDirectory()) {
+          return true;
+        } else {
+          if (f.getName().toLowerCase().endsWith(".c")) {
+            return true;
+          }
+          if (f.getName().toLowerCase().endsWith(".bmp")) {
+            return true;
+          }
+          if (f.getName().toLowerCase().endsWith(".jpg") &&
+            target.equals("tft_espi")) {
+            return true;
+          }
+          return false;
+        }
+      }
+    });
+    ImagePreviewPanel preview = new ImagePreviewPanel();
+    fileChooser.setAccessory(preview);
+    fileChooser.setFileView(new FileViewWithIcons());
+    fileChooser.addPropertyChangeListener(preview);
+
+    File currentDirectory = null;
+    // look for images in the last folder accessed
+    String resDir = ((GeneralModel) generalEditor.getModel()).getImageDir();
+    if (resDir.isEmpty()) {
+      if (Controller.getTargetPlatform().equals(ProjectModel.PLATFORM_LINUX)) {
+        resDir = CodeGenerator.LINUX_RES;
+      } else {
+        resDir = CodeGenerator.ARDUINO_RES;
+      }
+      String workingDir = Utils.getWorkingDir();
+      currentDirectory = new File(workingDir + resDir);
+    } else {
+      currentDirectory = new File(resDir);
+    }
+    fileChooser.setCurrentDirectory(currentDirectory);
+    int option = fileChooser.showDialog(new JFrame(), "Select");
+    if (option == JFileChooser.APPROVE_OPTION) {
+      file = fileChooser.getSelectedFile();
+      ((GeneralModel) generalEditor.getModel()).setImageDir(file.getParent());
+      GeneralEditor.getInstance().savePreferences();
+    }
+    return file;
+  }
+
   /**
    * Align top.
    */
