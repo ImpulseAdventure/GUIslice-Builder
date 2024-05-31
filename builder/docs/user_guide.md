@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b28
+        Ver: 0.17.b30
     </H3>
 </center>
 
@@ -14,7 +14,7 @@
 
 **Publication date and software version**
 
-Published May 2024. Based on GUIslice API Library 0.17.1.6
+Published June 2024. Based on GUIslice API Library 0.17.1.6
 
 **Copyright**
 
@@ -179,7 +179,29 @@ See 5.1 Project Options for details of the various settings.
 
 Now that you have your builder setup you can start creating your UI.  
 
-Before beginning lets go over over the mouse selecting rules for the TFT Simulation:
+Now start by picking your first UI piece on the Toolbox. I suggest you first turn on the GRID using Ctrl-L. I also suggest not starting with a box that takes up your whole screen or the grid lines will be useless.  Besides setting the background color has the same effect without interfering with UI design.  If you want a preview of the UI without grid lines simply use Cntl-L again or the Page Layout tab's Grid control to toggle the grid on/off.
+
+Say you start with a Text Button. Using your mouse select this Text Button by moving 
+the mouse pointer over the Text Button and then press down left mouse button.
+Keeping the left mouse button held down you can now drag the new button onto your TFT Panel canvas.
+Move your mouse to approximately where you want it placed and release the left button.
+Your new text button will now drop on your canvas.
+
+If you now wish to move your new button to a new position simply move your mouse pointer over the
+button and once again press and hold the left mouse button. You will notice your cursor will now look like this.
+![](images/drag.png)
+
+You may now drag the Button to a new location. You can refer to section 3.4 Layout Band for using the various alignment controls for further alignment. 
+
+For finer control over moving selected objects you can use the arrow keys pressing Alt-up arrow, Alt-down arrow, Alt-left arrow and Alt-right arrow to move one pixel at a time.
+
+Additionally, one futher refinement is when you drag with holding the ALT button, 
+you can drag in one axis (only vertical or only horizontal).
+
+In addition, If Snap to Grid is enabled your drag will cause the UI Widget to snap to the closest line
+(vertical or horizontal).
+
+The mouse selecting rules for the TFT Simulation:
 
 - Left-click on an object deselects any existing selection and selects the object.
 - Control Left-click on an object toggles its selection without affecting the selection of any other objects.
@@ -188,33 +210,10 @@ Before beginning lets go over over the mouse selecting rules for the TFT Simulat
 - Using the Rectangle Selection Tool ![](images/layout/selection.png) on the Page Layout tab will allow you to create a rubber band by pressing down the left mouse button and keeping it down while you move the band over the a group of objects and will select them all. For Example:
 ![](images/multi_sel.png)
 
-UI elements can be moved by placing the cursor over a selected object and pressing and holding down left mouse button while dragging the object or group of objects to a new location.  If you don't like the new location you can press the UNDO button.
-
-For finer control over moving selected objects you can use the arrow keys pressing Alt-up arrow, Alt-down arrow, Alt-left arrow and Alt-right arrow to move one pixel at a time.
-
-Now start by picking your first UI piece on the Toolbox. I suggest you first turn on the GRID using Ctrl-L. I also suggest not starting with a box that takes up your whole screen or the grid lines will be useless.  Besides setting the background color has the same effect without interfering with UI design.  If you want a preview of the UI without grid lines simply use Cntl-L again or the Page Layout tab's Grid control to toggle the grid on/off.
-
-Say you start with a Text Button, you will notice its been randomly 
-placed on the canvas. Using your mouse select this Text Button by moving 
-the mouse pointer over the Text Button and clicking the left key.
- 
-You will notice your cursor will now look like this.
-![](images/drag.png)
-
-Now press and hold the mouse left key and drag the Button 
-approximately where you want it. You can refer to section 3.4 Layout 
-Band for using the various alignment controls for further alignment. 
-
-One futher refinement is when you drag with holding the ALT button, 
-you can drag in one axis (only vertical or only horizontal).
-
-In addition, If Snap to Grid is enabled your drag will cause the UI Widget to snap to the closest line
-(vertical or horizontal).
-
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-You will also notice that as you move your cursor over your text button that when you pass over one of the red handles
+You will also notice that as you move your mouse cursor over your text button that when you pass over one of the red handles
 your cursor will change to one of these arrows. 
 
 ![](images/resize.png)

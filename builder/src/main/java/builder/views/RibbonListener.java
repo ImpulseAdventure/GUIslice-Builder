@@ -74,6 +74,7 @@ public class RibbonListener implements ActionListener {
   /** The Recent File List */
   private RecentFilePanel recentFileList = null;
 
+  private boolean bGave_DnD_Warning = false;
   /**
    * Instantiates a new toolbox.
    */
@@ -363,7 +364,17 @@ public class RibbonListener implements ActionListener {
       Builder.logger.debug("Toolbar: cut");
       controller.cutWidgets();
       break;
-    
+
+    case "dnd_warning":
+//      if (!bGave_DnD_Warning) {
+        JOptionPane.showMessageDialog(null,
+          "You must drag UI Element to your TFT Panel",
+          "Drag & Drop",
+          JOptionPane.WARNING_MESSAGE);
+        bGave_DnD_Warning = true;
+//      }
+      break;
+
     case "delete":
       Builder.logger.debug("Menu: delete");
       controller.removeComponent();

@@ -239,7 +239,7 @@ public class Ribbon extends JPanel {
     btn_text= band.addButton("   Text   ");
     btn_text.setImage(Utils.getIcon(
         "resources/icons/text/label_32x.png"));
-//    btn_text.setActionCommand("text");
+    btn_text.setActionCommand("dnd_warning");
     btn_text.setDragEnabled(EnumFactory.TEXT, Utils.getIcon(
       "resources/icons/text/label_32x.png",24,24));
     btn_text.addToolTip("Add display-only text element.");
@@ -247,7 +247,7 @@ public class Ribbon extends JPanel {
     btn_txtinput = band.addSlimButton("TextInput");
     btn_txtinput.setImage(Utils.getIcon(
         "resources/icons/text/textinput_32x.png"));
-//    btn_txtinput.setActionCommand("textinput");
+    btn_txtinput.setActionCommand("dnd_warning");
     btn_txtinput.setDragEnabled(EnumFactory.TEXTINPUT, Utils.getIcon(
       "resources/icons/text/textinput_32x.png",24,24));
     btn_txtinput.addToolTip("Accept text input\nfrom a virtual keypad.");
@@ -255,7 +255,7 @@ public class Ribbon extends JPanel {
     btn_numinput = band.addSlimButton("NumberInput");
     btn_numinput.setImage(Utils.getIcon(
         "resources/icons/text/numinput_32x.png"));
-//    btn_numinput.setActionCommand("numinput");
+    btn_numinput.setActionCommand("dnd_warning");
     btn_numinput.setDragEnabled(EnumFactory.NUMINPUT, Utils.getIcon(
       "resources/icons/text/numinput_32x.png",24,24));
     btn_numinput.addToolTip("Accept numberic input\nfrom a virtual keypad.");
@@ -263,7 +263,7 @@ public class Ribbon extends JPanel {
     btn_listbox = band.addSlimButton("ListBox");
     btn_listbox.setImage(Utils.getIcon(
         "resources/icons/controls/listbox_32x.png"));
-//    btn_listbox.setActionCommand("listbox");
+    btn_listbox.setActionCommand("dnd_warning");
     btn_listbox.setDragEnabled(EnumFactory.LISTBOX, Utils.getIcon(
       "resources/icons/controls/listbox_32x.png",24,24));
     btn_listbox.addToolTip("List of items");
@@ -271,7 +271,7 @@ public class Ribbon extends JPanel {
     btn_textbox = band.addSlimButton("TextBox");
     btn_textbox.setImage(Utils.getIcon(
         "resources/icons/text/textbox_32x.png"));
-//    btn_textbox.setActionCommand("textbox");
+    btn_textbox.setActionCommand("dnd_warning");
     btn_textbox.setDragEnabled(EnumFactory.TEXTBOX, Utils.getIcon(
       "resources/icons/text/textbox_32x.png",24,24));
     btn_textbox.addToolTip("Scrolling multi-line text");
@@ -287,7 +287,7 @@ public class Ribbon extends JPanel {
     btn_txtbtn = band.addButton("Text\nButton");
     btn_txtbtn.setImage(Utils.getIcon(
         "resources/icons/controls/button_32x.png"));
-//    btn_txtbtn.setActionCommand("textbutton");
+    btn_txtbtn.setActionCommand("dnd_warning");
     btn_txtbtn.setDragEnabled(EnumFactory.TEXTBUTTON, Utils.getIcon(
       "resources/icons/controls/button_32x.png",24,24));
     btn_txtbtn.addToolTip("Button with Text.");
@@ -295,7 +295,7 @@ public class Ribbon extends JPanel {
     btn_toggle = band.addSlimButton("Toggle Button");
     btn_toggle.setImage(Utils.getIcon(
         "resources/icons/controls/togglebtn.png"));
-//    btn_toggle.setActionCommand("toggle");
+    btn_toggle.setActionCommand("dnd_warning");
     btn_toggle.setDragEnabled(EnumFactory.TOGGLEBUTTON,Utils.getIcon(
       "resources/icons/controls/togglebtn.png",24,24));
     btn_toggle.addToolTip("Add Toggle Button element.");
@@ -303,7 +303,7 @@ public class Ribbon extends JPanel {
     btn_checkbox = band.addSlimButton("Checkbox");
     btn_checkbox.setImage(Utils.getIcon(
          "resources/icons/controls/checkbox_32x.png"));
-//    btn_checkbox.setActionCommand("checkbox");
+    btn_checkbox.setActionCommand("dnd_warning");
     btn_checkbox.setDragEnabled(EnumFactory.CHECKBOX, Utils.getIcon(
       "resources/icons/controls/checkbox_32x.png",24,24));
     btn_checkbox.addToolTip("Add Checkbox element.");
@@ -311,7 +311,7 @@ public class Ribbon extends JPanel {
     btn_radiobtn = band.addSlimButton("Radio Button");
     btn_radiobtn.setImage(Utils.getIcon(
          "resources/icons/controls/radiobutton_32x.png"));
-//    btn_radiobtn.setActionCommand("radiobutton");
+    btn_radiobtn.setActionCommand("dnd_warning");
     btn_radiobtn.setDragEnabled(EnumFactory.RADIOBUTTON, Utils.getIcon(
       "resources/icons/controls/radiobutton_32x.png",24,24));
     btn_radiobtn.addToolTip("Add Radio Button element.");
@@ -319,7 +319,7 @@ public class Ribbon extends JPanel {
     btn_imgbtn = band.addSlimButton("Image Button");
     btn_imgbtn.setImage(Utils.getIcon(
         "resources/icons/controls/imgbutton_32x.png"));
-//    btn_imgbtn.setActionCommand("imagebutton");
+    btn_imgbtn.setActionCommand("dnd_warning");
     btn_imgbtn.setDragEnabled(EnumFactory.IMAGEBUTTON, Utils.getIcon(
       "resources/icons/controls/imgbutton_32x.png",24,24));
     btn_imgbtn.addToolTip("Button with BMP image.");
@@ -327,7 +327,7 @@ public class Ribbon extends JPanel {
     btn_seekbar = band.addSlimButton("Seekbar");
     btn_seekbar.setImage(Utils.getIcon(
         "resources/icons/controls/seekbar.png"));
-//    btn_seekbar.setActionCommand("seekbar");
+    btn_seekbar.setActionCommand("dnd_warning");
     btn_seekbar.setDragEnabled(EnumFactory.SEEKBAR, Utils.getIcon(
       "resources/icons/controls/seekbar.png", 24,24));
     btn_seekbar.addToolTip("Seekbar slider element.");
@@ -335,7 +335,7 @@ public class Ribbon extends JPanel {
     btn_spinner = band.addSlimButton("Spinner");
     btn_spinner.setImage(Utils.getIcon(
         "resources/icons/controls/spinner_32x.png"));
-//    btn_spinner.setActionCommand("spinner");
+    btn_spinner.setActionCommand("dnd_warning");
     btn_spinner.setDragEnabled(EnumFactory.SPINNER, Utils.getIcon(
       "resources/icons/controls/spinner_32x.png",24,24));
     btn_spinner.addToolTip("Numeric up-down graphical control.");
@@ -343,7 +343,7 @@ public class Ribbon extends JPanel {
     btn_slider = band.addSlimButton("Slider");
     btn_slider.setImage(Utils.getIcon(
         "resources/icons/controls/slider_32x.png"));
-//    btn_slider.setActionCommand("slider");
+    btn_slider.setActionCommand("dnd_warning");
     btn_slider.setDragEnabled(EnumFactory.SLIDER, Utils.getIcon(
       "resources/icons/controls/slider_32x.png",24,24));
     btn_slider.addToolTip("Slider presents values along a line.");
@@ -351,7 +351,7 @@ public class Ribbon extends JPanel {
     btn_image = band.addSlimButton("Image");
     btn_image.setImage(Utils.getIcon(
         "resources/icons/controls/image_32x.png"));
-//    btn_image.setActionCommand("image");
+    btn_image.setActionCommand("dnd_warning");
     btn_image.setDragEnabled(EnumFactory.IMAGE, Utils.getIcon(
       "resources/icons/controls/image_32x.png",24,24));
     btn_image.addToolTip("Add image element.");
@@ -359,7 +359,7 @@ public class Ribbon extends JPanel {
     btn_progressbar = band.addSlimButton("Progress Bar");
     btn_progressbar.setImage(Utils.getIcon(
         "resources/icons/gauges/progressbar_32x.png"));
-//    btn_progressbar.setActionCommand("progressbar");
+    btn_progressbar.setActionCommand("dnd_warning");
     btn_progressbar.setDragEnabled(EnumFactory.PROGRESSBAR, Utils.getIcon(
       "resources/icons/gauges/progressbar_32x.png",24,24));
     btn_progressbar.addToolTip("Indicate progress of a\nlengthy operation as a bar.");
@@ -375,7 +375,7 @@ public class Ribbon extends JPanel {
     btn_ringgauge = band.addSlimButton("Ring Gauge");
     btn_ringgauge.setImage(Utils.getIcon(
         "resources/icons/gauges/ringgauge_32x.png"));
-//    btn_ringgauge.setActionCommand("ringgauge");
+    btn_ringgauge.setActionCommand("dnd_warning");
     btn_ringgauge.setDragEnabled(EnumFactory.RINGGAUGE, Utils.getIcon(
       "resources/icons/gauges/ringgauge_32x.png",24,24));
     btn_ringgauge.addToolTip("Add Ring Gauge element.");
@@ -383,7 +383,7 @@ public class Ribbon extends JPanel {
     btn_radial = band.addSlimButton("Radial Gauge");
     btn_radial.setImage(Utils.getIcon(
       "resources/icons/gauges/radial_32x.png"));
-//    btn_radial.setActionCommand("radial");
+    btn_radial.setActionCommand("dnd_warning");
     btn_radial.setDragEnabled(EnumFactory.RADIALGAUGE, Utils.getIcon(
       "resources/icons/gauges/radial_32x.png",24,24));
     btn_radial.addToolTip("Indicate progress of a\nlengthy operation as a dial.");
@@ -391,7 +391,7 @@ public class Ribbon extends JPanel {
     btn_ramp = band.addSlimButton("Ramp Gauge");
     btn_ramp.setImage(Utils.getIcon(
       "resources/icons/gauges/ramp_32x.png"));
-//    btn_ramp.setActionCommand("ramp");
+    btn_ramp.setActionCommand("dnd_warning");
     btn_ramp.setDragEnabled(EnumFactory.RAMPGAUGE, Utils.getIcon(
       "resources/icons/gauges/ramp_32x.png",24,24));
     btn_ramp.addToolTip("Indicate the progress of a\nlengthy operation as a ramp.");
@@ -433,7 +433,7 @@ public class Ribbon extends JPanel {
     btn_box = band.addSlimButton("Box");
     btn_box.setImage(Utils.getIcon(
       "resources/icons/shapes/box_32x.png"));
-//    btn_box.setActionCommand("box");
+    btn_box.setActionCommand("dnd_warning");
     btn_box.setDragEnabled(EnumFactory.BOX, Utils.getIcon(
       "resources/icons/shapes/box_32x.png",24,24));
     btn_box.addToolTip("Rectangle box element.");
@@ -441,7 +441,7 @@ public class Ribbon extends JPanel {
     btn_line = band.addSlimButton("Line");
     btn_line.setImage(Utils.getIcon(
         "resources/icons/shapes/line_32x.png"));
-//    btn_line.setActionCommand("line");
+    btn_line.setActionCommand("dnd_warning");
     btn_line.setDragEnabled(EnumFactory.LINE, Utils.getIcon(
       "resources/icons/shapes/line_32x.png",24,24));
     btn_line.addToolTip("Horizontal or Vertical line element.");
@@ -449,7 +449,7 @@ public class Ribbon extends JPanel {
     btn_graph = band.addSlimButton("Graph");
     btn_graph.setImage(Utils.getIcon(
         "resources/icons/controls/graph_32x.png"));
-//    btn_graph.setActionCommand("graph");
+    btn_graph.setActionCommand("dnd_warning");
     btn_graph.setDragEnabled(EnumFactory.GRAPH, Utils.getIcon(
       "resources/icons/controls/graph_32x.png",24,24));
     btn_graph.addToolTip("Graph element.");
@@ -658,34 +658,34 @@ public class Ribbon extends JPanel {
     q_copy_props.addActionListener(al);
     q_cut.addActionListener(al);
     
-//    btn_text.addActionListener(al);
-//    btn_textbox.addActionListener(al);
-//    btn_listbox.addActionListener(al);
-//    btn_txtinput.addActionListener(al);
-//    btn_numinput.addActionListener(al);
-//
-//    btn_txtbtn.addActionListener(al);
-//    btn_imgbtn.addActionListener(al);
-//    btn_slider.addActionListener(al);
-//    btn_checkbox.addActionListener(al);
-//    btn_radiobtn.addActionListener(al);
-//    btn_spinner.addActionListener(al);
-//    btn_image.addActionListener(al);
-//    btn_toggle.addActionListener(al);
-//    btn_seekbar.addActionListener(al);
-//    btn_progressbar.addActionListener(al);
-//
-//    btn_ringgauge.addActionListener(al);
-//    btn_radial.addActionListener(al);
-//    btn_ramp.addActionListener(al);
+    btn_text.addActionListener(al);
+    btn_textbox.addActionListener(al);
+    btn_listbox.addActionListener(al);
+    btn_txtinput.addActionListener(al);
+    btn_numinput.addActionListener(al);
+
+    btn_txtbtn.addActionListener(al);
+    btn_imgbtn.addActionListener(al);
+    btn_slider.addActionListener(al);
+    btn_checkbox.addActionListener(al);
+    btn_radiobtn.addActionListener(al);
+    btn_spinner.addActionListener(al);
+    btn_image.addActionListener(al);
+    btn_toggle.addActionListener(al);
+    btn_seekbar.addActionListener(al);
+    btn_progressbar.addActionListener(al);
+
+    btn_ringgauge.addActionListener(al);
+    btn_radial.addActionListener(al);
+    btn_ramp.addActionListener(al);
 
     btn_page.addActionListener(al);
     btn_base_page.addActionListener(al);
     btn_popup.addActionListener(al);
     
-//    btn_box.addActionListener(al);
-//    btn_line.addActionListener(al);
-//    btn_graph.addActionListener(al);
+    btn_box.addActionListener(al);
+    btn_line.addActionListener(al);
+    btn_graph.addActionListener(al);
     btn_group.addActionListener(al);
 
     btn_show_grid.addActionListener(al);

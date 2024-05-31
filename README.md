@@ -35,7 +35,7 @@ if the Software has errors.</p>
 
 ## Contributing
 
-Contributing Guidelines: docs/CONTRIBUTING.md
+[Contributing Guidelines](https://github.com/ImpulseAdventure/GUIslice-Builder/blob/master/docs/CONTRIBUTING.md)
 
 ## Builder Contents
 
