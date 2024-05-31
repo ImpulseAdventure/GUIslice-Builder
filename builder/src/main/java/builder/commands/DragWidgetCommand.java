@@ -122,8 +122,13 @@ public class DragWidgetCommand extends Command {
     Point mapPt = PagePane.mapPoint(m.x, m.y);
     for (int i=0; i<targets.size(); i++) {
       w = targets.get(i);
-      testPt = new Point(mapPt.x-offsetPt[i].x, mapPt.y-offsetPt[i].y);
-      if(!w.testLocation(testPt.x, testPt.y, tft_width, tft_height)) return;
+      /* skip the test if we are already off the screen.
+       * otherwise, we can't move back onto screen.
+       */
+      if (w.testLocation(w.getModel().getX(),w.getModel().getY(), tft_width, tft_height)) {
+        testPt = new Point(mapPt.x - offsetPt[i].x, mapPt.y - offsetPt[i].y);
+        if (!w.testLocation(testPt.x, testPt.y, tft_width, tft_height)) return;
+      }
     }
 
     for (int i=0; i<targets.size(); i++) {
@@ -159,7 +164,7 @@ public class DragWidgetCommand extends Command {
   /**
    * execute - will freeze the final drag point for each widget.
    *
-   * @see builder.commands.Command#execute()
+   * @see Command#execute()
    */
   @Override
   public void execute() {
@@ -177,7 +182,7 @@ public class DragWidgetCommand extends Command {
   /**
    * toString - converts drag command to a string for debugging.
    *
-   * @see java.lang.Object#toString()
+   * @see Object#toString()
    */
   @Override
   public String toString() {

@@ -8,7 +8,6 @@ module builder {
   requires transitive java.logging;
   requires com.google.gson;
   requires org.fife.RSyntaxTextArea;
-  requires transitive JRibbonMenu;
   requires com.formdev.flatlaf;
   requires com.formdev.flatlaf.intellijthemes;
   exports  builder.clipboard;
@@ -26,5 +25,5 @@ module builder {
   exports  builder.themes;
   exports  builder.views;
   exports  builder.widgets;
-
+  exports  builder.RibbonMenu;
 }

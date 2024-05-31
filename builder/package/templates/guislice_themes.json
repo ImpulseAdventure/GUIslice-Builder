@@ -9,8 +9,8 @@
 		 },
 		{
 			"uiElemName": "Box",
-			"width": "300",
-			"height": "150",
+			"width": "50",
+			"height": "50",
 			"use_flash": false,
 			"corners_rounded": false,
 			"frame_en": true,

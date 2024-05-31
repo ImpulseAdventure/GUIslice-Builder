@@ -64,8 +64,9 @@ public class ImgButtonWidget extends Widget {
    *          the y coordinate position
    */
   public boolean setImage(File file, int x, int y) {
+    boolean bResult =  m.setImage(file, x, y);
     super.setXY(model, x, y);
-    return m.setImage(file, x, y);
+    return bResult;
   }
   
   /**

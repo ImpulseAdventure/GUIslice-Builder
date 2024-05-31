@@ -127,6 +127,32 @@ public class Utils {
   }
 
   /**
+   * testLocation() will determine if our new location will fit our screen
+   *
+   * @param x
+   *          the test destination point x
+   * @param y
+   *          the test destination point y
+   * @param tft_width
+   *          the width of our target tft display
+   * @param tft_height
+   *          the height of our target tft display
+   * @return true if we still fit on the display, false otherwise
+   */
+  public static boolean testLocation(int x, int y) {
+    int canvas_width = Controller.getProjectModel().getWidth();
+    int canvas_height = Controller.getProjectModel().getHeight();
+    // Do the new Coordinates fit on our Display?
+    if (x > canvas_width)
+      return false;
+    if (y > canvas_height)
+      return false;
+    if (x < 0 || y < 0)
+      return false;
+    return true;
+  }
+
+  /**
    * snapToGrid() - Remaps coordinates to our nearest grid line.
    *
    * @param x

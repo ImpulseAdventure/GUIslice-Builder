@@ -62,7 +62,7 @@ import builder.themes.GUIsliceThemeElement;
  * @author Paul Conti
  *  
  */
-public class ProjectModel extends PageModel implements MultipeLineCellListener {
+public class ProjectModel extends WidgetModel implements MultipeLineCellListener {
   
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID  = 1L;
