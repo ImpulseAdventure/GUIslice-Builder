@@ -68,11 +68,8 @@ import builder.controller.UserPrefsManager;
 import builder.fonts.FontFactory;
 import builder.prefs.GeneralEditor;
 import builder.prefs.ModelEditor;
-import builder.views.MenuBar;
-import builder.views.Ribbon;
-import builder.views.RibbonListener;
+import builder.views.*;
 //import builder.views.ToolBar;
-import builder.views.TreeView;
 
 import com.formdev.flatlaf.util.SystemInfo;
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -116,7 +113,7 @@ public class Builder  extends JDesktopPane {
   private static final long serialVersionUID = 1L;
   
   /** The Constant VERSION. */
-  public static final String VERSION = "0.17.b30";
+  public static final String VERSION = "0.17.b31";
   
   /** The Constant VERSION_NO is for save and restore of user preferences. */
   public static final String VERSION_NO = "-16";
@@ -171,7 +168,7 @@ public class Builder  extends JDesktopPane {
   
   /** our logger */
   public static LogManager logger = null;
-  
+
   /**
    * The main method.
    *
@@ -359,7 +356,7 @@ public class Builder  extends JDesktopPane {
     frame.setIconImage(new ImageIcon(Builder.class.getResource("/resources/icons/guislicebuilder.png")).getImage());
 
     // pass on top level frame to controller so it can change project names
-    controller.setFrame(frame); 
+    controller.setFrame(frame);
     controller.initUI();  // now we can start the controller
 
     // trap the red X on our main frame

@@ -1214,6 +1214,9 @@ public class PagePane extends JPanel implements iSubscriber {
       Transferable t = support.getTransferable();
       DropLocation dropLocation = support.getDropLocation();
       Point dropPoint = dropLocation.getDropPoint();
+      // drop on our canvas?
+      if (!Utils.testLocation(dropPoint.x, dropPoint.y))
+        return false;
       //only Strings
       String enum_str = null;
       try {
@@ -1222,7 +1225,6 @@ public class PagePane extends JPanel implements iSubscriber {
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
-//        this.dropString(str, dropPoint);
       return true;
     }
   };

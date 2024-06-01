@@ -114,6 +114,11 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancement for 0.17.b31
+
+Cleanup of Drag and Drop cursor handling. The No Drop cursor will now show up if you attempt a drop of
+a UI element off of the TFT Panel.
+
 ### Enhancement for 0.17.b30
 
 Drag and Drop of UI Elements from the RibbonBar is now supported.  This allows you to place your UI pieces
