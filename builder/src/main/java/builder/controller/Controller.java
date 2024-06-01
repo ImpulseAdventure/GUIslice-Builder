@@ -943,7 +943,8 @@ public class Controller extends JInternalFrame
     }
 //    System.out.println("currentPageKey: " + currentPage.getKey());
     pm.writeModel(out);
-    out.writeDouble(PagePane.zoomFactor);
+    // removing zoom factor from project file (PagePane.zoomFactor)
+    out.writeDouble(1.0);
     out.writeInt(pages.size());
     String pageKey = null;
     String pageEnum = null;
@@ -1140,8 +1141,9 @@ public class Controller extends JInternalFrame
       }
       pm.printModel("Project Options");
       if (strVersion.equals("17")) {
-        PagePane.setZoom(in.readDouble());
-        refreshView();
+        // we don't save zoom factor in project file anymore
+        // PagePane.setZoom(in.readDouble());
+        // refreshView();
       }
       int cnt = in.readInt();
 //    System.out.println("pages: " + cnt);
@@ -1557,28 +1559,19 @@ public class Controller extends JInternalFrame
     return false;
   }
   
-  /**
-   * zoomIn.
-   */
   public void zoomIn() {
-    PagePane.zoomIn();
-    refreshView();    
+    if (currentPage == null) return;
+    currentPage.zoomIn();
   }
   
-  /**
-   * zoomOut.
-   */
   public void zoomOut() {
-    PagePane.zoomOut();
-    refreshView();
+    if (currentPage == null) return;
+    currentPage.zoomOut();
   }
 
-  /**
-   * zoomReset.
-   */
   public void zoomReset() {
-    PagePane.zoomReset();
-    refreshView();
+    if (currentPage == null) return;
+    currentPage.zoomReset();
   }
   
   static public void sendRepaint() {

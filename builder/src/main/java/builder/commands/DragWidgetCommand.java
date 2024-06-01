@@ -97,10 +97,7 @@ public class DragWidgetCommand extends Command {
     }
     // setup for undo
     memento = new PositionMemento(page, targets);
-    
-    // we support zoom so we need to map our mouse point
-    Point mapPt = PagePane.mapPoint(mousePt.x, mousePt.y);
-    
+
     // house keeping
     pt = new Point[targets.size()];
     offsetPt = new Point[targets.size()];
@@ -110,7 +107,7 @@ public class DragWidgetCommand extends Command {
      */
     for (int i=0; i<targets.size(); i++) {
       Point locPt = targets.get(i).getLocation();
-      offsetPt[i] = new Point(mapPt.x-locPt.x, mapPt.y-locPt.y);
+      offsetPt[i] = new Point(mousePt.x - locPt.x, mousePt.y - locPt.y);
     }
     return true;
   }
@@ -118,12 +115,11 @@ public class DragWidgetCommand extends Command {
   /**
    * Move will perform dragging the widgets.
    *
-   * @param m
+   * @param mousePt
    *          the <code>m</code> is the new relative position of our dragged widgets. 
    */
-  public void move(Point m, boolean doNotSnap) {
+  public void move(Point mousePt, boolean doNotSnap) {
     Widget w;
-    Point mapPt = PagePane.mapPoint(m.x, m.y);
 
     for (int i=0; i<targets.size(); i++) {
       /* 
@@ -131,8 +127,8 @@ public class DragWidgetCommand extends Command {
        */
       w = targets.get(i);
       pt[i] = new Point(
-        doNotSnap ? mapPt.x - offsetPt[i].x : hSnapper.snap(mapPt.x - offsetPt[i].x, Snapper.SourceEdge.MIN),
-        doNotSnap ? mapPt.y - offsetPt[i].y : vSnapper.snap(mapPt.y - offsetPt[i].y, Snapper.SourceEdge.MIN)
+        doNotSnap ? mousePt.x - offsetPt[i].x : hSnapper.snap(mousePt.x - offsetPt[i].x, Snapper.SourceEdge.MIN),
+        doNotSnap ? mousePt.y - offsetPt[i].y : vSnapper.snap(mousePt.y - offsetPt[i].y, Snapper.SourceEdge.MIN)
       );
       w.updateLocation(
         pt[i].x,

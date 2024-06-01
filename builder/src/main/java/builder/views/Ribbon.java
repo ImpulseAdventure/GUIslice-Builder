@@ -761,15 +761,17 @@ public class Ribbon extends JPanel {
   public static void enableGroup(boolean bEnable) {
     btn_group.setEnabled(bEnable);
   }
-  
-  public void enableZoom(boolean bEnable) {
+
+  public void enableZoomOut(boolean bEnable) {
     btn_zoom_out.setEnabled(bEnable);
+    repaint();
   }
 
   public void enableZoomReset(boolean bEnable) {
     btn_zoom_reset.setEnabled(bEnable);
-  }  
-  
+    repaint();
+  }
+
   /**
    * Enable grouping of radiobuttons
    * @param selectedGroupCnt is the number of radiobuttons selected on the page

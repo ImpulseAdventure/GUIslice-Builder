@@ -115,7 +115,6 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The mouse pt. */
   private Point mousePt;
-  private Point dragPt;
   
   /** The mouse rect. */
   private Rectangle mouseRect = new Rectangle();
@@ -179,21 +178,17 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   private int selectedGroupCnt = 0;
   
-  /** The zoom factor. */
-  public static double zoomFactor = 1;
+  private double zoomFactor = 1;
 
   /**
    * Distance from the top-left corner of the viewport to the top-left corner of
    * the page. We want our page to be centered in the viewport
    * (only of page is smaller than viewport)
    */
-  private static Point pageOffset = new Point(0, 0);
+  private Point pageOffset = new Point(0, 0);
   
-  /** The zoom AffineTransform at. */
-  private static AffineTransform at = null;
-  
-  /** The inverse AffineTransform at. */
-  public static AffineTransform invertedAt;
+  private AffineTransform pageTransform = null;
+  private AffineTransform invertedPageTranform;
   
   private String[] commands = {
                                   "UP",
@@ -226,8 +221,7 @@ public class PagePane extends JPanel implements iSubscriber {
     pm = Controller.getProjectModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
     model = new PageModel();
-    mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
-    dragPt = mousePt;
+//    mousePt = new Point(pm.getWidth() / 2, pm.getHeight() / 2);
     MouseHandler mouseHandler = new MouseHandler();
     this.addMouseListener(mouseHandler);
     this.addMouseWheelListener(mouseHandler);
@@ -288,7 +282,7 @@ public class PagePane extends JPanel implements iSubscriber {
     this.setFocusable( true ); 
     this.setBorder(BorderFactory.createLineBorder(Color.black));
     this.setVisible(true);
-    if (at == null) {
+    if (pageTransform == null) {
       zoomTransform();
     }
 
@@ -343,7 +337,7 @@ public class PagePane extends JPanel implements iSubscriber {
     }
 
     Graphics2D g2d = (Graphics2D) g.create();
-    g2d.transform(at);
+    g2d.transform(pageTransform);
     int width = pm.getWidth();
     int height = pm.getHeight();
     if (pm.useBackgroundImage() && (!advancedSnappingModel.isShowGrid() || !advancedSnappingModel.isShowGridBg())) {
@@ -445,81 +439,70 @@ public class PagePane extends JPanel implements iSubscriber {
   };
 
   /**
-   * set Zoom factor from open project
+   * set Zoom factor, not used anymore from open project!
    */
-  public static void setZoom(double zoom) {
-    ribbon.enableZoom(zoom > 1.0);
+  public void setZoom(double zoom) {
+    ribbon.enableZoomOut(zoom > 1.0);
     ribbon.enableZoomReset(zoom != 1.0);
     MenuBar.miZoomOut.setEnabled(zoom > 1.0);
     MenuBar.miZoomReset.setEnabled(zoom != 1.0);
     zoomFactor = zoom;
     zoomTransform();
   }
-  
+
   /**
    * create a transform
    */
-  public static void zoomTransform() {
-    at = new AffineTransform();
-    at.translate(pageOffset.getX(), pageOffset.getY());
-    at.scale(zoomFactor, zoomFactor);
+  public void zoomTransform() {
+    pageTransform = new AffineTransform();
+    pageTransform.translate(pageOffset.getX(), pageOffset.getY());
+    pageTransform.scale(zoomFactor, zoomFactor);
     try {
-      invertedAt = at.createInverse();
+      invertedPageTranform = pageTransform.createInverse();
     } catch (NoninvertibleTransformException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
-  
-  /**
-   * Zoom in.
-   */
-  public static void zoomIn() {
+
+  public void zoomIn() {
     zoomFactor *= 1.1;
     zoomTransform();
-    ribbon.enableZoom(true);
-    MenuBar.miZoomOut.setEnabled(true);
-    updateZoomReset();
+    refreshView();
+    updateRibbonAndMenu();
   }
-  
-  /**
-   * Zoom out.
-   */
-  public static void zoomOut() {
+
+  public void zoomOut() {
     zoomFactor /= 1.1;
     if (zoomFactor < 1.1) {
       zoomFactor = 1.0;
-      ribbon.enableZoom(false);
-      MenuBar.miZoomOut.setEnabled(false);
     }
-    updateZoomReset();
     zoomTransform();
+    refreshView();
+    updateRibbonAndMenu();
   }
 
-  /** Zoom reset */
-  public static void zoomReset() {
+  public void zoomReset() {
     zoomFactor = 1.0;
-    ribbon.enableZoom(false);
-    MenuBar.miZoomOut.setEnabled(false);
-    updateZoomReset();
     zoomTransform();
+    refreshView();
+    updateRibbonAndMenu();
   }
 
   /**
    * Update zoom reset button state.
    */
-  private static void updateZoomReset() {
-    MenuBar.miZoomReset.setEnabled(zoomFactor != 1.0);  
+  private void updateRibbonAndMenu() {
     ribbon.enableZoomReset(zoomFactor != 1.0);
+    ribbon.enableZoomOut(zoomFactor > 1.0);
+    MenuBar.miZoomReset.setEnabled(zoomFactor != 1.0);
+    MenuBar.miZoomOut.setEnabled(zoomFactor > 1.0);
   }
 
-  /**
-   * Zoom off.
-   */
-  public static void zoomOff() {
+  public void zoomOff() {
     zoomFactor = 1.0;
-    ribbon.enableZoom(false);
     zoomTransform();
+    updateRibbonAndMenu();
   }
 
   /**
@@ -919,12 +902,12 @@ public class PagePane extends JPanel implements iSubscriber {
   public Widget findOne(Point p) {
     // we may need to deal with scaled points because of zoom feature
     Point2D pos = p;
-    if (zoomFactor > 1) {
+    if (zoomFactor > 1 || pageOffset.x > 0 || pageOffset.y > 0) {
       Point2D.Double scaledPos = new Point2D.Double();
       scaledPos.x = (double) p.x;
       scaledPos.y = (double) p.y;
       // transforms are only needed in zoom mode
-      invertedAt.transform(scaledPos, scaledPos);
+      invertedPageTranform.transform(scaledPos, scaledPos);
       pos = scaledPos;
     }
 
@@ -947,7 +930,7 @@ public class PagePane extends JPanel implements iSubscriber {
     return null;
   }
   
-  static public Point mapPoint(int x, int y) {
+  private Point mapPoint(int x, int y) {
     // do nothing if no transformation is done
     if (zoomFactor == 1 && pageOffset.x == 0 && pageOffset.y == 0) {
       return new Point(x, y);
@@ -955,12 +938,12 @@ public class PagePane extends JPanel implements iSubscriber {
 
     Point2D.Double scaledPos = new Point2D.Double((double) x, (double) y);
 
-    invertedAt.transform(scaledPos, scaledPos);
+    invertedPageTranform.transform(scaledPos, scaledPos);
 
     return new Point((int) scaledPos.x, (int) scaledPos.y);
   }
 
-  static public Point mapPoint(Point p) {
+  private Point mapPoint(Point p) {
     return mapPoint(p.x, p.y);
   }
   
@@ -1149,7 +1132,7 @@ public class PagePane extends JPanel implements iSubscriber {
           donotSelectKey = w.getKey();
         }
       } else if (w != null) {
-        Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
+        Point unscaledPoint = mapPoint(e.getPoint().x, e.getPoint().y);
         HandleType handleType = w.getActionHandle(w.toWidgetSpace(unscaledPoint));
         switch (handleType) {
           case DRAG:
@@ -1158,7 +1141,6 @@ public class PagePane extends JPanel implements iSubscriber {
             if (w.isSelected() || w instanceof GuidelineWidget) {
               currentAction = CurrentAction.DRAGGING_WIDGET;
             }
-            dragPt = new Point(mousePt.x, mousePt.y);
             break;
           case NONE:
             break;
@@ -1190,7 +1172,7 @@ public class PagePane extends JPanel implements iSubscriber {
 
       // we don't use mapPoint here because we don't want result to be cast to int
       Point2D.Double pointAtCursorBeforeZoom = new Point2D.Double();
-      invertedAt.transform(e.getPoint(), pointAtCursorBeforeZoom);
+      invertedPageTranform.transform(e.getPoint(), pointAtCursorBeforeZoom);
 
       JViewport viewPort = (JViewport) (PagePane.this.getParent());
       Point viewPortMousePos = viewPort.getMousePosition();
@@ -1250,18 +1232,11 @@ public class PagePane extends JPanel implements iSubscriber {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      // widgetUnderCursor = null;
-      // if (advancedSnappingModel.isEditGuidelines()) {
-      //   widgetUnderCursor = guidelines.getOne(mapPoint(e.getPoint().x, e.getPoint().y));
-      // };
+      if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
+        return;
+      }
 
-      // if (widgetUnderCursor == null) {
-        if (bMultiSelectionBox || currentAction != CurrentAction.NONE) {
-          return;
-        }
-
-        widgetUnderCursor = findOne(e.getPoint());
-      // }
+      widgetUnderCursor = findOne(e.getPoint());
 
       if (widgetUnderCursor instanceof GuidelineWidget && !advancedSnappingModel.isEditGuidelines()) {
         widgetUnderCursor = null;
@@ -1276,7 +1251,7 @@ public class PagePane extends JPanel implements iSubscriber {
         return;
       }
 
-      Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y); 
+      Point unscaledPoint = mapPoint(e.getPoint().x, e.getPoint().y);
       HandleType handleType = widgetUnderCursor.getActionHandle(widgetUnderCursor.toWidgetSpace(unscaledPoint));
       switch (handleType) {
         case DRAG:
@@ -1340,18 +1315,18 @@ public class PagePane extends JPanel implements iSubscriber {
             Math.abs(mousePt.y - e.getY()));
         // Now select any widgets that fit inside our rubber band
         selectRect(mouseRect);
-     } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
-       if (dragCommand == null) {
-         dragCommand = new DragWidgetCommand(
-             instance,
-             Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
-                 pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(),
-                 gridModel.getGridMinorWidth()),
-             Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
-                 pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(),
-                 gridModel.getGridMinorHeight())
-          );
-          if (!dragCommand.start(dragPt)) {
+      } else if (currentAction == CurrentAction.DRAGGING_WIDGET) {
+        Point unscaledPoint = mapPoint(e.getPoint());
+        if (dragCommand == null) {
+          dragCommand = new DragWidgetCommand(
+              instance,
+              Snapper.Builder.buildHSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
+                  pm.getWidth(), pm.getMargins(), pm.getHSpacing(), gridModel.getGridMajorWidth(),
+                  gridModel.getGridMinorWidth()),
+              Snapper.Builder.buildVSnapper(widgetUnderCursor, advancedSnappingModel, guidelines, widgets,
+                  pm.getHeight(), pm.getMargins(), pm.getVSpacing(), gridModel.getGridMajorHeight(),
+                  gridModel.getGridMinorHeight()));
+          if (!dragCommand.start(unscaledPoint)) {
             currentAction = CurrentAction.NONE;
             bMultiSelectionBox = false;
             dragCommand = null;
@@ -1359,14 +1334,14 @@ public class PagePane extends JPanel implements iSubscriber {
             return;
           }
         }
-        // No need to adjust our points using u.fromWinPoint() 
+        // No need to adjust our points using u.fromWinPoint()
         // because here we are calculating offsets not absolute points.
-        dragCommand.move(e.getPoint(), e.isControlDown());
+        dragCommand.move(unscaledPoint, e.isControlDown());
       } else if (currentAction == CurrentAction.RESIZING_WIDGET) {
         if (resizeCommand == null) {
           System.out.println("resizeCommand is null");
         } else {
-          Point unscaledPoint = PagePane.mapPoint(e.getPoint().x, e.getPoint().y);
+          Point unscaledPoint = mapPoint(e.getPoint());
           resizeCommand.move(unscaledPoint, e.isAltDown(), e.isControlDown());
         }
       }
@@ -1618,7 +1593,6 @@ public class PagePane extends JPanel implements iSubscriber {
     Builder.postStatusMsg("Scale operation completed!");
   }
 
-
   /**
    * Listener for parent viewport will be used to detect changes in viewport size. It is necessary to make sure that the page is always
    * centered in the viewport.
@@ -1649,6 +1623,7 @@ public class PagePane extends JPanel implements iSubscriber {
   public void setActive(boolean state) {
     if (state) {
       refreshView();
+      updateRibbonAndMenu();
     } else {
       selectNone();
     }
