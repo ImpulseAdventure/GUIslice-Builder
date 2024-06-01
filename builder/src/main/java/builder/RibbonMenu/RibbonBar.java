@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+import builder.controller.PropManager;
 import builder.views.PagePane;
 import builder.common.Utils;
+import builder.views.TreeView;
 
 /**
  * Office styled RibbonBar main component.
@@ -519,20 +521,27 @@ public class RibbonBar extends JComponent {
 	}
 
 	public void createDragSource(PagePane p) {
-		DragSource dragSource = new DragSource();
-//		DragSourceMotionListener dsml = new DragSourceMotionListener()
-//		{
-//			@Override
-//			public void dragMouseMoved(DragSourceDragEvent dsde) {
-//				Point pts = new Point(dsde.getX(),dsde.getY());
-//				SwingUtilities.convertPointFromScreen(pts, p);
-//        Builder.logger.debug("x/y [" + dsde.getX() + "," + dsde.getY() + "] pts: " + pts.toString());
-//			}
-//		};
-//		dragSource.addDragSourceMotionListener(dsml);
+//		DragSource dragSource = new DragSource();
+		// global singleton
+		DragSource dragSource = DragSource.getDefaultDragSource();
+		DragSourceMotionListener dsml = new DragSourceMotionListener() {
+			@Override
+			public void dragMouseMoved(DragSourceDragEvent dsde) {
+				DragSourceContext context = dsde.getDragSourceContext();
+//				Builder.logger.debug(context.toString());
+				Point pts = new Point();
+				SwingUtilities.convertPointFromScreen(pts, p);
+				if (pts.x < 0 || pts.y < 0) {
+					context.setCursor(DragSource.DefaultMoveNoDrop);
+//					Builder.logger.debug("--- not on TFT: "+pts.toString());
+				}
+//				Builder.logger.debug(" pts: " + pts.toString());
+			}
+		};
+		dragSource.addDragSourceMotionListener(dsml);
 		RibbonDragGestureListener dlistener = new RibbonDragGestureListener();
 		dlistener.setTarget(p);
-		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_REFERENCE, dlistener);
+		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, dlistener);
 
 	}
 
@@ -1152,7 +1161,8 @@ public class RibbonBar extends JComponent {
 			Point p = event.getDragOrigin();
 			Button selection = findDragButton(p);
 			if (selection != null) {
-				Cursor ghost = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+//				Cursor ghost = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+				Cursor ghost = DragSource.DefaultMoveNoDrop;
 				ImageIcon icon = selection.getDragImage();
 				BufferedImage img = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 				Graphics g = (Graphics) img.getGraphics();
@@ -1182,10 +1192,24 @@ public class RibbonBar extends JComponent {
 					new DragSourceListener() {
 
 						@Override
-						public void dragEnter(DragSourceDragEvent dsde) { }
+						public void dragEnter(DragSourceDragEvent dsde) {
+							DragSourceContext context = dsde.getDragSourceContext();
+							context.setCursor(DragSource.DefaultMoveNoDrop);
+						}
 
 						@Override
-						public void dragOver(DragSourceDragEvent dsde) { }
+						public void dragOver(DragSourceDragEvent dsde) {
+							Point p = dsde.getLocation();
+							SwingUtilities.convertPointFromScreen(p, page);
+							DragSourceContext context = dsde.getDragSourceContext();
+							if (Utils.testLocation(p.x, p.y)) {
+								context.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//								Builder.logger.debug("--- not on TFT: "+p.toString());
+							} else {
+								context.setCursor(DragSource.DefaultMoveNoDrop);
+//								Builder.logger.debug("--- not on TFT: "+p.toString());
+							}
+					}
 
 						@Override
 						public void dropActionChanged(DragSourceDragEvent dsde) { }
@@ -1196,7 +1220,7 @@ public class RibbonBar extends JComponent {
 						@Override
 						public void dragDropEnd(DragSourceDropEvent dsde) { setCursor(Cursor.getDefaultCursor()); }
 
-					});
+				});
 			}
 		}
 	}

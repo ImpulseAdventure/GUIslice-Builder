@@ -143,11 +143,9 @@ public class Utils {
     int canvas_width = Controller.getProjectModel().getWidth();
     int canvas_height = Controller.getProjectModel().getHeight();
     // Do the new Coordinates fit on our Display?
-    if (x > canvas_width)
-      return false;
-    if (y > canvas_height)
-      return false;
     if (x < 0 || y < 0)
+      return false;
+    if (x > canvas_width || y > canvas_height)
       return false;
     return true;
   }
