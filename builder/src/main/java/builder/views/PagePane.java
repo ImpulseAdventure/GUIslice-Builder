@@ -209,7 +209,7 @@ public class PagePane extends JPanel implements iSubscriber {
     ribbon = Ribbon.getInstance();
     pm_model = Controller.getProjectModel();
     gridModel = (GridModel) GridEditor.getInstance().getModel();
-//    page_model = new PageModel();
+    page_model = new PageModel();
     mousePt = new Point(pm_model.getWidth() / 2, pm_model.getHeight() / 2);
     dragPt = mousePt;
     MouseHandler mouseHandler = new MouseHandler();
@@ -513,7 +513,8 @@ public class PagePane extends JPanel implements iSubscriber {
     current_enum = this.page_model.getEnum();
     MsgBoard.subscribe(this, current_key);
     if (current_type.equals(EnumFactory.BASEPAGE) ||
-      current_type.equals(EnumFactory.POPUP)) {
+      current_type.equals(EnumFactory.POPUP) ||
+      current_type.equals(EnumFactory.PROJECT)) {
       bPaintBaseWidgets=false;
     } else {
       bPaintBaseWidgets=true;
@@ -527,11 +528,6 @@ public class PagePane extends JPanel implements iSubscriber {
    */
   public void setPM_Model(ProjectModel pm_model) {
     this.pm_model = pm_model;
-    current_key = this.pm_model.getKey();
-    current_type = this.pm_model.getType();
-    current_enum = this.pm_model.getEnum();
-    MsgBoard.subscribe(this, current_key);
-    bPaintBaseWidgets=false;
   }
 
   /**
