@@ -114,7 +114,7 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
-### Enhancement for 0.17.b32
+### Enhancement for 0.17.b33
 
 Drag and Drop of UI Elements from the RibbonBar is now supported.  This allows you to place your UI pieces
 where you want them to appear.
@@ -123,7 +123,7 @@ where you want them to appear.
 
 <p>
 Thanks to the effort of etet100 Andrzej the Builder now supports resizing UI Elements using your mouse.
-You simply need to click on the UI Eement and then place your cursor over one of the red handles and drag
+You simply need to click on the UI Element and then place your cursor over one of the red handles and drag
 while holding down your left mouse button.
 </p>
 

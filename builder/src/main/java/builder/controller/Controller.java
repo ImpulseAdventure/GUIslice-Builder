@@ -333,6 +333,7 @@ public class Controller extends JInternalFrame
     PagePane p = new PagePane();
     p.setLayout(null);
     p.setPM_Model(pm);
+    p.setPage_model(pm);
     projectPage = p;
     addPage(p);
   }
@@ -574,7 +575,7 @@ public class Controller extends JInternalFrame
     createProjectModel();
     PagePane page = new PagePane();
     page.setLayout(null);
-    PageModel m = new PageModel();
+    PageModel m = page.getPage_model();
     String pageKey = EnumFactory.getInstance().createKey(EnumFactory.PAGE);
     m.setKey(pageKey);
     String pageEnum = EnumFactory.getInstance().createEnum(EnumFactory.PAGE);
@@ -805,6 +806,7 @@ public class Controller extends JInternalFrame
     PagePane p = new PagePane();
     p.setLayout(null);
     p.setPM_Model(pm);
+    p.setPage_model(pm);
     projectPage = p;
     addPageToView(p);
     PropManager.getInstance().addPropEditor(pm);
