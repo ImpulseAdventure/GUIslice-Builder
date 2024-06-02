@@ -54,6 +54,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.NumberFormatter;
 
 import builder.Builder;
+import builder.RibbonMenu.RibbonBar;
 import builder.codegen.CodeGenerator;
 import builder.codegen.PlatformIO;
 import builder.commands.AddWidgetCommand;
@@ -136,7 +137,7 @@ public class Controller extends JInternalFrame
   
   /** The str theme. */
   private String strTheme;
-  
+
   /** The current page. */
   private static PagePane currentPage;
   
@@ -259,7 +260,11 @@ public class Controller extends JInternalFrame
   public Clipboard getClipboard() {
     return clipboard;
   }
-  
+
+  public static PagePane getCurrentPage() {
+    return currentPage;
+  }
+
   /**
    * Sets the user prefs.
    *
@@ -330,7 +335,6 @@ public class Controller extends JInternalFrame
     p.setPM_Model(pm);
     projectPage = p;
     addPage(p);
-    p.setActive(false);
   }
   
   
@@ -433,10 +437,8 @@ public class Controller extends JInternalFrame
       }
       tabbedPane.setSelectedIndex(tabPages.size()-1);
     }
-    resetActivePages();
     tabbedPane.repaint();
     currentPage = page;
-    currentPage.setActive(true);
     currentPage.refreshView();
   }
 
@@ -452,10 +454,8 @@ public class Controller extends JInternalFrame
       int idx = findPageIdx(pageKey);
       if (currentPage != null) {
         currentPage.selectNone();  // turn off all selections
-        currentPage.setActive(false);
       }
       currentPage = page;
-      currentPage.setActive(true);
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
@@ -475,10 +475,8 @@ public class Controller extends JInternalFrame
       int idx = findPageIdx(pageKey);
       if (currentPage != null) {
         currentPage.selectNone();  // turn off all selections
-        currentPage.setActive(false);
       }
       currentPage = page;
-      currentPage.setActive(true);
       tabbedPane.setSelectedIndex(idx);
       tabbedPane.repaint();
       currentPage.refreshView();
@@ -684,12 +682,6 @@ public class Controller extends JInternalFrame
         JOptionPane.WARNING_MESSAGE);
   }
 
-   private void resetActivePages() {
-     for (PagePane p : pages) {
-        p.setActive(false);
-     }
-   }
-  
   /**
    * Removes the page, no longer supports undo/redo.
    * This function is called when user selects deletion of a page
@@ -1236,6 +1228,7 @@ public class Controller extends JInternalFrame
     }
     in.close();
     Builder.postStatusMsg("Successfully Opened Project File: " + projectFile.getName());
+    currentPage = null;
     changePage(openPage);
     this.setVisible(true);
     Builder.logger.debug("Opened Project File: " + projectFile.getName());

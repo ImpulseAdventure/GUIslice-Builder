@@ -100,15 +100,6 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
-  /** bActive is only to allow Drag and Drop
-   * Since we use card layout if we setup DnD for each pagepane
-   * we get multipe startDrag() operations and that would give an error
-   * class java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
-   * The bActive boolean allows RibbonBar to ignore pages without focus.
-   * Also note that adding addFocusListener doesn't work either.
-   */
-  private boolean bActive = false;
-
   /** The widgets. */
   private List<Widget> widgets = new ArrayList<Widget>();
   
@@ -118,12 +109,6 @@ public class PagePane extends JPanel implements iSubscriber {
   
   /** The mouse rect. */
   private Rectangle mouseRect = new Rectangle();
-  
-  // /** Cursor style will be CROSSHAIR in rectangular selection mode or arrow in default mode */
-  // public static Cursor  = new Cursor(Cursor.CROSSHAIR_CURSOR); 
-
-  /** The rectangular selection enabled switch */
-  public static boolean bRectangularSelectionMode = false;
   
   /** The selecting using a rubber band. */
   private boolean bMultiSelectionBox = false;
@@ -284,16 +269,6 @@ public class PagePane extends JPanel implements iSubscriber {
   }
 
   /**
-   * We use this instead of the JComponent hasfocus because JPanel has no such function
-   * @return true if page is active
-   */
-  public boolean isActive() {
-    return bActive;
-  }
-
-  public void setActive(boolean bActive) { this.bActive = bActive; }
-
-  /**
    * paintComponent.
    *
    * @param g
@@ -436,7 +411,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * rectangularSelection.
    */
   public void rectangularSelection(boolean bValue) {
-    bRectangularSelectionMode = bValue;
+    bMultiSelectionBox = bValue;
     if (bValue)
       setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     else
@@ -1214,9 +1189,6 @@ public class PagePane extends JPanel implements iSubscriber {
       Transferable t = support.getTransferable();
       DropLocation dropLocation = support.getDropLocation();
       Point dropPoint = dropLocation.getDropPoint();
-      // drop on our canvas?
-      if (!Utils.testLocation(dropPoint.x, dropPoint.y))
-        return false;
       //only Strings
       String enum_str = null;
       try {

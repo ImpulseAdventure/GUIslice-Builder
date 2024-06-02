@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b30
+        Ver: 0.17.b32
     </H3>
 </center>
 

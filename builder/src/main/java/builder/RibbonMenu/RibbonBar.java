@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+import builder.controller.Controller;
 import builder.controller.PropManager;
 import builder.views.PagePane;
 import builder.common.Utils;
@@ -246,7 +247,11 @@ public class RibbonBar extends JComponent {
 	/** The build menu. */
 	boolean buildMenu = true;
 
-  /**
+	static List<RibbonDragGestureListener> dsl_list = new ArrayList<>();
+
+	static DragSource dragSource = null;
+
+	/**
    * RibbonBar Factory to create our Singleton Object.
    * 
    * @return Ribbonbar instance only one permitted
@@ -521,28 +526,28 @@ public class RibbonBar extends JComponent {
 	}
 
 	public void createDragSource(PagePane p) {
-//		DragSource dragSource = new DragSource();
-		// global singleton
-		DragSource dragSource = DragSource.getDefaultDragSource();
-		DragSourceMotionListener dsml = new DragSourceMotionListener() {
-			@Override
-			public void dragMouseMoved(DragSourceDragEvent dsde) {
-				DragSourceContext context = dsde.getDragSourceContext();
-//				Builder.logger.debug(context.toString());
-				Point pts = new Point();
-				SwingUtilities.convertPointFromScreen(pts, p);
-				if (pts.x < 0 || pts.y < 0) {
-					context.setCursor(DragSource.DefaultMoveNoDrop);
-//					Builder.logger.debug("--- not on TFT: "+pts.toString());
+		if (dragSource == null) {
+			dragSource = new DragSource();
+			DragSourceMotionListener dsml = new DragSourceMotionListener() {
+				@Override
+				public void dragMouseMoved(DragSourceDragEvent dsde) {
+					DragSourceContext context = dsde.getDragSourceContext();
+	//				Builder.logger.debug(context.toString());
+					Point pts = new Point();
+					SwingUtilities.convertPointFromScreen(pts, Controller.getCurrentPage());
+					if (pts.x < 0 || pts.y < 0) {
+						context.setCursor(DragSource.DefaultMoveNoDrop);
+	//					Builder.logger.debug("--- not on TFT: "+pts.toString());
+					} else {
+						context.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					}
+	//				Builder.logger.debug(" pts: " + pts.toString());
 				}
-//				Builder.logger.debug(" pts: " + pts.toString());
-			}
-		};
-		dragSource.addDragSourceMotionListener(dsml);
-		RibbonDragGestureListener dlistener = new RibbonDragGestureListener();
-		dlistener.setTarget(p);
-		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, dlistener);
-
+			};
+			dragSource.addDragSourceMotionListener(dsml);
+			RibbonDragGestureListener dlistener = new RibbonDragGestureListener();
+			dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, dlistener);
+		}
 	}
 
 	/**
@@ -1151,18 +1156,14 @@ public class RibbonBar extends JComponent {
 
 	class RibbonDragGestureListener implements DragGestureListener {
 
-		PagePane page = null;
 		public RibbonDragGestureListener() { };
 
-		public void setTarget(PagePane page) { this.page = page; }
 		@Override
 		public void dragGestureRecognized(DragGestureEvent event) {
-      if (!page.isActive()) { return; }
 			Point p = event.getDragOrigin();
 			Button selection = findDragButton(p);
 			if (selection != null) {
-//				Cursor ghost = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-				Cursor ghost = DragSource.DefaultMoveNoDrop;
+				Cursor ghost = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 				ImageIcon icon = selection.getDragImage();
 				BufferedImage img = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 				Graphics g = (Graphics) img.getGraphics();
@@ -1193,14 +1194,15 @@ public class RibbonBar extends JComponent {
 
 						@Override
 						public void dragEnter(DragSourceDragEvent dsde) {
-							DragSourceContext context = dsde.getDragSourceContext();
-							context.setCursor(DragSource.DefaultMoveNoDrop);
+//							DragSourceContext context = dsde.getDragSourceContext();
+//							context.setCursor(DragSource.DefaultMoveNoDrop);
 						}
 
 						@Override
 						public void dragOver(DragSourceDragEvent dsde) {
 							Point p = dsde.getLocation();
-							SwingUtilities.convertPointFromScreen(p, page);
+							PagePane c = Controller.getCurrentPage();
+							SwingUtilities.convertPointFromScreen(p, c);
 							DragSourceContext context = dsde.getDragSourceContext();
 							if (Utils.testLocation(p.x, p.y)) {
 								context.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
