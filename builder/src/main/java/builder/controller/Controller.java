@@ -807,6 +807,7 @@ public class Controller extends JInternalFrame
     p.setLayout(null);
     p.setPM_Model(pm);
     p.setPage_model(pm);
+    p.setPageType(EnumFactory.PROJECT);
     projectPage = p;
     addPageToView(p);
     PropManager.getInstance().addPropEditor(pm);
@@ -977,9 +978,9 @@ public class Controller extends JInternalFrame
     // save last page accessed unless its the project options page
     String tmpKey = currentPage.getKey();
     if (tmpKey.equals("Project$1")) {
-      out.writeObject((String)"Page$1");  
+      out.writeObject((String)"Page$1");
     } else {
-      out.writeObject(tmpKey);  
+      out.writeObject(tmpKey);
     }
 //    System.out.println("currentPageKey: " + currentPage.getKey());
     pm.writeModel(out);
@@ -1190,15 +1191,16 @@ public class Controller extends JInternalFrame
 //      System.out.println("restore page: " + pageKey);
         pageEnum = (String)in.readObject();
 //      System.out.println("restore page: " + pageEnum);
-        pageType = EnumFactory.PAGE;
         if (!strVersion.equals("1.01")) {
           pageType = (String)in.readObject();
 //        System.out.println("restore page: " + pageType);
           if (pageType.equals(EnumFactory.BASEPAGE)) {
             nBasePages++;
           }
+        } else {
+          pageType = EnumFactory.PAGE;
         }
-        if (pageType.equals(EnumFactory.PROJECT)) {
+        if (pageEnum.equals("E_PROJECT_OPTIONS")) {
           p = restoreProject();
         } else {
           p = restorePage(pageKey, pageEnum, pageType);
