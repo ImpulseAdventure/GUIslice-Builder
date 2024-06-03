@@ -539,6 +539,8 @@ public class PagePane extends JPanel implements iSubscriber {
     return current_type;
   }
 
+  public void setPageType(String type) { current_type = type; }
+  
   /**
    * Gets the page model.
    *

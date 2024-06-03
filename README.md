@@ -114,6 +114,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes for 0.17.b34
+
+Fix for problem saving and loading project options.
+
 ### Enhancement for 0.17.b33
 
 Drag and Drop of UI Elements from the RibbonBar is now supported.  This allows you to place your UI pieces
