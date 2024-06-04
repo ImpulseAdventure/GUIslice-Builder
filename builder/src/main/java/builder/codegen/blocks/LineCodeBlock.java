@@ -85,7 +85,7 @@ public class LineCodeBlock implements CodeBlock {
     int nX1, nY1;
     if (m.isVertical()) {
       nX1 = m.getX();
-      nY1 = m.getY()+m.getWidth();
+      nY1 = m.getY()+m.getHeight();
     } else {
       nX1 = m.getX()+m.getWidth();
       nY1 = m.getY();
