@@ -114,6 +114,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes for 0.17.b35
+
+Pull Request 267 - Fix vertical line height always 1
+
 ### Bug Fixes for 0.17.b34
 
 Fix for problem saving and loading project options.
