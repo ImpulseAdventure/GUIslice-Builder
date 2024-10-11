@@ -66,20 +66,22 @@ public class TextModel extends WidgetModel {
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
   static private final int PROP_TEXT              = 8;
+  static private final int PROP_TXT_VAR_EN        = 9;
 //  static private final int PROP_UTF8              = 9;
-  static private final int PROP_TEXT_SZ           = 9;
-  static private final int PROP_TEXT_ALIGN        = 10;
-  static private final int PROP_TEXT_MARGIN       = 11;
-  static private final int PROP_FILL_EN           = 12;
-  static private final int PROP_FRAME_EN          = 13;
-  static private final int PROP_USE_FLASH         = 14;
-  static private final int PROP_TEXT_COLOR        = 15;
-  static private final int PROP_FRAME_COLOR       = 16;
-  static private final int PROP_FILL_COLOR        = 17;
-  static private final int PROP_SELECTED_COLOR    = 18;
+  static private final int PROP_TEXT_SZ           = 10;
+  static private final int PROP_TEXT_ALIGN        = 11;
+  static private final int PROP_TEXT_MARGIN       = 12;
+  static private final int PROP_FILL_EN           = 13;
+  static private final int PROP_FRAME_EN          = 14;
+  static private final int PROP_USE_FLASH         = 15;
+  static private final int PROP_TEXT_COLOR        = 16;
+  static private final int PROP_FRAME_COLOR       = 17;
+  static private final int PROP_FILL_COLOR        = 18;
+  static private final int PROP_SELECTED_COLOR    = 19;
 
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
+  static public  final Boolean DEF_TXT_VAR_EN        = Boolean.FALSE;
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
   static public  final String  DEF_TEXT_ALIGN        = FontTFT.ALIGN_LEFT;
@@ -153,12 +155,13 @@ public class TextModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.TEXT;
-    data = new Object[19][5];
+    data = new Object[20][5];
 
     initCommonProps(DEF_WIDTH, DEF_HEIGHT);
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
+    initProp(PROP_TXT_VAR_EN, Boolean.class, "COM-012", Boolean.FALSE,"Text is a Variable?",DEF_TXT_VAR_EN);
     
 //    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
 
@@ -414,7 +417,10 @@ public class TextModel extends WidgetModel {
   public boolean isFrameEnabled() {
     return ((Boolean) data[PROP_FRAME_EN][PROP_VAL_VALUE]).booleanValue();
   }
-
+  
+  public boolean isStringEnabled() {
+    return ((Boolean) data[PROP_TXT_VAR_EN][PROP_VAL_VALUE]).booleanValue();
+  }
   /**
    * Gets the alignment.
    *
@@ -634,6 +640,7 @@ public class TextModel extends WidgetModel {
     FontTFT font = ff.getFont(item.getDisplayName());
     textBox.setFontTFT(ff, font);
     String text = getText();
+    
     if (getTextStorage() > 0) {
       text = "";
       for (int i=0; i<getTextStorage(); i++) {
