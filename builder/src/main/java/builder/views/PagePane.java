@@ -144,9 +144,6 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The key for current page */
   String current_key = null;
 
-  /** the ENUM for our current page */
-  String current_enum = null;
-
   /** The instance. */
   private PagePane instance = null;
 
@@ -510,7 +507,6 @@ public class PagePane extends JPanel implements iSubscriber {
     this.page_model = page_model;
     current_key = this.page_model.getKey();
     current_type = this.page_model.getType();
-    current_enum = this.page_model.getEnum();
     MsgBoard.subscribe(this, current_key);
     if (current_type.equals(EnumFactory.BASEPAGE) ||
       current_type.equals(EnumFactory.POPUP) ||
@@ -565,7 +561,7 @@ public class PagePane extends JPanel implements iSubscriber {
    * @return the enum
    */
   public String getEnum() {
-    return current_enum;
+    return getPage_model().getEnum();
   }
 
 
