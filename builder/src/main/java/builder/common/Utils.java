@@ -54,6 +54,7 @@ import builder.Builder;
 import builder.codegen.PlatformIO;
 import builder.controller.Controller;
 import builder.fonts.FontFactory;
+import builder.models.GeneralModel;
 import builder.prefs.GeneralEditor;
 import builder.prefs.GridEditor;
 
@@ -321,6 +322,8 @@ public class Utils {
    */
   static public void backupFile(File file)
   {
+    GeneralModel gm = (GeneralModel) GeneralEditor.getInstance().getModel();
+    if (!gm.isAutoBackckupModel()) return;
     int n;
     String strFSep = System.getProperty("file.separator"); 
     // start with backup folder itself
@@ -363,7 +366,8 @@ public class Utils {
    *          the out file
    */
   static public void copyFile(File inFile, File outFile)
-  { 
+  {
+    if (!inFile.exists()) return;
     InputStream inStream = null;
     OutputStream outStream = null;
     try{
@@ -377,7 +381,7 @@ public class Utils {
       }
       inStream.close();
       outStream.close();
-//      System.out.println("File is copied successfully!");
+      Builder.logger.debug("File "+inFile.getName()+ " copied successfully!");
     }catch(IOException e){
       e.printStackTrace();
     }

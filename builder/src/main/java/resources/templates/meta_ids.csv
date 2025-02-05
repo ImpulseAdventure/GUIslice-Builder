@@ -61,6 +61,7 @@ COM-017,Callback En
 COM-018,Key Count (Number in the Key after the $)
 COM-019,ELEMENT REF
 COM-020,Use Flash API
+GEN-096,Backup files
 GEN-097,GUIslice Themes
 GEN-098,Target IDE
 GEN-099,PIO Default Environments
@@ -129,12 +130,15 @@ IBTN-110,Image Memory Type
 IBTN-111,Select Image Memory Type
 IBTN-112,Toggle?
 IBTN-113,Custom Code Segment
-IMG-100,Image
+IBTN-114,Image Internal File Name
+IBTN-115,Image Selected Internal File Name
+IMG-100,Image File Name
 IMG-101,Image #defines
 IMG-102,Image Format
 IMG-107,Image Transparency
 IMG-108,Image Extern
 IMG-109,Image Memory Type
+IMG-110,Image Internal File Name
 KEY-014,Button MarginW
 KEY-015,Button MarginH
 KEY-019,Keypad EREF

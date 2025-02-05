@@ -67,14 +67,15 @@ public class GeneralModel extends WidgetModel {
   public static final int PROP_PROJECT_DIR          = 8;
   public static final int PROP_TARGET_IMAGE_DIR     = 9;
   public static final int PROP_BACKGROUND           = 10;
-  public static final int PROP_TRANSPARENCY_COLOR   = 11;
-  public static final int PROP_MARGINS              = 12;
-  public static final int PROP_HSPACING             = 13;
-  public static final int PROP_VSPACING             = 14;
-  public static final int PROP_MAX_STRING           = 15;
-  public static final int PROP_ROTATION             = 16;
-  public static final int PROP_BACKWARD_COMPAT      = 17;
-  public static final int PROP_PRESERVE_BTN_CALLBACKS = 18;
+  public static final int PROP_BACKUP               = 11;
+  public static final int PROP_TRANSPARENCY_COLOR   = 12;
+  public static final int PROP_MARGINS              = 13;
+  public static final int PROP_HSPACING             = 14;
+  public static final int PROP_VSPACING             = 15;
+  public static final int PROP_MAX_STRING           = 16;
+  public static final int PROP_ROTATION             = 17;
+  public static final int PROP_BACKWARD_COMPAT      = 18;
+  public static final int PROP_PRESERVE_BTN_CALLBACKS = 19;
 
   // The following properties are hidden from users
   // TODO - remove hidden props and create a new model RuntimeModel
@@ -85,15 +86,15 @@ public class GeneralModel extends WidgetModel {
    * the other values must change in proportion. It's much easier to
    * simply keep track of when users drag a window and record the values.
    */
-  public static final int PROP_IMAGE_DIR            = 19; // last folder used to load image
-  public static final int PROP_SIZE_APP_WIDTH       = 20; // Size of App Window 
-  public static final int PROP_SIZE_APP_HEIGHT      = 21; 
-  public static final int PROP_SIZE_TFT_WIDTH       = 22; // Size of TFT Simulation Pane
-  public static final int PROP_SIZE_TFT_HEIGHT      = 23; 
-  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 24; // Size of Property View Pane 
-  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 25; 
-  public static final int PROP_SIZE_TREEVIEW_WIDTH  = 26; // Size of tree View Pane 
-  public static final int PROP_SIZE_TREEVIEW_HEIGHT = 27; 
+  public static final int PROP_IMAGE_DIR            = 20; // last folder used to load image
+  public static final int PROP_SIZE_APP_WIDTH       = 21; // Size of App Window
+  public static final int PROP_SIZE_APP_HEIGHT      = 22;
+  public static final int PROP_SIZE_TFT_WIDTH       = 23; // Size of TFT Simulation Pane
+  public static final int PROP_SIZE_TFT_HEIGHT      = 24;
+  public static final int PROP_SIZE_PROPVIEW_WIDTH  = 25; // Size of Property View Pane
+  public static final int PROP_SIZE_PROPVIEW_HEIGHT = 26;
+  public static final int PROP_SIZE_TREEVIEW_WIDTH  = 27; // Size of tree View Pane
+  public static final int PROP_SIZE_TREEVIEW_HEIGHT = 28;
   
   /** The Property Defaults */
   static public  final String  DEF_IDE                 = "Arduino IDE";
@@ -112,7 +113,8 @@ public class GeneralModel extends WidgetModel {
   static public  final Integer DEF_MAX_STRING          = Integer.valueOf(100);
   static public  final Integer DEF_ROTATION            = Integer.valueOf(-1);
   static public  final Boolean DEF_BACKWARD_COMPAT     = Boolean.valueOf(false);
-  
+  static public  final Boolean DEF_BACKUP              = Boolean.valueOf(true);
+
   /** The cb themes. */
   public static JComboBox<String> cbThemes;
   
@@ -160,7 +162,7 @@ public class GeneralModel extends WidgetModel {
   protected void initProperties()
   {
     widgetType = EnumFactory.GENERAL;
-    data = new Object[28][5];
+    data = new Object[29][5];
 
     initProp(PROP_KEY, String.class, "COM-001", Boolean.TRUE,"Key",widgetType);
     initProp(PROP_THEME, String.class, "GEN-100", Boolean.FALSE,"Java Themes","");
@@ -179,6 +181,9 @@ public class GeneralModel extends WidgetModel {
         "Target Platform Image Directory",DEF_TARGET_IMAGE_DIR);
 
     initProp(PROP_BACKGROUND, Color.class, "COL-310", Boolean.FALSE,"Background Color",DEF_BACKGROUND);
+
+    initProp(PROP_BACKUP, Boolean.class, "GEN-096", Boolean.FALSE,
+      "Auto Backup Files?",DEF_BACKUP);
 
     initProp(PROP_TRANSPARENCY_COLOR, Color.class, "COL-314", Boolean.FALSE,
         "Image Transparency Color",DEF_TRANSPARENCY_COLOR);
@@ -648,6 +653,15 @@ public class GeneralModel extends WidgetModel {
    */
   public int getScreenRotation() {
     return (((Integer) (data[PROP_ROTATION][PROP_VAL_VALUE])).intValue());
+  }
+
+  /**
+   * is Auto Backup Mode?
+   *
+   * @return <code>true</code>, if auto Backup is to be used
+   */
+  public boolean isAutoBackckupModel() {
+    return ((Boolean) data[PROP_BACKUP][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
