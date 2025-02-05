@@ -114,6 +114,14 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancements & Bug Fixes for 0.17.b36
+
+- Bug Fix `273` - Fix for About menu showing incorrect version number.
+
+- Issue `278` - Reduce number of backups. Added switch inside edit->options->general tab "Auto Backup Files?" to turn off backups of your edits
+set to false.  Don't cry to me if you lose work...
+
+
 ### Bug Fixes for 0.17.b35
 
 Pull Request 267 - Fix vertical line height always 1
