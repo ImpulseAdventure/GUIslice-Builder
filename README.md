@@ -114,9 +114,10 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
-### Enhancements & Bug Fixes for 0.17.b36
+### Enhancements & Bug Fixes for 0.17.b37
 
-- Bug Fix `273` - Fix for About menu showing incorrect version number.
+- Bug Fix `280` - Cannot rename a page
+- Bug Fix `273` - About menu showing incorrect version number.
 
 - Issue `278` - Reduce number of backups. Added switch inside edit->options->general tab "Auto Backup Files?" to turn off backups of your edits
 set to false.  Don't cry to me if you lose work...
