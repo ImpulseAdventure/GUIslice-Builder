@@ -161,7 +161,7 @@ public class TextModel extends WidgetModel {
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
-    initProp(PROP_TXT_VAR_EN, Boolean.class, "COM-012", Boolean.FALSE,"Text is a Variable?",DEF_TXT_VAR_EN);
+    initProp(PROP_TXT_VAR_EN, Boolean.class, "COM-021", Boolean.FALSE,"Text is a Variable?",DEF_TXT_VAR_EN);
     
 //    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
 

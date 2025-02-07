@@ -144,6 +144,8 @@ public class PagePane extends JPanel implements iSubscriber {
   /** The key for current page */
   String current_key = null;
 
+
+
   /** The instance. */
   private PagePane instance = null;
 
