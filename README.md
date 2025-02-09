@@ -114,6 +114,12 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Enhancements for 0.17.b38
+
+nadjet09 Completed "Text is a Variable?" support. This will let user choose to output text 
+with or without quotation marks "" inside a Text Element if they have the text already predefined. 
+Also, in the TextButton with text as variable.
+
 ### Enhancements & Bug Fixes for 0.17.b37
 
 - Bug Fix `280` - Cannot rename a page
