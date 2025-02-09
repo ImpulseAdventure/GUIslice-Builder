@@ -49,20 +49,20 @@ import builder.models.WidgetModel;
 public final class TxtButtonCodeBlock implements CodeBlock {
 
   /** The Constants for TEMPLATES. */
-  private final static String ALIGN_TEMPLATE         = "<TEXTALIGN>";
+  private final static String ALIGN_TEMPLATE = "<TEXTALIGN>";
   private final static String CORNERS_ROUNDED_TEMPLATE = "<CORNERS_ROUNDED>";
-  private final static String ELEMENTREF_TEMPLATE    = "<ELEMENT_REF>";
-  private final static String FILL_EN_TEMPLATE       = "<FILL_EN>";
-  private final static String FRAME_EN_TEMPLATE      = "<FRAME_EN>";
-  private final static String TEXTMARGIN_TEMPLATE     = "<TEXT_MARGIN>";
-  private final static String TEXTCOLOR_TEMPLATE     = "<TEXT_COLOR>";
-  private final static String TEXTUTF8_TEMPLATE      = "<TEXT_UTF8>";
-  private final static String TXTBUTTON_TEMPLATE     = "<TXTBUTTON>";
+  private final static String ELEMENTREF_TEMPLATE = "<ELEMENT_REF>";
+  private final static String FILL_EN_TEMPLATE = "<FILL_EN>";
+  private final static String FRAME_EN_TEMPLATE = "<FRAME_EN>";
+  private final static String TEXTMARGIN_TEMPLATE = "<TEXT_MARGIN>";
+  private final static String TEXTCOLOR_TEMPLATE = "<TEXT_COLOR>";
+  private final static String TEXTUTF8_TEMPLATE = "<TEXT_UTF8>";
+  private final static String TXTBUTTON_TEMPLATE = "<TXTBUTTON>";
   private final static String TXTBUTTON_UPDATE_TEMPLATE = "<TXTBUTTON_UPDATE>";
-  private final static String COLOR_TEMPLATE         = "<COLOR>";
+  private final static String COLOR_TEMPLATE = "<COLOR>";
 
   /** The Constants for MACROS */
-  private final static String TEXT_MACRO             = "TEXT";
+  private final static String TEXT_MACRO = "TEXT";
 
   /**
    * Instantiates a new check box code block.
@@ -75,20 +75,21 @@ public final class TxtButtonCodeBlock implements CodeBlock {
    * our input string builder object.
    *
    * @param cg
-   *          the cg points to our CodeGenerator object that 
-   *          is the controller for code generation.
+   *                 the cg points to our CodeGenerator object that
+   *                 is the controller for code generation.
    * @param tm
-   *          the tm is the TemplateManager
+   *                 the tm is the TemplateManager
    * @param sBd
-   *          the sBd is the processed code
+   *                 the sBd is the processed code
    * @param pageEnum
-   *          the page enum
+   *                 the page enum
    * @param wm
-   *          the wm is the widget model to use for code generation
+   *                 the wm is the widget model to use for code generation
    * @return the <code>string builder</code> object
    */
-  static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum, WidgetModel wm) {
-    TxtButtonModel m = (TxtButtonModel)wm;
+  static public StringBuilder process(CodeGenerator cg, TemplateManager tm, StringBuilder sBd, String pageEnum,
+      WidgetModel wm) {
+    TxtButtonModel m = (TxtButtonModel) wm;
     List<String> template = null;
     List<String> outputLines = null;
     Map<String, String> map = m.getMappedProperties(pageEnum);
@@ -105,15 +106,23 @@ public final class TxtButtonCodeBlock implements CodeBlock {
 
     String fontName = m.getFontDisplayName();
     FontTFT font = FontFactory.getInstance().getFont(fontName);
-    /* we can't use standard mapping of TXT-202 since we may need
+    /*
+     * we can't use standard mapping of TXT-202 since we may need
      * to handle converting utf8 to hex characters and deal with builtin
      * (classic) character sets that be not be in display 32-126 ascii range.
      */
-    map.put(TEXT_MACRO, CodeUtils.createLiteral(font, "\"", m.getText()));
+    String text = m.getText();
+
+    if (m.isStringEnabled() && text.length() >= 2) { // check if text is string or variable name to decide whether to
+                                                     // use the "" or not.
+      map.put(TEXT_MACRO, m.getText());
+    } else {
+      map.put(TEXT_MACRO, CodeUtils.createLiteral(font, "\"", m.getText()));
+    }
 
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);
-    
+
     // now deal with any extra switches
     String strAlign = m.getAlignment();
     if (!strAlign.equals("GSLC_ALIGN_MID_MID")) {
@@ -132,7 +141,7 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       tm.codeWriter(sBd, outputLines);
     }
     if ((!m.getFrameColor().equals(TxtButtonModel.DEF_FRAME_COLOR)) ||
-        (!m.getFillColor().equals(TxtButtonModel.DEF_FILL_COLOR))  || 
+        (!m.getFillColor().equals(TxtButtonModel.DEF_FILL_COLOR)) ||
         (!m.getSelectedColor().equals(TxtButtonModel.DEF_SELECTED_COLOR))) {
       template = tm.loadTemplate(COLOR_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
@@ -148,7 +157,7 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       template = tm.loadTemplate(CORNERS_ROUNDED_TEMPLATE);
       tm.codeWriter(sBd, template);
     }
-    
+
     if (!m.isFillEnabled()) {
       template = tm.loadTemplate(FILL_EN_TEMPLATE);
       outputLines = tm.expandMacros(template, map);
@@ -165,11 +174,11 @@ public final class TxtButtonCodeBlock implements CodeBlock {
       outputLines = tm.expandMacros(template, map);
       tm.codeWriter(sBd, outputLines);
     }
-    
+
     template.clear();
     outputLines.clear();
     map.clear();
-    return sBd;   
+    return sBd;
   }
-  
+
 }
