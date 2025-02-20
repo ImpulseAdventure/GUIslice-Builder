@@ -114,6 +114,29 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes for 0.17.b39
+
+- Bug Fix 278 - GuiSlice builder 0.17.b38 - Text problem
+
+The new feature "Text is a Variable?" support that nadjet09 added has caused some confusion amoung our users. 
+It's caused users to actually place quotes inside the text string while laying out their UI.
+They do this because if "Text is a Variable?"=true they get compiler errors for undefined variable.
+
+In an effort to clear things up it's been changed to ""Wrap Quotes around text?"
+with a default of true since its very rare for users to need variables or defines to set text.
+Now if users set this value to false a WARNING message will also popup:
+
+WARNING: Turning this to false
+means no quotes will be output
+during code generation.
+Are you sure?
+ 
+I Have also renamed the windows setup exe to drop the current version number at the end.
+So now it will always be builder-win.exe this is because every time I run a new version 
+Norton anti-virus makes me play twenty questions with it before I can actually do a new install.
+Hopefully I will only have to this once now...
+
+
 ### Enhancements for 0.17.b38
 
 nadjet09 Completed "Text is a Variable?" support. This will let user choose to output text 

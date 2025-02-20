@@ -61,7 +61,7 @@ COM-017,Callback En
 COM-018,Key Count (Number in the Key after the $)
 COM-019,ELEMENT REF
 COM-020,Use Flash API
-COM-021,Text is a Variable
+COM-021,Text is a Variable // OLD NOT USED
 GEN-096,Backup files
 GEN-097,GUIslice Themes
 GEN-098,Target IDE
@@ -195,6 +195,7 @@ TXT-210,Text Columns
 TXT-211,Font Enum
 TXT-212,Text Margin
 TXT-213,Text Alignment
+TXT-214,Output Quote Marks around Text
 TBNT-100,Jump Page Function (Old Not Used)
 TBNT-101,Jump to Page ENUM
 TBNT-102,Show Popup Page Function (Old Not used)

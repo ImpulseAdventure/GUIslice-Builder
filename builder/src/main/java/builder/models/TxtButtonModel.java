@@ -67,7 +67,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   static private final int PROP_FONT = 7;
   static private final int PROP_TEXT = 8;
   // static private final int PROP_UTF8 = 9;
-  static private final int PROP_TXT_VAR_EN = 9;
+  static private final int PROP_TXT_QUOTES_EN = 9;
   static private final int PROP_ROUNDED = 10;
   static private final int PROP_FILL_EN = 11;
   static private final int PROP_FRAME_EN = 12;
@@ -86,7 +86,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
 
   /** The Property Defaults */
   static public final String DEF_TEXT = "";
-  static public final Boolean DEF_TXT_VAR_EN = Boolean.FALSE;
+  static public final Boolean DEF_TXT_VAR_EN = Boolean.TRUE;
   static public final Boolean DEF_UTF8 = Boolean.FALSE;
   static public final Boolean DEF_ROUNDED = Boolean.FALSE;
   static public final Boolean DEF_FILL_EN = Boolean.TRUE;
@@ -168,7 +168,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
 
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE, "Font", ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-202", Boolean.FALSE, "Label", DEF_TEXT);
-    initProp(PROP_TXT_VAR_EN, Boolean.class, "COM-021", Boolean.FALSE, "Text is a Variable?", DEF_TXT_VAR_EN);
+    initProp(PROP_TXT_QUOTES_EN, Boolean.class, "TXT-214", Boolean.FALSE, "Wrap Quotes around text?", DEF_TXT_VAR_EN);
     // initProp(PROP_UTF8, Boolean.class, "TXT-203",
     // Boolean.FALSE,"UTF-8?",DEF_UTF8);
 
@@ -196,7 +196,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /**
    * setFontReadOnly
    *
-   * @see builder.models.WidgetModel#setFontReadOnly()
+   * @see WidgetModel#setFontReadOnly()
    */
   @Override
   public void setFontReadOnly() {
@@ -213,7 +213,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /**
    * buttonClicked
    *
-   * @see builder.tables.MultipeLineCellListener#buttonClicked(java.lang.String[])
+   * @see MultipeLineCellListener#buttonClicked(String[])
    */
   @Override
   public void buttonClicked(String[] strings) {
@@ -225,11 +225,25 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /**
    * setValueAt
    *
-   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
+   * @see javax.swing.table.AbstractTableModel#setValueAt(Object, int,
    *      int)
    */
   @Override
   public void setValueAt(Object value, int row, int col) {
+    if (row == PROP_TXT_QUOTES_EN) {
+      if (value instanceof Boolean) {
+        if (!((Boolean) value).booleanValue()) {
+          String msg = String.format("WARNING: Setting this to false\nmeans no quotes will be output\nduring code generation.\nAre you sure?");
+          if (JOptionPane.showConfirmDialog(null,
+            msg,
+            "Continue?",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+            return;
+          }
+        }
+      }
+    }
     // we handle code segment through a backdoor "buttonClicked"
     if (row == PROP_CODE)
       return;
@@ -248,7 +262,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /**
    * getEditorAt
    *
-   * @see builder.models.WidgetModel#getEditorAt(int)
+   * @see WidgetModel#getEditorAt(int)
    */
   @Override
   public TableCellEditor getEditorAt(int row) {
@@ -264,7 +278,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /**
    * getRendererAt
    *
-   * @see builder.models.WidgetModel#getRendererAt(int)
+   * @see WidgetModel#getRendererAt(int)
    */
   @Override
   public TableCellRenderer getRendererAt(int row) {
@@ -294,7 +308,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
   /**
    * changeValueAt
    *
-   * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)
+   * @see WidgetModel#changeValueAt(Object, int)
    */
   @Override
   public void changeValueAt(Object value, int row) {
@@ -461,8 +475,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
    *
    * @return boolean string or variable
    */
-  public boolean isStringEnabled() {
-    return ((Boolean) data[PROP_TXT_VAR_EN][PROP_VAL_VALUE]).booleanValue();
+  public boolean isQuotesEnabled() {
+    return ((Boolean) data[PROP_TXT_QUOTES_EN][PROP_VAL_VALUE]).booleanValue();
   }
 
   /**
@@ -670,7 +684,7 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
    * 
    * changeThemeColors
    *
-   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   * @see WidgetModel#changeThemeColors(GUIsliceTheme)
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
@@ -710,8 +724,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
    *                                Signals that an I/O exception has occurred.
    * @throws ClassNotFoundException
    *                                the class not found exception
-   * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream,
-   *      java.lang.String)
+   * @see WidgetModel#readModel(ObjectInputStream,
+   *      String)
    */
   @Override
   public void readModel(ObjectInputStream in, String widgetType)
@@ -728,6 +742,8 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
     // System.out.println("WM rows: " + rows);
     boolean bPopup = false;
     boolean bJump = false;
+    boolean bVariable = false;
+
     String pageEnum = "";
     // in case of upgrade make sure we start fresh
     data[PROP_POPUP_PAGE][PROP_VAL_VALUE] = "";
@@ -744,6 +760,17 @@ public class TxtButtonModel extends WidgetModel implements MultipeLineCellListen
     for (int i = 0; i < rows; i++) {
       metaID = (String) in.readObject();
       objectData = in.readObject();
+      if (metaID.equals("COM-021")) { // is text variable
+        // reverse boolean so that a true outputs quote marks
+        if (((Boolean) objectData).booleanValue()) {
+          bVariable = false;
+        } else {
+          bVariable = true;
+        }
+        row = mapMetaIDtoProperty("TXT-214"); // new value of meta-id
+        data[row][PROP_VAL_VALUE] = Boolean.valueOf(bVariable);
+        continue;
+      }
       if (metaID.equals("TBTN-100")) {
         if (((Boolean) objectData).booleanValue()) {
           bJump = true;

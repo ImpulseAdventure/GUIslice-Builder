@@ -113,11 +113,11 @@ public final class TxtButtonCodeBlock implements CodeBlock {
      */
     String text = m.getText();
 
-    if (m.isStringEnabled() && text.length() >= 2) { // check if text is string or variable name to decide whether to
+    if (m.isQuotesEnabled()) { // check if text is string or variable name to decide whether to
                                                      // use the "" or not.
-      map.put(TEXT_MACRO, m.getText());
-    } else {
       map.put(TEXT_MACRO, CodeUtils.createLiteral(font, "\"", m.getText()));
+    } else {
+      map.put(TEXT_MACRO, m.getText());
     }
 
     outputLines = tm.expandMacros(template, map);
