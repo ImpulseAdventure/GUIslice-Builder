@@ -66,7 +66,7 @@ public class TextModel extends WidgetModel {
   /** The Property Index Constants. */
   static private final int PROP_FONT              = 7;
   static private final int PROP_TEXT              = 8;
-  static private final int PROP_TXT_VAR_EN        = 9;
+  static private final int PROP_TXT_QUOTES_EN = 9;
 //  static private final int PROP_UTF8              = 9;
   static private final int PROP_TEXT_SZ           = 10;
   static private final int PROP_TEXT_ALIGN        = 11;
@@ -81,7 +81,7 @@ public class TextModel extends WidgetModel {
 
   /** The Property Defaults */
   static public  final String  DEF_TEXT              = "";
-  static public  final Boolean DEF_TXT_VAR_EN        = Boolean.FALSE;
+  static public  final Boolean DEF_TXT_QUOTES_EN = Boolean.TRUE;
   static public  final Boolean DEF_UTF8              = Boolean.FALSE;
   static public  final Integer DEF_TEXT_SZ           = Integer.valueOf(0);
   static public  final String  DEF_TEXT_ALIGN        = FontTFT.ALIGN_LEFT;
@@ -161,7 +161,7 @@ public class TextModel extends WidgetModel {
     
     initProp(PROP_FONT, JTextField.class, "TXT-200", Boolean.FALSE,"Font",ff.getDefFontName());
     initProp(PROP_TEXT, String.class, "TXT-201", Boolean.FALSE,"Text",DEF_TEXT);
-    initProp(PROP_TXT_VAR_EN, Boolean.class, "COM-021", Boolean.FALSE,"Text is a Variable?",DEF_TXT_VAR_EN);
+    initProp(PROP_TXT_QUOTES_EN, Boolean.class, "TXT-214", Boolean.FALSE,"Wrap Quotes around text?", DEF_TXT_QUOTES_EN);
     
 //    initProp(PROP_UTF8, Boolean.class, "TXT-203", Boolean.FALSE,"UTF-8?",DEF_UTF8);
 
@@ -183,7 +183,7 @@ public class TextModel extends WidgetModel {
   /**
    * getEditorAt
    *
-   * @see builder.models.WidgetModel#getEditorAt(int)
+   * @see WidgetModel#getEditorAt(int)
    */
   @Override
   public TableCellEditor getEditorAt(int row) {
@@ -197,7 +197,7 @@ public class TextModel extends WidgetModel {
   /**
    * getRendererAt
    *
-   * @see builder.models.WidgetModel#getRendererAt(int)
+   * @see WidgetModel#getRendererAt(int)
    */
   @Override
   public TableCellRenderer getRendererAt(int row) {
@@ -224,10 +224,24 @@ public class TextModel extends WidgetModel {
   /**
    * setValueAt
    *
-   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+   * @see javax.swing.table.AbstractTableModel#setValueAt(Object, int, int)
    */
   @Override
   public void setValueAt(Object value, int row, int col) {
+    if (row == PROP_TXT_QUOTES_EN) {
+      if (value instanceof Boolean) {
+        if (!((Boolean) value).booleanValue()) {
+          String msg = String.format("WARNING: Turning this to false\nmeans no quotes will be output\nduring code generation.\nAre you sure?");
+          if (JOptionPane.showConfirmDialog(null,
+            msg,
+            "Continue?",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+            return;
+          }
+        }
+      }
+    }
     if (row == PROP_TEXT_SZ) {
       try {
         int size = Integer.parseInt((String) value);
@@ -252,7 +266,7 @@ public class TextModel extends WidgetModel {
   /**
    * changeValueAt
    *
-   * @see builder.models.WidgetModel#changeValueAt(java.lang.Object, int)
+   * @see WidgetModel#changeValueAt(Object, int)
    */
   @Override
   public void changeValueAt(Object value, int row) {
@@ -311,7 +325,7 @@ public class TextModel extends WidgetModel {
 /**
  * setFontReadOnly
  *
- * @see builder.models.WidgetModel#setFontReadOnly()
+ * @see WidgetModel#setFontReadOnly()
  */
   @Override
   public void setFontReadOnly() {
@@ -347,7 +361,7 @@ public class TextModel extends WidgetModel {
   /**
    * getWidth
    *
-   * @see builder.models.WidgetModel#getWidth()
+   * @see WidgetModel#getWidth()
    */
 /*
   public int getWidth() {
@@ -361,7 +375,7 @@ public class TextModel extends WidgetModel {
   /**
    * getHeight
    *
-   * @see builder.models.WidgetModel#getHeight()
+   * @see WidgetModel#getHeight()
    */
 /*
   public int getHeight() {
@@ -418,8 +432,8 @@ public class TextModel extends WidgetModel {
     return ((Boolean) data[PROP_FRAME_EN][PROP_VAL_VALUE]).booleanValue();
   }
   
-  public boolean isStringEnabled() {
-    return ((Boolean) data[PROP_TXT_VAR_EN][PROP_VAL_VALUE]).booleanValue();
+  public boolean isQuotesEnabled() {
+    return ((Boolean) data[PROP_TXT_QUOTES_EN][PROP_VAL_VALUE]).booleanValue();
   }
   /**
    * Gets the alignment.
@@ -563,7 +577,7 @@ public class TextModel extends WidgetModel {
    * 
    * changeThemeColors
    *
-   * @see builder.models.WidgetModel#changeThemeColors(builder.themes.GUIsliceTheme)
+   * @see WidgetModel#changeThemeColors(GUIsliceTheme)
    */
   @Override
   public void changeThemeColors(GUIsliceTheme theme) {
@@ -597,13 +611,49 @@ public class TextModel extends WidgetModel {
   *           Signals that an I/O exception has occurred.
   * @throws ClassNotFoundException
   *           the class not found exception
-   * @see builder.models.WidgetModel#readModel(java.io.ObjectInputStream, java.lang.String)
+   * @see WidgetModel#readModel(ObjectInputStream, String)
   */
   @Override
   public void readModel(ObjectInputStream in, String widgetType) 
      throws IOException, ClassNotFoundException {
-   super.readModel(in,  widgetType);
-   if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("left"))
+ //  super.readModel(in,  widgetType);
+    // System.out.println("===== WM readModel() ========");
+    if (widgetType != null)
+      this.widgetType = widgetType;
+    bSendEvents = in.readBoolean();
+    // System.out.println("bSendEvents: " + bSendEvents);
+    int rows = in.readInt();
+    String metaID = null;
+    Object objectData = null;
+    int row;
+    // System.out.println("WM rows: " + rows);
+    boolean bVariable = false;
+
+    for (int i = 0; i < rows; i++) {
+      metaID = (String) in.readObject();
+      objectData = in.readObject();
+      if (metaID.equals("COM-021")) { // is text variable
+        // reverse boolean so that a true outputs quote marks
+        if (((Boolean) objectData).booleanValue()) {
+          bVariable = false;
+        } else {
+          bVariable = true;
+        }
+        row = mapMetaIDtoProperty("TXT-214"); // new value of meta-id
+        data[row][PROP_VAL_VALUE] = Boolean.valueOf(bVariable);
+        continue;
+      }
+      row = mapMetaIDtoProperty(metaID);
+      if (row >= 0) {
+        data[row][PROP_VAL_VALUE] = objectData;
+
+        // System.out.println(data[row][PROP_VAL_NAME].toString() + ": " +
+        // data[row][PROP_VAL_VALUE].toString() + " mapped to row " + row);
+
+      }
+    }
+
+      if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("left"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_LEFT;
      else if (((String)data[PROP_TEXT_ALIGN][PROP_VAL_VALUE]).toLowerCase().equals("right"))
       data[PROP_TEXT_ALIGN][PROP_VAL_VALUE] = FontTFT.ALIGN_RIGHT;

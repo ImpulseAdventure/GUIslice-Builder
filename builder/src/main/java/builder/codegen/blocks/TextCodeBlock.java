@@ -112,11 +112,10 @@ public final class TextCodeBlock implements CodeBlock {
      */
     String text = m.getText();
     
-    if (m.isStringEnabled() && text.length() >= 2) {
-      // Remove first and last character
-      map.put(TEXT_MACRO, m.getText());
-    } else {
+    if (m.isQuotesEnabled() || text.length() >= 2) {
       map.put(TEXT_MACRO, CodeUtils.createLiteral(font, "\"", m.getText()));
+    } else {
+      map.put(TEXT_MACRO, m.getText());
     }
     outputLines = tm.expandMacros(template, map);
     tm.codeWriter(sBd, outputLines);

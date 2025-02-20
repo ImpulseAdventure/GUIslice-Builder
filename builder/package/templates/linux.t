@@ -323,7 +323,6 @@ $<CALLBACK>
 <KEYPAD_CB_CASE>
       case $<COM-002>:
         gslc_ElemXKeyPadInputGet(pGui, $<COM-019>, pvData);
-        gslc_PopupHide(&m_gui);
         break;
 <STOP>
 <KEYPAD_CONFIG_NUM>

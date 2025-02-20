@@ -15,7 +15,7 @@ repositories {
 mainClassName = "builder.Builder"
 applicationName = "GUIslice"
 archivesBaseName = 'builder'
-project.version = '0.17.b38'
+project.version = '0.17.b39'
  
 processResources { 
      from("src/main/java/") { 
