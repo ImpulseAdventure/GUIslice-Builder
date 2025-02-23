@@ -585,7 +585,7 @@ public class TextModel extends WidgetModel {
     GUIsliceThemeElement element = theme.getElement("Text");
     if (element != null) {
       data[PROP_USE_FLASH][PROP_VAL_VALUE] = element.isUse_flash();
-      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isCornersRounded();
+      data[PROP_FILL_EN][PROP_VAL_VALUE] = element.isFillEnabled();
       data[PROP_FRAME_EN][PROP_VAL_VALUE] = element.isFrameEnabled();
       if (element.getTextCol() != null)
         data[PROP_TEXT_COLOR][PROP_VAL_VALUE] = element.getTextCol();

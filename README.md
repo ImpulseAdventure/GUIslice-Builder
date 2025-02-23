@@ -114,6 +114,12 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes for 0.17.b40
+
+A bug in the Text Model has been fixed. The bug caused generated code for text fields 
+to set gslc_ElemSetFillEn(&m_gui,pElemRef,false); (basically claiming the text field is transparent).
+This was forcing full page refreshes to occur on each update loop.
+
 ### Bug Fixes for 0.17.b39
 
 - Bug Fix 278 - GuiSlice builder 0.17.b38 - Text problem
