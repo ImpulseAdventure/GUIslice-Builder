@@ -65,7 +65,7 @@ public class MenuBar extends JMenuBar {
   public static MyToggleButton miSnapGrid;
  
   private int preferredMetaKey =
-         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(  );
+         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx(  );
  
   /**
    * Instantiates a new menu bar.
