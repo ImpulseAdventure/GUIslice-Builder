@@ -114,6 +114,12 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes for 0.17.b41
+
+- Bug Fix 294 - Each item in a lisbox should not be forced to be unique. 
+- Bug Fix 295 - Menu key shortcuts do not follow platform defaults
+
+
 ### Bug Fixes for 0.17.b40
 
 A bug in the Text Model has been fixed. The bug caused generated code for text fields 

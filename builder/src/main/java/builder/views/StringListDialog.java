@@ -429,7 +429,7 @@ public class StringListDialog extends JDialog implements ActionListener, ListSel
 
   public int addItem(String name) {
     //User didn't type in a unique name...
-    if (name.equals("") || alreadyInList(name)) {
+    if (name.equals("")) {
         Toolkit.getDefaultToolkit().beep();
         itemName.requestFocusInWindow();
         itemName.selectAll();
