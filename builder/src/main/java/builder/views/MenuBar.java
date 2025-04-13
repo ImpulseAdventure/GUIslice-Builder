@@ -28,6 +28,7 @@ package builder.views;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.Toolkit;
 
 import javax.swing.*;
 //import javax.swing.ImageIcon;
@@ -62,7 +63,10 @@ public class MenuBar extends JMenuBar {
   public static JMenuItem miZoomIn, miZoomOut, miZoomReset;
   public static MyToggleButtonMenuItem miShowGrid;
   public static MyToggleButton miSnapGrid;
-  
+ 
+  private int preferredMetaKey =
+         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(  );
+ 
   /**
    * Instantiates a new menu bar.
    */
@@ -83,7 +87,7 @@ public class MenuBar extends JMenuBar {
         Utils.getIcon("resources/icons/file/new.png", 24,24));
     miNew.setActionCommand("new");
     miNew.setAccelerator(KeyStroke.getKeyStroke(
-        'N', ActionEvent.CTRL_MASK));
+        'N', preferredMetaKey));
     miNew.setToolTipText("Create New Project File");
     mbFile.add(miNew);
     
@@ -92,7 +96,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/file/open.png", 24,24));
     miOpen.setActionCommand("open");
     miOpen.setAccelerator(KeyStroke.getKeyStroke(
-        'O', ActionEvent.CTRL_MASK));
+        'O', preferredMetaKey));
     miOpen.setToolTipText("Open Project File");
     mbFile.add(miOpen);
     
@@ -100,7 +104,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/file/close.png", 24,24));
     miClose.setActionCommand("close");
     miClose.setAccelerator(KeyStroke.getKeyStroke(
-        'W', ActionEvent.CTRL_MASK));
+        'W', preferredMetaKey));
     miClose.setToolTipText("Close Project File");
     mbFile.add(miClose);
     
@@ -108,7 +112,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/file/save.png", 24,24));
     miSave.setActionCommand("save");
     miSave.setAccelerator(KeyStroke.getKeyStroke(
-        'S', ActionEvent.CTRL_MASK));
+        'S', preferredMetaKey));
     miSave.setToolTipText("Save Project File");
     mbFile.add(miSave);
     
@@ -124,7 +128,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/file/export.png", 24,24));
     miCode.setActionCommand("code");
     miCode.setAccelerator(KeyStroke.getKeyStroke(
-        'G', ActionEvent.CTRL_MASK));
+        'G', preferredMetaKey));
     miCode.setToolTipText("Create C Code Output Files");
     mbFile.add(miCode);
     
@@ -134,7 +138,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/file/logout.png", 24,24));
     miExit.setActionCommand("exit");
     miExit.setAccelerator(KeyStroke.getKeyStroke(
-        'E', ActionEvent.CTRL_MASK));
+        'E', preferredMetaKey));
     miExit.setToolTipText("Exit Program");
     mbFile.add(miExit);
     
@@ -147,7 +151,7 @@ public class MenuBar extends JMenuBar {
     miZoomIn = new JMenuItem("Zoom In",
       Utils.getIcon("resources/icons/view/zoom_in.png", 24,24));
     miZoomIn.setActionCommand("zoomin");
-    miZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
+    miZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, preferredMetaKey));
     miZoomIn.setToolTipText("Zoom In TFT Simulation page");
     mbView.add(miZoomIn);
 
@@ -157,7 +161,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/view/disable_zoom_out.png", 24,24));
     miZoomOut.setEnabled(false);
     miZoomOut.setActionCommand("zoomout");
-    miZoomOut.setAccelerator(KeyStroke.getKeyStroke('-', ActionEvent.CTRL_MASK));
+    miZoomOut.setAccelerator(KeyStroke.getKeyStroke('-', preferredMetaKey));
     miZoomOut.setToolTipText("Zoom Out TFT Simulation page");
     mbView.add(miZoomOut);
 
@@ -167,7 +171,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/view/disable_zoom_reset.png", 24,24));
     miZoomReset.setEnabled(false);
     miZoomReset.setActionCommand("zoomreset");
-    miZoomReset.setAccelerator(KeyStroke.getKeyStroke('0', ActionEvent.CTRL_MASK));
+    miZoomReset.setAccelerator(KeyStroke.getKeyStroke('0', preferredMetaKey));
     miZoomReset.setToolTipText("Reset Zoom to 100%");
     mbView.add(miZoomReset);
 
@@ -180,7 +184,7 @@ public class MenuBar extends JMenuBar {
     miShowGrid.setOnImage(Utils.getIcon("resources/icons/view/show_grid_on.png", 24,24));
     miShowGrid.setActionCommand("showgrid");
     miShowGrid.setAccelerator(KeyStroke.getKeyStroke(
-        'L', ActionEvent.CTRL_MASK));
+        'L', preferredMetaKey));
     miShowGrid.setToolTipText("Toggle Grid ON/OFF");
     mbView.add(miShowGrid);
 
@@ -206,7 +210,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/edit/undo.png", 24,24));
     miUndo.setActionCommand("undo");
     miUndo.setAccelerator(KeyStroke.getKeyStroke(
-        'Z', ActionEvent.CTRL_MASK));
+        'Z', preferredMetaKey));
     miUndo.setToolTipText("Undo edits to your project file.");
     mbEdit.add(miUndo);
     
@@ -214,7 +218,7 @@ public class MenuBar extends JMenuBar {
         Utils.getIcon("resources/icons/edit/redo.png", 24,24));
     miRedo.setActionCommand("redo");
     miRedo.setAccelerator(KeyStroke.getKeyStroke(
-          'Y', ActionEvent.CTRL_MASK));
+          'Y', preferredMetaKey));
     miRedo.setToolTipText("Re-apply edits to your project file.");
     mbEdit.add(miRedo);
       
@@ -223,7 +227,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/edit/copy.png", 24,24));
     miCopy.setActionCommand("copy");
     miCopy.setAccelerator(KeyStroke.getKeyStroke(
-        'C', ActionEvent.CTRL_MASK));
+        'C', preferredMetaKey));
     miCopy.setToolTipText("Copy element selections to clipboard.");
     mbEdit.add(miCopy);
 
@@ -231,7 +235,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/edit/cut.png", 24,24));
     miCut.setActionCommand("cut");
     miCut.setAccelerator(KeyStroke.getKeyStroke(
-        'X', ActionEvent.CTRL_MASK));
+        'X', preferredMetaKey));
     miCut.setToolTipText("Cut element selections from page.");
     mbEdit.add(miCut);
 
@@ -239,7 +243,7 @@ public class MenuBar extends JMenuBar {
       Utils.getIcon("resources/icons/edit/paste.png", 24,24));
     miPaste.setActionCommand("paste");
     miPaste.setAccelerator(KeyStroke.getKeyStroke(
-        'V', ActionEvent.CTRL_MASK));
+        'V', preferredMetaKey));
     miPaste.setToolTipText("Paste element(s) from the clipboard.");
     mbEdit.add(miPaste);
 
