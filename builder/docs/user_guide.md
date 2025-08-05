@@ -6,7 +6,7 @@
         User Guide
     </H2>
     <H3>
-        Ver: 0.17.b33
+        Ver: 0.17.b41
     </H3>
 </center>
 
@@ -14,11 +14,11 @@
 
 **Publication date and software version**
 
-Published June 2024. Based on GUIslice API Library 0.17.1.6
+Published August 2025. Based on GUIslice API Library 0.17.2.1
 
 **Copyright**
 
-This document is Copyright © 2018-2024 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
+This document is Copyright © 2018-2025 by Paul Conti. You may distribute or modify it under the terms of the MIT License.  https://opensource.org/licenses/MIT
 
 GUIslice Copyright (c) Calvin Hass 2016-2021
 
@@ -106,7 +106,7 @@ See Section 4.19 Text Button for details of your button options and Appendix E C
 
 Remember, if you need to use any unsupported API calls or UI elements just keep them outside of the tags. This would be one reason why you would need to edit the 'project_GSLC.h' file so you can increase the storage for any unsupported UI elements.
 
-The Code Templates the Builder uses are exposed inside GUIsliceBuilder/templates. The two files are arduino.t and linux.t.  Some documentation is included in Appendix D in case you need to make edits.
+The Code Templates the Builder uses are exposed inside GUIsliceBuilder/templates. The two files are graphics.t and linux.t.  Some documentation is included in Appendix D in case you need to make edits.
 
 
 ---------------
@@ -1797,45 +1797,23 @@ to you project folder. If you change fonts between code generation it will also 
 For example, Adafruit ships Free fonts but only in 9,12,18 and 24 sizes. If you chose say FreeSans size 14 the builder will copy 
 FreeSans14pt7b.h to your project sketch folder and if it becomes un-referenced in your project it will be deleted during a new code generation.
 
-While `*.vlw` smoothfonts do need edits to the builder_fonts.json file to add them. Google's Noto Bold is already 
+While Smooth Fonts `*.vlw` do need edits to the builder_fonts.json file to add them. Google's Noto Bold is already 
 supported so you can use its entries as a guide.  Note that you don't place the actual *.vlw fonts in the 
 Builders folders. You place the *.ttf file that you used as input to Processing IDE that created your *.vlw 
 fonts. The Builder currently can't read the *.vlw files only the TrueType fonts. You will however notice a sub folder 
 called data where the NotoBold vlw files have been placed as a convenience so you don't need to generate them, 
 just copy to your Arduino project `data` folder and upload them to your SPIFFS file system. 
 
-As an example, say you need to support a chinese font called "wqyMicroHei.ttf" and the size 16. You first copy this font to GUIsliceBuilder/fonts/vlw.
+Follow Appendix G for instructions to create vlw font or a flash based header font file.
+Header files are copied to your project's subfolder named "fonts" while vlw files are copied to your project's subfolder named data
+and then needs to be uploaded to your MicroController SPIFFS file system.
 
-You follow Appendix G for instructions to create your size 16 vlw font, "wqyMicroHei16.vlw". This file is the one you copy to your project's subfolder named data. This then needs to be uploaded to your MicroController.
-
-Then you edit the GUIsliceBuilder/templates/builder_fonts.json file as so:
-```
-        {
-          "categoryName": "FONT_VLW",
-          "fonts": [
-            {
-              "familyName": "wqyMicroHei.vlw",
-              "displayName": "wqyMicroHei16V",
-              "defineFile": "wqyMicroHei16",
-              "eFontRefType": "GSLC_FONTREF_FNAME",
-              "pvFontRef": "WQYMICROHEI16_VLW",
-              "nFontSz": "16",
-              "logicalName": "wqyMicroHei.ttf",
-              "logicalSize": "16",
-              "logicalStyle": "Bold",
-              "fontRefMode": "GSLC_FONTREF_MODE_1"
-            },
-            {
-              "familyName": "NotoSansBold.vlw",
-              "displayName": "NotoSansBold16V",
-```
-
-If you need to use a font that doesn't fall into the above categories then you will need to tell the Builder to simulate it, "categoryName": "FONT_SIM".
-This is fairly easy to do but can be a bit fussy. There isn't much error handling so be careful with edits.
+There isn't much error handling so be careful with edits to builder_fonts.json file.
 You will need to study Appendix B to be successful. If you need help or advice simply post to the Builder Github respository's issues section.
  
 If an error is detected processing builder_fonts.json it will be reported inside GUIsliceBuilder/logs/builder.log or a crash *.txt file.
-You should get a line number and most likely a cryptic message. For example: saying a name was expected. Look for extra or missing commas ',', brackets ']' or curly braces '}'.
+You should get a line number and most likely a cryptic message. 
+For example: saying a name was expected. Look for extra or missing commas ',', brackets ']' or curly braces '}'.
 
 The builder_fonts.json file format is documented in Appendix B.
 
@@ -2028,6 +2006,7 @@ The fields are:
 
  -  **fontName** - No Default
     refers to the font family, ex: Dosis SansSerif, FreeFont Sans, Noto Mono, etc...
+    **bInstalledFont** - true if GUIsliceBuilder will copy over the font from GUIsliceBuilder/fonts, false otherwise.
  -  **displayName** - No Default
     refers to the actual font on the target platform, Ex: 'FreeSans12pt7b'.
  - **externName** - Default: "NULL"
@@ -2060,7 +2039,7 @@ The fields are:
  - **logicalFontStyle** - No Default
     The font style, PLAIN, BOLD, ITALIC, BOLD_ITALIC
  - **fontRefMode** - Default: GSLC_FONTREF_MODE_DEFAULT
-    This is for drivers that need special handling within GUIslice API. 
+    This is for drivers that need special handling within GUIslice API such as for TFT_eSPI Smooth Fonts.
 
 If the default value of a font field is satisfactory for your font you can simply skip the field.
 
@@ -2498,28 +2477,85 @@ The most current and complete list of Ids is inside the source code
 -----------------------------------------------
 <div style="page-break-after: always;"></div>
 
-# Appendix G - Creating VLW Fonts
+# Appendix G - Creating Smooth Fonts (VLW)
+
+Smooth Fonts are only supported by TFT_eSPI driver.  You have two choices, one is to 
+create a file that can be stored inside a SPIFFS file system with a .vlw extension or to create a flash 
+based font inside a header file.
+
+If you use the tool supplied with Arduino\libraries\TFT_eSPI-2.5.43\Tools\Create_Smooth_Font\Create_font
+both files will be created.
 
 Begin by downloading the Processing IDE from
 [Download Processing](https://processing.org/download/)
 
-Open Processing IDE and select tools->create_font
-![](images/fonts/tools.png)
+Open the Create_font.pde in a text editor and follow the instructions beginning on line 50.
 
-Select your font from the installed fonts and also the font size:
-![](images/fonts/create_font.png)
+Once the setting are the way you want. Copy your input tty font to Create_font/data folder.
 
------------------------------------------------
-<div style="page-break-after: always;"></div>
+Open Processing IDE and select the Create_font.pde project and run it.
+In windows you may be able to simply double click on this file.
 
-Optionally you can make your font use less memeory by selecting character selector and picking your unicode code blocks for specific characters:
-![](images/fonts/character_selector.png)
+Your .vlw and .h files will be inside Create_font/FontFiles
 
-You may repeat this process as often as required. 
+If you are using the header file you need to copy it into your project folder/fonts directory.
+While the .vlw file if used needs to be inside project folder/data directory.
 
-Once you have converted all the fonts and sizes needed you need then open your sketch to find these new fonts:
-![](images/fonts/show_folder.png)
+Now you need to inform the GUIsliceBuilder of your new font to do this you must edit
+GUIsliceBuilder\templates\builder_fonts.json file.
 
-Your new fonts will be inside the data sub folder. Copy them to your project's data folder.
+Start by searching for "categoryName": "FONT_VLW", and your new entries would be after
 
+```
+        {
+          "categoryName": "FONT_VLW",
+          "fontFolderPath": "fonts/vlw",
+          "fonts": [
+```
+
+Now say I created a header file fonts/NotoSansJPThin28.h from a source file NotoSansJP-VariableFont_wght.ttf
+the entry example would be:
+
+``` 
+           {
+              "bInstalledFont": false,
+              "familyName": "NotoSansJPThin28Flash",
+              "displayName": "NOTOSANSJPTHIN28F",
+              "includeFile": "fonts/NotoSansJPThin28.h",
+              "eFontRefType": "GSLC_FONTREF_PTR",
+              "pvFontRef": "&NotoSansJPThin28",
+              "nFontSz": "28",
+              "logicalName": "NotoSansJP-VariableFont_wght.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+```
+            
+After saving the file you need to copy your tty font (NotoSansJP-VariableFont_wght.ttf) to
+GUIsliceBuilder\fonts\vlw folder.  
+
+If you instead are using vlw stored in SPIFFS which frankly I no longer recommend the example json entry
+would look like:
+
+```
+            {
+              "bInstalledFont": true,
+              "familyName": "NotoSansJPThin.vlw",
+              "displayName": "NotoSansJPThin28V",
+              "defineFile": "NotoSansJPThin28",
+              "eFontRefType": "GSLC_FONTREF_FNAME",
+              "pvFontRef": "NOTOSANSJPTHIN28_VLW",
+              "nFontSz": "28",
+              "logicalName": "NotoSansJP-VariableFont_wght.ttf",
+              "logicalSize": "28",
+              "logicalStyle": "PLAIN",
+              "fontRefMode": "GSLC_FONTREF_MODE_1"
+            },
+```
+
+Again after saving the file you need to copy your tty font (NotoSansJP-VariableFont_wght.ttf) to
+GUIsliceBuilder\fonts\vlw folder.  
+
+Don't forget to upload you .vlw file from your project folder/data to SPIFFS (not LittleFS).
 
