@@ -114,6 +114,9 @@ You will need to select "Allow Anyway" to continue.
 
 ## Release History
 
+### Bug Fixes for 0.17.b42
+Fixed big in Utils.getWorkingDir() that was too aggressive pruning back paths that contain the substring 'bin'.
+
 ### Enhancements for 0.17.b41
 
 <p>

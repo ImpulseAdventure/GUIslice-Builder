@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright 2018-2024 Paul Conti
+ * Copyright 2018-2026 Paul Conti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +25,11 @@
  */
 package builder.views;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,18 +42,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import builder.Builder;
-import builder.codegen.CodeGenerator;
 import builder.commands.History;
 import builder.common.Utils;
 import builder.common.EnumFactory;
 import builder.controller.Controller;
 import builder.models.GeneralModel;
-import builder.models.ProjectModel;
 import builder.prefs.GeneralEditor;
-import builder.widgets.ImageWidget;
-import builder.widgets.ImgButtonWidget;
-import builder.widgets.Widget;
-import builder.widgets.WidgetFactory;
 
 /**
  * The Class RibbonListener.
@@ -62,6 +58,8 @@ import builder.widgets.WidgetFactory;
  */
 public class RibbonListener implements ActionListener {
   
+  boolean useSwingFileChooser = false;
+
   /** The controller. */
   Controller controller;
   
@@ -156,58 +154,79 @@ public class RibbonListener implements ActionListener {
   public File showFileDialog(String title, String[] fileExtension, String suggestedFile, 
       boolean bAcceptAll, String btnText) {
     File file = null;
-    JFileChooser fileChooser = new JFileChooser();
-    if (suggestedFile != null)
-      fileChooser.setSelectedFile(new File(suggestedFile));
-    fileChooser.setDialogTitle(title);
-    if (!bAcceptAll)
-      fileChooser.setAcceptAllFileFilterUsed(false);
-    fileChooser.addChoosableFileFilter(new FileFilter() {
-      public String getDescription() {
-        String descr = new String("GUIslice Builder file (");
-        for (int i=0; i<fileExtension.length; i++) {
-          if (i > 0) 
-            descr = descr + ", ";
-          descr = descr + "*" + fileExtension[i];
+    if (useSwingFileChooser) {
+      JFileChooser fileChooser = new JFileChooser();
+      if (suggestedFile != null)
+        fileChooser.setSelectedFile(new File(suggestedFile));
+      fileChooser.setDialogTitle(title);
+      if (!bAcceptAll)
+        fileChooser.setAcceptAllFileFilterUsed(false);
+      fileChooser.addChoosableFileFilter(new FileFilter() {
+        public String getDescription() {
+          String descr = new String("GUIslice Builder file (");
+          for (int i = 0; i < fileExtension.length; i++) {
+            if (i > 0)
+              descr = descr + ", ";
+            descr = descr + "*" + fileExtension[i];
+          }
+          descr = descr + ")";
+          return descr;
         }
-        descr = descr  + ")"; 
-        return descr;
-      }
-      public boolean accept(File f) {
-        if (f.isDirectory()) {
-          return true;
+
+        public boolean accept(File f) {
+          if (f.isDirectory()) {
+            return true;
+          } else {
+            String name = f.getName().toLowerCase();
+            for (int i = 0; i < fileExtension.length; i++)
+              if (name.endsWith(fileExtension[i]))
+                return true;
+            return false;
+          }
+        }
+      });
+      recentFileList = new RecentFilePanel(fileChooser);
+      fileChooser.setAccessory(recentFileList);
+      String sCurrentFolder = recentFileList.getCurrentFolder();
+      fileChooser.setFileView(new FileViewWithIcons());
+      File currentDirectory;
+      if (sCurrentFolder == null) {
+        String sProjectDir = generalModel.getProjectDir();
+        // absolute path or relative?
+        Path path = Paths.get(sProjectDir);
+        if (path.isAbsolute()) {
+          currentDirectory = new File(sProjectDir);
         } else {
-          String name = f.getName().toLowerCase();
-          for (int i=0; i<fileExtension.length; i++) 
-            if (name.endsWith(fileExtension[i]))
-              return true;
-          return false;
+          String sWorkingDir = Utils.getWorkingDir();
+          currentDirectory = new File(sWorkingDir + sProjectDir);
         }
-      }
-    });
-    recentFileList = new RecentFilePanel(fileChooser);
-    fileChooser.setAccessory(recentFileList);
-    String sCurrentFolder = recentFileList.getCurrentFolder();
-    fileChooser.setFileView(new FileViewWithIcons());
-    File currentDirectory;
-    if (sCurrentFolder == null) {
-      String sProjectDir = generalModel.getProjectDir();
-      // absolute path or relative?
-      Path path = Paths.get(sProjectDir);
-      if (path.isAbsolute()) {
-        currentDirectory = new File(sProjectDir);
       } else {
-        String sWorkingDir = Utils.getWorkingDir();
-        currentDirectory = new File(sWorkingDir + sProjectDir);
+        currentDirectory = new File(sCurrentFolder);
+      }
+      fileChooser.setCurrentDirectory(currentDirectory);
+      int option = fileChooser.showDialog(new JFrame(), btnText);
+      if (option == JFileChooser.APPROVE_OPTION) {
+        file = fileChooser.getSelectedFile();
+        recentFileList.add(file);
       }
     } else {
-      currentDirectory = new File(sCurrentFolder);
-    }
-    fileChooser.setCurrentDirectory(currentDirectory);
-    int option = fileChooser.showDialog(new JFrame(), btnText);
-    if (option == JFileChooser.APPROVE_OPTION) {
-      file = fileChooser.getSelectedFile();
-      recentFileList.add(file);
+      FileDialog fd = new FileDialog(Controller.getInstance().getFrame(), "Select File", FileDialog.LOAD);
+//      String sWorkingDir = Utils.getWorkingDir();
+      String sHome = System.getProperty("user.home")
+        + System.getProperty("file.separator")
+        + "Documents"
+        + System.getProperty("file.separator")
+        + "Arduino";
+      fd.setDirectory(sHome);
+      fd.setFile("*"+fileExtension[0].toLowerCase());
+      fd.setVisible(true);
+      String sFile = fd.getFile();
+      String sDir = fd.getDirectory();
+      if (sFile != null && sDir != null) {
+        file = new File(sDir, sFile);
+      } else {
+        Builder.logger.debug("Project Open Cancel");
+      }
     }
     return file;
   }
@@ -257,8 +276,9 @@ public class RibbonListener implements ActionListener {
     switch(command) {
     case "about":
       Builder.logger.debug("Menu: about");
-      String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight (c) Paul Conti 2018-2025</center>"
-          + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2021</center></p>", Builder.VERSION);
+      String htmlBody = String.format("<p><center>GUIslice Builder ver: %s<br>CopyRight %s</center>"
+          + "<br><center>GUIslice CopyRight (c) Calvin Hass 2016-2021</center></p>", 
+          Builder.VERSION,Builder.COPYRIGHT);
       htmlBody = htmlBody + "<br>For the latest guides, updates and support view:<br>";
       MessageWithLink msgDialog = new MessageWithLink(htmlBody, "https://github.com/ImpulseAdventure/GUIslice/wiki");
       msgDialog.showMessage();
