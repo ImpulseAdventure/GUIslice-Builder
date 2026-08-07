@@ -13,13 +13,29 @@ GUIslice API
 
 **Publication date and software versions**
 
-Published June, 2023. Based on GUIslice Builder 0.17.b24 and GUIslice API Library 0.17.0
+Published July, 2026. Based on GUIslice Builder 0.17.b41 and GUIslice API Library 0.17.2
 
 ## Using the GUIsliceBuilder
 
 ### WARNING!
 
 You must not place switch or additional break statements inside your button callbacks. The code generator will crash. Instead simply create a subroutine that has your more complex logic and call that from inside your callback.
+
+### Where are personalized settings stored?
+
+The Java Preferences API (java.util.prefs), stores preference data in a location specific to the operating system.
+
+For windows 11 use regedit.exe
+go to:
+```
+Computer\HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\impulseadventure\builder
+```
+It's possible to export this to a file and to import it by double clicking on the exported file.
+
+On Linux systems, Java preferences are typically stored in the user's home directory within a hidden folder named .java, specifically: ~/.java/.userPrefs
+
+---------
+<div style="page-break-after: always;"></div>
 
 ### I changed the Graphics Library by way of  GUIslice Builder->Edit->Options->General Tab->Graphics Library
 
@@ -60,6 +76,8 @@ void loop(){
 ```
 Output: 124.679
 
+---------
+<div style="page-break-after: always;"></div>
 
 ### Compiler Error when I try and use TFT_espi Display Driver
 If the error is Builder config "Edit->Options->General->Target Platform" should be "arduino TFT_eSPI"
@@ -72,9 +90,6 @@ The Builder supports the following target platforms:
 -  linux
 
 Just follow the error message's guidance to reset your target platform. This allows the Builder to correctly handle fonts between the different packages.
-
----------
-<div style="page-break-after: always;"></div>
 
 ### Can you change a Text String at runtime?
 
