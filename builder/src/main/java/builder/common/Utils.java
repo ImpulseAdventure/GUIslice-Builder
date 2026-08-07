@@ -302,7 +302,18 @@ public class Utils {
       // where we are running outside eclipse IDE
       int n = strUserDir.lastIndexOf("bin");
       if (n > 0) {
-        strUserDir = strUserDir.substring(0,n-1);  // remove "/bin"
+        // bugfix: strip away the /bin ONLY if the resulting directory has a parent dir.
+        // otherwise, installing the program in c:\bin\GUIsliceBuilder causes it to return c:\ as the working dir
+        try {
+          File parent = (new File(strUserDir.substring(0, n - 1))).getParentFile();
+          if ((parent != null)  && parent.isDirectory()) {
+            strUserDir = strUserDir.substring(0, n - 1);  // remove "/bin"
+            //Builder.logger.debug("Removed /bin, now '" + strUserDir + "'");
+          }
+        }
+        catch (Exception e) {
+          Builder.logger.debug("caught and swallowed exception: " + e.toString());
+        }
       }
       workingDir = strUserDir + System.getProperty("file.separator"); 
     }
